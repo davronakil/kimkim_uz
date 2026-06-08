@@ -2,7 +2,7 @@
   "common": {
     "appName": "KimKim",
     "tagline": "Kim keladi? KimKim biladi.",
-    "loading": "Ishlayapman...",
+    "loading": "Sabr...",
     "save": "Saqlash",
     "cancel": "Bekor",
     "delete": "O'chirish",
@@ -299,7 +299,7 @@
     }
   },
   "join": {
-    "loading": "Link tekshirilmoqda...",
+    "loading": "Sabr...",
     "notFound": "Link noto'g'ri yoki eskirgan.",
     "eyebrow": "Sizni chaqirishdi",
     "headline": "Qo'shiling",
