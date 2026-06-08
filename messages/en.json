@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "KimKim",
-    "tagline": "Who's coming? KimKim knows.",
+    "tagline": "Gather with clarity.",
     "loading": "Loading...",
     "save": "Save",
     "cancel": "Cancel",
@@ -17,16 +17,16 @@
     "language": "Language"
   },
   "meta": {
-    "title": "KimKim — Plan weddings, gap circles & gatherings",
-    "description": "Who's coming, where to meet, who owes what — for weddings, gap circles, sunnat to'y, choyxona, and more. Sign in with Telegram.",
-    "ogTitle": "KimKim — Plan every gathering in one place",
+    "title": "KimKim - Gatherings, invites, and shared costs",
+    "description": "Plan the gathering, invite your people, track RSVPs, and split costs in one calm place. Built around Telegram.",
+    "ogTitle": "KimKim - Keep every gathering clear",
     "keywords": "event planning, wedding, gap circle, sunnat to'y, aqiqa, challari, choyxona, birthday, Telegram, Uzbekistan"
   },
   "home": {
-    "heroTitle": "Who's coming?\nKimKim knows.",
-    "heroSubtitle": "Guests, location, and expenses — sorted in one place.",
-    "heroTitleSignedIn": "Welcome back",
-    "heroSubtitleSignedIn": "Your events, guests, and expenses — all here.",
+    "heroTitle": "Plan the gathering.\nKeep everyone in sync.",
+    "heroSubtitle": "Invites, RSVPs, location, comments, and shared costs in one simple place.",
+    "heroTitleSignedIn": "Your gatherings are ready",
+    "heroSubtitleSignedIn": "Events, guests, updates, and expenses are all in one place.",
     "ctaSignedOut": "Sign in with Telegram",
     "ctaSignedIn": "Go to my events",
     "useCases": {
@@ -39,19 +39,19 @@
       "challari": "Challari"
     },
     "features": {
-      "eventsTitle": "Any gathering",
-      "eventsBody": "Date, place, and guest list — whether it's a wedding, gap circle, or choyxona night.",
-      "commentsTitle": "Plan together",
-      "commentsBody": "Threaded comments for venue picks, tasks, and updates — nothing gets lost in the chat.",
-      "expensesTitle": "Split costs fairly",
-      "expensesBody": "Log who paid, split the bill, and see who owes whom — no awkward math later.",
-      "telegramTitle": "Lives in Telegram",
-      "telegramBody": "Share invite links, get reminders, and stay updated where your people already are."
+      "eventsTitle": "Create the plan",
+      "eventsBody": "Set the date, place, guest list, and payment style without extra noise.",
+      "commentsTitle": "Keep decisions clear",
+      "commentsBody": "Use one thread for updates, venue choices, tasks, and small decisions.",
+      "expensesTitle": "Track the money",
+      "expensesBody": "Log payments, split costs, and see balances before the awkward part.",
+      "telegramTitle": "Stay close to Telegram",
+      "telegramBody": "Share invites, send reminders, and post updates where the group already talks."
     }
   },
   "auth": {
     "title": "Sign in with Telegram",
-    "subtitle": "One tap to create or join events — no password needed.",
+    "subtitle": "One tap to create or join events. No password needed.",
     "telegramHint": "We only receive your public Telegram profile.",
     "miniAppHint": "Opened from Telegram? You are already signed in."
   },
@@ -242,6 +242,6 @@
     "offlineCachedAt": "Saved {time}"
   },
   "footer": {
-    "madeIn": "Made for families, friends, and gap circles — in Uzbekistan and beyond."
+    "madeIn": "Built for real gatherings in Uzbekistan and beyond."
   }
 }
