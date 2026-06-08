@@ -19,7 +19,15 @@ export const centralAsiaBounds = {
   west: 55.9,
 };
 
-export const centralAsiaCountries = ["uz", "kz", "kg", "tj"] as const;
+export const usBounds = {
+  north: 49.5,
+  south: 24.5,
+  east: -66.9,
+  west: -125.0,
+};
+
+/** Google Autocomplete allows up to 5 countries. */
+export const locationSearchCountries = ["uz", "kz", "kg", "tj", "us"] as const;
 
 type GoogleMapsWindow = Window & {
   google?: {
@@ -216,8 +224,7 @@ function fetchAutocompletePredictions(input: string): Promise<PlacePrediction[]>
     service.getPlacePredictions(
       {
         input,
-        bounds: centralAsiaBounds,
-        componentRestrictions: { country: [...centralAsiaCountries] },
+        componentRestrictions: { country: [...locationSearchCountries] },
       },
       (predictions, status) => {
         if (status !== "OK" || !predictions) {
@@ -230,23 +237,34 @@ function fetchAutocompletePredictions(input: string): Promise<PlacePrediction[]>
   });
 }
 
-function isWithinCentralAsia(lat: number, lng: number) {
+function isWithinBounds(
+  lat: number,
+  lng: number,
+  bounds: { north: number; south: number; east: number; west: number },
+) {
   return (
-    lat >= centralAsiaBounds.south &&
-    lat <= centralAsiaBounds.north &&
-    lng >= centralAsiaBounds.west &&
-    lng <= centralAsiaBounds.east
+    lat >= bounds.south &&
+    lat <= bounds.north &&
+    lng >= bounds.west &&
+    lng <= bounds.east
   );
 }
 
-function fetchTextSearchResults(input: string): Promise<PlacePrediction[]> {
+function isWithinSearchRegion(lat: number, lng: number) {
+  return isWithinBounds(lat, lng, centralAsiaBounds) || isWithinBounds(lat, lng, usBounds);
+}
+
+function fetchTextSearchResultsForBounds(
+  input: string,
+  bounds: { north: number; south: number; east: number; west: number },
+): Promise<PlacePrediction[]> {
   return new Promise((resolve) => {
     const service = getPlacesService();
 
     service.textSearch(
       {
         query: input,
-        bounds: centralAsiaBounds,
+        bounds,
       },
       (results, status) => {
         if (status !== "OK" || !results) {
@@ -260,7 +278,7 @@ function fetchTextSearchResults(input: string): Promise<PlacePrediction[]> {
               if (!result.place_id || !result.name) return false;
               const location = result.geometry?.location;
               if (!location) return true;
-              return isWithinCentralAsia(location.lat(), location.lng());
+              return isWithinSearchRegion(location.lat(), location.lng());
             })
             .map((result) => ({
               placeId: result.place_id!,
@@ -272,6 +290,13 @@ function fetchTextSearchResults(input: string): Promise<PlacePrediction[]> {
       },
     );
   });
+}
+
+function fetchTextSearchResults(input: string): Promise<PlacePrediction[]> {
+  return Promise.all([
+    fetchTextSearchResultsForBounds(input, centralAsiaBounds),
+    fetchTextSearchResultsForBounds(input, usBounds),
+  ]).then(([centralAsia, us]) => [...centralAsia, ...us]);
 }
 
 export async function searchPlaces(input: string): Promise<PlacePrediction[]> {
