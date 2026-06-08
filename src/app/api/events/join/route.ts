@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getEnv, runInBackground } from "@/lib/cloudflare";
 import { getCurrentUser } from "@/lib/auth/session";
 import { notifyMemberJoined } from "@/lib/telegram/notifications";
+import { getEventRsvp, upsertEventRsvp } from "@/lib/events/rsvp";
 import {
   getEventByInviteCode,
   hasCompletedEventPayment,
@@ -15,6 +16,7 @@ import { eventPaymentsEnabled } from "@/lib/stripe/checkout";
 const joinSchema = z.object({
   code: z.string().min(4).max(32),
   pay_later: z.boolean().optional(),
+  rsvp_status: z.enum(["going", "maybe", "declined"]).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -34,6 +36,7 @@ export async function GET(request: NextRequest) {
   const env = await getEnv();
   const paymentsEnabled = eventPaymentsEnabled(event, env.STRIPE_SECRET_KEY);
   const hasPaid = user ? await hasCompletedEventPayment(event.id, user.id) : false;
+  const rsvpStatus = user ? await getEventRsvp(event.id, user.id) : null;
 
   return NextResponse.json({
     event: {
@@ -56,6 +59,7 @@ export async function GET(request: NextRequest) {
     logged_in: Boolean(user),
     payments_enabled: paymentsEnabled,
     has_paid: hasPaid,
+    rsvp_status: rsvpStatus,
   });
 }
 
@@ -75,8 +79,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const rsvpStatus = parsed.data.rsvp_status ?? "going";
+
+  if (rsvpStatus === "declined") {
+    await upsertEventRsvp(event.id, user.id, "declined");
+    return NextResponse.json({ event_id: event.id, joined: false });
+  }
+
   const env = await getEnv();
-  if (eventPaymentsEnabled(event, env.STRIPE_SECRET_KEY) && !parsed.data.pay_later) {
+  if (
+    rsvpStatus === "going" &&
+    eventPaymentsEnabled(event, env.STRIPE_SECRET_KEY) &&
+    !parsed.data.pay_later
+  ) {
     const paid = await hasCompletedEventPayment(event.id, user.id);
     if (!paid) {
       return NextResponse.json({ error: "Payment required" }, { status: 402 });
@@ -85,6 +100,7 @@ export async function POST(request: NextRequest) {
 
   const alreadyMember = await isEventMember(event.id, user.id);
   await joinEvent(event.id, user.id);
+  await upsertEventRsvp(event.id, user.id, rsvpStatus);
 
   if (!alreadyMember) {
     void runInBackground(

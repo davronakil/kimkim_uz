@@ -13,6 +13,7 @@ export function inviteRsvpKeyboard({
   inviteCode: string;
   labels: {
     going: string;
+    maybe: string;
     declined: string;
     openEvent: string;
     eventUrl: string;
@@ -22,6 +23,7 @@ export function inviteRsvpKeyboard({
     inline_keyboard: [
       [
         { text: labels.going, callback_data: `rsvp:y:${inviteCode}` },
+        { text: labels.maybe, callback_data: `rsvp:m:${inviteCode}` },
         { text: labels.declined, callback_data: `rsvp:n:${inviteCode}` },
       ],
       [{ text: labels.openEvent, url: labels.eventUrl }],

@@ -59,5 +59,13 @@ export async function createEventRecord(input: CreateEventInput) {
     .bind(eventId, input.creatorId)
     .run();
 
+  await db
+    .prepare(
+      `INSERT INTO event_rsvps (event_id, user_id, status, updated_at)
+       VALUES (?, ?, 'going', datetime('now'))`,
+    )
+    .bind(eventId, input.creatorId)
+    .run();
+
   return { eventId, inviteCode };
 }

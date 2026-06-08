@@ -32,6 +32,7 @@ export function MemberList({
   const t = useTranslations("events");
   const common = useTranslations("common");
   const paymentT = useTranslations("events.memberPayments");
+  const rsvpT = useTranslations("events.rsvp");
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [updatingPaymentId, setUpdatingPaymentId] = useState<string | null>(null);
@@ -108,6 +109,17 @@ export function MemberList({
                     {t("ownerBadge")}
                   </span>
                 ) : null}
+                <span
+                  className={`w-fit rounded-full px-2.5 py-1 text-xs font-medium ${
+                    member.rsvp_status === "maybe"
+                      ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200"
+                      : member.rsvp_status === "declined"
+                        ? "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+                        : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+                  }`}
+                >
+                  {rsvpT(member.rsvp_status ?? "going")}
+                </span>
                 {showPaymentStatus ? (
                   <span
                     className={`inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${

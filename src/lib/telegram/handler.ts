@@ -74,6 +74,7 @@ async function handleInviteStart(
       inviteCode,
       labels: {
         going: strings.rsvpGoing,
+        maybe: strings.rsvpMaybe,
         declined: strings.rsvpDeclined,
         openEvent: strings.openEvent,
         eventUrl,

@@ -134,6 +134,7 @@ export async function linkGroupToEvent({
           inviteCode: event.invite_code,
           labels: {
             going: inviteStrings.rsvpGoing,
+            maybe: inviteStrings.rsvpMaybe,
             declined: inviteStrings.rsvpDeclined,
             openEvent: strings.openEvent,
             eventUrl,
@@ -234,6 +235,7 @@ export async function postEventShareToGroup(eventId: string) {
         inviteCode: event.invite_code,
         labels: {
           going: inviteStrings.rsvpGoing,
+          maybe: inviteStrings.rsvpMaybe,
           declined: inviteStrings.rsvpDeclined,
           openEvent: strings.openEvent,
           eventUrl,

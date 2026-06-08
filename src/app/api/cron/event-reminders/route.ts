@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEnv } from "@/lib/cloudflare";
-import { processEventReminders } from "@/lib/telegram/notifications";
+import { processEventDigests, processEventReminders } from "@/lib/telegram/notifications";
 
 export async function GET(request: NextRequest) {
   const env = await getEnv();
@@ -16,5 +16,6 @@ export async function GET(request: NextRequest) {
   }
 
   await processEventReminders();
+  await processEventDigests();
   return NextResponse.json({ ok: true });
 }

@@ -11,6 +11,8 @@ import { CommentThread } from "@/components/events/comment-thread";
 import { ExpensePanel } from "@/components/events/expense-panel";
 import { InvitePanel } from "@/components/events/invite-panel";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
+import { NotificationPreferencesPanel } from "@/components/events/notification-preferences-panel";
+import { PaidEventSummaryPanel } from "@/components/events/paid-event-summary-panel";
 import { PayoutMethodPanel } from "@/components/events/payout-method-panel";
 import { LeaveEventButton } from "@/components/events/leave-event-button";
 import { MemberList } from "@/components/events/member-list";
@@ -116,6 +118,7 @@ export function EventWorkspace({
       return (
         <div className="space-y-4">
           {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
+          <NotificationPreferencesPanel eventId={eventId} />
           {event.invite_code ? (
             <InvitePanel
               eventId={eventId}
@@ -132,6 +135,15 @@ export function EventWorkspace({
               inviteCode={event.invite_code}
               botUsername={botUsername}
               linked={Boolean(event.telegram_chat_id)}
+            />
+          ) : null}
+          {canEdit && event.payment_mode === "paid" ? (
+            <PaidEventSummaryPanel
+              members={members}
+              paymentSummaries={paymentSummaries}
+              ticketPriceCents={event.ticket_price_cents}
+              ticketCurrency={event.ticket_currency}
+              locale={locale}
             />
           ) : null}
           {canEdit && event.payment_mode === "paid" ? <PayoutMethodPanel /> : null}

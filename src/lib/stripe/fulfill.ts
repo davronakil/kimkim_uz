@@ -12,6 +12,7 @@ import {
   paymentIntentId,
   retrieveCheckoutSession,
 } from "@/lib/stripe/checkout";
+import { upsertEventRsvp } from "@/lib/events/rsvp";
 import { notifyMemberJoined } from "@/lib/telegram/notifications";
 
 export async function fulfillCheckoutSession(sessionId: string, expectedUserId?: string) {
@@ -48,6 +49,7 @@ export async function fulfillCheckoutSession(sessionId: string, expectedUserId?:
 
   const wasMember = await isEventMember(eventId, userId);
   await joinEvent(eventId, userId);
+  await upsertEventRsvp(eventId, userId, "going");
 
   if (!wasMember) {
     const member = await getUserById(userId);

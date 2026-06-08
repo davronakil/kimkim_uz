@@ -32,17 +32,23 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 ### Social & ops
 - Dynamic OG cards when no cover photo or map
 - Map OG snapshot when location has coordinates
+- Public read-only event pages for non-members and logged-out visitors
+- Event creation templates
+- RSVP states: going / maybe / can't go
+- Paid-event host payment summary
+- Per-event Telegram notification controls: instant / digest / muted
+- PNG generated OG cards
 - CI: `npm run build` on push/PR
 
 ## Phase 3 — growth
 
 | Priority | Item | Notes |
 |----------|------|-------|
-| P1 | Event templates | “Friday dinner”, gap, to'y presets |
+| P1 | Event templates | Shipped: gap, choyxona, wedding, birthday, sunnat, paid |
 | P1 | UZS + USD toggle per event | Display + expense currency |
-| P2 | Public read-only event page | Large gatherings, no login required |
+| P2 | Public read-only event page | Shipped for `/events/:id`; private activity still member-only |
 | P2 | Referral tracking | Invite source via bot start param |
-| P3 | PNG OG cards | SVG works today; raster for Telegram/Facebook previews |
+| P3 | PNG OG cards | Shipped for generated site/event cards |
 
 ## Housekeeping / ops
 

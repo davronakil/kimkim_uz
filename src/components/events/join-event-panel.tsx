@@ -11,7 +11,7 @@ import type { Locale } from "@/i18n/config";
 import { useRouter } from "@/i18n/navigation";
 import { intlLocale } from "@/lib/locale";
 import { formatMoney } from "@/lib/utils";
-import type { Event, EventPaymentMode } from "@/types";
+import type { Event, EventPaymentMode, EventRsvpStatus } from "@/types";
 
 type JoinPreview = {
   event: Pick<
@@ -32,6 +32,7 @@ type JoinPreview = {
   logged_in: boolean;
   payments_enabled: boolean;
   has_paid: boolean;
+  rsvp_status: EventRsvpStatus | null;
 };
 
 function showsExpenseNote(mode: EventPaymentMode) {
@@ -59,6 +60,7 @@ export function JoinEventPanel({
   const [joining, setJoining] = useState(false);
   const [paying, setPaying] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
+  const [rsvpMessage, setRsvpMessage] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const response = await fetch(`/api/events/join?code=${encodeURIComponent(code)}`, {
@@ -118,18 +120,25 @@ export function JoinEventPanel({
     void confirmCheckout();
   }, [code, load, router, searchParams, t]);
 
-  async function join(payLater = false) {
+  async function join(payLater = false, rsvpStatus: EventRsvpStatus = "going") {
     setJoining(true);
+    setRsvpMessage(null);
     const response = await fetch("/api/events/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ code, pay_later: payLater }),
+      body: JSON.stringify({ code, pay_later: payLater, rsvp_status: rsvpStatus }),
     });
 
     if (response.ok) {
-      const data = (await response.json()) as { event_id: string };
+      const data = (await response.json()) as { event_id: string; joined?: boolean };
       window.dispatchEvent(new Event("kimkim:auth-change"));
+      if (rsvpStatus === "declined" || data.joined === false) {
+        setRsvpMessage(t("declinedSaved"));
+        void load();
+        setJoining(false);
+        return;
+      }
       router.push(`/events/${data.event_id}`);
       router.refresh();
     }
@@ -173,7 +182,7 @@ export function JoinEventPanel({
     );
   }
 
-  const { event, member_count, joined, logged_in, payments_enabled } = preview;
+  const { event, member_count, joined, logged_in, payments_enabled, rsvp_status } = preview;
   const paymentMode = event.payment_mode ?? "free";
   const startsAt = new Date(event.starts_at);
   const loginRedirect = `/join/${code}`;
@@ -267,6 +276,12 @@ export function JoinEventPanel({
             </p>
           ) : null}
 
+          {rsvpMessage || rsvp_status === "declined" ? (
+            <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-100">
+              {rsvpMessage ?? t("declinedCurrent")}
+            </p>
+          ) : null}
+
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 dark:border-emerald-900 dark:bg-emerald-950/40">
             {joined ? (
               <div className="space-y-4 text-center">
@@ -304,24 +319,62 @@ export function JoinEventPanel({
                 <button
                   type="button"
                   disabled={joining || paying}
-                  onClick={() => void join(true)}
+                  onClick={() => void join(true, "going")}
                   className="w-full rounded-full border border-emerald-300 bg-white px-5 py-3 text-sm font-semibold text-emerald-950 transition hover:border-emerald-500 hover:bg-emerald-50 disabled:opacity-60 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100 dark:hover:bg-emerald-900"
                 >
                   {joining ? t("joining") : t("joinPayLater")}
                 </button>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    disabled={joining || paying}
+                    onClick={() => void join(true, "maybe")}
+                    className="rounded-full border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition hover:border-emerald-300 hover:bg-emerald-50 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
+                  >
+                    {t("maybe")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={joining || paying}
+                    onClick={() => void join(false, "declined")}
+                    className="rounded-full border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition hover:border-amber-300 hover:bg-amber-50 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
+                  >
+                    {t("cantGo")}
+                  </button>
+                </div>
                 <p className="text-center text-xs leading-relaxed text-emerald-900/75 dark:text-emerald-100/70">
                   {t("payLaterNote")}
                 </p>
               </div>
             ) : (
-              <button
-                type="button"
-                disabled={joining}
-                onClick={() => void join()}
-                className="kk-btn-primary w-full disabled:opacity-60"
-              >
-                {joining ? t("joining") : t("join")}
-              </button>
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  disabled={joining}
+                  onClick={() => void join(false, "going")}
+                  className="kk-btn-primary w-full disabled:opacity-60"
+                >
+                  {joining ? t("joining") : t("join")}
+                </button>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    disabled={joining}
+                    onClick={() => void join(false, "maybe")}
+                    className="rounded-full border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition hover:border-emerald-300 hover:bg-emerald-50 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
+                  >
+                    {t("maybe")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={joining}
+                    onClick={() => void join(false, "declined")}
+                    className="rounded-full border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition hover:border-amber-300 hover:bg-amber-50 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
+                  >
+                    {t("cantGo")}
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>

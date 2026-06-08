@@ -16,7 +16,11 @@ export type User = {
 
 export type EventMember = User & {
   role: "owner" | "member";
+  rsvp_status: EventRsvpStatus | null;
 };
+
+export type EventRsvpStatus = "going" | "maybe" | "declined";
+export type EventNotificationMode = "instant" | "digest" | "muted";
 
 export type EventPaymentMode = "free" | "split" | "pay_yourself" | "paid";
 

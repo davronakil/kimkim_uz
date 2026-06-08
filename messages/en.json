@@ -82,6 +82,47 @@
       "markPaid": "Mark paid",
       "markUnpaid": "Mark unpaid"
     },
+    "rsvp": {
+      "going": "Going",
+      "maybe": "Maybe",
+      "declined": "Can't go"
+    },
+    "notifications": {
+      "title": "Telegram notifications",
+      "subtitle": "Choose how KimKim should notify you about comments and expenses in this event.",
+      "saving": "Saving...",
+      "instant": {
+        "title": "Instant",
+        "body": "Send each comment and expense right away."
+      },
+      "digest": {
+        "title": "Digest",
+        "body": "Send an hourly summary when there is activity."
+      },
+      "muted": {
+        "title": "Muted",
+        "body": "No comment or expense notifications."
+      }
+    },
+    "paymentsSummary": {
+      "title": "Payment summary",
+      "subtitle": "Track ticket money across card payments and outside-app settlement.",
+      "expected": "Expected",
+      "received": "Received",
+      "card": "Card",
+      "manual": "Manual",
+      "attendees": "{count, plural, one {# paying guest} other {# paying guests}}",
+      "paidCount": "{count, plural, one {# paid} other {# paid}}",
+      "cardCount": "{count, plural, one {# card payment} other {# card payments}}",
+      "manualCount": "{count, plural, one {# manual payment} other {# manual payments}}",
+      "unpaidHint": "{count, plural, one {# guest is still unpaid. Use the member list below to mark payment when they settle.} other {# guests are still unpaid. Use the member list below to mark payments when they settle.}}",
+      "copy": "Copy summary",
+      "copied": "Copied",
+      "copyTitle": "KimKim payment summary",
+      "copyExpected": "Expected: {amount} from {count} attendees",
+      "copyReceived": "Received: {amount} from {count} attendees",
+      "copyUnpaid": "Unpaid attendees: {count}"
+    },
     "payout": {
       "title": "Payout preference",
       "subtitle": "Tell guests how you want to receive money paid outside KimKim. Stripe card payments still go to the platform Stripe account until Connect payouts are added.",
@@ -91,6 +132,17 @@
       "detailsPlaceholder": "Add card number, phone number, bank details, or payout notes.",
       "notSet": "No payout preference saved yet.",
       "updated": "Payout preference saved."
+    },
+    "public": {
+      "eyebrow": "Event preview",
+      "title": "See the plan before you join",
+      "bodyLoggedOut": "This is a public preview. Sign in with Telegram when you're ready to RSVP, comment, pay, or see private event activity.",
+      "bodyLoggedIn": "This is a public preview. Join the event to RSVP, comment, pay, and see private event activity.",
+      "ticketPrice": "Ticket: {price}",
+      "memberCount": "{count, plural, one {# person going} other {# people going}}",
+      "ctaBody": "Join through the invite page to be added to the guest list.",
+      "signInAction": "Sign in and join",
+      "joinAction": "Join this event"
     },
     "form": {
       "title": "Title",
@@ -102,26 +154,32 @@
       "templates": {
         "gap": {
           "title": "Gap circle",
+          "short": "Shared meal, rotating costs, everyone sees their share.",
           "description": "Monthly gap with friends. Add the location, then track expenses here so everyone knows their share."
         },
         "choyxona": {
           "title": "Choyxona",
+          "short": "Casual meetup where each guest covers their own order.",
           "description": "Choyxona meetup. Guests can RSVP, follow updates, and cover their own order at the venue."
         },
         "wedding": {
           "title": "Wedding",
+          "short": "A clean invite for family, guests, place, and timing.",
           "description": "Wedding invite with date, place, guest notes, and updates for everyone attending."
         },
         "birthday": {
           "title": "Birthday",
+          "short": "Invite friends and split any shared celebration costs.",
           "description": "Birthday gathering. Invite friends, coordinate details, and split shared costs if needed."
         },
         "sunnat": {
           "title": "Sunnat to'y",
+          "short": "Family event details and reminders in one place.",
           "description": "Sunnat to'y invite with family notes, location, timing, and reminders for guests."
         },
         "paid": {
           "title": "Paid event",
+          "short": "Ticketed gathering with card or manual payment tracking.",
           "description": "Ticketed event. Set a price, let guests pay by card or settle with the host later, and track who has paid."
         }
       },
@@ -252,6 +310,10 @@
     "ticketPrice": "Ticket: {price}",
     "memberCount": "{count, plural, one {# person going} other {# people going}}",
     "join": "I'm coming — join event",
+    "maybe": "Maybe",
+    "cantGo": "Can't go",
+    "declinedSaved": "Got it — you're marked as not coming.",
+    "declinedCurrent": "You're currently marked as not coming.",
     "joining": "Joining...",
     "payAndJoin": "Pay {price} & join",
     "joinPayLater": "Join and pay host later",

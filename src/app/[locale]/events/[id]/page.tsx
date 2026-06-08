@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { EventWorkspace } from "@/components/events/event-workspace";
-import { redirect } from "@/i18n/navigation";
+import { PublicEventOverview } from "@/components/events/public-event-overview";
 import { getCurrentUser } from "@/lib/auth/session";
 import { buildEventShareMetadata } from "@/lib/event-metadata";
 import {
@@ -43,16 +43,23 @@ export default async function EventDetailPage({
   const { locale, id } = await params;
   setRequestLocale(locale);
 
-  const user = await getCurrentUser();
-  if (!user) {
-    return redirect({ href: "/login", locale });
-  }
-
   const event = await getEventById(id);
   if (!event) notFound();
 
-  const member = await isEventMember(id, user.id);
-  if (!member) notFound();
+  const user = await getCurrentUser();
+  const member = user ? await isEventMember(id, user.id) : false;
+
+  if (!user || !member) {
+    const members = await listEventMembers(id);
+    return (
+      <PublicEventOverview
+        event={event}
+        locale={locale}
+        memberCount={members.length}
+        loggedIn={Boolean(user)}
+      />
+    );
+  }
 
   const [members, comments, expenses, paymentSummaries] = await Promise.all([
     listEventMembers(id),

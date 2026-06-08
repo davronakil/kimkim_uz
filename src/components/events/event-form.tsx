@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Banknote,
+  Cake,
+  GlassWater,
+  Heart,
+  Landmark,
+  MessageCircle,
+  type LucideIcon,
+} from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -49,44 +58,58 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
   const templates: Array<{
     id: string;
     title: string;
+    short: string;
     description: string;
     paymentMode: EventPaymentMode;
+    icon: LucideIcon;
   }> = [
     {
       id: "gap",
       title: t("templates.gap.title"),
+      short: t("templates.gap.short"),
       description: t("templates.gap.description"),
       paymentMode: "split",
+      icon: MessageCircle,
     },
     {
       id: "choyxona",
       title: t("templates.choyxona.title"),
+      short: t("templates.choyxona.short"),
       description: t("templates.choyxona.description"),
       paymentMode: "pay_yourself",
+      icon: GlassWater,
     },
     {
       id: "wedding",
       title: t("templates.wedding.title"),
+      short: t("templates.wedding.short"),
       description: t("templates.wedding.description"),
       paymentMode: "free",
+      icon: Heart,
     },
     {
       id: "birthday",
       title: t("templates.birthday.title"),
+      short: t("templates.birthday.short"),
       description: t("templates.birthday.description"),
       paymentMode: "split",
+      icon: Cake,
     },
     {
       id: "sunnat",
       title: t("templates.sunnat.title"),
+      short: t("templates.sunnat.short"),
       description: t("templates.sunnat.description"),
       paymentMode: "free",
+      icon: Landmark,
     },
     {
       id: "paid",
       title: t("templates.paid.title"),
+      short: t("templates.paid.short"),
       description: t("templates.paid.description"),
       paymentMode: "paid",
+      icon: Banknote,
     },
   ];
 
@@ -175,17 +198,33 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
               {t("templatesSubtitle")}
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {templates.map((template) => (
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            {templates.map((template) => {
+              const Icon = template.icon;
+              return (
               <button
                 key={template.id}
                 type="button"
                 onClick={() => applyTemplate(template)}
-                className="rounded-full border border-emerald-200 bg-white px-3.5 py-2 text-sm font-semibold text-emerald-950 transition hover:border-emerald-400 hover:bg-emerald-100 active:scale-[0.98] dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100 dark:hover:bg-emerald-900"
+                className="group flex min-h-28 touch-manipulation flex-col items-start gap-2 rounded-2xl border border-emerald-200 bg-white p-3 text-left transition hover:border-emerald-400 hover:bg-emerald-100 active:scale-[0.98] dark:border-emerald-800 dark:bg-emerald-950 dark:hover:bg-emerald-900"
               >
-                {template.title}
+                <span className="flex w-full items-center justify-between gap-2">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span className="rounded-full bg-zinc-100 px-2 py-1 text-[0.68rem] font-semibold text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+                    {events(`paymentMode.labels.${template.paymentMode}`)}
+                  </span>
+                </span>
+                <span className="text-sm font-semibold text-emerald-950 dark:text-emerald-100">
+                  {template.title}
+                </span>
+                <span className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  {template.short}
+                </span>
               </button>
-            ))}
+              );
+            })}
           </div>
         </section>
       ) : null}

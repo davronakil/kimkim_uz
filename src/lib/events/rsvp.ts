@@ -1,10 +1,12 @@
 import { getDb } from "@/lib/cloudflare";
 import { joinEvent, isEventMember } from "@/lib/db/queries";
-import type { Event, User } from "@/types";
+import type { Event, EventRsvpStatus, User } from "@/types";
 
-export type RsvpStatus = "going" | "declined";
-
-export async function upsertEventRsvp(eventId: string, userId: string, status: RsvpStatus) {
+export async function upsertEventRsvp(
+  eventId: string,
+  userId: string,
+  status: EventRsvpStatus,
+) {
   const db = await getDb();
   await db
     .prepare(
@@ -18,12 +20,15 @@ export async function upsertEventRsvp(eventId: string, userId: string, status: R
     .run();
 }
 
-export async function getEventRsvp(eventId: string, userId: string): Promise<RsvpStatus | null> {
+export async function getEventRsvp(
+  eventId: string,
+  userId: string,
+): Promise<EventRsvpStatus | null> {
   const db = await getDb();
   const row = await db
     .prepare("SELECT status FROM event_rsvps WHERE event_id = ? AND user_id = ?")
     .bind(eventId, userId)
-    .first<{ status: RsvpStatus }>();
+    .first<{ status: EventRsvpStatus }>();
   return row?.status ?? null;
 }
 
@@ -31,6 +36,13 @@ export async function rsvpGoing(event: Event, user: User) {
   const wasMember = await isEventMember(event.id, user.id);
   await joinEvent(event.id, user.id);
   await upsertEventRsvp(event.id, user.id, "going");
+  return { wasMember, joined: true };
+}
+
+export async function rsvpMaybe(event: Event, user: User) {
+  const wasMember = await isEventMember(event.id, user.id);
+  await joinEvent(event.id, user.id);
+  await upsertEventRsvp(event.id, user.id, "maybe");
   return { wasMember, joined: true };
 }
 

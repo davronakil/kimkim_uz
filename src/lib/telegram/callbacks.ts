@@ -1,7 +1,7 @@
 import { upsertTelegramUser } from "@/lib/auth/session";
 import { runInBackground } from "@/lib/cloudflare";
 import { getEventByInviteCode, isEventMember } from "@/lib/db/queries";
-import { rsvpDeclined, rsvpGoing } from "@/lib/events/rsvp";
+import { rsvpDeclined, rsvpGoing, rsvpMaybe } from "@/lib/events/rsvp";
 import { isLocale } from "@/lib/locale";
 import {
   answerCallbackQuery,
@@ -74,6 +74,30 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
 
     await rsvpDeclined(event.id, user.id);
     await answerCallbackQuery(query.id, strings.rsvpDeclinedConfirmed);
+    await editMessageReplyMarkup(message.chat.id, message.message_id);
+    return;
+  }
+
+  if (data.startsWith("rsvp:m:")) {
+    const inviteCode = data.slice("rsvp:m:".length);
+    const event = await getEventByInviteCode(inviteCode);
+    if (!event) {
+      await answerCallbackQuery(query.id, strings.inviteNotFound, true);
+      return;
+    }
+
+    const { wasMember } = await rsvpMaybe(event, user);
+    if (!wasMember) {
+      void runInBackground(
+        notifyMemberJoined({
+          eventId: event.id,
+          member: user,
+          memberUserId: user.id,
+        }),
+      );
+    }
+
+    await answerCallbackQuery(query.id, strings.rsvpMaybeConfirmed);
     await editMessageReplyMarkup(message.chat.id, message.message_id);
     return;
   }

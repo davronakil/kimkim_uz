@@ -2,15 +2,15 @@
   "common": {
     "appName": "KimKim",
     "tagline": "Kim keladi? KimKim biladi.",
-    "loading": "Bir soniya...",
+    "loading": "Ishlayapman...",
     "save": "Saqlash",
     "cancel": "Bekor",
     "delete": "O'chirish",
     "edit": "Tahrirlash",
     "back": "Orqaga",
-    "share": "Ulashish",
+    "share": "Tarqatish",
     "signIn": "Kirish",
-    "signOut": "Chiqish",
+    "signOut": "Chiqib ketish",
     "createEvent": "Yangi event",
     "myEvents": "Eventlarim",
     "noEvents": "Hali event yo'q. Birinchisini yarating va odamlarni chaqiring.",
@@ -82,6 +82,47 @@
       "markPaid": "To'landi deb belgilash",
       "markUnpaid": "To'lanmadi deb belgilash"
     },
+    "rsvp": {
+      "going": "Keladi",
+      "maybe": "Balki",
+      "declined": "Kela olmaydi"
+    },
+    "notifications": {
+      "title": "Telegram bildirishnomalari",
+      "subtitle": "Bu eventdagi izoh va xarajatlar haqida KimKim qanday xabar berishini tanlang.",
+      "saving": "Saqlanmoqda...",
+      "instant": {
+        "title": "Darhol",
+        "body": "Har bir izoh va xarajatni darhol yuboradi."
+      },
+      "digest": {
+        "title": "Xulosa",
+        "body": "Faollik bo'lsa, soatiga bir marta qisqa xulosa yuboradi."
+      },
+      "muted": {
+        "title": "O'chirilgan",
+        "body": "Izoh va xarajat bildirishnomalari kelmaydi."
+      }
+    },
+    "paymentsSummary": {
+      "title": "To'lov xulosasi",
+      "subtitle": "Karta to'lovlari va KimKimdan tashqaridagi hisob-kitoblarni bir joyda kuzating.",
+      "expected": "Kutilayotgan",
+      "received": "Qabul qilingan",
+      "card": "Karta",
+      "manual": "Qo'lda",
+      "attendees": "{count, plural, one {# to'lovchi mehmon} other {# to'lovchi mehmon}}",
+      "paidCount": "{count, plural, one {# to'lagan} other {# to'lagan}}",
+      "cardCount": "{count, plural, one {# karta to'lovi} other {# karta to'lovi}}",
+      "manualCount": "{count, plural, one {# qo'lda to'lov} other {# qo'lda to'lov}}",
+      "unpaidHint": "{count, plural, one {# mehmon hali to'lamagan. To'lagandan keyin pastdagi ro'yxatda belgilab qo'ying.} other {# mehmon hali to'lamagan. To'lagandan keyin pastdagi ro'yxatda belgilab qo'ying.}}",
+      "copy": "Xulosani nusxalash",
+      "copied": "Nusxalandi",
+      "copyTitle": "KimKim to'lov xulosasi",
+      "copyExpected": "Kutilayotgan: {amount}, {count} ishtirokchidan",
+      "copyReceived": "Qabul qilingan: {amount}, {count} ishtirokchidan",
+      "copyUnpaid": "To'lamaganlar: {count}"
+    },
     "payout": {
       "title": "Pul olish usuli",
       "subtitle": "KimKim tashqarisida to'langan pullarni qanday qabul qilishingizni mehmonlarga yozib qo'ying. Stripe karta to'lovlari Connect qo'shilmaguncha platforma Stripe hisobiga tushadi.",
@@ -91,6 +132,17 @@
       "detailsPlaceholder": "Karta raqami, telefon, bank rekvizitlari yoki izoh yozing.",
       "notSet": "Hali pul olish usuli saqlanmagan.",
       "updated": "Pul olish usuli saqlandi."
+    },
+    "public": {
+      "eyebrow": "Event ko'rinishi",
+      "title": "Qo'shilishdan oldin rejani ko'ring",
+      "bodyLoggedOut": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash yoki yopiq event faolligini ko'rish uchun Telegram bilan kiring.",
+      "bodyLoggedIn": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash va yopiq event faolligini ko'rish uchun eventga qo'shiling.",
+      "ticketPrice": "Chipta: {price}",
+      "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
+      "ctaBody": "Mehmonlar ro'yxatiga qo'shilish uchun taklif sahifasi orqali kiring.",
+      "signInAction": "Kirish va qo'shilish",
+      "joinAction": "Eventga qo'shilish"
     },
     "form": {
       "title": "Nomi",
@@ -102,26 +154,32 @@
       "templates": {
         "gap": {
           "title": "Gap",
+          "short": "Umumiy ovqat, navbatdagi xarajat va hammaga aniq ulush.",
           "description": "Do'stlar bilan navbatdagi gap. Joyni qo'shing, xarajatlarni shu yerda yozing, hamma o'z ulushini ko'rsin."
         },
         "choyxona": {
           "title": "Choyxona",
+          "short": "Oddiy uchrashuv, har kim o'z buyurtmasini yopadi.",
           "description": "Choyxona uchrashuvi. Mehmonlar kelishini bildiradi, yangiliklarni ko'radi va joyida o'z hisobini yopadi."
         },
         "wedding": {
           "title": "To'y",
+          "short": "Oila, mehmonlar, joy va vaqt uchun toza taklif.",
           "description": "To'y taklifi: sana, joy, mehmonlar uchun izohlar va yangiliklar bitta joyda."
         },
         "birthday": {
           "title": "Tug'ilgan kun",
+          "short": "Do'stlarni chaqiring, umumiy xarajat bo'lsa bo'ling.",
           "description": "Tug'ilgan kun uchrashuvi. Do'stlarni chaqiring, tafsilotlarni kelishing va kerak bo'lsa xarajatni bo'ling."
         },
         "sunnat": {
           "title": "Sunnat to'y",
+          "short": "Oilaviy event tafsilotlari va eslatmalar bir joyda.",
           "description": "Sunnat to'y taklifi: oila uchun izohlar, joy, vaqt va mehmonlarga eslatmalar."
         },
         "paid": {
           "title": "Pullik event",
+          "short": "Chiptali event, karta yoki qo'lda to'lov kuzatuvi bilan.",
           "description": "Chiptali event. Narx qo'ying, mehmonlar karta bilan yoki keyin hostga to'laydi, kim to'laganini kuzating."
         }
       },
@@ -252,6 +310,10 @@
     "ticketPrice": "Chipta: {price}",
     "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
     "join": "Kelaman — qo'shilish",
+    "maybe": "Balki",
+    "cantGo": "Bora olmayman",
+    "declinedSaved": "Tushundik — siz kela olmaysiz deb belgilandi.",
+    "declinedCurrent": "Siz hozir kela olmaysiz deb belgilangansiz.",
     "joining": "Qo'shilmoqda...",
     "payAndJoin": "{price} to'lab qo'shilish",
     "joinPayLater": "Qo'shilib, keyin hostga to'lash",

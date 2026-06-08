@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { ImageResponse } from "next/og";
 import { getEventById } from "@/lib/db/queries";
 import { isLocale } from "@/lib/locale";
-import { renderEventCardSvg } from "@/lib/og/render-event-card-svg";
+import { EventCardImage } from "@/lib/og/event-card-image";
 
 type RouteContext = {
   params: Promise<{ eventId: string }>;
@@ -21,12 +22,11 @@ export async function GET(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }
 
-  const svg = renderEventCardSvg(event, locale);
-
-  return new NextResponse(svg, {
+  return new ImageResponse(<EventCardImage event={event} locale={locale} />, {
+    width: 1200,
+    height: 630,
     headers: {
       ...cacheHeaders,
-      "Content-Type": "image/svg+xml; charset=utf-8",
     },
   });
 }

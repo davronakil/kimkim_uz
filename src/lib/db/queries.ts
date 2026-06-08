@@ -4,6 +4,7 @@ import type {
   Comment,
   Event,
   EventMember,
+  EventNotificationMode,
   EventPayment,
   EventPaymentMode,
   EventPaymentSource,
@@ -424,6 +425,10 @@ export async function removeEventMember(eventId: string, userId: string): Promis
     .prepare("DELETE FROM event_members WHERE event_id = ? AND user_id = ?")
     .bind(eventId, userId)
     .run();
+  await db
+    .prepare("DELETE FROM event_rsvps WHERE event_id = ? AND user_id = ?")
+    .bind(eventId, userId)
+    .run();
 }
 
 export async function transferEventOwnership(
@@ -461,6 +466,44 @@ export async function transferEventOwnership(
   return true;
 }
 
+export async function getEventNotificationMode(
+  eventId: string,
+  userId: string,
+): Promise<EventNotificationMode> {
+  const db = await getDb();
+  const row = await db
+    .prepare(
+      `SELECT mode FROM event_notification_preferences
+       WHERE event_id = ? AND user_id = ?`,
+    )
+    .bind(eventId, userId)
+    .first<{ mode: EventNotificationMode }>();
+
+  return row?.mode ?? "instant";
+}
+
+export async function setEventNotificationMode({
+  eventId,
+  userId,
+  mode,
+}: {
+  eventId: string;
+  userId: string;
+  mode: EventNotificationMode;
+}) {
+  const db = await getDb();
+  await db
+    .prepare(
+      `INSERT INTO event_notification_preferences (event_id, user_id, mode, updated_at)
+       VALUES (?, ?, ?, datetime('now'))
+       ON CONFLICT(event_id, user_id) DO UPDATE SET
+         mode = excluded.mode,
+         updated_at = datetime('now')`,
+    )
+    .bind(eventId, userId, mode)
+    .run();
+}
+
 export async function regenerateEventInviteCode(eventId: string): Promise<string | null> {
   const db = await getDb();
   const code = generateInviteCode();
@@ -477,9 +520,10 @@ export async function listEventMembers(eventId: string): Promise<EventMember[]> 
   const db = await getDb();
   const result = await db
     .prepare(
-      `SELECT u.*, em.role
+      `SELECT u.*, em.role, COALESCE(r.status, 'going') AS rsvp_status
        FROM users u
        JOIN event_members em ON em.user_id = u.id
+       LEFT JOIN event_rsvps r ON r.event_id = em.event_id AND r.user_id = u.id
        WHERE em.event_id = ?
        ORDER BY CASE em.role WHEN 'owner' THEN 0 ELSE 1 END, u.first_name ASC`,
     )

@@ -51,11 +51,28 @@ const changeLabels = {
 async function listNotifiableMembers(
   eventId: string,
   excludeUserId?: string,
+  activityOnly = false,
 ): Promise<User[]> {
   const members = await listEventMembers(eventId);
-  return members.filter(
-    (member) => member.telegram_chat_id && member.id !== excludeUserId,
-  );
+  if (!activityOnly) {
+    return members.filter(
+      (member) => member.telegram_chat_id && member.id !== excludeUserId,
+    );
+  }
+
+  const db = await getDb();
+  const prefs = await db
+    .prepare(
+      `SELECT user_id, mode FROM event_notification_preferences WHERE event_id = ?`,
+    )
+    .bind(eventId)
+    .all<{ user_id: string; mode: "instant" | "digest" | "muted" }>();
+  const modeByUser = new Map((prefs.results ?? []).map((pref) => [pref.user_id, pref.mode]));
+
+  return members.filter((member) => {
+    if (!member.telegram_chat_id || member.id === excludeUserId) return false;
+    return (modeByUser.get(member.id) ?? "instant") === "instant";
+  });
 }
 
 async function notifyMembers(
@@ -66,7 +83,7 @@ async function notifyMembers(
   const event = await getEventById(eventId);
   if (!event) return;
 
-  const members = await listNotifiableMembers(eventId, excludeUserId);
+  const members = await listNotifiableMembers(eventId, excludeUserId, true);
 
   await Promise.allSettled(
     members.map(async (member) => {
@@ -310,6 +327,98 @@ export async function processEventReminders() {
           console.error("Event reminder failed:", error);
         }
       }
+    }
+  }
+}
+
+function digestText({
+  locale,
+  title,
+  commentCount,
+  expenseCount,
+}: {
+  locale: BotLocale;
+  title: string;
+  commentCount: number;
+  expenseCount: number;
+}) {
+  const safeTitle = escapeHtml(title);
+  if (locale === "uz") {
+    return `🧾 <b>${safeTitle}</b> bo'yicha qisqa xulosa:\n💬 Izohlar: ${commentCount}\n💰 Xarajatlar: ${expenseCount}`;
+  }
+  if (locale === "ru") {
+    return `🧾 Краткая сводка по <b>${safeTitle}</b>:\n💬 Комментарии: ${commentCount}\n💰 Расходы: ${expenseCount}`;
+  }
+  return `🧾 Digest for <b>${safeTitle}</b>:\n💬 Comments: ${commentCount}\n💰 Expenses: ${expenseCount}`;
+}
+
+export async function processEventDigests() {
+  const db = await getDb();
+  const prefs = await db
+    .prepare(
+      `SELECT p.event_id, p.user_id, p.last_digest_at, e.title, u.telegram_chat_id,
+              u.first_name, u.last_name, u.username, u.language_code
+       FROM event_notification_preferences p
+       JOIN events e ON e.id = p.event_id
+       JOIN users u ON u.id = p.user_id
+       JOIN event_members em ON em.event_id = p.event_id AND em.user_id = p.user_id
+       WHERE p.mode = 'digest' AND u.telegram_chat_id IS NOT NULL`,
+    )
+    .all<
+      {
+        event_id: string;
+        user_id: string;
+        last_digest_at: string | null;
+        title: string;
+        telegram_chat_id: string;
+      } & Pick<User, "first_name" | "last_name" | "username" | "language_code">
+    >();
+
+  for (const pref of prefs.results ?? []) {
+    const since =
+      pref.last_digest_at ??
+      new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 19).replace("T", " ");
+    const counts = await db
+      .prepare(
+        `SELECT
+           (SELECT COUNT(*) FROM comments WHERE event_id = ? AND created_at > ? AND user_id != ?) AS comment_count,
+           (SELECT COUNT(*) FROM expenses WHERE event_id = ? AND created_at > ? AND payer_id != ?) AS expense_count`,
+      )
+      .bind(pref.event_id, since, pref.user_id, pref.event_id, since, pref.user_id)
+      .first<{ comment_count: number; expense_count: number }>();
+
+    const commentCount = counts?.comment_count ?? 0;
+    const expenseCount = counts?.expense_count ?? 0;
+
+    if (commentCount === 0 && expenseCount === 0) {
+      await db
+        .prepare(
+          `UPDATE event_notification_preferences
+           SET last_digest_at = datetime('now'), updated_at = datetime('now')
+           WHERE event_id = ? AND user_id = ?`,
+        )
+        .bind(pref.event_id, pref.user_id)
+        .run();
+      continue;
+    }
+
+    const locale = localeFor(pref);
+    try {
+      await sendTelegramMessage(
+        pref.telegram_chat_id,
+        digestText({ locale, title: pref.title, commentCount, expenseCount }),
+        openEventButton(pref.event_id, locale),
+      );
+      await db
+        .prepare(
+          `UPDATE event_notification_preferences
+           SET last_digest_at = datetime('now'), updated_at = datetime('now')
+           WHERE event_id = ? AND user_id = ?`,
+        )
+        .bind(pref.event_id, pref.user_id)
+        .run();
+    } catch (error) {
+      console.error("Event digest failed:", error);
     }
   }
 }
