@@ -1,8 +1,30 @@
+import type { Metadata } from "next";
 import { Sparkles } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
+import { buildSitePageMetadata } from "@/lib/page-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const [auth, meta] = await Promise.all([
+    getTranslations({ locale, namespace: "auth" }),
+    getTranslations({ locale, namespace: "meta" }),
+  ]);
+
+  return buildSitePageMetadata({
+    locale,
+    pagePath: `/${locale}/login`,
+    title: auth("title"),
+    description: auth("subtitle"),
+    ogTitle: meta("ogTitle"),
+  });
+}
 
 export default async function LoginPage({
   params,

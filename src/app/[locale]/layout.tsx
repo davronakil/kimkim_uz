@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { locales, type Locale } from "@/i18n/config";
 import { alternateOgLocales, ogLocaleTag } from "@/lib/locale";
+import { buildAppUrl } from "@/lib/telegram/bot";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -37,6 +38,13 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "meta" });
   const baseUrl = appBaseUrl();
   const localePath = `/${locale}`;
+  const siteOgImageUrl = buildAppUrl(`/api/og/site?locale=${locale}`, baseUrl);
+  const siteOgImage = {
+    url: siteOgImageUrl,
+    width: 1200,
+    height: 630,
+    alt: t("ogTitle"),
+  };
 
   return {
     metadataBase: new URL(baseUrl),
@@ -59,7 +67,10 @@ export async function generateMetadata({
     },
     alternates: {
       canonical: localePath,
-      languages: Object.fromEntries(locales.map((code) => [code, `/${code}`])),
+      languages: {
+        ...Object.fromEntries(locales.map((code) => [code, `/${code}`])),
+        "x-default": "/en",
+      },
     },
     openGraph: {
       title: t("ogTitle"),
@@ -69,11 +80,13 @@ export async function generateMetadata({
       locale: ogLocaleTag(locale as Locale),
       alternateLocale: alternateOgLocales(locale as Locale),
       type: "website",
+      images: [siteOgImage],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: t("ogTitle"),
       description: t("description"),
+      images: [siteOgImageUrl],
     },
   };
 }

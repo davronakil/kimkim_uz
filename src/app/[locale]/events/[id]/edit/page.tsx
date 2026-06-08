@@ -1,9 +1,31 @@
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { EventForm } from "@/components/events/event-form";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getEventById, isEventOwner } from "@/lib/db/queries";
+import { buildSitePageMetadata } from "@/lib/page-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id } = await params;
+  const [events, meta] = await Promise.all([
+    getTranslations({ locale, namespace: "events" }),
+    getTranslations({ locale, namespace: "meta" }),
+  ]);
+
+  return buildSitePageMetadata({
+    locale,
+    pagePath: `/${locale}/events/${id}/edit`,
+    title: events("editTitle"),
+    description: meta("description"),
+    ogTitle: meta("ogTitle"),
+  });
+}
 
 export default async function EditEventPage({
   params,

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { CalendarPlus, CalendarRange } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EventCard } from "@/components/events/event-card";
@@ -7,6 +8,27 @@ import { Link, redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { listUserEvents } from "@/lib/db/queries";
 import { partitionEventsByDate } from "@/lib/events/partition-by-date";
+import { buildSitePageMetadata } from "@/lib/page-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const [events, meta] = await Promise.all([
+    getTranslations({ locale, namespace: "events" }),
+    getTranslations({ locale, namespace: "meta" }),
+  ]);
+
+  return buildSitePageMetadata({
+    locale,
+    pagePath: `/${locale}/events`,
+    title: events("title"),
+    description: meta("description"),
+    ogTitle: meta("ogTitle"),
+  });
+}
 
 export default async function EventsPage({
   params,

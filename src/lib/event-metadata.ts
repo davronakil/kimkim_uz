@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { alternateOgLocales, intlLocale, isLocale, ogLocaleTag } from "@/lib/locale";
+import { alternateOgLocales, intlLocale, ogLocaleTag } from "@/lib/locale";
 import { buildEventOgCardUrl } from "@/lib/og/event-card-url";
+import { localizedLanguageAlternates, resolveMetadataLocale } from "@/lib/page-metadata";
 import { buildAppUrl } from "@/lib/telegram/bot";
 import { resolveServerGoogleMapsApiKey } from "@/lib/google-static-map";
 import type { Event } from "@/types";
@@ -9,7 +10,7 @@ function formatEventOgDescription(event: Event, locale: string) {
   const parts = [event.title];
   if (event.location_name) parts.push(event.location_name);
 
-  const dateLocale = intlLocale(locale as "en" | "uz" | "ru");
+  const dateLocale = intlLocale(resolveMetadataLocale(locale));
   const formattedDate = new Intl.DateTimeFormat(dateLocale, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -36,7 +37,7 @@ async function resolveEventOgImage(event: Event, locale: string): Promise<string
     }
   }
 
-  const cardLocale = isLocale(locale) ? locale : "en";
+  const cardLocale = resolveMetadataLocale(locale);
   return buildEventOgCardUrl(event.id, cardLocale);
 }
 
@@ -45,9 +46,10 @@ export async function buildEventShareMetadata(
   locale: string,
   pagePath: string,
 ): Promise<Metadata> {
-  const description = formatEventOgDescription(event, locale);
-  const imageUrl = await resolveEventOgImage(event, locale);
-  const ogLocale = ogLocaleTag(locale as "en" | "uz" | "ru");
+  const metadataLocale = resolveMetadataLocale(locale);
+  const description = formatEventOgDescription(event, metadataLocale);
+  const imageUrl = await resolveEventOgImage(event, metadataLocale);
+  const ogLocale = ogLocaleTag(metadataLocale);
 
   const openGraphImages = [
     {
@@ -67,6 +69,7 @@ export async function buildEventShareMetadata(
     description,
     alternates: {
       canonical: pagePath,
+      languages: localizedLanguageAlternates(pagePath),
     },
     openGraph: {
       title: event.title,
@@ -74,7 +77,7 @@ export async function buildEventShareMetadata(
       url: pagePath,
       siteName: "KimKim",
       locale: ogLocale,
-      alternateLocale: alternateOgLocales(locale as "en" | "uz" | "ru"),
+      alternateLocale: alternateOgLocales(metadataLocale),
       type: "website",
       images: openGraphImages,
     },
