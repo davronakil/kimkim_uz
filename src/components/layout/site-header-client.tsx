@@ -1,6 +1,7 @@
 "use client";
 
 import { CalendarPlus, LogOut, Menu, Plus, X } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -78,9 +79,14 @@ export function SiteHeaderClient({
             href="/"
             className="flex min-w-0 touch-manipulation items-center gap-2.5 font-semibold tracking-tight"
           >
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-base text-white shadow-sm shadow-emerald-500/30 sm:h-8 sm:w-8 sm:text-sm">
-              K
-            </span>
+            <Image
+              src="/kimkim-app-icon.png"
+              alt=""
+              width={40}
+              height={40}
+              priority
+              className="h-9 w-9 shrink-0 rounded-xl object-cover shadow-sm shadow-emerald-500/25 sm:h-8 sm:w-8"
+            />
             <span className="truncate text-base sm:text-sm">{appName}</span>
           </Link>
 
