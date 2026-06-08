@@ -36,13 +36,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 
-  const valid = verifyTelegramLogin(parsed.data, env.TELEGRAM_BOT_TOKEN);
+  const { app_locale: appLocaleParam, ...telegramAuthData } = parsed.data;
+  const valid = verifyTelegramLogin(telegramAuthData, env.TELEGRAM_BOT_TOKEN);
   if (!valid) {
     return NextResponse.json({ error: "Invalid Telegram auth" }, { status: 401 });
   }
 
-  const appLocale = parsed.data.app_locale && isLocale(parsed.data.app_locale)
-    ? parsed.data.app_locale
+  const appLocale = appLocaleParam && isLocale(appLocaleParam)
+    ? appLocaleParam
     : null;
 
   const user = await upsertTelegramUser({
