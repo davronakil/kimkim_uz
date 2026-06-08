@@ -15,8 +15,15 @@ import {
 import { upsertEventRsvp } from "@/lib/events/rsvp";
 import { notifyMemberJoined } from "@/lib/telegram/notifications";
 
+import { fulfillBusinessSlotCheckout } from "@/lib/stripe/fulfill-business-slot";
+
 export async function fulfillCheckoutSession(sessionId: string, expectedUserId?: string) {
   const session = await retrieveCheckoutSession(sessionId);
+
+  if (session.metadata?.purchase_type === "business_slot") {
+    return fulfillBusinessSlotCheckout(sessionId, expectedUserId);
+  }
+
   if (!checkoutSessionIsPaid(session)) {
     return { joined: false, status: session.payment_status as string };
   }

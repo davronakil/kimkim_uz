@@ -204,6 +204,17 @@ Share previews use this priority:
 
 Cards include title, date, location, payment mode, and themed styling. SVG output (1200×630), cached 24h.
 
+## Event visibility
+
+Hosts choose per event:
+
+- **Private link** (default) — shareable at `/events/[id]`, but `noindex` and excluded from `sitemap.xml`
+- **Public** — indexable event page with schema.org Event JSON-LD; listed in the sitemap with `/en`, `/uz`, `/ru` alternates
+
+Invite links (`/join/[code]`) always stay `noindex` regardless of visibility.
+
+See [docs/DATABASE.md](./docs/DATABASE.md#event-visibility--seo).
+
 ---
 
 ## Security

@@ -4,7 +4,10 @@ import { notFound } from "next/navigation";
 import { EventWorkspace } from "@/components/events/event-workspace";
 import { PublicEventOverview } from "@/components/events/public-event-overview";
 import { getCurrentUser } from "@/lib/auth/session";
-import { buildEventShareMetadata } from "@/lib/event-metadata";
+import { buildEventJsonLd } from "@/lib/event-json-ld";
+import { buildEventDetailMetadata } from "@/lib/event-metadata";
+import { isPublicEvent } from "@/lib/events/visibility";
+import { JsonLd } from "@/lib/seo";
 import {
   buildBalancesFromExpenses,
   calculateSettlements,
@@ -32,7 +35,7 @@ export async function generateMetadata({
     return { title: "Event not found" };
   }
 
-  return buildEventShareMetadata(event, locale, `/${locale}/events/${id}`);
+  return buildEventDetailMetadata(event, locale, `/${locale}/events/${id}`);
 }
 
 export default async function EventDetailPage({
@@ -51,13 +54,20 @@ export default async function EventDetailPage({
 
   if (!user || !member) {
     const members = await listEventMembers(id);
+    const jsonLd = isPublicEvent(event.visibility)
+      ? await buildEventJsonLd(event, locale)
+      : null;
+
     return (
-      <PublicEventOverview
-        event={event}
-        locale={locale}
-        memberCount={members.length}
-        loggedIn={Boolean(user)}
-      />
+      <>
+        {jsonLd ? <JsonLd data={jsonLd} /> : null}
+        <PublicEventOverview
+          event={event}
+          locale={locale}
+          memberCount={members.length}
+          loggedIn={Boolean(user)}
+        />
+      </>
     );
   }
 
@@ -97,8 +107,12 @@ export default async function EventDetailPage({
     ),
   ]);
 
+  const jsonLd = isPublicEvent(event.visibility) ? await buildEventJsonLd(event, locale) : null;
+
   return (
-    <EventWorkspace
+    <>
+      {jsonLd ? <JsonLd data={jsonLd} /> : null}
+      <EventWorkspace
       eventId={id}
       locale={locale}
       botUsername={botUsername}
@@ -108,5 +122,6 @@ export default async function EventDetailPage({
       currentUserId={user.id}
       initialData={{ event, members, comments, expenses, settlements, paymentSummaries }}
     />
+    </>
   );
 }

@@ -231,6 +231,18 @@
       "ticketCurrency": "Valyuta",
       "ticketHint": "Qo'shilishda mehmonlar shu summani Stripe orqali to'laydi."
     },
+    "visibility": {
+      "fieldLabel": "Kim bu eventni topishi mumkin?",
+      "subtitle": "Yopiq eventlar Google'da chiqmaydi. Ochiq eventlar qidiruvda ko'rinishi mumkin.",
+      "private": {
+        "title": "Faqat link",
+        "hint": "Faqat link bilan ochiladi. Qidiruv tizimlariga kirmaydi."
+      },
+      "public": {
+        "title": "Ochiq",
+        "hint": "Sitemapga qo'shiladi va Google qidiruvida chiqishi mumkin."
+      }
+    },
     "tabs": {
       "overview": "Asosiy",
       "comments": "Chat",
@@ -350,6 +362,93 @@
   },
   "footer": {
     "madeIn": "Oila, do'stlar va gaplar uchun — O'zbekiston va undan tashqari."
+  },
+  "catalog": {
+    "title": "Katalog",
+    "nav": "Katalog",
+    "subtitle": "KimKim jamoasidan tavsiya etilgan mahalliy bizneslar.",
+    "metaDescription": "KimKim'da sartaroshxonalar, salonlar, restoranlar va boshqa bizneslar.",
+    "allCategories": "Hammasi",
+    "emptyTitle": "Hali e'lon yo'q",
+    "emptyBody": "Birinchi bo'lib biznesingizni qo'shing. Kirish qiling va moderatsiyaga yuboring.",
+    "manageListings": "E'lonlarim",
+    "signInToSubmit": "Biznes qo'shish uchun kiring",
+    "backToCatalog": "Katalogga qaytish",
+    "website": "Sayt",
+    "openInMaps": "Xaritada ochish",
+    "representative": "Vakil",
+    "manageTitle": "Biznes e'lonlarim",
+    "manageSubtitle": "Katalog e'lonlarini boshqaring. Har bir akkauntga bitta bepul slot beriladi.",
+    "submitTitle": "Biznes qo'shish",
+    "submitSubtitle": "Ma'lumotlarni to'ldiring. Har bir e'lon nashrdan oldin tekshiriladi.",
+    "editTitle": "E'lonni tahrirlash",
+    "submitListing": "E'lon yuborish",
+    "myListings": "E'lonlaringiz",
+    "noListingsTitle": "E'lonlar yo'q",
+    "noListingsBody": "Birinchi biznesingiz uchun bepul slotdan foydalaning.",
+    "statusPending": "Tekshiruvda",
+    "statusApproved": "Nashr qilingan",
+    "statusRejected": "Rad etilgan",
+    "slotsTitle": "Slotlar",
+    "slotsSummary": "{total} tadan {used} ishlatilgan · {remaining} bo'sh",
+    "buyExtraSlot": "Qo'shimcha slot ({price})",
+    "buyExtraSlotShort": "Qo'shimcha slot sotib olish",
+    "extraSlotHint": "Ko'proq e'lon kerakmi? Qo'shimcha slot — {price}.",
+    "slotPurchaseSuccess": "To'lov qabul qilindi — qo'shimcha slot tayyor.",
+    "slotPurchasePending": "To'lov hali qayta ishlanmoqda. Birozdan keyin yangilang.",
+    "slotPurchaseCancelled": "To'lov bekor qilindi.",
+    "slotPurchaseError": "To'lovni boshlab bo'lmadi. Keyinroq urinib ko'ring.",
+    "categories": {
+      "barbershop": "Sartaroshxona",
+      "nail_salon": "Manikyur salon",
+      "restaurant": "Restoran",
+      "cafe": "Kafe",
+      "wedding_venue": "To'y joyi",
+      "photographer": "Fotograf",
+      "florist": "Gulchi",
+      "other": "Boshqa"
+    },
+    "form": {
+      "name": "Biznes nomi",
+      "category": "Kategoriya",
+      "description": "Biznes haqida",
+      "phone": "Telefon",
+      "telegram": "Telegram",
+      "website": "Sayt",
+      "location": "Manzil",
+      "clearLocation": "Manzilni o'chirish",
+      "cover": "Muqova",
+      "removeCover": "Muqovani olib tashlash",
+      "submit": "Tekshiruvga yuborish",
+      "submitError": "Saqlab bo'lmadi. Maydonlarni tekshirib qayta urinib ko'ring.",
+      "resubmitNotice": "O'zgarishlardan keyin e'lon yana tekshiruvga yuboriladi."
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "nav": "Admin",
+    "subtitle": "Biznes e'lonlarini tekshirish va adminlarni boshqarish.",
+    "metaDescription": "KimKim platforma boshqaruvi.",
+    "catalog": {
+      "sectionTitle": "Tekshiruvdagi e'lonlar",
+      "emptyTitle": "Tekshirish uchun hech narsa yo'q",
+      "emptyBody": "Yangi arizalar shu yerda paydo bo'ladi.",
+      "preview": "Ko'rish",
+      "approve": "Tasdiqlash",
+      "reject": "Rad etish",
+      "rejectReasonPlaceholder": "Rad etish sababi (ixtiyoriy)"
+    },
+    "admins": {
+      "sectionTitle": "Platforma adminlari",
+      "usernamePlaceholder": "Telegram username",
+      "addAdmin": "Admin qo'shish",
+      "addError": "Qo'shib bo'lmadi. Username'ni tekshiring.",
+      "emptyTitle": "Adminlar yo'q",
+      "emptyBody": "Ishonchli odamlarga admin huquqi bering.",
+      "roleSuperadmin": "Superadmin",
+      "roleAdmin": "Admin",
+      "remove": "Olib tashlash"
+    }
   },
   "errors": {
     "notFoundEyebrow": "Sahifa topilmadi",

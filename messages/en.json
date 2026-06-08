@@ -231,6 +231,18 @@
       "ticketCurrency": "Currency",
       "ticketHint": "Guests will pay this amount via Stripe when they join."
     },
+    "visibility": {
+      "fieldLabel": "Who can find this event?",
+      "subtitle": "Private events stay off Google. Public events can show up in search.",
+      "private": {
+        "title": "Private link",
+        "hint": "Only people with the link can open it. Not indexed by search engines."
+      },
+      "public": {
+        "title": "Public",
+        "hint": "Listed in the sitemap and eligible for Google search results."
+      }
+    },
     "tabs": {
       "overview": "Overview",
       "comments": "Comments",
@@ -350,6 +362,93 @@
   },
   "footer": {
     "madeIn": "Built for real gatherings in Uzbekistan and beyond."
+  },
+  "catalog": {
+    "title": "Catalog",
+    "nav": "Catalog",
+    "subtitle": "Local businesses recommended by the KimKim community.",
+    "metaDescription": "Browse barbershops, salons, restaurants, and other local businesses on KimKim.",
+    "allCategories": "All",
+    "emptyTitle": "No listings yet",
+    "emptyBody": "Be the first to add your business. Sign in and submit a listing for review.",
+    "manageListings": "My listings",
+    "signInToSubmit": "Sign in to list your business",
+    "backToCatalog": "Back to catalog",
+    "website": "Website",
+    "openInMaps": "Open in Maps",
+    "representative": "Listed by",
+    "manageTitle": "My business listings",
+    "manageSubtitle": "Submit and manage your catalog listings. Each account includes one free slot.",
+    "submitTitle": "Submit a business",
+    "submitSubtitle": "Add your business details. We review every listing before it goes live.",
+    "editTitle": "Edit listing",
+    "submitListing": "Submit listing",
+    "myListings": "Your listings",
+    "noListingsTitle": "No listings yet",
+    "noListingsBody": "Use your included slot to add your first business.",
+    "statusPending": "Pending review",
+    "statusApproved": "Published",
+    "statusRejected": "Rejected",
+    "slotsTitle": "Listing slots",
+    "slotsSummary": "{used} of {total} used · {remaining} available",
+    "buyExtraSlot": "Buy extra slot ({price})",
+    "buyExtraSlotShort": "Buy extra slot",
+    "extraSlotHint": "Need more listings? Extra slots are {price} each.",
+    "slotPurchaseSuccess": "Payment received — your extra slot is ready.",
+    "slotPurchasePending": "Payment is still processing. Refresh in a moment.",
+    "slotPurchaseCancelled": "Checkout was cancelled.",
+    "slotPurchaseError": "Could not start checkout. Try again later.",
+    "categories": {
+      "barbershop": "Barbershop",
+      "nail_salon": "Nail salon",
+      "restaurant": "Restaurant",
+      "cafe": "Café",
+      "wedding_venue": "Wedding venue",
+      "photographer": "Photographer",
+      "florist": "Florist",
+      "other": "Other"
+    },
+    "form": {
+      "name": "Business name",
+      "category": "Category",
+      "description": "About your business",
+      "phone": "Phone",
+      "telegram": "Telegram",
+      "website": "Website",
+      "location": "Location",
+      "clearLocation": "Clear location",
+      "cover": "Cover photo",
+      "removeCover": "Remove cover",
+      "submit": "Submit for review",
+      "submitError": "Could not save listing. Check the fields and try again.",
+      "resubmitNotice": "Saving changes will send this listing back for review before it appears in the catalog again."
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "nav": "Admin",
+    "subtitle": "Review business submissions and manage platform admins.",
+    "metaDescription": "KimKim platform administration.",
+    "catalog": {
+      "sectionTitle": "Pending listings",
+      "emptyTitle": "Nothing to review",
+      "emptyBody": "New business submissions will appear here.",
+      "preview": "Preview",
+      "approve": "Approve",
+      "reject": "Reject",
+      "rejectReasonPlaceholder": "Optional reason if rejecting"
+    },
+    "admins": {
+      "sectionTitle": "Platform admins",
+      "usernamePlaceholder": "Telegram username",
+      "addAdmin": "Add admin",
+      "addError": "Could not add admin. Check the username.",
+      "emptyTitle": "No admins yet",
+      "emptyBody": "Grant admin access to trusted team members.",
+      "roleSuperadmin": "Superadmin",
+      "roleAdmin": "Admin",
+      "remove": "Remove"
+    }
   },
   "errors": {
     "notFoundEyebrow": "Page not found",

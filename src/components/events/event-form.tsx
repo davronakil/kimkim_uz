@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LocationPicker, type LocationValue } from "@/components/events/location-picker";
 import { PaymentModePicker } from "@/components/events/payment-mode-picker";
+import { VisibilityPicker } from "@/components/events/visibility-picker";
 import { toDatetimeLocalValue } from "@/lib/events/form";
 import type { Event, EventPaymentMode } from "@/types";
 
@@ -265,6 +266,8 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
         defaultTicketPriceCents={event?.ticket_price_cents}
         defaultTicketCurrency={event?.ticket_currency ?? "UZS"}
       />
+
+      <VisibilityPicker defaultValue={event?.visibility ?? "private"} />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">

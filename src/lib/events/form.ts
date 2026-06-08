@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { defaultPaymentMode, eventPaymentModes } from "@/lib/events/payment-mode";
+import { defaultEventVisibility, eventVisibilityModes } from "@/lib/events/visibility";
 import { majorToCents } from "@/lib/utils";
 
 const ticketCurrencies = ["UZS", "USD"] as const;
@@ -17,6 +18,7 @@ export const eventFormSchema = z
     payment_mode: z.enum(eventPaymentModes).default(defaultPaymentMode),
     ticket_price: z.coerce.number().optional(),
     ticket_currency: z.enum(ticketCurrencies).default("UZS"),
+    visibility: z.enum(eventVisibilityModes).default(defaultEventVisibility),
   })
   .superRefine((data, ctx) => {
     if (data.payment_mode === "paid" && (!data.ticket_price || data.ticket_price <= 0)) {
@@ -51,6 +53,7 @@ export function parseEventFormData(formData: FormData) {
     payment_mode: formData.get("payment_mode") || defaultPaymentMode,
     ticket_price: formData.get("ticket_price") || undefined,
     ticket_currency: formData.get("ticket_currency") || "UZS",
+    visibility: formData.get("visibility") || defaultEventVisibility,
   });
 }
 

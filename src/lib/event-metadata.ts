@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { alternateOgLocales, intlLocale, ogLocaleTag } from "@/lib/locale";
 import { buildEventOgCardUrl } from "@/lib/og/event-card-url";
 import { localizedLanguageAlternates, resolveMetadataLocale } from "@/lib/page-metadata";
+import { isPublicEvent } from "@/lib/events/visibility";
 import { buildAppUrl } from "@/lib/telegram/bot";
 import { resolveServerGoogleMapsApiKey } from "@/lib/google-static-map";
 import type { Event } from "@/types";
@@ -41,15 +42,21 @@ async function resolveEventOgImage(event: Event, locale: string): Promise<string
   return buildEventOgCardUrl(event.id, cardLocale);
 }
 
-export async function buildEventShareMetadata(
+type EventMetadataOptions = {
+  indexable?: boolean;
+};
+
+async function buildEventMetadata(
   event: Event,
   locale: string,
   pagePath: string,
+  options: EventMetadataOptions = {},
 ): Promise<Metadata> {
   const metadataLocale = resolveMetadataLocale(locale);
   const description = formatEventOgDescription(event, metadataLocale);
   const imageUrl = await resolveEventOgImage(event, metadataLocale);
   const ogLocale = ogLocaleTag(metadataLocale);
+  const indexable = options.indexable ?? false;
 
   const openGraphImages = [
     {
@@ -68,7 +75,7 @@ export async function buildEventShareMetadata(
     title: event.title,
     description,
     robots: {
-      index: false,
+      index: indexable,
       follow: true,
     },
     alternates: {
@@ -92,4 +99,31 @@ export async function buildEventShareMetadata(
       images: [imageUrl],
     },
   };
+}
+
+export async function buildEventDetailMetadata(
+  event: Event,
+  locale: string,
+  pagePath: string,
+): Promise<Metadata> {
+  return buildEventMetadata(event, locale, pagePath, {
+    indexable: isPublicEvent(event.visibility),
+  });
+}
+
+export async function buildEventJoinMetadata(
+  event: Event,
+  locale: string,
+  pagePath: string,
+): Promise<Metadata> {
+  return buildEventMetadata(event, locale, pagePath, { indexable: false });
+}
+
+/** @deprecated Use buildEventDetailMetadata or buildEventJoinMetadata */
+export async function buildEventShareMetadata(
+  event: Event,
+  locale: string,
+  pagePath: string,
+): Promise<Metadata> {
+  return buildEventJoinMetadata(event, locale, pagePath);
 }

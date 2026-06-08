@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { JoinEventPanel } from "@/components/events/join-event-panel";
 import { getEventByInviteCode } from "@/lib/db/queries";
-import { buildEventShareMetadata } from "@/lib/event-metadata";
+import { buildEventJoinMetadata } from "@/lib/event-metadata";
 
 export async function generateMetadata({
   params,
@@ -19,7 +19,7 @@ export async function generateMetadata({
     return { title: t("notFound") };
   }
 
-  return buildEventShareMetadata(event, locale, `/${locale}/join/${code}`);
+  return buildEventJoinMetadata(event, locale, `/${locale}/join/${code}`);
 }
 
 export default async function JoinEventPage({

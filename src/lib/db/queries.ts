@@ -15,13 +15,31 @@ import type {
 } from "@/types";
 import { nestComments } from "@/lib/expense/settlement";
 
-function normalizeEvent<T extends Partial<Event>>(row: T | null): (T & { payment_mode: EventPaymentMode }) | null {
+function normalizeEvent<T extends Partial<Event>>(row: T | null): (T & { payment_mode: EventPaymentMode; visibility: Event["visibility"] }) | null {
   if (!row) return null;
   return {
     ...row,
     payment_mode: (row.payment_mode as EventPaymentMode | undefined) ?? "free",
     ticket_currency: row.ticket_currency ?? "UZS",
+    visibility: row.visibility === "public" ? "public" : "private",
   };
+}
+
+export async function listPublicEventsForSitemap(): Promise<
+  Array<Pick<Event, "id" | "updated_at" | "starts_at">>
+> {
+  const db = await getDb();
+  const result = await db
+    .prepare(
+      `SELECT id, updated_at, starts_at
+       FROM events
+       WHERE visibility = 'public'
+         AND starts_at >= datetime('now', '-90 days')
+       ORDER BY starts_at ASC`,
+    )
+    .all<Pick<Event, "id" | "updated_at" | "starts_at">>();
+
+  return result.results ?? [];
 }
 
 export async function listUserEvents(userId: string): Promise<Event[]> {

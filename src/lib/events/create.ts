@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { getDb } from "@/lib/cloudflare";
 import { defaultPaymentMode, type EventPaymentMode } from "@/lib/events/payment-mode";
+import { defaultEventVisibility, type EventVisibility } from "@/lib/events/visibility";
 import { generateInviteCode } from "@/lib/utils";
 
 export type CreateEventInput = {
@@ -17,6 +18,7 @@ export type CreateEventInput = {
   paymentMode?: EventPaymentMode;
   ticketPriceCents?: number | null;
   ticketCurrency?: string;
+  visibility?: EventVisibility;
 };
 
 export async function createEventRecord(input: CreateEventInput) {
@@ -24,14 +26,15 @@ export async function createEventRecord(input: CreateEventInput) {
   const eventId = nanoid();
   const inviteCode = generateInviteCode();
   const paymentMode = input.paymentMode ?? defaultPaymentMode;
+  const visibility = input.visibility ?? defaultEventVisibility;
 
   await db
     .prepare(
       `INSERT INTO events (
         id, creator_id, title, description, starts_at, ends_at,
         location_name, location_address, location_lat, location_lng, cover_image_key,
-        payment_mode, ticket_price_cents, ticket_currency, invite_code
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        payment_mode, ticket_price_cents, ticket_currency, invite_code, visibility
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       eventId,
@@ -49,6 +52,7 @@ export async function createEventRecord(input: CreateEventInput) {
       input.ticketPriceCents ?? null,
       input.ticketCurrency ?? "UZS",
       inviteCode,
+      visibility,
     )
     .run();
 

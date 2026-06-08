@@ -231,6 +231,18 @@
       "ticketCurrency": "Валюта",
       "ticketHint": "Гости оплатят эту сумму через Stripe при присоединении."
     },
+    "visibility": {
+      "fieldLabel": "Кто может найти это событие?",
+      "subtitle": "Приватные события не попадают в Google. Публичные могут появиться в поиске.",
+      "private": {
+        "title": "По ссылке",
+        "hint": "Открывается только по ссылке. Не индексируется поисковиками."
+      },
+      "public": {
+        "title": "Публичное",
+        "hint": "Попадает в sitemap и может отображаться в результатах Google."
+      }
+    },
     "tabs": {
       "overview": "Обзор",
       "comments": "Комментарии",
@@ -350,6 +362,93 @@
   },
   "footer": {
     "madeIn": "Для семьи, друзей и гяпа — в Узбекистане и за его пределами."
+  },
+  "catalog": {
+    "title": "Каталог",
+    "nav": "Каталог",
+    "subtitle": "Местные бизнесы от сообщества KimKim.",
+    "metaDescription": "Барбершопы, салоны, рестораны и другие местные бизнесы на KimKim.",
+    "allCategories": "Все",
+    "emptyTitle": "Пока пусто",
+    "emptyBody": "Добавьте свой бизнес первым. Войдите и отправьте заявку на модерацию.",
+    "manageListings": "Мои объявления",
+    "signInToSubmit": "Войти, чтобы добавить бизнес",
+    "backToCatalog": "Назад в каталог",
+    "website": "Сайт",
+    "openInMaps": "Открыть на карте",
+    "representative": "Представитель",
+    "manageTitle": "Мои бизнесы",
+    "manageSubtitle": "Добавляйте и редактируйте объявления. Один бесплатный слот на аккаунт.",
+    "submitTitle": "Добавить бизнес",
+    "submitSubtitle": "Заполните данные. Каждое объявление проходит проверку перед публикацией.",
+    "editTitle": "Редактировать",
+    "submitListing": "Добавить бизнес",
+    "myListings": "Ваши объявления",
+    "noListingsTitle": "Объявлений пока нет",
+    "noListingsBody": "Используйте бесплатный слот для первого бизнеса.",
+    "statusPending": "На модерации",
+    "statusApproved": "Опубликовано",
+    "statusRejected": "Отклонено",
+    "slotsTitle": "Слоты",
+    "slotsSummary": "Использовано {used} из {total} · доступно {remaining}",
+    "buyExtraSlot": "Купить слот ({price})",
+    "buyExtraSlotShort": "Купить слот",
+    "extraSlotHint": "Нужно больше объявлений? Дополнительный слот — {price}.",
+    "slotPurchaseSuccess": "Оплата прошла — дополнительный слот активен.",
+    "slotPurchasePending": "Платёж обрабатывается. Обновите страницу через минуту.",
+    "slotPurchaseCancelled": "Оплата отменена.",
+    "slotPurchaseError": "Не удалось начать оплату. Попробуйте позже.",
+    "categories": {
+      "barbershop": "Барбершоп",
+      "nail_salon": "Ногтевой салон",
+      "restaurant": "Ресторан",
+      "cafe": "Кафе",
+      "wedding_venue": "Свадебная площадка",
+      "photographer": "Фотограф",
+      "florist": "Флорист",
+      "other": "Другое"
+    },
+    "form": {
+      "name": "Название",
+      "category": "Категория",
+      "description": "О бизнесе",
+      "phone": "Телефон",
+      "telegram": "Telegram",
+      "website": "Сайт",
+      "location": "Адрес",
+      "clearLocation": "Убрать адрес",
+      "cover": "Обложка",
+      "removeCover": "Удалить обложку",
+      "submit": "Отправить на модерацию",
+      "submitError": "Не удалось сохранить. Проверьте поля и попробуйте снова.",
+      "resubmitNotice": "После сохранения объявление снова уйдёт на модерацию."
+    }
+  },
+  "admin": {
+    "title": "Админ",
+    "nav": "Админ",
+    "subtitle": "Модерация объявлений и управление администраторами.",
+    "metaDescription": "Администрирование KimKim.",
+    "catalog": {
+      "sectionTitle": "На модерации",
+      "emptyTitle": "Нечего проверять",
+      "emptyBody": "Новые заявки появятся здесь.",
+      "preview": "Просмотр",
+      "approve": "Одобрить",
+      "reject": "Отклонить",
+      "rejectReasonPlaceholder": "Причина отклонения (необязательно)"
+    },
+    "admins": {
+      "sectionTitle": "Администраторы",
+      "usernamePlaceholder": "Telegram username",
+      "addAdmin": "Добавить",
+      "addError": "Не удалось добавить. Проверьте username.",
+      "emptyTitle": "Админов пока нет",
+      "emptyBody": "Выдайте доступ доверенным людям.",
+      "roleSuperadmin": "Суперадмин",
+      "roleAdmin": "Админ",
+      "remove": "Убрать"
+    }
   },
   "errors": {
     "notFoundEyebrow": "Страница не найдена",

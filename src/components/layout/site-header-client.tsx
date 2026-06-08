@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarPlus, LogOut, Menu, Plus, X } from "lucide-react";
+import { CalendarPlus, LogOut, Menu, Plus, Shield, Store, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -24,8 +24,11 @@ export function SiteHeaderClient({
   initialUser: AuthUser | null;
 }) {
   const t = useTranslations("common");
+  const catalog = useTranslations("catalog");
+  const admin = useTranslations("admin");
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(initialUser);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -37,8 +40,16 @@ export function SiteHeaderClient({
       if (response.ok) {
         const data = (await response.json()) as { user: AuthUser };
         setUser(data.user);
+        const adminResponse = await fetch("/api/admin/me", { credentials: "include" });
+        if (adminResponse.ok) {
+          const adminData = (await adminResponse.json()) as { admin: boolean };
+          setIsAdmin(adminData.admin);
+        } else {
+          setIsAdmin(false);
+        }
       } else {
         setUser(null);
+        setIsAdmin(false);
       }
     }
 
@@ -92,6 +103,12 @@ export function SiteHeaderClient({
 
           {/* Desktop */}
           <nav className="hidden items-center gap-2 md:flex">
+            <Link
+              href="/catalog"
+              className="rounded-full px-4 py-2.5 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+            >
+              {catalog("title")}
+            </Link>
             {user ? (
               <>
                 <Link
@@ -100,6 +117,14 @@ export function SiteHeaderClient({
                 >
                   {t("myEvents")}
                 </Link>
+                {isAdmin ? (
+                  <Link
+                    href="/admin"
+                    className="rounded-full px-4 py-2.5 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                  >
+                    {admin("nav")}
+                  </Link>
+                ) : null}
                 <Link href="/events/new" className="kk-btn-primary">
                   <Plus className="h-4 w-4" />
                   {t("createEvent")}
@@ -203,6 +228,14 @@ export function SiteHeaderClient({
             </div>
 
             <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
+              <Link
+                href="/catalog"
+                onClick={closeMenu}
+                className="flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition hover:bg-zinc-100 active:bg-zinc-100 dark:hover:bg-zinc-900"
+              >
+                <Store className="h-5 w-5 text-emerald-500" />
+                {catalog("title")}
+              </Link>
               {user ? (
                 <>
                   <Link
@@ -213,6 +246,16 @@ export function SiteHeaderClient({
                     <CalendarPlus className="h-5 w-5 text-emerald-500" />
                     {t("myEvents")}
                   </Link>
+                  {isAdmin ? (
+                    <Link
+                      href="/admin"
+                      onClick={closeMenu}
+                      className="flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition hover:bg-zinc-100 active:bg-zinc-100 dark:hover:bg-zinc-900"
+                    >
+                      <Shield className="h-5 w-5 text-emerald-500" />
+                      {admin("nav")}
+                    </Link>
+                  ) : null}
                   <Link
                     href="/events/new"
                     onClick={closeMenu}

@@ -40,6 +40,8 @@ npm run db:migrate:remote   # production
 | `bot_sessions` | `0006` | Multi-step bot flows |
 | `event_group_reminder_logs` | `0007` | Group reminder dedup |
 | `event_rsvps` | `0008` | RSVP status (`going` / `declined`) |
+| `event_notification_preferences` | `0011` | Per-user Telegram notification mode |
+| `visibility` on `events` | `0012` | `private` (default) or `public` for SEO |
 
 ## Notable columns on `events`
 
@@ -47,6 +49,16 @@ npm run db:migrate:remote   # production
 - `payment_mode` — `free` | `split` | `pay_yourself` | `paid`
 - `ticket_price_cents`, `ticket_currency` — for Stripe paid events
 - `invite_code` — public join slug
+- `visibility` — `private` (link-only, `noindex`) or `public` (sitemap + Google indexing on `/events/[id]`)
+
+## Event visibility & SEO
+
+| Visibility | Event page `/events/[id]` | Join link `/join/[code]` | Sitemap |
+|------------|---------------------------|--------------------------|---------|
+| `private` (default) | `noindex`, shareable by URL | always `noindex` | excluded |
+| `public` | indexable, Event JSON-LD | always `noindex` | included with locale alternates |
+
+Public events in the sitemap are limited to those starting within the last 90 days.
 
 ## Queries
 

@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
       payload.data.ticket_price,
     ),
     ticketCurrency: payload.data.payment_mode === "paid" ? payload.data.ticket_currency : "UZS",
+    visibility: payload.data.visibility,
   });
 
   const cover = formData.get("cover_image");
