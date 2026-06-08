@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { ExternalLink, MapPin, Phone, Store } from "lucide-react";
+import { ExternalLink, MapPin, Phone } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { BusinessCoverImage } from "@/components/catalog/business-cover-image";
 import { CategoryBadge } from "@/components/catalog/category-badge";
 import { BusinessVouchButton } from "@/components/catalog/business-vouch-button";
 import { Link } from "@/i18n/navigation";
@@ -50,6 +51,7 @@ export default async function CatalogDetailPage({
   setRequestLocale(locale);
 
   const t = await getTranslations("catalog");
+  const tCategories = await getTranslations("catalog.categories");
   const common = await getTranslations("common");
   const listing = await getBusinessListingWithRepresentative(id);
 
@@ -89,19 +91,13 @@ export default async function CatalogDetailPage({
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="aspect-[21/9] bg-zinc-100 dark:bg-zinc-800">
-          {listing.cover_image_key ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={`/api/media/${listing.cover_image_key}`}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-zinc-400">
-              <Store className="h-16 w-16" />
-            </div>
-          )}
+        <div className="aspect-[21/9] overflow-hidden">
+          <BusinessCoverImage
+            listing={listing}
+            categoryLabel={tCategories(listing.category as Parameters<typeof tCategories>[0])}
+            variant="hero"
+            className="h-full w-full object-cover"
+          />
         </div>
         <div className="space-y-4 p-5 sm:p-8">
           <div className="flex flex-wrap items-center gap-2">

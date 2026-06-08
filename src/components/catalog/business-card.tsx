@@ -1,32 +1,28 @@
 import { Link } from "@/i18n/navigation";
-import { MapPin, Store, ThumbsUp } from "lucide-react";
+import { MapPin, ThumbsUp } from "lucide-react";
+import { BusinessCoverImage } from "@/components/catalog/business-cover-image";
 import { CategoryBadge } from "@/components/catalog/category-badge";
 import type { BusinessListingWithVouches } from "@/types";
 
 type BusinessCardProps = {
   listing: BusinessListingWithVouches;
   locale: string;
+  categoryLabel: string;
 };
 
-export function BusinessCard({ listing, locale }: BusinessCardProps) {
+export function BusinessCard({ listing, locale, categoryLabel }: BusinessCardProps) {
   return (
     <Link
       href={`/catalog/${listing.id}`}
       className="group touch-manipulation overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900"
     >
-      <div className="aspect-[16/9] overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-        {listing.cover_image_key ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={`/api/media/${listing.cover_image_key}`}
-            alt=""
-            className="h-full w-full object-cover transition group-hover:scale-[1.02]"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-zinc-400">
-            <Store className="h-12 w-12" />
-          </div>
-        )}
+      <div className="aspect-[16/9] overflow-hidden">
+        <BusinessCoverImage
+          listing={listing}
+          categoryLabel={categoryLabel}
+          variant="card"
+          className="h-full w-full object-cover transition group-hover:scale-[1.02]"
+        />
       </div>
       <div className="space-y-2 p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-2">

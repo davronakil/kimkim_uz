@@ -38,6 +38,7 @@ export default async function CatalogPage({
   setRequestLocale(locale);
 
   const t = await getTranslations("catalog");
+  const tCategories = await getTranslations("catalog.categories");
   const user = await getCurrentUser();
   const listings = await listApprovedBusinessListings(category);
 
@@ -66,7 +67,12 @@ export default async function CatalogPage({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {listings.map((listing) => (
-            <BusinessCard key={listing.id} listing={listing} locale={locale} />
+            <BusinessCard
+              key={listing.id}
+              listing={listing}
+              locale={locale}
+              categoryLabel={tCategories(listing.category as Parameters<typeof tCategories>[0])}
+            />
           ))}
         </div>
       )}
