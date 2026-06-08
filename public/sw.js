@@ -1,10 +1,15 @@
 const CACHE = "kimkim-v1";
+const PRECACHE = [
+  "/manifest.webmanifest",
+  "/favicon.ico",
+  "/apple-touch-icon.png",
+  "/icon-512.png",
+  "/kimkim-app-icon.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) =>
-      cache.addAll(["/manifest.webmanifest", "/icon.svg"]).catch(() => undefined),
-    ),
+    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE).catch(() => undefined)),
   );
   self.skipWaiting();
 });

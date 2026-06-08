@@ -62,8 +62,11 @@ export async function generateMetadata({
       statusBarStyle: "default",
     },
     icons: {
-      icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-      apple: [{ url: "/icon.svg", type: "image/svg+xml" }],
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
     },
     alternates: {
       canonical: localePath,
