@@ -6,6 +6,7 @@ import { Link, redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getBusinessListingById } from "@/lib/db/catalog-queries";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
+import { isSuperadmin } from "@/lib/platform/admin";
 
 export async function generateMetadata({
   params,
@@ -44,6 +45,7 @@ export default async function CatalogEditPage({
 
   const t = await getTranslations("catalog");
   const common = await getTranslations("common");
+  const superadmin = await isSuperadmin(user);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -53,7 +55,12 @@ export default async function CatalogEditPage({
         </Link>
         <h1 className="kk-page-title mt-2">{t("editTitle")}</h1>
       </div>
-      <BusinessListingForm mode="edit" listing={listing} defaultTelegramUsername={user.username} />
+      <BusinessListingForm
+        mode="edit"
+        listing={listing}
+        defaultTelegramUsername={user.username}
+        instantPublish={superadmin}
+      />
     </div>
   );
 }

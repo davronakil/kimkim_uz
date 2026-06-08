@@ -22,12 +22,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   }));
 
+  const discoverEntries = locales.map((locale) => ({
+    url: absoluteUrl(`/${locale}/discover`, baseUrl),
+    lastModified: now,
+    changeFrequency: "daily" as const,
+    priority: 0.85,
+    alternates: {
+      languages: {
+        ...Object.fromEntries(
+          locales.map((code) => [code, absoluteUrl(`/${code}/discover`, baseUrl)]),
+        ),
+        "x-default": absoluteUrl("/en/discover", baseUrl),
+      },
+    },
+  }));
+
+  const catalogEntries = locales.map((locale) => ({
+    url: absoluteUrl(`/${locale}/catalog`, baseUrl),
+    lastModified: now,
+    changeFrequency: "daily" as const,
+    priority: 0.85,
+    alternates: {
+      languages: {
+        ...Object.fromEntries(
+          locales.map((code) => [code, absoluteUrl(`/${code}/catalog`, baseUrl)]),
+        ),
+        "x-default": absoluteUrl("/en/catalog", baseUrl),
+      },
+    },
+  }));
+
   let publicEvents: Awaited<ReturnType<typeof listPublicEventsForSitemap>> = [];
 
   try {
     publicEvents = await listPublicEventsForSitemap();
   } catch {
-    return homeEntries;
+    return [...homeEntries, ...discoverEntries, ...catalogEntries];
   }
 
   const eventEntries = publicEvents.map((event) => {
@@ -50,5 +80,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  return [...homeEntries, ...eventEntries];
+  return [...homeEntries, ...discoverEntries, ...catalogEntries, ...eventEntries];
 }

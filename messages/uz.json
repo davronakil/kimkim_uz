@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "KimKim",
-    "tagline": "Kim keladi? KimKim biladi.",
+    "tagline": "Kim, Qayerda, Qachon + Hisob Kitob",
     "loading": "Sabr...",
     "save": "Saqlash",
     "cancel": "Bekor",
@@ -17,18 +17,28 @@
     "language": "Til"
   },
   "meta": {
-    "title": "KimKim — Kim keladi? KimKim biladi.",
-    "description": "Kim keladi, qayerda uchrashamiz, pul kimda — to'y, gap, sunnat to'y, choyxona va boshqalar. Telegram bilan kirish.",
-    "ogTitle": "KimKim — Barcha tadbirlar bir joyda",
-    "keywords": "event, to'y, gap, tug'ilgan kun, sunnat to'y, aqiqa, challari, choyxona, Telegram, O'zbekiston"
+    "title": "KimKim — Kim, Qayerda, Qachon?",
+    "description": "Kim keladi, qayerda uchrashamiz, hisob kitob + biznes katalog. To'y, gap, choyxona. Hammasi bir joyda. Telegram bilan ulangan.",
+    "ogTitle": "KimKim — Kim, Qayerda, Qachon?",
+    "keywords": "event, to'y, gap, tug'ilgan kun, aqiqa, challari, choyxona, Telegram, O'zbekiston, eventlar, tadbirlar, hisob kitob, biznes katalog, taklif, rejalar, taklifnoma"
   },
   "home": {
-    "heroTitle": "Kim keladi?\nKimKim biladi.",
-    "heroSubtitle": "Kim keladi, qayerda uchrashamiz, pul kimda — hammasi bir joyda.",
+    "heroTitle": "KimKim, Qayerda, Qachon?\n",
+    "heroSubtitle": "KimKim, Qayerda, Qachon + Hisob Kitob + Biznes Katalogi. To'y, gap, choyxona. Hammasi bir joyda.",
     "heroTitleSignedIn": "Hammani bir joyga yig'ishga tayyormisiz?",
     "heroSubtitleSignedIn": "Sayohat, kechki ovqat, uchrashuv yoki guruh eventini rejalashtiring. Mehmonlar, yangiliklar va xarajatlar — hammasi bir joyda.",
     "ctaSignedOut": "Telegram bilan kirish",
     "ctaSignedIn": "Eventlarim",
+    "catalogCta": "Katalogni ko'rish",
+    "catalogTitle": "Ishonchli mahalliy bizneslarni toping",
+    "catalogBody": "Yelp uslubidagi katalog: sartaroshxonalar, salonlar, restoranlar, dachalar va xizmatlar — haqiqiy vakillar tomonidan e'lon qilinadi va KimKim jamoasi tavsiya qiladi.",
+    "catalogBrowse": "Bizneslarni ko'rish",
+    "catalogListBusiness": "Biznes qo'shish",
+    "catalogPoints": [
+      "Kategoriya bo'yicha qidiring — restorandan digital agentlikgacha",
+      "Har bir e'lonni haqiqiy vakil yuboradi",
+      "KimKim a'zolari ishonadigan joylarni tavsiya qilishi mumkin"
+    ],
     "useCases": {
       "wedding": "To'y",
       "gap": "Gap",
@@ -363,11 +373,19 @@
   "footer": {
     "madeIn": "Oila, do'stlar va gaplar uchun — O'zbekiston va undan tashqari."
   },
+  "discover": {
+    "title": "Tadbirlar",
+    "subtitle": "Hamma topishi va qo'shilishi mumkin bo'lgan ochiq tadbirlar.",
+    "metaDescription": "KimKim'da ochiq to'ylar, gaplar, tug'ilgan kunlar va boshqa tadbirlar.",
+    "emptyTitle": "Hali ochiq tadbir yo'q",
+    "emptyBody": "Tashkilotchi tadbirni ochiq qilsa, u shu yerda paydo bo'ladi.",
+    "noUpcoming": "Hozir yaqinlashayotgan ochiq tadbirlar yo'q. Keyinroq qaytib keling."
+  },
   "catalog": {
     "title": "Katalog",
     "nav": "Katalog",
-    "subtitle": "KimKim jamoasidan tavsiya etilgan mahalliy bizneslar.",
-    "metaDescription": "KimKim'da sartaroshxonalar, salonlar, restoranlar va boshqa bizneslar.",
+    "subtitle": "Mahalliy bizneslar va xizmatlar katalogi — KimKim jamoasi tavsiyasi bilan.",
+    "metaDescription": "KimKim'da sartaroshxonalar, salonlar, restoranlar, dachalar va boshqa bizneslarni toping hamda tavsiya qiling.",
     "allCategories": "Hammasi",
     "emptyTitle": "Hali e'lon yo'q",
     "emptyBody": "Birinchi bo'lib biznesingizni qo'shing. Kirish qiling va moderatsiyaga yuboring.",
@@ -381,6 +399,8 @@
     "manageSubtitle": "Katalog e'lonlarini boshqaring. Har bir akkauntga bitta bepul slot beriladi.",
     "submitTitle": "Biznes qo'shish",
     "submitSubtitle": "Ma'lumotlarni to'ldiring. Har bir e'lon nashrdan oldin tekshiriladi.",
+    "submitSubtitleSuperadmin": "Biznes qo'shing. Superadmin sifatida darhol nashr qilasiz — slot cheklovi va moderatsiyasiz.",
+    "submitPublish": "Nashr qilish",
     "editTitle": "E'lonni tahrirlash",
     "submitListing": "E'lon yuborish",
     "myListings": "E'lonlaringiz",
@@ -391,6 +411,7 @@
     "statusRejected": "Rad etilgan",
     "slotsTitle": "Slotlar",
     "slotsSummary": "{total} tadan {used} ishlatilgan · {remaining} bo'sh",
+    "slotsUnlimited": "{used} ta nashr qilingan · superadmin uchun cheksiz",
     "buyExtraSlot": "Qo'shimcha slot ({price})",
     "buyExtraSlotShort": "Qo'shimcha slot sotib olish",
     "extraSlotHint": "Ko'proq e'lon kerakmi? Qo'shimcha slot — {price}.",
@@ -398,6 +419,15 @@
     "slotPurchasePending": "To'lov hali qayta ishlanmoqda. Birozdan keyin yangilang.",
     "slotPurchaseCancelled": "To'lov bekor qilindi.",
     "slotPurchaseError": "To'lovni boshlab bo'lmadi. Keyinroq urinib ko'ring.",
+    "vouch": {
+      "vouch": "Tavsiya qilaman",
+      "vouched": "Siz tavsiya qildingiz",
+      "hint": "Yaxshi tajriba bo'lgan bo'lsa, bu joyni tavsiya qilish uchun bosing.",
+      "count": "{count, plural, one {# ta tavsiya} other {# ta tavsiya}}",
+      "signInPrompt": "Ishonadigan bizneslarni tavsiya qilish uchun kiring.",
+      "signInAction": "Kirish",
+      "error": "Tavsiyani yangilab bo'lmadi. Qayta urinib ko'ring."
+    },
     "categories": {
       "restaurant": "Restoran",
       "cafe": "Kafe",

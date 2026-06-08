@@ -12,6 +12,7 @@ type BusinessListingFormProps = {
   listing?: BusinessListing;
   cancelHref?: string;
   defaultTelegramUsername?: string | null;
+  instantPublish?: boolean;
 };
 
 function listingToLocation(listing: BusinessListing): LocationValue | null {
@@ -29,6 +30,7 @@ export function BusinessListingForm({
   listing,
   cancelHref = "/catalog/manage",
   defaultTelegramUsername,
+  instantPublish = false,
 }: BusinessListingFormProps) {
   const t = useTranslations("catalog.form");
   const tCategories = useTranslations("catalog.categories");
@@ -230,7 +232,7 @@ export function BusinessListingForm({
         <input id="cover_image" name="cover_image" type="file" accept="image/*" className="kk-input" />
       </div>
 
-      {mode === "edit" && listing?.status === "approved" ? (
+      {mode === "edit" && listing?.status === "approved" && !instantPublish ? (
         <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
           {t("resubmitNotice")}
         </p>
@@ -240,7 +242,7 @@ export function BusinessListingForm({
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <button type="submit" disabled={submitting} className="kk-btn-primary">
-          {submitting ? common("loading") : mode === "create" ? t("submit") : common("save")}
+          {submitting ? common("loading") : mode === "create" ? (instantPublish ? t("submitPublish") : t("submit")) : common("save")}
         </button>
         <Link href={cancelHref} className="kk-btn-secondary text-center">
           {common("cancel")}

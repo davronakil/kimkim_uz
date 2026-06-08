@@ -3,8 +3,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BusinessListingForm } from "@/components/catalog/business-listing-form";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
-import { getBusinessListingSlotSummary } from "@/lib/db/catalog-queries";
+import { getBusinessListingSlotSummaryForUser } from "@/lib/db/catalog-queries";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
+import { isSuperadmin } from "@/lib/platform/admin";
 
 export async function generateMetadata({
   params,
@@ -36,9 +37,12 @@ export default async function CatalogSubmitPage({
     return redirect({ href: "/login", locale });
   }
 
-  const slots = await getBusinessListingSlotSummary(user.id);
-  if (slots.remaining <= 0) {
-    return redirect({ href: "/catalog/manage", locale });
+  const superadmin = await isSuperadmin(user);
+  if (!superadmin) {
+    const slots = await getBusinessListingSlotSummaryForUser(user);
+    if (slots.remaining <= 0) {
+      return redirect({ href: "/catalog/manage", locale });
+    }
   }
 
   const t = await getTranslations("catalog");
@@ -47,9 +51,15 @@ export default async function CatalogSubmitPage({
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <h1 className="kk-page-title">{t("submitTitle")}</h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-300">{t("submitSubtitle")}</p>
+        <p className="mt-1 text-zinc-600 dark:text-zinc-300">
+          {superadmin ? t("submitSubtitleSuperadmin") : t("submitSubtitle")}
+        </p>
       </div>
-      <BusinessListingForm mode="create" defaultTelegramUsername={user.username} />
+      <BusinessListingForm
+        mode="create"
+        defaultTelegramUsername={user.username}
+        instantPublish={superadmin}
+      />
     </div>
   );
 }

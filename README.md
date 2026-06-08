@@ -9,11 +9,13 @@ Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on
 ## Features
 
 - **Events** — to'y, gap, sunnat to'y, aqiqa, challari, choyxona, birthdays; date/time, location, cover image
+- **Public discover** — `/discover` lists events hosts mark as public (indexable, sitemap)
 - **Invites** — shareable links, locale-aware bot deep links, link rotation, RSVP landing page
 - **Payment modes** — Free, Split the bill, Pay for yourself, Paid (Stripe Checkout)
 - **Members** — join, leave, transfer ownership, remove member
 - **Threaded comments** — nested discussion; delete own comments (no replies)
 - **Expense splitting** — equal or custom splits, settlement copy/share, delete
+- **Business catalog** — Yelp-style directory at `/catalog`; submit listings, admin approval, community vouches, paid extra slots (Stripe)
 - **Telegram bot** — create events, log expenses, RSVP buttons, group linking, bilingual + Russian
 - **Notifications** — DM + group announcements; 24h / 1h reminders
 - **OG previews** — cover photo → map pin → auto-generated event card
@@ -33,7 +35,7 @@ See [ROADMAP.md](./ROADMAP.md) for what's next.
 | Hosting | [Cloudflare Workers](https://developers.cloudflare.com/workers/) via [@opennextjs/cloudflare](https://opennext.js.org/cloudflare) |
 | Database | [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) |
 | Media | [Cloudflare R2](https://developers.cloudflare.com/r2/) |
-| Payments | [Stripe](https://stripe.com/) Checkout (paid events) |
+| Payments | [Stripe](https://stripe.com/) Checkout (paid events + extra catalog slots) |
 | Auth | [Telegram Login](https://core.telegram.org/widgets/login) + Web App initData |
 
 ---
@@ -50,11 +52,13 @@ Next.js on Cloudflare Workers (OpenNext)
    ▼         ▼          ▼         ▼
   D1        R2      Telegram   Stripe
 (events,   (covers)  (auth,    (paid
- comments,           bot)       tickets)
- expenses)
+ comments,           bot)       tickets,
+ expenses)                      catalog slots)
 ```
 
 Hourly cron → event reminders (`worker-scheduled.mjs`).
+
+Public surfaces: **`/discover`** (public events), **`/catalog`** (business directory).
 
 ---
 
@@ -179,13 +183,15 @@ src/
 ├── i18n/                  # next-intl routing & config
 ├── lib/
 │   ├── telegram/          # Bot handler, flows, notifications
-│   ├── events/            # Create, payment mode, RSVP
+│   ├── events/            # Create, payment mode, RSVP, visibility
+│   ├── catalog/           # Business listing form + categories
+│   ├── db/                  # queries.ts + catalog-queries.ts
 │   ├── expense/           # Splits, settlement
 │   ├── og/                # Dynamic social preview cards
-│   └── stripe/            # Checkout + webhook
-docs/                      # TELEGRAM, DATABASE, DEPLOYMENT guides
+│   └── stripe/            # Checkout + webhook (events + catalog slots)
+docs/                      # TELEGRAM, DATABASE, CATALOG, DEPLOYMENT
 messages/                  # en.json, uz.json, ru.json
-migrations/                # D1 SQL migrations (0001–0008)
+migrations/                # D1 SQL migrations (0001–0014)
 wrangler.jsonc             # Cloudflare Worker config
 AGENTS.md                  # Notes for AI coding assistants
 ```
@@ -215,6 +221,19 @@ Invite links (`/join/[code]`) always stay `noindex` regardless of visibility.
 
 See [docs/DATABASE.md](./docs/DATABASE.md#event-visibility--seo).
 
+## Business catalog
+
+A **Yelp-style directory** at `/catalog`:
+
+- Logged-in users submit businesses (barbershops, salons, restaurants, dachas, agencies, etc.)
+- Platform admins approve before publish
+- Logged-in users **vouch** for places they trust (one per listing)
+- One free listing slot per account; extra slots via Stripe
+
+Homepage promotes the catalog to visitors; listings sort by vouch count.
+
+See [docs/CATALOG.md](./docs/CATALOG.md).
+
 ---
 
 ## Security
@@ -233,6 +252,7 @@ Report security issues privately, not in public GitHub issues.
 | Doc | Contents |
 |-----|----------|
 | [ROADMAP.md](./ROADMAP.md) | Shipped features, Phase 3, ops backlog |
+| [docs/CATALOG.md](./docs/CATALOG.md) | Business directory, vouches, admin, Stripe slots |
 | [docs/TELEGRAM.md](./docs/TELEGRAM.md) | Bot commands, webhooks, notifications |
 | [docs/DATABASE.md](./docs/DATABASE.md) | Tables, migrations |
 | [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Production checklist |

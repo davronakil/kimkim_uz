@@ -42,6 +42,21 @@ export async function listPublicEventsForSitemap(): Promise<
   return result.results ?? [];
 }
 
+export async function listPublicEvents(): Promise<Event[]> {
+  const db = await getDb();
+  const result = await db
+    .prepare(
+      `SELECT *
+       FROM events
+       WHERE visibility = 'public'
+         AND starts_at >= datetime('now', '-90 days')
+       ORDER BY starts_at ASC`,
+    )
+    .all<Event>();
+
+  return (result.results ?? []).map((row) => normalizeEvent(row)!);
+}
+
 export async function listUserEvents(userId: string): Promise<Event[]> {
   const db = await getDb();
   const result = await db

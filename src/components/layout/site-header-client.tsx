@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarPlus, LogOut, Menu, Plus, Shield, Store, X } from "lucide-react";
+import { CalendarDays, CalendarPlus, LogOut, Menu, Plus, Shield, Store, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -25,6 +25,7 @@ export function SiteHeaderClient({
 }) {
   const t = useTranslations("common");
   const catalog = useTranslations("catalog");
+  const discover = useTranslations("discover");
   const admin = useTranslations("admin");
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(initialUser);
@@ -108,6 +109,12 @@ export function SiteHeaderClient({
               className="rounded-full px-4 py-2.5 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
             >
               {catalog("title")}
+            </Link>
+            <Link
+              href="/discover"
+              className="rounded-full px-4 py-2.5 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+            >
+              {discover("title")}
             </Link>
             {user ? (
               <>
@@ -235,6 +242,14 @@ export function SiteHeaderClient({
               >
                 <Store className="h-5 w-5 text-emerald-500" />
                 {catalog("title")}
+              </Link>
+              <Link
+                href="/discover"
+                onClick={closeMenu}
+                className="flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition hover:bg-zinc-100 active:bg-zinc-100 dark:hover:bg-zinc-900"
+              >
+                <CalendarDays className="h-5 w-5 text-emerald-500" />
+                {discover("title")}
               </Link>
               {user ? (
                 <>

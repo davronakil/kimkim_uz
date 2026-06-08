@@ -1,12 +1,25 @@
 import { nanoid } from "nanoid";
 import { getDb } from "@/lib/cloudflare";
+import { isSuperadmin } from "@/lib/platform/admin";
 import type {
   BusinessListing,
   BusinessListingEntitlement,
   BusinessListingStatus,
+  BusinessListingWithVouches,
   PlatformAdmin,
   User,
 } from "@/types";
+
+const approvedListingSelect = `
+  SELECT bl.*, COUNT(blv.user_id) AS vouch_count
+  FROM business_listings bl
+  LEFT JOIN business_listing_vouches blv ON blv.listing_id = bl.id
+`;
+
+const approvedListingGroup = `
+  GROUP BY bl.id
+  ORDER BY vouch_count DESC, bl.published_at DESC, bl.name ASC
+`;
 
 export async function getBusinessListingById(id: string): Promise<BusinessListing | null> {
   const db = await getDb();
@@ -18,21 +31,87 @@ export async function getBusinessListingById(id: string): Promise<BusinessListin
   );
 }
 
-export async function listApprovedBusinessListings(category?: string): Promise<BusinessListing[]> {
+export async function listApprovedBusinessListings(
+  category?: string,
+): Promise<BusinessListingWithVouches[]> {
   const db = await getDb();
   const query = category
-    ? `SELECT * FROM business_listings
-       WHERE status = 'approved' AND category = ?
-       ORDER BY published_at DESC, name ASC`
-    : `SELECT * FROM business_listings
-       WHERE status = 'approved'
-       ORDER BY published_at DESC, name ASC`;
+    ? `${approvedListingSelect}
+       WHERE bl.status = 'approved' AND bl.category = ?
+       ${approvedListingGroup}`
+    : `${approvedListingSelect}
+       WHERE bl.status = 'approved'
+       ${approvedListingGroup}`;
 
   const result = category
-    ? await db.prepare(query).bind(category).all<BusinessListing>()
-    : await db.prepare(query).all<BusinessListing>();
+    ? await db.prepare(query).bind(category).all<BusinessListingWithVouches>()
+    : await db.prepare(query).all<BusinessListingWithVouches>();
 
-  return result.results ?? [];
+  return (result.results ?? []).map((row) => ({
+    ...row,
+    vouch_count: Number(row.vouch_count ?? 0),
+  }));
+}
+
+export async function getBusinessListingVouchCount(listingId: string) {
+  const db = await getDb();
+  const row = await db
+    .prepare("SELECT COUNT(*) AS count FROM business_listing_vouches WHERE listing_id = ?")
+    .bind(listingId)
+    .first<{ count: number }>();
+
+  return row?.count ?? 0;
+}
+
+export async function hasUserVouchedForListing(listingId: string, userId: string) {
+  const db = await getDb();
+  const row = await db
+    .prepare(
+      "SELECT 1 AS vouched FROM business_listing_vouches WHERE listing_id = ? AND user_id = ?",
+    )
+    .bind(listingId, userId)
+    .first<{ vouched: number }>();
+
+  return Boolean(row?.vouched);
+}
+
+export async function getBusinessListingVouchSummary(
+  listingId: string,
+  userId?: string | null,
+) {
+  const count = await getBusinessListingVouchCount(listingId);
+  const vouchedByMe = userId ? await hasUserVouchedForListing(listingId, userId) : false;
+  return { count, vouchedByMe };
+}
+
+export async function toggleBusinessListingVouch(listingId: string, userId: string) {
+  const listing = await getBusinessListingById(listingId);
+  if (!listing || listing.status !== "approved") {
+    throw new Error("Listing not found");
+  }
+  if (listing.representative_user_id === userId) {
+    throw new Error("Cannot vouch for your own listing");
+  }
+
+  const db = await getDb();
+  const existing = await hasUserVouchedForListing(listingId, userId);
+
+  if (existing) {
+    await db
+      .prepare("DELETE FROM business_listing_vouches WHERE listing_id = ? AND user_id = ?")
+      .bind(listingId, userId)
+      .run();
+  } else {
+    await db
+      .prepare(
+        "INSERT INTO business_listing_vouches (listing_id, user_id) VALUES (?, ?)",
+      )
+      .bind(listingId, userId)
+      .run();
+  }
+
+  const count = await getBusinessListingVouchCount(listingId);
+  return { vouched: !existing, count };
 }
 
 export async function listBusinessListingsForUser(userId: string): Promise<BusinessListing[]> {
@@ -94,7 +173,19 @@ export async function getBusinessListingSlotSummary(userId: string) {
   const used = await countActiveBusinessListingsForUser(userId);
   const total = entitlement.included_slots + entitlement.paid_slots;
 
-  return { entitlement, used, total, remaining: Math.max(total - used, 0) };
+  return { entitlement, used, total, remaining: Math.max(total - used, 0), unlimited: false as const };
+}
+
+export async function getBusinessListingSlotSummaryForUser(
+  user: Pick<User, "id" | "username">,
+) {
+  if (await isSuperadmin(user)) {
+    const entitlement = await getBusinessListingEntitlement(user.id);
+    const used = await countActiveBusinessListingsForUser(user.id);
+    return { entitlement, used, total: used, remaining: used, unlimited: true as const };
+  }
+
+  return getBusinessListingSlotSummary(user.id);
 }
 
 export async function createBusinessListing(input: {
@@ -110,9 +201,11 @@ export async function createBusinessListing(input: {
   locationLat?: number | null;
   locationLng?: number | null;
   coverImageKey?: string | null;
+  approvedBy?: string;
 }) {
   const db = await getDb();
   const id = nanoid();
+  const publishNow = Boolean(input.approvedBy);
 
   await db
     .prepare(
@@ -120,8 +213,10 @@ export async function createBusinessListing(input: {
         id, representative_user_id, name, description, category,
         phone, telegram_username, website_url,
         location_name, location_address, location_lat, location_lng,
-        cover_image_key, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+        cover_image_key, status, reviewed_by, reviewed_at, published_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+        ${publishNow ? "datetime('now')" : "NULL"},
+        ${publishNow ? "datetime('now')" : "NULL"})`,
     )
     .bind(
       id,
@@ -137,6 +232,8 @@ export async function createBusinessListing(input: {
       input.locationLat ?? null,
       input.locationLng ?? null,
       input.coverImageKey ?? null,
+      publishNow ? "approved" : "pending",
+      publishNow ? input.approvedBy! : null,
     )
     .run();
 

@@ -13,6 +13,7 @@ type SlotSummary = {
   used: number;
   total: number;
   remaining: number;
+  unlimited?: boolean;
 };
 
 type ExtraSlotInfo = {
@@ -127,10 +128,16 @@ export function CatalogManagePanel({
             <div>
               <p className="text-sm text-zinc-500">{t("slotsTitle")}</p>
               <p className="text-lg font-semibold">
-                {t("slotsSummary", { used: slots.used, total: slots.total, remaining: slots.remaining })}
+                {slots.unlimited
+                  ? t("slotsUnlimited", { used: slots.used })
+                  : t("slotsSummary", {
+                      used: slots.used,
+                      total: slots.total,
+                      remaining: slots.remaining,
+                    })}
               </p>
             </div>
-            {extraSlot?.available && slots.remaining <= 0 ? (
+            {extraSlot?.available && !slots.unlimited && slots.remaining <= 0 ? (
               <button
                 type="button"
                 onClick={() => void buySlot()}
@@ -146,7 +153,7 @@ export function CatalogManagePanel({
               </button>
             ) : null}
           </div>
-          {extraSlot?.available && slots.remaining > 0 ? (
+          {extraSlot?.available && !slots.unlimited && slots.remaining > 0 ? (
             <p className="mt-3 text-sm text-zinc-500">
               {t("extraSlotHint", {
                 price: formatMoney(extraSlot.priceCents, extraSlot.currency, locale),
@@ -158,7 +165,7 @@ export function CatalogManagePanel({
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-semibold">{t("myListings")}</h2>
-        {slots && slots.remaining > 0 ? (
+        {slots && (slots.unlimited || slots.remaining > 0) ? (
           <Link href="/catalog/submit" className="kk-btn-primary w-full sm:w-auto">
             <Plus className="h-4 w-4" />
             {t("submitListing")}
@@ -168,7 +175,7 @@ export function CatalogManagePanel({
 
       {listings.length === 0 ? (
         <EmptyState icon={Store} title={t("noListingsTitle")} description={t("noListingsBody")}>
-          {slots && slots.remaining > 0 ? (
+          {slots && (slots.unlimited || slots.remaining > 0) ? (
             <Link href="/catalog/submit" className="kk-btn-primary w-full sm:w-auto">
               {t("submitListing")}
             </Link>

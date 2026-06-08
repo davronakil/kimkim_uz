@@ -29,6 +29,16 @@
     "heroSubtitleSignedIn": "Plan trips, dinners, gatherings, and group events. Keep guests, updates, and expenses all in one place.",
     "ctaSignedOut": "Sign in with Telegram",
     "ctaSignedIn": "My events",
+    "catalogCta": "Browse the catalog",
+    "catalogTitle": "Find trusted local businesses",
+    "catalogBody": "A Yelp-style directory of barbershops, salons, restaurants, dachas, and service providers — listed by real people and vouched for by the KimKim community.",
+    "catalogBrowse": "Browse businesses",
+    "catalogListBusiness": "List your business",
+    "catalogPoints": [
+      "Browse by category — from restaurants to digital agencies",
+      "Every listing is submitted by a real representative",
+      "Logged-in members can vouch for places they trust"
+    ],
     "useCases": {
       "wedding": "Wedding",
       "gap": "Gap circle",
@@ -363,11 +373,19 @@
   "footer": {
     "madeIn": "Built for real gatherings in Uzbekistan and beyond."
   },
+  "discover": {
+    "title": "Discover",
+    "subtitle": "Public gatherings anyone can find and join.",
+    "metaDescription": "Browse public weddings, gap circles, birthdays, and other gatherings on KimKim.",
+    "emptyTitle": "No public events yet",
+    "emptyBody": "When hosts publish an event as public, it will show up here.",
+    "noUpcoming": "No upcoming public events right now. Check back soon."
+  },
   "catalog": {
     "title": "Catalog",
     "nav": "Catalog",
-    "subtitle": "Local businesses recommended by the KimKim community.",
-    "metaDescription": "Browse barbershops, salons, restaurants, and other local businesses on KimKim.",
+    "subtitle": "A Yelp-style directory of local businesses and service providers, vouched for by the KimKim community.",
+    "metaDescription": "Browse and vouch for barbershops, salons, restaurants, dachas, and other local businesses on KimKim.",
     "allCategories": "All",
     "emptyTitle": "No listings yet",
     "emptyBody": "Be the first to add your business. Sign in and submit a listing for review.",
@@ -381,6 +399,8 @@
     "manageSubtitle": "Submit and manage your catalog listings. Each account includes one free slot.",
     "submitTitle": "Submit a business",
     "submitSubtitle": "Add your business details. We review every listing before it goes live.",
+    "submitSubtitleSuperadmin": "Add a business listing. As superadmin, it publishes to the catalog immediately with no slot limit.",
+    "submitPublish": "Publish listing",
     "editTitle": "Edit listing",
     "submitListing": "Submit listing",
     "myListings": "Your listings",
@@ -391,6 +411,7 @@
     "statusRejected": "Rejected",
     "slotsTitle": "Listing slots",
     "slotsSummary": "{used} of {total} used · {remaining} available",
+    "slotsUnlimited": "{used} published · unlimited superadmin slots",
     "buyExtraSlot": "Buy extra slot ({price})",
     "buyExtraSlotShort": "Buy extra slot",
     "extraSlotHint": "Need more listings? Extra slots are {price} each.",
@@ -398,6 +419,15 @@
     "slotPurchasePending": "Payment is still processing. Refresh in a moment.",
     "slotPurchaseCancelled": "Checkout was cancelled.",
     "slotPurchaseError": "Could not start checkout. Try again later.",
+    "vouch": {
+      "vouch": "Vouch for this business",
+      "vouched": "You vouched",
+      "hint": "Tap once if you've had a good experience and want to recommend this place.",
+      "count": "{count, plural, one {# vouch} other {# vouches}}",
+      "signInPrompt": "Sign in to vouch for businesses you trust.",
+      "signInAction": "Sign in",
+      "error": "Could not update your vouch. Try again."
+    },
     "categories": {
       "restaurant": "Restaurant",
       "cafe": "Café",

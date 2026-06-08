@@ -50,6 +50,10 @@ export type BusinessListing = {
   updated_at: string;
 };
 
+export type BusinessListingWithVouches = BusinessListing & {
+  vouch_count: number;
+};
+
 export type BusinessListingEntitlement = {
   user_id: string;
   included_slots: number;

@@ -7,7 +7,7 @@ import {
   updateBusinessListing,
 } from "@/lib/db/catalog-queries";
 import { parseBusinessListingFormData } from "@/lib/catalog/form";
-import { isPlatformAdmin } from "@/lib/platform/admin";
+import { isPlatformAdmin, isSuperadmin } from "@/lib/platform/admin";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -50,6 +50,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const superadmin = await isSuperadmin(user);
+
   const formData = await request.formData();
   const parsed = parseBusinessListingFormData(formData);
   if (!parsed.success) {
@@ -82,7 +84,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     locationLat: parsed.data.location_lat ?? null,
     locationLng: parsed.data.location_lng ?? null,
     coverImageKey,
-    resetForReview: listing.status === "approved" || listing.status === "rejected",
+    resetForReview:
+      !superadmin && (listing.status === "approved" || listing.status === "rejected"),
   });
 
   return NextResponse.json({ ok: true });

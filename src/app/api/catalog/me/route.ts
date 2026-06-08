@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import {
-  getBusinessListingSlotSummary,
+  getBusinessListingSlotSummaryForUser,
   listBusinessListingsForUser,
 } from "@/lib/db/catalog-queries";
 import { businessSlotCurrency, businessSlotPriceCents } from "@/lib/stripe/business-slots";
@@ -16,7 +16,7 @@ export async function GET() {
 
   const [listings, slots] = await Promise.all([
     listBusinessListingsForUser(user.id),
-    getBusinessListingSlotSummary(user.id),
+    getBusinessListingSlotSummaryForUser(user),
   ]);
 
   const env = await getEnv();

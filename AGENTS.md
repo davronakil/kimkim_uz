@@ -31,15 +31,23 @@ Bot strings are separate: `src/lib/telegram/i18n.ts`.
 
 ## Conventions
 
-- DB queries: `src/lib/db/queries.ts`
+- Event DB queries: `src/lib/db/queries.ts`
+- Catalog DB queries: `src/lib/db/catalog-queries.ts`
 - Event creation: `src/lib/events/create.ts`
 - Expense creation: `src/lib/expense/create.ts`
 - Telegram handler: `src/lib/telegram/handler.ts`
 - OG images: cover → map → generated card (`src/lib/og/`)
+- Platform admin / superadmin: `src/lib/platform/admin.ts` (`davron_tx`)
+
+## Public pages
+
+- `/discover` — public events (`visibility = public`)
+- `/catalog` — approved business listings with community vouches
 
 ## Docs
 
 - [README.md](./README.md) — overview & getting started
+- [docs/CATALOG.md](./docs/CATALOG.md) — business directory & vouches
 - [docs/TELEGRAM.md](./docs/TELEGRAM.md) — bot & notifications
 - [docs/DATABASE.md](./docs/DATABASE.md) — schema & migrations
 - [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) — production checklist

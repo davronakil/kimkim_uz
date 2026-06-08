@@ -1,4 +1,4 @@
-import { CalendarDays, MessageSquare, Receipt, Send } from "lucide-react";
+import { CalendarDays, MessageSquare, Receipt, Send, Store } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeNames, locales, type Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
@@ -21,6 +21,7 @@ export default async function HomePage({
 
   const t = await getTranslations("home");
   const common = await getTranslations("common");
+  const catalog = await getTranslations("catalog");
   const meta = await getTranslations("meta");
   const user = await getCurrentUser();
   const baseUrl = appBaseUrl();
@@ -123,9 +124,57 @@ export default async function HomePage({
               <Link href="/events/new" className="kk-btn-secondary w-full sm:w-auto">
                 {common("createEvent")}
               </Link>
-            ) : null}
+            ) : (
+              <Link href="/catalog" className="kk-btn-secondary w-full sm:w-auto">
+                {t("catalogCta")}
+              </Link>
+            )}
           </div>
         </div>
+      </section>
+
+      <section className="relative overflow-hidden rounded-3xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50 via-white to-white px-5 py-8 shadow-sm dark:border-emerald-900/50 dark:from-emerald-950/40 dark:via-zinc-900 dark:to-zinc-900 sm:px-10 sm:py-10">
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="space-y-4">
+            <p className="text-sm font-medium uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
+              {catalog("title")}
+            </p>
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              {t("catalogTitle")}
+            </h2>
+            <p className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+              {t("catalogBody")}
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link href="/catalog" className="kk-btn-primary w-full sm:w-auto">
+                {t("catalogBrowse")}
+              </Link>
+              {!user ? (
+                <Link href="/login" className="kk-btn-secondary w-full sm:w-auto">
+                  {t("catalogListBusiness")}
+                </Link>
+              ) : (
+                <Link href="/catalog/manage" className="kk-btn-secondary w-full sm:w-auto">
+                  {catalog("manageListings")}
+                </Link>
+              )}
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            {t.raw("catalogPoints").map((point: string, index: number) => (
+              <div
+                key={point}
+                className="rounded-2xl border border-emerald-100 bg-white/80 px-4 py-3 text-sm text-zinc-700 dark:border-emerald-900/40 dark:bg-zinc-950/60 dark:text-zinc-200"
+              >
+                <span className="mr-2 font-semibold text-emerald-600 dark:text-emerald-400">
+                  {index + 1}.
+                </span>
+                {point}
+              </div>
+            ))}
+          </div>
+        </div>
+        <Store className="pointer-events-none absolute -bottom-6 -right-4 h-28 w-28 text-emerald-500/10 sm:h-36 sm:w-36" />
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">

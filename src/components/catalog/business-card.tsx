@@ -1,10 +1,10 @@
 import { Link } from "@/i18n/navigation";
-import { MapPin, Store } from "lucide-react";
+import { MapPin, Store, ThumbsUp } from "lucide-react";
 import { CategoryBadge } from "@/components/catalog/category-badge";
-import type { BusinessListing } from "@/types";
+import type { BusinessListingWithVouches } from "@/types";
 
 type BusinessCardProps = {
-  listing: BusinessListing;
+  listing: BusinessListingWithVouches;
   locale: string;
 };
 
@@ -38,14 +38,20 @@ export function BusinessCard({ listing, locale }: BusinessCardProps) {
         <p className="line-clamp-2 text-base text-zinc-600 sm:text-sm dark:text-zinc-300">
           {listing.description || "—"}
         </p>
-        {listing.location_name ? (
-          <div className="flex flex-wrap gap-3 text-sm text-zinc-500">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
+          {listing.vouch_count > 0 ? (
+            <span className="inline-flex items-center gap-1">
+              <ThumbsUp className="h-4 w-4" />
+              {listing.vouch_count}
+            </span>
+          ) : null}
+          {listing.location_name ? (
             <span className="inline-flex items-center gap-1">
               <MapPin className="h-4 w-4" />
               {listing.location_name}
             </span>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </div>
     </Link>
   );

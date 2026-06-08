@@ -17,7 +17,7 @@ npm run db:migrate:remote   # production
 |-------|---------|
 | `users` | Telegram users; `language_code` is app locale (`en` / `uz` / `ru`) |
 | `sessions` | JWT session records |
-| `events` | Events with location, cover, payment mode, invite code, linked Telegram group |
+| `events` | Events with location, cover, payment mode, invite code, visibility, linked Telegram group |
 | `event_members` | Membership; `owner` or `member` |
 | `comments` | Threaded discussion (`parent_id`) |
 | `expenses` | Who paid, amount in cents, currency |
@@ -43,6 +43,18 @@ npm run db:migrate:remote   # production
 | `event_notification_preferences` | `0011` | Per-user Telegram notification mode |
 | `visibility` on `events` | `0012` | `private` (default) or `public` for SEO |
 
+### Business catalog
+
+| Table | Migration | Purpose |
+|-------|-----------|---------|
+| `platform_admins` | `0013` | Platform admins (`admin` / `superadmin`) |
+| `business_listing_entitlements` | `0013` | Free + paid listing slots per user |
+| `business_listings` | `0013` | Business submissions (`pending` / `approved` / `rejected`) |
+| `business_slot_payments` | `0013` | Stripe purchases for extra listing slots |
+| `business_listing_vouches` | `0014` | One vouch per user per approved listing |
+
+Full catalog flow: [CATALOG.md](./CATALOG.md).
+
 ## Notable columns on `events`
 
 - `telegram_chat_id` — linked Telegram group for announcements
@@ -53,13 +65,16 @@ npm run db:migrate:remote   # production
 
 ## Event visibility & SEO
 
-| Visibility | Event page `/events/[id]` | Join link `/join/[code]` | Sitemap |
-|------------|---------------------------|--------------------------|---------|
+| Visibility | Event page `/events/[id]` | Join link `/join/[code]` | Sitemap / Discover |
+|------------|---------------------------|--------------------------|--------------------|
 | `private` (default) | `noindex`, shareable by URL | always `noindex` | excluded |
-| `public` | indexable, Event JSON-LD | always `noindex` | included with locale alternates |
+| `public` | indexable, Event JSON-LD | always `noindex` | listed on `/discover` + sitemap |
 
 Public events in the sitemap are limited to those starting within the last 90 days.
 
 ## Queries
 
-All DB access goes through `src/lib/db/queries.ts`. Do not run raw SQL from route handlers except migrations.
+- Events, members, expenses: `src/lib/db/queries.ts`
+- Business catalog + vouches: `src/lib/db/catalog-queries.ts`
+
+Do not run raw SQL from route handlers except migrations.

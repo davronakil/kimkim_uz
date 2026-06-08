@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import {
   createBusinessListing,
-  getBusinessListingSlotSummary,
+  getBusinessListingSlotSummaryForUser,
   listApprovedBusinessListings,
 } from "@/lib/db/catalog-queries";
 import { parseBusinessListingFormData } from "@/lib/catalog/form";
 import { getMediaBucket } from "@/lib/cloudflare";
+import { isSuperadmin } from "@/lib/platform/admin";
 
 export async function GET(request: NextRequest) {
   const category = request.nextUrl.searchParams.get("category") ?? undefined;
@@ -20,9 +21,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const slots = await getBusinessListingSlotSummary(user.id);
-  if (slots.remaining <= 0) {
-    return NextResponse.json({ error: "No listing slots available" }, { status: 403 });
+  const superadmin = await isSuperadmin(user);
+  if (!superadmin) {
+    const slots = await getBusinessListingSlotSummaryForUser(user);
+    if (slots.remaining <= 0) {
+      return NextResponse.json({ error: "No listing slots available" }, { status: 403 });
+    }
   }
 
   const formData = await request.formData();
@@ -43,6 +47,7 @@ export async function POST(request: NextRequest) {
     locationAddress: parsed.data.location_address ?? null,
     locationLat: parsed.data.location_lat ?? null,
     locationLng: parsed.data.location_lng ?? null,
+    approvedBy: superadmin ? user.id : undefined,
   });
 
   const cover = formData.get("cover_image");
@@ -69,5 +74,5 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  return NextResponse.json({ id: listingId });
+  return NextResponse.json({ id: listingId, published: superadmin });
 }

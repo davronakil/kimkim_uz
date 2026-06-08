@@ -3,9 +3,13 @@ import { ExternalLink, MapPin, Phone, Store } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { CategoryBadge } from "@/components/catalog/category-badge";
+import { BusinessVouchButton } from "@/components/catalog/business-vouch-button";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
-import { getBusinessListingWithRepresentative } from "@/lib/db/catalog-queries";
+import {
+  getBusinessListingVouchSummary,
+  getBusinessListingWithRepresentative,
+} from "@/lib/db/catalog-queries";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
 import { displayName } from "@/lib/utils";
 import { isPlatformAdmin } from "@/lib/platform/admin";
@@ -60,6 +64,10 @@ export default async function CatalogDetailPage({
   if (!canView) notFound();
 
   const isOwner = user?.id === listing.representative_user_id;
+  const vouchSummary =
+    listing.status === "approved"
+      ? await getBusinessListingVouchSummary(id, user?.id)
+      : { count: 0, vouchedByMe: false };
   const mapsUrl =
     listing.location_lat != null && listing.location_lng != null
       ? `https://www.google.com/maps/search/?api=1&query=${listing.location_lat},${listing.location_lng}`
@@ -151,6 +159,18 @@ export default async function CatalogDetailPage({
               <MapPin className="h-4 w-4" />
               {t("openInMaps")}
             </a>
+          ) : null}
+
+          {listing.status === "approved" ? (
+            <div className="border-t border-zinc-200 pt-4 dark:border-zinc-800">
+              <BusinessVouchButton
+                listingId={listing.id}
+                initialCount={vouchSummary.count}
+                initialVouched={vouchSummary.vouchedByMe}
+                loggedIn={Boolean(user)}
+                isOwner={Boolean(isOwner)}
+              />
+            </div>
           ) : null}
 
           <div className="border-t border-zinc-200 pt-4 dark:border-zinc-800">
