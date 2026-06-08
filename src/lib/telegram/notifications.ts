@@ -87,7 +87,7 @@ export async function notifyNewComment(input: {
   const authorName = escapeHtml(displayName(input.author));
   const preview = escapeHtml(truncate(input.body));
 
-  await notifyMembers(input.eventId, input.authorUserId, (locale, event) => {
+  const buildComment = (locale: BotLocale, event: Event) => {
     const title = escapeHtml(event.title);
     if (input.parentId) {
       if (locale === "uz") {
@@ -105,7 +105,13 @@ export async function notifyNewComment(input: {
       return `💬 <b>${authorName}</b> прокомментировал(а) <b>${title}</b>:\n"${preview}"`;
     }
     return `💬 <b>${authorName}</b> commented on <b>${title}</b>:\n"${preview}"`;
-  });
+  };
+
+  await notifyMembers(input.eventId, input.authorUserId, buildComment);
+
+  await notifyEventGroup(input.eventId, buildComment, (locale, event) => [
+    { text: t(locale).openEvent, url: eventUrl(event.id, locale) },
+  ]);
 }
 
 export async function notifyNewExpense(input: {
@@ -119,7 +125,7 @@ export async function notifyNewExpense(input: {
   const description = escapeHtml(truncate(input.description, 80));
   const amount = escapeHtml(input.amountLabel);
 
-  await notifyMembers(input.eventId, input.authorUserId, (locale, event) => {
+  const buildExpense = (locale: BotLocale, event: Event) => {
     const title = escapeHtml(event.title);
     if (locale === "uz") {
       return `💰 <b>${authorName}</b> <b>${title}</b> ga xarajat qo'shdi: ${description} — ${amount}`;
@@ -128,7 +134,13 @@ export async function notifyNewExpense(input: {
       return `💰 <b>${authorName}</b> добавил(а) расход в <b>${title}</b>: ${description} — ${amount}`;
     }
     return `💰 <b>${authorName}</b> added an expense to <b>${title}</b>: ${description} — ${amount}`;
-  });
+  };
+
+  await notifyMembers(input.eventId, input.authorUserId, buildExpense);
+
+  await notifyEventGroup(input.eventId, buildExpense, (locale, event) => [
+    { text: t(locale).openEvent, url: eventUrl(event.id, locale) },
+  ]);
 }
 
 export async function notifyEventUpdated(input: {
