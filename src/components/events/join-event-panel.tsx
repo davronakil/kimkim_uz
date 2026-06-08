@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { CalendarDays, MapPin, Sparkles, Users } from "lucide-react";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
+import { EventCoverImage } from "@/components/events/event-cover-image";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import type { Locale } from "@/i18n/config";
 import { useRouter } from "@/i18n/navigation";
@@ -185,15 +186,13 @@ export function JoinEventPanel({
   return (
     <div className="mx-auto w-full max-w-lg">
       <div className="overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="relative aspect-[4/3] bg-gradient-to-br from-emerald-100 via-teal-100 to-emerald-200 dark:from-emerald-950 dark:via-teal-950 dark:to-emerald-900">
-          {event.cover_image_key ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={`/api/media/${event.cover_image_key}`}
-              alt={event.title}
-              className="h-full w-full object-cover"
-            />
-          ) : null}
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <EventCoverImage
+            event={event}
+            locale={locale}
+            variant="hero"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
             <p className="inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-emerald-200">

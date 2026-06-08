@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { intlLocale } from "@/lib/locale";
 import type { Locale } from "@/i18n/config";
+import { EventCoverImage } from "@/components/events/event-cover-image";
 import { CalendarDays, MapPin } from "lucide-react";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import type { Event } from "@/types";
@@ -19,19 +20,13 @@ export function EventCard({ event, locale, past = false }: EventCardProps) {
       href={`/events/${event.id}`}
       className={`group touch-manipulation overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900 ${past ? "opacity-80" : ""}`}
     >
-      <div className="aspect-[16/9] bg-gradient-to-br from-emerald-100 to-teal-200 dark:from-emerald-950 dark:to-teal-950">
-        {event.cover_image_key ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={`/api/media/${event.cover_image_key}`}
-            alt={event.title}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-emerald-700/70 dark:text-emerald-200/70">
-            <CalendarDays className="h-10 w-10" />
-          </div>
-        )}
+      <div className="aspect-[16/9] overflow-hidden">
+        <EventCoverImage
+          event={event}
+          locale={locale}
+          variant="card"
+          className="h-full w-full object-cover"
+        />
       </div>
       <div className="space-y-2 p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-2">

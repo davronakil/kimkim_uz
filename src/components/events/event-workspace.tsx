@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
 import { cacheEventDetail, getCachedEventDetail } from "@/lib/offline/event-cache";
 import { useOnlineStatus } from "@/lib/offline/use-online-status";
+import { EventCoverImage } from "@/components/events/event-cover-image";
 import { CommentThread } from "@/components/events/comment-thread";
 import { ExpensePanel } from "@/components/events/expense-panel";
 import { InvitePanel } from "@/components/events/invite-panel";
@@ -184,15 +185,13 @@ export function EventWorkspace({
         ) : null}
 
         <section className="overflow-hidden rounded-3xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-          <div className="aspect-[4/3] bg-gradient-to-br from-emerald-100 to-teal-200 sm:aspect-[21/9] dark:from-emerald-950 dark:to-teal-950">
-            {event.cover_image_key ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={`/api/media/${event.cover_image_key}`}
-                alt={event.title}
-                className="h-full w-full object-cover"
-              />
-            ) : null}
+          <div className="aspect-[4/3] overflow-hidden sm:aspect-[21/9]">
+            <EventCoverImage
+              event={event}
+              locale={locale}
+              variant="hero"
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="space-y-4 p-5 sm:p-6">
             <div className="space-y-3">
