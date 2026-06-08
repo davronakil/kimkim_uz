@@ -25,10 +25,10 @@
   "home": {
     "heroTitle": "Plan the gathering.\nKeep everyone in sync.",
     "heroSubtitle": "Invites, RSVPs, location, comments, and shared costs in one simple place.",
-    "heroTitleSignedIn": "Your gatherings are ready",
-    "heroSubtitleSignedIn": "Events, guests, updates, and expenses are all in one place.",
+    "heroTitleSignedIn": "Ready to get everyone together?",
+    "heroSubtitleSignedIn": "Plan trips, dinners, gatherings, and group events. Keep guests, updates, and expenses all in one place.",
     "ctaSignedOut": "Sign in with Telegram",
-    "ctaSignedIn": "Go to my events",
+    "ctaSignedIn": "My events",
     "useCases": {
       "wedding": "Wedding",
       "gap": "Gap circle",
@@ -352,5 +352,21 @@
   },
   "footer": {
     "madeIn": "Built for real gatherings in Uzbekistan and beyond."
+  },
+  "errors": {
+    "notFoundEyebrow": "Page not found",
+    "notFoundTitle": "This page isn't here",
+    "notFoundDescription": "The link may be broken, or the page may have moved. Pick a path below and keep planning your gathering.",
+    "errorEyebrow": "Something went wrong",
+    "errorTitle": "We hit a snag",
+    "errorDescription": "KimKim ran into an unexpected problem. Try again, or head somewhere safe below.",
+    "goHome": "Home",
+    "tryAgain": "Try again",
+    "tipHomeSignedIn": "Start from the homepage to browse features and jump back into your flow.",
+    "tipHomeSignedOut": "Head home to sign in with Telegram and pick up where you left off.",
+    "tipExplore": "From the homepage you can explore how KimKim helps with invites, guests, and shared costs.",
+    "tipEvents": "Open your events list to get back to an active gathering.",
+    "tipCreate": "Start a fresh event if you were trying to plan something new.",
+    "tipRetry": "Reload this page if the problem was temporary — a quick retry often fixes it."
   }
 }

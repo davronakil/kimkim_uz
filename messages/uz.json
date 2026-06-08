@@ -25,10 +25,10 @@
   "home": {
     "heroTitle": "Kim keladi?\nKimKim biladi.",
     "heroSubtitle": "Kim keladi, qayerda uchrashamiz, pul kimda — hammasi bir joyda.",
-    "heroTitleSignedIn": "Eventlaringiz tayyor",
-    "heroSubtitleSignedIn": "Eventlar, mehmonlar va xarajatlar — hammasi shu yerda.",
+    "heroTitleSignedIn": "Hammani bir joyga yig'ishga tayyormisiz?",
+    "heroSubtitleSignedIn": "Sayohat, kechki ovqat, uchrashuv yoki guruh eventini rejalashtiring. Mehmonlar, yangiliklar va xarajatlar — hammasi bir joyda.",
     "ctaSignedOut": "Telegram bilan kirish",
-    "ctaSignedIn": "Eventlarimga o'tish",
+    "ctaSignedIn": "Eventlarim",
     "useCases": {
       "wedding": "To'y",
       "gap": "Gap",
@@ -352,5 +352,21 @@
   },
   "footer": {
     "madeIn": "Oila, do'stlar va gaplar uchun — O'zbekiston va undan tashqari."
+  },
+  "errors": {
+    "notFoundEyebrow": "Sahifa topilmadi",
+    "notFoundTitle": "Bu sahifa yo'q",
+    "notFoundDescription": "Link noto'g'ri yoki sahifa ko'chirilgan bo'lishi mumkin. Pastdan kerakli yo'lni tanlang.",
+    "errorEyebrow": "Xatolik yuz berdi",
+    "errorTitle": "Nimadir xato ketdi",
+    "errorDescription": "KimKim kutilmagan muammoga duch keldi. Qayta urinib ko'ring yoki pastdan xavfsiz yo'lni tanlang.",
+    "goHome": "Bosh sahifa",
+    "tryAgain": "Qayta urinish",
+    "tipHomeSignedIn": "Bosh sahifadan boshlang — eventlaringizga qaytish oson.",
+    "tipHomeSignedOut": "Bosh sahifaga qayting, Telegram bilan kiring va davom eting.",
+    "tipExplore": "Bosh sahifada KimKim taklif, mehmonlar va xarajatlar bilan qanday ishlashini ko'rasiz.",
+    "tipEvents": "Eventlar ro'yxatini oching — faol tadbiringiz shu yerda.",
+    "tipCreate": "Yangi reja qilmoqchi bo'lsangiz, yangi event yarating.",
+    "tipRetry": "Vaqtinchalik muammo bo'lishi mumkin — sahifani yangilab ko'ring."
   }
 }
