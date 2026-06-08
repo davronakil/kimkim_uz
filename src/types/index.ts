@@ -1,6 +1,7 @@
 export type User = {
   id: string;
   telegram_id: string;
+  telegram_chat_id: string | null;
   username: string | null;
   first_name: string;
   last_name: string | null;
@@ -8,6 +9,10 @@ export type User = {
   language_code: string;
   created_at: string;
   updated_at: string;
+};
+
+export type EventMember = User & {
+  role: "owner" | "member";
 };
 
 export type Event = {
@@ -22,6 +27,7 @@ export type Event = {
   location_lat: number | null;
   location_lng: number | null;
   cover_image_key: string | null;
+  invite_code: string | null;
   telegram_chat_id: string | null;
   created_at: string;
   updated_at: string;
@@ -79,6 +85,7 @@ export type CloudflareEnv = Cloudflare.Env & {
   SESSION_SECRET: string;
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_BOT_USERNAME: string;
+  CRON_SECRET?: string;
   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?: string;
   NEXT_PUBLIC_APP_URL?: string;
 };

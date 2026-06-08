@@ -1,19 +1,38 @@
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { EventWorkspace } from "@/components/events/event-workspace";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
+import { buildEventShareMetadata } from "@/lib/event-metadata";
 import {
   buildBalancesFromExpenses,
   calculateSettlements,
 } from "@/lib/expense/settlement";
 import {
   getEventById,
+  getEventMemberRole,
   isEventMember,
+  isEventOwner,
   listEventComments,
   listEventExpenses,
   listEventMembers,
 } from "@/lib/db/queries";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id } = await params;
+  const event = await getEventById(id);
+
+  if (!event) {
+    return { title: "Event not found" };
+  }
+
+  return buildEventShareMetadata(event, locale, `/${locale}/events/${id}`);
+}
 
 export default async function EventDetailPage({
   params,
@@ -59,10 +78,25 @@ export default async function EventDetailPage({
     expenses[0]?.currency ?? "UZS",
   );
 
+  const [canEdit, role, botUsername] = await Promise.all([
+    isEventOwner(id, user.id),
+    getEventMemberRole(id, user.id),
+    Promise.resolve(
+      process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME ??
+        process.env.TELEGRAM_BOT_USERNAME ??
+        "kimkimuzbot",
+    ),
+  ]);
+
   return (
     <EventWorkspace
       eventId={id}
       locale={locale}
+      botUsername={botUsername}
+      canEdit={canEdit}
+      canLeave={role === "member"}
+      showNotifyBanner={!user.telegram_chat_id}
+      currentUserId={user.id}
       initialData={{ event, members, comments, expenses, settlements }}
     />
   );

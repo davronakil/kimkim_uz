@@ -2,17 +2,43 @@ import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
-import { getDb } from "@/lib/cloudflare";
+import { getDb, runInBackground } from "@/lib/cloudflare";
 import { isEventMember, listEventMembers } from "@/lib/db/queries";
-import { majorToCents } from "@/lib/utils";
+import { notifyNewExpense } from "@/lib/telegram/notifications";
+import { buildExpenseSplits } from "@/lib/expense/mutations";
+import { formatMoney } from "@/lib/utils";
 
-const expenseSchema = z.object({
-  description: z.string().min(1).max(500),
-  amount: z.number().positive(),
-  currency: z.string().default("UZS"),
-  payer_id: z.string(),
-  split_user_ids: z.array(z.string()).min(1),
-});
+const expenseSchema = z
+  .object({
+    description: z.string().min(1).max(500),
+    amount: z.number().positive(),
+    currency: z.string().default("UZS"),
+    payer_id: z.string(),
+    split_mode: z.enum(["equal", "custom"]).default("equal"),
+    split_user_ids: z.array(z.string()).optional(),
+    custom_splits: z
+      .array(
+        z.object({
+          user_id: z.string(),
+          amount: z.number().nonnegative(),
+        }),
+      )
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.split_mode === "equal" && (!data.split_user_ids || data.split_user_ids.length === 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "split_user_ids required for equal split",
+      });
+    }
+    if (data.split_mode === "custom" && (!data.custom_splits || data.custom_splits.length === 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "custom_splits required for custom split",
+      });
+    }
+  });
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -41,16 +67,12 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Invalid payer" }, { status: 400 });
   }
 
-  for (const splitUserId of parsed.data.split_user_ids) {
-    if (!memberIds.has(splitUserId)) {
-      return NextResponse.json({ error: "Invalid split member" }, { status: 400 });
-    }
+  const built = buildExpenseSplits(parsed.data, memberIds);
+  if (!built.ok) {
+    return NextResponse.json({ error: built.error }, { status: 400 });
   }
 
-  const amountCents = majorToCents(parsed.data.amount);
-  const splitCount = parsed.data.split_user_ids.length;
-  const baseShare = Math.floor(amountCents / splitCount);
-  let remainder = amountCents - baseShare * splitCount;
+  const { amountCents, splits: splitEntries } = built;
 
   const db = await getDb();
   const expenseId = nanoid();
@@ -69,16 +91,24 @@ export async function POST(request: NextRequest, context: RouteContext) {
     )
     .run();
 
-  for (const splitUserId of parsed.data.split_user_ids) {
-    const extra = remainder > 0 ? 1 : 0;
-    if (extra) remainder -= 1;
+  for (const split of splitEntries) {
     await db
       .prepare(
         "INSERT INTO expense_splits (expense_id, user_id, amount_cents) VALUES (?, ?, ?)",
       )
-      .bind(expenseId, splitUserId, baseShare + extra)
+      .bind(expenseId, split.user_id, split.amount_cents)
       .run();
   }
+
+  void runInBackground(
+    notifyNewExpense({
+      eventId,
+      author: user,
+      description: parsed.data.description,
+      amountLabel: formatMoney(amountCents, parsed.data.currency, user.language_code === "uz" ? "uz" : "en"),
+      authorUserId: user.id,
+    }),
+  );
 
   return NextResponse.json({ id: expenseId });
 }

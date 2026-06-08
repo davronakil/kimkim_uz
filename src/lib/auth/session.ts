@@ -7,8 +7,49 @@ import type { User } from "@/types";
 export const SESSION_COOKIE = "kimkim_session";
 const SESSION_TTL_DAYS = 30;
 
+export type SessionCookieOptions = {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: "lax";
+  path: string;
+  maxAge: number;
+};
+
 function getSecretKey(secret: string) {
   return new TextEncoder().encode(secret);
+}
+
+export function getSessionCookieOptions(secure = true): SessionCookieOptions {
+  return {
+    httpOnly: true,
+    secure,
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_TTL_DAYS * 24 * 60 * 60,
+  };
+}
+
+export function applySessionCookie(
+  response: Response,
+  token: string,
+  secure = true,
+): Response {
+  const headers = new Headers(response.headers);
+  const options = getSessionCookieOptions(secure);
+  const parts = [
+    `${SESSION_COOKIE}=${encodeURIComponent(token)}`,
+    "Path=/",
+    "HttpOnly",
+    `SameSite=${options.sameSite}`,
+    `Max-Age=${options.maxAge}`,
+  ];
+  if (options.secure) parts.push("Secure");
+  headers.append("Set-Cookie", parts.join("; "));
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }
 
 export async function createSession(userId: string): Promise<string> {
@@ -34,15 +75,9 @@ export async function createSession(userId: string): Promise<string> {
   return token;
 }
 
-export async function setSessionCookie(token: string) {
+export async function setSessionCookie(token: string, secure = true) {
   const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: SESSION_TTL_DAYS * 24 * 60 * 60,
-  });
+  cookieStore.set(SESSION_COOKIE, token, getSessionCookieOptions(secure));
 }
 
 export async function clearSessionCookie() {

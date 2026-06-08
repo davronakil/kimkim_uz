@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
@@ -20,10 +21,15 @@ declare global {
 
 type TelegramLoginButtonProps = {
   botUsername: string;
+  redirectTo?: string;
 };
 
-export function TelegramLoginButton({ botUsername }: TelegramLoginButtonProps) {
+export function TelegramLoginButton({
+  botUsername,
+  redirectTo = "/events",
+}: TelegramLoginButtonProps) {
   const router = useRouter();
+  const locale = useLocale();
   const t = useTranslations("common");
 
   useEffect(() => {
@@ -31,6 +37,7 @@ export function TelegramLoginButton({ botUsername }: TelegramLoginButtonProps) {
       const response = await fetch("/api/auth/telegram", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           ...user,
           id: String(user.id),
@@ -39,8 +46,9 @@ export function TelegramLoginButton({ botUsername }: TelegramLoginButtonProps) {
       });
 
       if (response.ok) {
+        window.dispatchEvent(new Event("kimkim:auth-change"));
         router.refresh();
-        router.push("/events");
+        router.push(redirectTo);
       }
     };
 
@@ -60,7 +68,7 @@ export function TelegramLoginButton({ botUsername }: TelegramLoginButtonProps) {
     return () => {
       delete window.onTelegramAuth;
     };
-  }, [botUsername, router]);
+  }, [botUsername, locale, redirectTo, router]);
 
   return (
     <div className="space-y-3">

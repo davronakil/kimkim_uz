@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "KimKim",
-    "tagline": "Plan events, split expenses, stay connected.",
+    "tagline": "Weddings, gap circles, sunnat to'y, aqiqa — plan it all.",
     "loading": "Loading...",
     "save": "Save",
     "cancel": "Cancel",
@@ -13,46 +13,90 @@
     "signOut": "Sign out",
     "createEvent": "Create event",
     "myEvents": "My events",
-    "noEvents": "No events yet. Create your first gathering!",
+    "noEvents": "No events yet. Start a wedding, gap circle, sunnat to'y, choyxona, or any gathering.",
     "language": "Language"
   },
+  "meta": {
+    "title": "KimKim — Weddings, gap circles, sunnat to'y & more",
+    "description": "Coordinate guests, location, and expenses for weddings, gap circles, sunnat to'y, aqiqa, challari, choyxona, and any gathering. Sign in with Telegram.",
+    "ogTitle": "KimKim — Uzbek celebrations & gatherings",
+    "keywords": "event planning, wedding, gap circle, sunnat to'y, aqiqa, challari, choyxona, birthday, Telegram, Uzbekistan"
+  },
   "home": {
-    "heroTitle": "Events made simple for your crew",
-    "heroSubtitle": "Create gatherings, pick a place on the map, discuss plans in threaded comments, and settle expenses automatically.",
+    "heroTitle": "Plan Uzbek celebrations — from gap circles to weddings",
+    "heroSubtitle": "Coordinate who's coming, where to meet, and who owes what. Weddings, gap circles, sunnat to'y, aqiqa, challari, birthdays, and choyxona nights.",
+    "heroTitleSignedIn": "Welcome back",
+    "heroSubtitleSignedIn": "Your weddings, gap circles, sunnat to'y, and more — all in one place.",
     "ctaSignedOut": "Continue with Telegram",
     "ctaSignedIn": "Go to my events",
+    "useCases": {
+      "wedding": "Wedding",
+      "gap": "Gap circle",
+      "birthday": "Birthday",
+      "choyxona": "Choyxona",
+      "sunnat": "Sunnat to'y",
+      "aqiqa": "Aqiqa",
+      "challari": "Challari"
+    },
     "features": {
-      "eventsTitle": "Plan together",
-      "eventsBody": "Set date, time, location, and cover image for every event.",
-      "commentsTitle": "Discuss in threads",
-      "commentsBody": "Nested comments keep conversations organized, Reddit-style.",
-      "expensesTitle": "Split fairly",
-      "expensesBody": "Log who paid what and see who owes whom instantly.",
+      "eventsTitle": "Any kind of event",
+      "eventsBody": "Weddings, gap circles, sunnat to'y, aqiqa, challari, birthdays, or a choyxona gathering — date, place, and guest list in one spot.",
+      "commentsTitle": "Plan together",
+      "commentsBody": "Threaded comments keep venue picks, tasks, and updates organized as the group decides.",
+      "expensesTitle": "Money made clear",
+      "expensesBody": "Track who paid, split costs fairly, and see balances — useful for gap pools, choyxona bills, and family celebrations.",
       "telegramTitle": "Built for Telegram",
-      "telegramBody": "Sign in with Telegram and share events back to your chats."
+      "telegramBody": "Invite family and friends by link. Get reminders and updates in Telegram."
     }
   },
   "auth": {
     "title": "Sign in with Telegram",
-    "subtitle": "Use your Telegram account to create and join events.",
+    "subtitle": "Use Telegram to create or join weddings, gap circles, sunnat to'y, choyxona, and any event.",
     "telegramHint": "We only receive your public Telegram profile.",
     "miniAppHint": "Opened from Telegram? You are already signed in."
   },
   "events": {
     "title": "Events",
     "newTitle": "New event",
+    "editTitle": "Edit event",
+    "deleteEvent": "Delete event",
+    "deleteConfirm": "Delete this event permanently? All comments and expenses will be removed.",
     "detailTitle": "Event details",
+    "upcomingTitle": "Upcoming",
+    "pastTitle": "Past events",
+    "ownerBadge": "Organizer",
+    "leaveEvent": "Leave event",
+    "leaveConfirm": "Leave this event? You can rejoin with an invite link.",
+    "removeMember": "Remove",
+    "transferTitle": "Transfer organizer role",
+    "transferHint": "Hand off admin duties so you can leave the event.",
+    "transferAction": "Make someone else admin",
+    "transferConfirm": "They will become the organizer. You will become a regular member.",
     "form": {
       "title": "Title",
-      "titlePlaceholder": "Friday dinner, Tashkent trip...",
+      "titlePlaceholder": "e.g. Wedding, Gap circle, Sunnat to'y, Choyxona...",
       "description": "Description",
-      "descriptionPlaceholder": "What should everyone know?",
+      "descriptionPlaceholder": "Guest notes, venue details, gap rules — anything the group needs.",
       "startsAt": "Date & time",
       "endsAt": "End time (optional)",
       "location": "Location",
       "locationPlaceholder": "Search for a place",
+      "locationLoading": "Loading Google Maps...",
+      "locationHint": "Search venues and addresses in Uzbekistan and nearby countries. If a place is missing, use the typed name option.",
+      "locationSearching": "Searching...",
+      "locationNoResults": "No matches yet. Try a shorter name or save the typed name below.",
+      "locationUseTypedName": "Use \"{name}\" without map pin",
+      "locationManualOnly": "Saved without map coordinates",
+      "locationClear": "Clear",
+      "locationMapsUnavailable": "Google Maps API key is not configured. You can type a location name manually.",
+      "locationError": "Could not load maps. Try again or type manually.",
       "coverImage": "Cover image",
-      "submit": "Create event"
+      "coverReplaceHint": "Upload a new image to replace the current cover.",
+      "removeCover": "Remove cover image",
+      "submit": "Create event",
+      "saveChanges": "Save changes",
+      "saveError": "Could not save event. Please try again.",
+      "deleteError": "Could not delete event. Please try again."
     },
     "tabs": {
       "overview": "Overview",
@@ -73,12 +117,49 @@
       "amount": "Amount",
       "paidBy": "Paid by",
       "splitAmong": "Split among",
+      "splitEqual": "Split equally",
+      "splitCustom": "Custom amounts",
+      "customAmount": "Amount",
+      "customTotal": "Split total: {current} / {target}",
       "settlementTitle": "Who owes whom",
       "settlementEmpty": "All settled up!",
+      "empty": "No expenses yet.",
+      "edit": "Edit",
+      "delete": "Delete",
       "owes": "{from} owes {to} {amount}"
+    },
+    "notifications": {
+      "enableHint": "Start the KimKim bot on Telegram to get comment, expense, and reminder notifications.",
+      "openBot": "Enable notifications"
+    },
+    "invite": {
+      "title": "Invite friends",
+      "subtitle": "Share this link so others can join the event.",
+      "copy": "Copy link",
+      "copied": "Copied!",
+      "shareTelegram": "Share on Telegram",
+      "openInBot": "Open in bot",
+      "shareText": "Join my event: {title}",
+      "regenerate": "New invite link",
+      "regenerateConfirm": "Generate a new invite link? The old link will stop working."
     }
   },
+  "join": {
+    "loading": "Loading invite...",
+    "notFound": "This invite link is invalid or expired.",
+    "eyebrow": "You're invited",
+    "memberCount": "{count, plural, one {# person going} other {# people going}}",
+    "join": "Join event",
+    "joining": "Joining...",
+    "openEvent": "Open event",
+    "loginToJoin": "Sign in with Telegram to join this event."
+  },
+  "pwa": {
+    "offlineTitle": "You're offline",
+    "offlineBody": "Showing saved event details. Comments and expenses can't be updated until you're back online.",
+    "offlineCachedAt": "Saved {time}"
+  },
   "footer": {
-    "madeIn": "Made for friends in Uzbekistan and beyond."
+    "madeIn": "For families, friends, and gap circles — in Uzbekistan and beyond."
   }
 }

@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/cloudflare";
-import type { Comment, Event, Expense, User } from "@/types";
+import { generateInviteCode } from "@/lib/utils";
+import type { Comment, Event, EventMember, Expense, User } from "@/types";
 import { nestComments } from "@/lib/expense/settlement";
 
 export async function listUserEvents(userId: string): Promise<Event[]> {
@@ -16,6 +17,31 @@ export async function listUserEvents(userId: string): Promise<Event[]> {
     .all<Event>();
 
   return result.results ?? [];
+}
+
+export async function getEventByInviteCode(code: string): Promise<Event | null> {
+  const db = await getDb();
+  return (
+    (await db
+      .prepare("SELECT * FROM events WHERE invite_code = ?")
+      .bind(code)
+      .first<Event>()) ?? null
+  );
+}
+
+export async function joinEvent(eventId: string, userId: string): Promise<boolean> {
+  const db = await getDb();
+  const existing = await isEventMember(eventId, userId);
+  if (existing) return true;
+
+  await db
+    .prepare(
+      "INSERT INTO event_members (event_id, user_id, role) VALUES (?, ?, 'member')",
+    )
+    .bind(eventId, userId)
+    .run();
+
+  return true;
 }
 
 export async function getEventById(eventId: string): Promise<Event | null> {
@@ -37,18 +63,105 @@ export async function isEventMember(eventId: string, userId: string): Promise<bo
   return Boolean(row);
 }
 
-export async function listEventMembers(eventId: string): Promise<User[]> {
+export async function isEventOwner(eventId: string, userId: string): Promise<boolean> {
+  const db = await getDb();
+  const row = await db
+    .prepare(
+      "SELECT 1 FROM event_members WHERE event_id = ? AND user_id = ? AND role = 'owner'",
+    )
+    .bind(eventId, userId)
+    .first();
+  return Boolean(row);
+}
+
+export async function getEventMemberRole(
+  eventId: string,
+  userId: string,
+): Promise<"owner" | "member" | null> {
+  const db = await getDb();
+  const row = await db
+    .prepare("SELECT role FROM event_members WHERE event_id = ? AND user_id = ?")
+    .bind(eventId, userId)
+    .first<{ role: "owner" | "member" }>();
+
+  return row?.role ?? null;
+}
+
+export async function leaveEvent(eventId: string, userId: string): Promise<boolean> {
+  const role = await getEventMemberRole(eventId, userId);
+  if (!role || role === "owner") return false;
+
+  await removeEventMember(eventId, userId);
+  return true;
+}
+
+export async function removeEventMember(eventId: string, userId: string): Promise<void> {
+  const db = await getDb();
+  await db
+    .prepare("DELETE FROM event_members WHERE event_id = ? AND user_id = ?")
+    .bind(eventId, userId)
+    .run();
+}
+
+export async function transferEventOwnership(
+  eventId: string,
+  fromUserId: string,
+  toUserId: string,
+): Promise<boolean> {
+  const db = await getDb();
+  const fromRole = await getEventMemberRole(eventId, fromUserId);
+  const toRole = await getEventMemberRole(eventId, toUserId);
+
+  if (fromRole !== "owner" || !toRole || toUserId === fromUserId) {
+    return false;
+  }
+
+  await db
+    .prepare(
+      "UPDATE event_members SET role = 'member' WHERE event_id = ? AND user_id = ?",
+    )
+    .bind(eventId, fromUserId)
+    .run();
+
+  await db
+    .prepare(
+      "UPDATE event_members SET role = 'owner' WHERE event_id = ? AND user_id = ?",
+    )
+    .bind(eventId, toUserId)
+    .run();
+
+  await db
+    .prepare("UPDATE events SET creator_id = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(toUserId, eventId)
+    .run();
+
+  return true;
+}
+
+export async function regenerateEventInviteCode(eventId: string): Promise<string | null> {
+  const db = await getDb();
+  const code = generateInviteCode();
+
+  await db
+    .prepare("UPDATE events SET invite_code = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(code, eventId)
+    .run();
+
+  return code;
+}
+
+export async function listEventMembers(eventId: string): Promise<EventMember[]> {
   const db = await getDb();
   const result = await db
     .prepare(
-      `SELECT u.*
+      `SELECT u.*, em.role
        FROM users u
        JOIN event_members em ON em.user_id = u.id
        WHERE em.event_id = ?
-       ORDER BY u.first_name ASC`,
+       ORDER BY CASE em.role WHEN 'owner' THEN 0 ELSE 1 END, u.first_name ASC`,
     )
     .bind(eventId)
-    .all<User>();
+    .all<EventMember>();
 
   return result.results ?? [];
 }

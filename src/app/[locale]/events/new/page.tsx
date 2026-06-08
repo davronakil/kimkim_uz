@@ -20,7 +20,7 @@ export default async function NewEventPage({
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-3xl font-semibold">{t("newTitle")}</h1>
+      <h1 className="kk-page-title">{t("newTitle")}</h1>
       <CreateEventForm />
     </div>
   );

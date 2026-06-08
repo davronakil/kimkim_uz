@@ -15,3 +15,12 @@ export async function getMediaBucket(): Promise<R2Bucket> {
   const env = await getEnv();
   return env.MEDIA;
 }
+
+export async function runInBackground(task: Promise<unknown>) {
+  try {
+    const { ctx } = await getCloudflareContext({ async: true });
+    ctx.waitUntil(task);
+  } catch {
+    void task.catch((error) => console.error("Background task failed:", error));
+  }
+}

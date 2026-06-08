@@ -8,7 +8,8 @@ TELEGRAM_BOT_TOKEN=your-telegram-bot-token
 TELEGRAM_BOT_USERNAME=your_bot_username
 NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=your_bot_username
 
-# Google Cloud Console — restrict key to your domains (kimkim.uz, localhost)
+# Google Cloud Console — enable "Maps JavaScript API" + "Places API"
+# Restrict key to kimkim.uz and localhost. Also add to wrangler vars for production builds.
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
 
 # Local dev
@@ -16,3 +17,6 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # Production (set in Cloudflare dashboard / wrangler secret, not in git)
 # NEXT_PUBLIC_APP_URL=https://kimkim.uz
+
+# Random secret for hourly reminder cron (also set via: wrangler secret put CRON_SECRET)
+CRON_SECRET=replace-with-a-long-random-string

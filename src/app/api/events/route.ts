@@ -1,20 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
-import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getDb, getMediaBucket } from "@/lib/cloudflare";
 import { listUserEvents } from "@/lib/db/queries";
-
-const createEventSchema = z.object({
-  title: z.string().min(2).max(120),
-  description: z.string().max(5000).optional(),
-  starts_at: z.string(),
-  ends_at: z.string().optional(),
-  location_name: z.string().optional(),
-  location_address: z.string().optional(),
-  location_lat: z.number().optional(),
-  location_lng: z.number().optional(),
-});
+import { parseEventFormData } from "@/lib/events/form";
+import { generateInviteCode } from "@/lib/utils";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -33,20 +23,7 @@ export async function POST(request: NextRequest) {
   }
 
   const formData = await request.formData();
-  const payload = createEventSchema.safeParse({
-    title: formData.get("title"),
-    description: formData.get("description") || undefined,
-    starts_at: formData.get("starts_at"),
-    ends_at: formData.get("ends_at") || undefined,
-    location_name: formData.get("location_name") || undefined,
-    location_address: formData.get("location_address") || undefined,
-    location_lat: formData.get("location_lat")
-      ? Number(formData.get("location_lat"))
-      : undefined,
-    location_lng: formData.get("location_lng")
-      ? Number(formData.get("location_lng"))
-      : undefined,
-  });
+  const payload = parseEventFormData(formData);
 
   if (!payload.success) {
     return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
@@ -54,6 +31,7 @@ export async function POST(request: NextRequest) {
 
   const db = await getDb();
   const eventId = nanoid();
+  const inviteCode = generateInviteCode();
   let coverImageKey: string | null = null;
 
   const cover = formData.get("cover_image");
@@ -69,8 +47,8 @@ export async function POST(request: NextRequest) {
     .prepare(
       `INSERT INTO events (
         id, creator_id, title, description, starts_at, ends_at,
-        location_name, location_address, location_lat, location_lng, cover_image_key
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        location_name, location_address, location_lat, location_lng, cover_image_key, invite_code
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       eventId,
@@ -84,6 +62,7 @@ export async function POST(request: NextRequest) {
       payload.data.location_lat ?? null,
       payload.data.location_lng ?? null,
       coverImageKey,
+      inviteCode,
     )
     .run();
 

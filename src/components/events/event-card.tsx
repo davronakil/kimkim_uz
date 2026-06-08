@@ -5,15 +5,16 @@ import type { Event } from "@/types";
 type EventCardProps = {
   event: Event;
   locale: string;
+  past?: boolean;
 };
 
-export function EventCard({ event, locale }: EventCardProps) {
+export function EventCard({ event, locale, past = false }: EventCardProps) {
   const startsAt = new Date(event.starts_at);
 
   return (
     <Link
       href={`/events/${event.id}`}
-      className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+      className={`group touch-manipulation overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900 ${past ? "opacity-80" : ""}`}
     >
       <div className="aspect-[16/9] bg-gradient-to-br from-emerald-100 to-teal-200 dark:from-emerald-950 dark:to-teal-950">
         {event.cover_image_key ? (
@@ -29,9 +30,11 @@ export function EventCard({ event, locale }: EventCardProps) {
           </div>
         )}
       </div>
-      <div className="space-y-2 p-4">
-        <h3 className="text-lg font-semibold group-hover:text-emerald-600">{event.title}</h3>
-        <p className="line-clamp-2 text-sm text-zinc-600 dark:text-zinc-300">
+      <div className="space-y-2 p-4 sm:p-5">
+        <h3 className="text-lg font-semibold leading-snug group-hover:text-emerald-600 sm:text-xl">
+          {event.title}
+        </h3>
+        <p className="line-clamp-2 text-base text-zinc-600 sm:text-sm dark:text-zinc-300">
           {event.description || "—"}
         </p>
         <div className="flex flex-wrap gap-3 text-sm text-zinc-500">

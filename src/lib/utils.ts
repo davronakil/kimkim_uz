@@ -1,5 +1,12 @@
 import { clsx, type ClassValue } from "clsx";
+import { customAlphabet } from "nanoid";
 import { twMerge } from "tailwind-merge";
+
+const inviteAlphabet = customAlphabet("23456789abcdefghjkmnpqrstuvwxyz", 10);
+
+export function generateInviteCode() {
+  return inviteAlphabet();
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

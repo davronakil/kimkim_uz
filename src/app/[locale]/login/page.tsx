@@ -23,10 +23,12 @@ export default async function LoginPage({
     "your_bot_username";
 
   return (
-    <div className="mx-auto max-w-md space-y-6 rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold">{t("title")}</h1>
-        <p className="text-sm text-zinc-600 dark:text-zinc-300">{t("subtitle")}</p>
+    <div className="mx-auto max-w-md space-y-6 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="space-y-3 text-center">
+        <h1 className="text-2xl font-semibold sm:text-3xl">{t("title")}</h1>
+        <p className="text-base leading-relaxed text-zinc-600 sm:text-sm dark:text-zinc-300">
+          {t("subtitle")}
+        </p>
       </div>
       <TelegramLoginButton botUsername={botUsername} />
       <p className="text-center text-xs text-zinc-500">{t("telegramHint")}</p>

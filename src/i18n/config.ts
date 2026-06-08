@@ -4,5 +4,15 @@ export const defaultLocale: Locale = "en";
 
 export const localeNames: Record<Locale, string> = {
   en: "English",
-  uz: "Oʻzbekcha",
+  uz: "O'zbek",
+};
+
+export const localeFlags: Record<Locale, string> = {
+  en: "🇬🇧",
+  uz: "🇺🇿",
+};
+
+export const localeShort: Record<Locale, string> = {
+  en: "EN",
+  uz: "UZ",
 };

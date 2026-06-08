@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
-import { getDb } from "@/lib/cloudflare";
+import { getDb, runInBackground } from "@/lib/cloudflare";
 import { isEventMember } from "@/lib/db/queries";
+import { notifyNewComment } from "@/lib/telegram/notifications";
 
 const commentSchema = z.object({
   body: z.string().min(1).max(5000),
@@ -46,6 +47,16 @@ export async function POST(request: NextRequest, context: RouteContext) {
       parsed.data.body,
     )
     .run();
+
+  void runInBackground(
+    notifyNewComment({
+      eventId,
+      author: user,
+      body: parsed.data.body,
+      parentId: parsed.data.parent_id ?? null,
+      authorUserId: user.id,
+    }),
+  );
 
   return NextResponse.json({ id: commentId });
 }

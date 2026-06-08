@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { verifyTelegramLogin, verifyTelegramWebAppInitData } from "@/lib/auth/telegram";
-import { createSession, setSessionCookie, upsertTelegramUser } from "@/lib/auth/session";
+import {
+  applySessionCookie,
+  createSession,
+  upsertTelegramUser,
+} from "@/lib/auth/session";
 import { getEnv } from "@/lib/cloudflare";
 
 const loginSchema = z.object({
@@ -13,6 +17,13 @@ const loginSchema = z.object({
   auth_date: z.string(),
   hash: z.string(),
 });
+
+function isSecureRequest(request: NextRequest) {
+  return (
+    request.url.startsWith("https://") ||
+    request.headers.get("x-forwarded-proto") === "https"
+  );
+}
 
 export async function POST(request: NextRequest) {
   const env = await getEnv();
@@ -37,9 +48,8 @@ export async function POST(request: NextRequest) {
   });
 
   const token = await createSession(user.id);
-  await setSessionCookie(token);
-
-  return NextResponse.json({ user });
+  const response = NextResponse.json({ user });
+  return applySessionCookie(response, token, isSecureRequest(request));
 }
 
 export async function PUT(request: NextRequest) {
@@ -75,7 +85,6 @@ export async function PUT(request: NextRequest) {
   });
 
   const token = await createSession(user.id);
-  await setSessionCookie(token);
-
-  return NextResponse.json({ user });
+  const response = NextResponse.json({ user });
+  return applySessionCookie(response, token, isSecureRequest(request));
 }

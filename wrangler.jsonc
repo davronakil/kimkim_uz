@@ -1,20 +1,19 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "kimkim-uz",
-  "main": ".open-next/worker.js",
+  "main": "worker-scheduled.mjs",
   "compatibility_date": "2026-06-08",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": true,
   "observability": { "enabled": true },
   "routes": [
-    {
-      "pattern": "kimkim.uz",
-      "custom_domain": true
-    },
-    {
-      "pattern": "www.kimkim.uz",
-      "custom_domain": true
-    }
+    { "pattern": "kimkim.uz/*", "zone_name": "kimkim.uz" },
+    { "pattern": "www.kimkim.uz/*", "zone_name": "kimkim.uz" }
   ],
+  "vars": {
+    "NEXT_PUBLIC_APP_URL": "https://kimkim.uz",
+    "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME": "kimkimuzbot"
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
@@ -29,7 +28,7 @@
     {
       "binding": "DB",
       "database_name": "kimkim-db",
-      "database_id": "00000000-0000-0000-0000-000000000001"
+      "database_id": "fc042b1a-b261-42cd-840d-0f5698ef60ad"
     }
   ],
   "r2_buckets": [
@@ -40,5 +39,8 @@
   ],
   "images": {
     "binding": "IMAGES"
+  },
+  "triggers": {
+    "crons": ["0 * * * *"]
   }
 }

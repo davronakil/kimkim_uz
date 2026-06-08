@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
+  --background: #f4f4f5;
   --foreground: #18181b;
+  --card: #ffffff;
+  --muted: #71717a;
+  --accent: #10b981;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
 }
 
 @theme inline {
@@ -16,11 +21,135 @@
   :root {
     --background: #09090b;
     --foreground: #fafafa;
+    --card: #18181b;
+    --muted: #a1a1aa;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 16px inputs prevent iOS zoom on focus */
+  input,
+  textarea,
+  select {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 640px) {
+    input,
+    textarea,
+    select {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+@layer components {
+  .kk-input {
+    @apply w-full rounded-xl border border-zinc-200 bg-white px-4 py-3.5 outline-none transition focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-950;
+  }
+
+  .kk-textarea {
+    @apply w-full min-h-[7rem] resize-y rounded-xl border border-zinc-200 bg-white px-4 py-3.5 outline-none transition focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-950;
+  }
+
+  .kk-label {
+    @apply block text-base font-medium sm:text-sm;
+  }
+
+  .kk-card {
+    @apply rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900;
+  }
+
+  .kk-btn {
+    @apply inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-medium transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 sm:min-h-10 sm:px-4 sm:py-2.5 sm:text-sm;
+  }
+
+  .kk-btn-primary {
+    @apply inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 rounded-full bg-emerald-500 px-5 py-3 text-base font-medium text-white shadow-sm shadow-emerald-500/25 transition hover:bg-emerald-600 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 sm:min-h-10 sm:px-4 sm:py-2.5 sm:text-sm;
+  }
+
+  .kk-btn-secondary {
+    @apply inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 rounded-full border border-zinc-200 bg-white px-5 py-3 text-base font-medium text-zinc-700 transition hover:bg-zinc-50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-800 sm:min-h-10 sm:px-4 sm:py-2.5 sm:text-sm;
+  }
+
+  .kk-btn-ghost {
+    @apply inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 rounded-full border border-zinc-200 px-5 py-3 text-base font-medium text-zinc-600 transition hover:bg-zinc-50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 sm:min-h-10 sm:px-4 sm:py-2.5 sm:text-sm;
+  }
+
+  .kk-page-title {
+    @apply text-2xl font-semibold tracking-tight sm:text-3xl;
+  }
+
+  .kk-section-title {
+    @apply text-lg font-semibold sm:text-base sm:font-medium;
+  }
+
+  .kk-chip {
+    @apply inline-flex min-h-10 touch-manipulation items-center rounded-full px-4 py-2 text-sm font-medium transition active:scale-[0.98] sm:min-h-9 sm:px-3.5 sm:py-1.5;
+  }
+
+  .kk-chip-active {
+    @apply inline-flex min-h-10 touch-manipulation items-center rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition active:scale-[0.98] sm:min-h-9 sm:px-3.5 sm:py-1.5;
+  }
+
+  .kk-chip-inactive {
+    @apply inline-flex min-h-10 touch-manipulation items-center rounded-full border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-600 transition active:scale-[0.98] dark:border-zinc-700 dark:text-zinc-300 sm:min-h-9 sm:px-3.5 sm:py-1.5;
+  }
+}
+
+@layer utilities {
+  .pt-safe {
+    padding-top: var(--safe-top);
+  }
+
+  .pb-safe {
+    padding-bottom: max(0.75rem, var(--safe-bottom));
+  }
+
+  .pb-safe-nav {
+    padding-bottom: calc(4.5rem + var(--safe-bottom));
+  }
+}
+
+/* Google Places autocomplete dropdown above modals/header */
+.pac-container {
+  z-index: 10000 !important;
+  border-radius: 0.75rem;
+  border: 1px solid #e4e4e7;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.12);
+  margin-top: 4px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.pac-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.pac-item:hover {
+  background: #ecfdf5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pac-container {
+    background: #18181b;
+    border-color: #3f3f46;
+  }
+
+  .pac-item:hover {
+    background: #064e3b;
+  }
 }
