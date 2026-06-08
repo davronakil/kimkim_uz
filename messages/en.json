@@ -88,21 +88,23 @@
       "declined": "Can't go"
     },
     "notifications": {
-      "title": "Telegram notifications",
-      "subtitle": "Choose how KimKim should notify you about comments and expenses in this event.",
+      "title": "Telegram updates",
+      "subtitle": "How do you want to hear about comments and expenses for this event?",
       "saving": "Saving...",
       "instant": {
-        "title": "Instant",
-        "body": "Send each comment and expense right away."
+        "title": "Every update",
+        "body": "Ping me in Telegram as soon as someone comments or logs an expense."
       },
       "digest": {
-        "title": "Digest",
-        "body": "Send an hourly summary when there is activity."
+        "title": "Hourly digest",
+        "body": "Bundle new activity into one short message per hour."
       },
       "muted": {
-        "title": "Muted",
-        "body": "No comment or expense notifications."
-      }
+        "title": "Turn off",
+        "body": "Skip comment and expense alerts. Event reminders still come through."
+      },
+      "enableHint": "Start the KimKim bot to get comments, expenses, and reminders in Telegram.",
+      "openBot": "Enable notifications"
     },
     "paymentsSummary": {
       "title": "Payment summary",
@@ -268,10 +270,6 @@
       "copySettlement": "Copy balances",
       "settlementCopied": "Copied!",
       "shareSettlement": "Share on Telegram"
-    },
-    "notifications": {
-      "enableHint": "Start the KimKim bot to get comments, expenses, and reminders in Telegram.",
-      "openBot": "Enable notifications"
     },
     "invite": {
       "title": "Invite friends",

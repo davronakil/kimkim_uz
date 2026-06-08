@@ -88,21 +88,23 @@
       "declined": "Kela olmaydi"
     },
     "notifications": {
-      "title": "Telegram bildirishnomalari",
-      "subtitle": "Bu eventdagi izoh va xarajatlar haqida KimKim qanday xabar berishini tanlang.",
+      "title": "Telegram yangiliklari",
+      "subtitle": "Bu eventdagi izoh va xarajatlar haqida qanday xabar olasiz?",
       "saving": "Saqlanmoqda...",
       "instant": {
-        "title": "Darhol",
-        "body": "Har bir izoh va xarajatni darhol yuboradi."
+        "title": "Har yangilikda",
+        "body": "Kimdir izoh yozsa yoki xarajat qo'shsa — darhol Telegramga xabar."
       },
       "digest": {
-        "title": "Xulosa",
-        "body": "Faollik bo'lsa, soatiga bir marta qisqa xulosa yuboradi."
+        "title": "Soatlik xulosa",
+        "body": "Soatiga bir marta qisqa xulosa — faqat yangilik bo'lsa."
       },
       "muted": {
-        "title": "O'chirilgan",
-        "body": "Izoh va xarajat bildirishnomalari kelmaydi."
-      }
+        "title": "O'chiq",
+        "body": "Izoh va xarajat xabarlari kelmaydi. Event eslatmalari keladi."
+      },
+      "enableHint": "KimKim botini start qiling — izohlar, xarajatlar va eslatmalar Telegramga keladi.",
+      "openBot": "Botni ochish"
     },
     "paymentsSummary": {
       "title": "To'lov xulosasi",
@@ -268,10 +270,6 @@
       "copySettlement": "Qarzlarni copy",
       "settlementCopied": "Copy bo'ldi!",
       "shareSettlement": "Telegramda share"
-    },
-    "notifications": {
-      "enableHint": "KimKim botini start qiling — izohlar, xarajatlar va eslatmalar Telegramga keladi.",
-      "openBot": "Botni ochish"
     },
     "invite": {
       "title": "Do'stlarni chaqirish",
