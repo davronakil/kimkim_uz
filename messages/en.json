@@ -1,0 +1,84 @@
+{
+  "common": {
+    "appName": "KimKim",
+    "tagline": "Plan events, split expenses, stay connected.",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "share": "Share",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "createEvent": "Create event",
+    "myEvents": "My events",
+    "noEvents": "No events yet. Create your first gathering!",
+    "language": "Language"
+  },
+  "home": {
+    "heroTitle": "Events made simple for your crew",
+    "heroSubtitle": "Create gatherings, pick a place on the map, discuss plans in threaded comments, and settle expenses automatically.",
+    "ctaSignedOut": "Continue with Telegram",
+    "ctaSignedIn": "Go to my events",
+    "features": {
+      "eventsTitle": "Plan together",
+      "eventsBody": "Set date, time, location, and cover image for every event.",
+      "commentsTitle": "Discuss in threads",
+      "commentsBody": "Nested comments keep conversations organized, Reddit-style.",
+      "expensesTitle": "Split fairly",
+      "expensesBody": "Log who paid what and see who owes whom instantly.",
+      "telegramTitle": "Built for Telegram",
+      "telegramBody": "Sign in with Telegram and share events back to your chats."
+    }
+  },
+  "auth": {
+    "title": "Sign in with Telegram",
+    "subtitle": "Use your Telegram account to create and join events.",
+    "telegramHint": "We only receive your public Telegram profile.",
+    "miniAppHint": "Opened from Telegram? You are already signed in."
+  },
+  "events": {
+    "title": "Events",
+    "newTitle": "New event",
+    "detailTitle": "Event details",
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "Friday dinner, Tashkent trip...",
+      "description": "Description",
+      "descriptionPlaceholder": "What should everyone know?",
+      "startsAt": "Date & time",
+      "endsAt": "End time (optional)",
+      "location": "Location",
+      "locationPlaceholder": "Search for a place",
+      "coverImage": "Cover image",
+      "submit": "Create event"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "comments": "Comments",
+      "expenses": "Expenses"
+    },
+    "comments": {
+      "title": "Discussion",
+      "placeholder": "Write a comment...",
+      "reply": "Reply",
+      "post": "Post",
+      "empty": "No comments yet. Start the conversation."
+    },
+    "expenses": {
+      "title": "Expenses",
+      "add": "Add expense",
+      "description": "Description",
+      "amount": "Amount",
+      "paidBy": "Paid by",
+      "splitAmong": "Split among",
+      "settlementTitle": "Who owes whom",
+      "settlementEmpty": "All settled up!",
+      "owes": "{from} owes {to} {amount}"
+    }
+  },
+  "footer": {
+    "madeIn": "Made for friends in Uzbekistan and beyond."
+  }
+}

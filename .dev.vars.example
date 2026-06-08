@@ -1,0 +1,18 @@
+NEXTJS_ENV=development
+
+# Generate a long random string (never commit the real value)
+SESSION_SECRET=replace-with-a-long-random-string
+
+# From https://t.me/BotFather — store only in .dev.vars or Wrangler secrets
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_BOT_USERNAME=your_bot_username
+NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=your_bot_username
+
+# Google Cloud Console — restrict key to your domains (kimkim.uz, localhost)
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+
+# Local dev
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Production (set in Cloudflare dashboard / wrangler secret, not in git)
+# NEXT_PUBLIC_APP_URL=https://kimkim.uz

@@ -15,7 +15,12 @@
 
 # next.js
 /.next/
+/.open-next/
 /out/
+.dev.vars
+
+# cloudflare local state (D1 sqlite, etc.)
+.wrangler/
 
 # production
 /build
@@ -23,6 +28,10 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.p12
+.credentials
+.credentials.json
 
 # debug
 npm-debug.log*

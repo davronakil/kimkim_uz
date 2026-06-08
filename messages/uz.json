@@ -1,0 +1,84 @@
+{
+  "common": {
+    "appName": "KimKim",
+    "tagline": "Tadbirlarni rejalashtiring, xarajatlarni bo‘ling, aloqada qoling.",
+    "loading": "Yuklanmoqda...",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O‘chirish",
+    "edit": "Tahrirlash",
+    "back": "Orqaga",
+    "share": "Ulashish",
+    "signIn": "Kirish",
+    "signOut": "Chiqish",
+    "createEvent": "Tadbir yaratish",
+    "myEvents": "Mening tadbirlarim",
+    "noEvents": "Hali tadbir yo‘q. Birinchi yig‘ilishni yarating!",
+    "language": "Til"
+  },
+  "home": {
+    "heroTitle": "Do‘stlaringiz uchun tadbirlar oson",
+    "heroSubtitle": "Yig‘ilish yarating, xaritadan joy tanlang, izchil izohlar orqali muhokama qiling va xarajatlarni avtomatik hisoblang.",
+    "ctaSignedOut": "Telegram orqali davom etish",
+    "ctaSignedIn": "Tadbirlarimga o‘tish",
+    "features": {
+      "eventsTitle": "Birgalikda rejalashtiring",
+      "eventsBody": "Har bir tadbir uchun sana, vaqt, joy va muqova rasmini belgilang.",
+      "commentsTitle": "Mavzular bo‘yicha muhokama",
+      "commentsBody": "Ichma-ich izohlar suhbatni tartibli saqlaydi.",
+      "expensesTitle": "Adolatli bo‘lish",
+      "expensesBody": "Kim nima to‘laganini yozing va kim kimga qancha qarzdorligini ko‘ring.",
+      "telegramTitle": "Telegram uchun yaratilgan",
+      "telegramBody": "Telegram orqali kiring va tadbirlarni chatlaringizga ulashing."
+    }
+  },
+  "auth": {
+    "title": "Telegram orqali kirish",
+    "subtitle": "Tadbir yaratish va qo‘shilish uchun Telegram hisobingizdan foydalaning.",
+    "telegramHint": "Biz faqat ochiq Telegram profilingizni olamiz.",
+    "miniAppHint": "Telegram ichidan ochdingizmi? Siz allaqachon tizimga kirdingiz."
+  },
+  "events": {
+    "title": "Tadbirlar",
+    "newTitle": "Yangi tadbir",
+    "detailTitle": "Tadbir tafsilotlari",
+    "form": {
+      "title": "Sarlavha",
+      "titlePlaceholder": "Juma kechasi ovqat, Toshkent sayohati...",
+      "description": "Tavsif",
+      "descriptionPlaceholder": "Hammaga nima ma’lum bo‘lishi kerak?",
+      "startsAt": "Sana va vaqt",
+      "endsAt": "Tugash vaqti (ixtiyoriy)",
+      "location": "Joy",
+      "locationPlaceholder": "Joy qidiring",
+      "coverImage": "Muqova rasmi",
+      "submit": "Tadbir yaratish"
+    },
+    "tabs": {
+      "overview": "Umumiy",
+      "comments": "Izohlar",
+      "expenses": "Xarajatlar"
+    },
+    "comments": {
+      "title": "Muhokama",
+      "placeholder": "Izoh yozing...",
+      "reply": "Javob berish",
+      "post": "Yuborish",
+      "empty": "Hali izoh yo‘q. Suhbatni boshlang."
+    },
+    "expenses": {
+      "title": "Xarajatlar",
+      "add": "Xarajat qo‘shish",
+      "description": "Tavsif",
+      "amount": "Summa",
+      "paidBy": "To‘lagan",
+      "splitAmong": "Bo‘linadi",
+      "settlementTitle": "Kim kimga qarzdor",
+      "settlementEmpty": "Hammasi hal qilindi!",
+      "owes": "{from} → {to}: {amount}"
+    }
+  },
+  "footer": {
+    "madeIn": "O‘zbekiston va undan tashqaridagi do‘stlar uchun yaratilgan."
+  }
+}
