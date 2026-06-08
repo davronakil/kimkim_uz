@@ -11,6 +11,7 @@ import { CommentThread } from "@/components/events/comment-thread";
 import { ExpensePanel } from "@/components/events/expense-panel";
 import { InvitePanel } from "@/components/events/invite-panel";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
+import { PayoutMethodPanel } from "@/components/events/payout-method-panel";
 import { LeaveEventButton } from "@/components/events/leave-event-button";
 import { MemberList } from "@/components/events/member-list";
 import { TransferOwnershipPanel } from "@/components/events/transfer-ownership-panel";
@@ -19,13 +20,21 @@ import { TelegramNotifyBanner } from "@/components/events/telegram-notify-banner
 import type { Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
 import { intlLocale } from "@/lib/locale";
-import type { Comment, Event, EventMember, Expense, Settlement } from "@/types";
+import type {
+  Comment,
+  Event,
+  EventMember,
+  EventPaymentSummary,
+  Expense,
+  Settlement,
+} from "@/types";
 type EventPayload = {
   event: Event;
   members: EventMember[];
   comments: Comment[];
   expenses: Expense[];
   settlements: Settlement[];
+  paymentSummaries: EventPaymentSummary[];
 };
 
 const tabs = ["overview", "comments", "expenses"] as const;
@@ -99,7 +108,7 @@ export function EventWorkspace({
     }
   }, [eventId, online]);
 
-  const { event, members, comments, expenses, settlements } = data;
+  const { event, members, comments, expenses, settlements, paymentSummaries } = data;
   const startsAt = new Date(event.starts_at);
 
   function renderTabContent() {
@@ -125,11 +134,17 @@ export function EventWorkspace({
               linked={Boolean(event.telegram_chat_id)}
             />
           ) : null}
+          {canEdit && event.payment_mode === "paid" ? <PayoutMethodPanel /> : null}
           <section className="kk-card p-5 sm:p-6">
             <h2 className="kk-section-title">{t("detailTitle")}</h2>
             <MemberList
               eventId={eventId}
               members={members}
+              paymentMode={event.payment_mode ?? "free"}
+              paymentSummaries={paymentSummaries}
+              ticketPriceCents={event.ticket_price_cents}
+              ticketCurrency={event.ticket_currency}
+              locale={locale}
               currentUserId={currentUserId}
               canManage={canEdit}
               onChanged={load}

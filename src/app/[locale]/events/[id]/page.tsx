@@ -17,6 +17,7 @@ import {
   listEventComments,
   listEventExpenses,
   listEventMembers,
+  listEventPaymentSummaries,
 } from "@/lib/db/queries";
 
 export async function generateMetadata({
@@ -53,10 +54,11 @@ export default async function EventDetailPage({
   const member = await isEventMember(id, user.id);
   if (!member) notFound();
 
-  const [members, comments, expenses] = await Promise.all([
+  const [members, comments, expenses, paymentSummaries] = await Promise.all([
     listEventMembers(id),
     listEventComments(id),
     listEventExpenses(id),
+    listEventPaymentSummaries(id),
   ]);
 
   const balances = buildBalancesFromExpenses(
@@ -97,7 +99,7 @@ export default async function EventDetailPage({
       canLeave={role === "member"}
       showNotifyBanner={!user.telegram_chat_id}
       currentUserId={user.id}
-      initialData={{ event, members, comments, expenses, settlements }}
+      initialData={{ event, members, comments, expenses, settlements, paymentSummaries }}
     />
   );
 }

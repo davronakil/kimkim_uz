@@ -1,28 +1,42 @@
 "use client";
 
-import { UserMinus } from "lucide-react";
+import { CheckCircle2, CircleDollarSign, UserMinus, XCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import type { EventMember } from "@/types";
-import { displayName } from "@/lib/utils";
+import type { EventMember, EventPaymentMode, EventPaymentSummary } from "@/types";
+import { displayName, formatMoney } from "@/lib/utils";
 
 export function MemberList({
   eventId,
   members,
+  paymentMode,
+  paymentSummaries,
+  ticketPriceCents,
+  ticketCurrency,
+  locale,
   currentUserId,
   canManage,
   onChanged,
 }: {
   eventId: string;
   members: EventMember[];
+  paymentMode: EventPaymentMode;
+  paymentSummaries: EventPaymentSummary[];
+  ticketPriceCents: number | null;
+  ticketCurrency: string;
+  locale: string;
   currentUserId: string;
   canManage: boolean;
   onChanged: () => void;
 }) {
   const t = useTranslations("events");
   const common = useTranslations("common");
+  const paymentT = useTranslations("events.memberPayments");
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [updatingPaymentId, setUpdatingPaymentId] = useState<string | null>(null);
+  const paymentByUser = new Map(paymentSummaries.map((payment) => [payment.user_id, payment]));
+  const showPaymentStatus = paymentMode === "paid";
 
   async function removeMember(userId: string) {
     setRemovingId(userId);
@@ -37,11 +51,32 @@ export function MemberList({
     }
   }
 
+  async function setPaid(userId: string, paid: boolean) {
+    setUpdatingPaymentId(userId);
+    const response = await fetch(`/api/events/${eventId}/members/${userId}/payment`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ paid }),
+    });
+    setUpdatingPaymentId(null);
+
+    if (response.ok) {
+      onChanged();
+    }
+  }
+
   return (
     <ul className="mt-4 space-y-3">
       {members.map((member) => {
         const canRemove =
           canManage && member.role !== "owner" && member.id !== currentUserId;
+        const payment = paymentByUser.get(member.id);
+        const paid = payment?.status === "completed";
+        const ticketLabel =
+          ticketPriceCents && ticketPriceCents > 0
+            ? formatMoney(ticketPriceCents, ticketCurrency, locale)
+            : null;
 
         return (
           <li
@@ -73,39 +108,79 @@ export function MemberList({
                     {t("ownerBadge")}
                   </span>
                 ) : null}
+                {showPaymentStatus ? (
+                  <span
+                    className={`inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
+                      paid
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+                        : "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200"
+                    }`}
+                  >
+                    {paid ? (
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <CircleDollarSign className="h-3.5 w-3.5" />
+                    )}
+                    {paid
+                      ? paymentT(payment?.source === "stripe" ? "paidStripe" : "paidManual")
+                      : paymentT("unpaid")}
+                    {ticketLabel ? ` · ${ticketLabel}` : ""}
+                  </span>
+                ) : null}
               </span>
             </div>
 
-            {canRemove ? (
-              confirmId === member.id ? (
-                <div className="flex flex-wrap gap-2">
+            {canManage || canRemove ? (
+              <div className="flex flex-wrap gap-2">
+                {showPaymentStatus && canManage && member.role !== "owner" ? (
                   <button
                     type="button"
-                    onClick={() => void removeMember(member.id)}
-                    disabled={removingId === member.id}
-                    className="kk-btn min-h-10 flex-1 bg-red-600 px-4 text-white hover:bg-red-700 sm:flex-none"
+                    onClick={() => void setPaid(member.id, !paid)}
+                    disabled={updatingPaymentId === member.id}
+                    className={`kk-btn-secondary min-h-10 flex-1 sm:flex-none ${
+                      paid ? "text-amber-700 dark:text-amber-300" : "text-emerald-700 dark:text-emerald-300"
+                    }`}
                   >
-                    {removingId === member.id ? common("loading") : common("delete")}
+                    {paid ? <XCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                    {updatingPaymentId === member.id
+                      ? common("loading")
+                      : paid
+                        ? paymentT("markUnpaid")
+                        : paymentT("markPaid")}
                   </button>
+                ) : null}
+                {canRemove ? (
+                  confirmId === member.id ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => void removeMember(member.id)}
+                        disabled={removingId === member.id}
+                        className="kk-btn min-h-10 flex-1 bg-red-600 px-4 text-white hover:bg-red-700 sm:flex-none"
+                      >
+                        {removingId === member.id ? common("loading") : common("delete")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmId(null)}
+                        className="kk-btn-secondary min-h-10 flex-1 sm:flex-none"
+                      >
+                        {common("cancel")}
+                      </button>
+                    </>
+                  ) : (
                   <button
                     type="button"
-                    onClick={() => setConfirmId(null)}
+                    onClick={() => setConfirmId(member.id)}
                     className="kk-btn-secondary min-h-10 flex-1 sm:flex-none"
+                    title={t("removeMember")}
                   >
-                    {common("cancel")}
+                    <UserMinus className="h-4 w-4" />
+                    {t("removeMember")}
                   </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setConfirmId(member.id)}
-                  className="kk-btn-secondary min-h-10 w-full sm:w-auto"
-                  title={t("removeMember")}
-                >
-                  <UserMinus className="h-4 w-4" />
-                  {t("removeMember")}
-                </button>
-              )
+                  )
+                ) : null}
+              </div>
             ) : null}
           </li>
         );

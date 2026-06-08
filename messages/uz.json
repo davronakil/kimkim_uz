@@ -75,6 +75,23 @@
     "transferHint": "Chiqib ketish uchun avval boshqasiga admin ber.",
     "transferAction": "Boshqasini admin qilish",
     "transferConfirm": "U admin bo'ladi. Siz oddiy a'zo bo'lasiz.",
+    "memberPayments": {
+      "paidStripe": "Karta orqali to'langan",
+      "paidManual": "To'langan",
+      "unpaid": "To'lanmagan",
+      "markPaid": "To'landi deb belgilash",
+      "markUnpaid": "To'lanmadi deb belgilash"
+    },
+    "payout": {
+      "title": "Pul olish usuli",
+      "subtitle": "KimKim tashqarisida to'langan pullarni qanday qabul qilishingizni mehmonlarga yozib qo'ying. Stripe karta to'lovlari Connect qo'shilmaguncha platforma Stripe hisobiga tushadi.",
+      "method": "Usul",
+      "methodPlaceholder": "masalan: Bank karta, Payme, Click, naqd",
+      "details": "Ma'lumotlar",
+      "detailsPlaceholder": "Karta raqami, telefon, bank rekvizitlari yoki izoh yozing.",
+      "notSet": "Hali pul olish usuli saqlanmagan.",
+      "updated": "Pul olish usuli saqlandi."
+    },
     "form": {
       "title": "Nomi",
       "titlePlaceholder": "Masalan: To'y, Gap, Sunnat to'y, Choyxona...",
@@ -209,6 +226,8 @@
     "join": "Kelaman — qo'shilish",
     "joining": "Qo'shilmoqda...",
     "payAndJoin": "{price} to'lab qo'shilish",
+    "joinPayLater": "Qo'shilib, keyin hostga to'lash",
+    "payLaterNote": "Tashkilotchi to'lov holatingizni ko'radi va KimKimdan tashqarida to'laganingizdan keyin sizni to'langan deb belgilaydi.",
     "startingCheckout": "To'lov ochilmoqda...",
     "confirmingPayment": "To'lov tekshirilmoqda...",
     "paymentSuccess": "To'lov qabul qilindi — xush kelibsiz!",

@@ -7,6 +7,9 @@ export type User = {
   last_name: string | null;
   photo_url: string | null;
   language_code: string;
+  payout_method: string | null;
+  payout_details: string | null;
+  payout_updated_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -87,17 +90,31 @@ export type TelegramLoginPayload = {
 };
 
 export type EventPaymentStatus = "pending" | "completed" | "failed";
+export type EventPaymentSource = "stripe" | "manual";
 
 export type EventPayment = {
   id: string;
   event_id: string;
   user_id: string;
-  stripe_checkout_session_id: string;
+  stripe_checkout_session_id: string | null;
   stripe_payment_intent_id: string | null;
   amount_cents: number;
   currency: string;
   status: EventPaymentStatus;
+  source: EventPaymentSource;
+  marked_by_user_id: string | null;
+  note: string | null;
   created_at: string;
+  updated_at: string;
+};
+
+export type EventPaymentSummary = {
+  user_id: string;
+  amount_cents: number;
+  currency: string;
+  status: EventPaymentStatus;
+  source: EventPaymentSource;
+  note: string | null;
   updated_at: string;
 };
 

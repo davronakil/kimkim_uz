@@ -75,6 +75,23 @@
     "transferHint": "Hand off admin duties so you can leave the event.",
     "transferAction": "Make someone else admin",
     "transferConfirm": "They will become the organizer. You will become a regular member.",
+    "memberPayments": {
+      "paidStripe": "Paid by card",
+      "paidManual": "Paid",
+      "unpaid": "Unpaid",
+      "markPaid": "Mark paid",
+      "markUnpaid": "Mark unpaid"
+    },
+    "payout": {
+      "title": "Payout preference",
+      "subtitle": "Tell guests how you want to receive money paid outside KimKim. Stripe card payments still go to the platform Stripe account until Connect payouts are added.",
+      "method": "Method",
+      "methodPlaceholder": "e.g. Bank card, Payme, Click, cash",
+      "details": "Details",
+      "detailsPlaceholder": "Add card number, phone number, bank details, or payout notes.",
+      "notSet": "No payout preference saved yet.",
+      "updated": "Payout preference saved."
+    },
     "form": {
       "title": "Title",
       "titlePlaceholder": "e.g. Wedding, Gap circle, Sunnat to'y, Choyxona...",
@@ -209,6 +226,8 @@
     "join": "I'm coming — join event",
     "joining": "Joining...",
     "payAndJoin": "Pay {price} & join",
+    "joinPayLater": "Join and pay host later",
+    "payLaterNote": "The host will track your payment status and can mark you paid after you settle outside KimKim.",
     "startingCheckout": "Opening checkout...",
     "confirmingPayment": "Confirming your payment...",
     "paymentSuccess": "Payment received — welcome to the event!",

@@ -6,6 +6,8 @@ import type {
   EventMember,
   EventPayment,
   EventPaymentMode,
+  EventPaymentSource,
+  EventPaymentSummary,
   EventPaymentStatus,
   Expense,
   User,
@@ -66,6 +68,29 @@ export async function getUserById(userId: string): Promise<User | null> {
   return (
     (await db.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<User>()) ?? null
   );
+}
+
+export async function updateUserPayoutPreferences({
+  userId,
+  payoutMethod,
+  payoutDetails,
+}: {
+  userId: string;
+  payoutMethod: string | null;
+  payoutDetails: string | null;
+}): Promise<User | null> {
+  const db = await getDb();
+  await db
+    .prepare(
+      `UPDATE users
+       SET payout_method = ?, payout_details = ?, payout_updated_at = datetime('now'),
+           updated_at = datetime('now')
+       WHERE id = ?`,
+    )
+    .bind(payoutMethod, payoutDetails, userId)
+    .run();
+
+  return getUserById(userId);
 }
 
 export async function getUserByTelegramId(telegramId: string): Promise<User | null> {
@@ -133,29 +158,62 @@ export async function upsertEventPayment({
   amountCents,
   currency,
   status,
+  source = "stripe",
+  markedByUserId = null,
+  note = null,
 }: {
   id: string;
   eventId: string;
   userId: string;
-  stripeCheckoutSessionId: string;
+  stripeCheckoutSessionId: string | null;
   stripePaymentIntentId: string | null;
   amountCents: number;
   currency: string;
   status: EventPaymentStatus;
+  source?: EventPaymentSource;
+  markedByUserId?: string | null;
+  note?: string | null;
 }) {
   const db = await getDb();
+  const existing = stripeCheckoutSessionId
+    ? await db
+        .prepare(
+          `SELECT id FROM event_payments WHERE stripe_checkout_session_id = ? LIMIT 1`,
+        )
+        .bind(stripeCheckoutSessionId)
+        .first<{ id: string }>()
+    : null;
+
+  if (existing) {
+    await db
+      .prepare(
+        `UPDATE event_payments
+         SET stripe_payment_intent_id = ?, amount_cents = ?, currency = ?,
+             status = ?, source = ?, marked_by_user_id = ?, note = ?,
+             updated_at = datetime('now')
+         WHERE id = ?`,
+      )
+      .bind(
+        stripePaymentIntentId,
+        amountCents,
+        currency,
+        status,
+        source,
+        markedByUserId,
+        note,
+        existing.id,
+      )
+      .run();
+    return;
+  }
+
   await db
     .prepare(
       `INSERT INTO event_payments (
         id, event_id, user_id, stripe_checkout_session_id, stripe_payment_intent_id,
-        amount_cents, currency, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(stripe_checkout_session_id) DO UPDATE SET
-        stripe_payment_intent_id = excluded.stripe_payment_intent_id,
-        amount_cents = excluded.amount_cents,
-        currency = excluded.currency,
-        status = excluded.status,
-        updated_at = datetime('now')`,
+        amount_cents, currency, status, source, marked_by_user_id, note
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
     )
     .bind(
       id,
@@ -166,6 +224,9 @@ export async function upsertEventPayment({
       amountCents,
       currency,
       status,
+      source,
+      markedByUserId,
+      note,
     )
     .run();
 }
@@ -197,6 +258,61 @@ export async function createPendingEventPayment({
   });
 }
 
+export async function setManualEventPayment({
+  eventId,
+  userId,
+  markedByUserId,
+  amountCents,
+  currency,
+  status,
+  note,
+}: {
+  eventId: string;
+  userId: string;
+  markedByUserId: string;
+  amountCents: number;
+  currency: string;
+  status: EventPaymentStatus;
+  note?: string | null;
+}) {
+  const db = await getDb();
+  const existing = await db
+    .prepare(
+      `SELECT id FROM event_payments
+       WHERE event_id = ? AND user_id = ? AND source = 'manual'
+       LIMIT 1`,
+    )
+    .bind(eventId, userId)
+    .first<{ id: string }>();
+
+  if (existing) {
+    await db
+      .prepare(
+        `UPDATE event_payments
+         SET amount_cents = ?, currency = ?, status = ?, marked_by_user_id = ?,
+             note = ?, updated_at = datetime('now')
+         WHERE id = ?`,
+      )
+      .bind(amountCents, currency, status, markedByUserId, note ?? null, existing.id)
+      .run();
+    return;
+  }
+
+  await upsertEventPayment({
+    id: crypto.randomUUID(),
+    eventId,
+    userId,
+    stripeCheckoutSessionId: null,
+    stripePaymentIntentId: null,
+    amountCents,
+    currency,
+    status,
+    source: "manual",
+    markedByUserId,
+    note: note ?? null,
+  });
+}
+
 export async function hasCompletedEventPayment(eventId: string, userId: string): Promise<boolean> {
   const db = await getDb();
   const row = await db
@@ -208,6 +324,36 @@ export async function hasCompletedEventPayment(eventId: string, userId: string):
     .bind(eventId, userId)
     .first();
   return Boolean(row);
+}
+
+export async function listEventPaymentSummaries(
+  eventId: string,
+): Promise<EventPaymentSummary[]> {
+  const db = await getDb();
+  const result = await db
+    .prepare(
+      `SELECT user_id, amount_cents, currency, status, source, note, updated_at
+       FROM event_payments
+       WHERE event_id = ?
+       ORDER BY updated_at DESC`,
+    )
+    .bind(eventId)
+    .all<EventPaymentSummary>();
+
+  const summaries = new Map<string, EventPaymentSummary>();
+  for (const payment of result.results ?? []) {
+    const current = summaries.get(payment.user_id);
+    if (!current) {
+      summaries.set(payment.user_id, payment);
+      continue;
+    }
+
+    if (payment.status === "completed" && current.status !== "completed") {
+      summaries.set(payment.user_id, payment);
+    }
+  }
+
+  return [...summaries.values()];
 }
 
 export async function getEventPaymentBySessionId(

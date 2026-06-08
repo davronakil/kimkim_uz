@@ -118,13 +118,13 @@ export function JoinEventPanel({
     void confirmCheckout();
   }, [code, load, router, searchParams, t]);
 
-  async function join() {
+  async function join(payLater = false) {
     setJoining(true);
     const response = await fetch("/api/events/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ code, pay_later: payLater }),
     });
 
     if (response.ok) {
@@ -290,16 +290,29 @@ export function JoinEventPanel({
                 <TelegramLoginButton botUsername={botUsername} redirectTo={loginRedirect} />
               </div>
             ) : requiresPayment ? (
-              <button
-                type="button"
-                disabled={paying}
-                onClick={() => void startCheckout()}
-                className="kk-btn-primary w-full disabled:opacity-60"
-              >
-                {paying
-                  ? t("startingCheckout")
-                  : t("payAndJoin", { price: ticketLabel ?? "" })}
-              </button>
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  disabled={paying || joining}
+                  onClick={() => void startCheckout()}
+                  className="kk-btn-primary w-full disabled:opacity-60"
+                >
+                  {paying
+                    ? t("startingCheckout")
+                    : t("payAndJoin", { price: ticketLabel ?? "" })}
+                </button>
+                <button
+                  type="button"
+                  disabled={joining || paying}
+                  onClick={() => void join(true)}
+                  className="w-full rounded-full border border-emerald-300 bg-white px-5 py-3 text-sm font-semibold text-emerald-950 transition hover:border-emerald-500 hover:bg-emerald-50 disabled:opacity-60 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100 dark:hover:bg-emerald-900"
+                >
+                  {joining ? t("joining") : t("joinPayLater")}
+                </button>
+                <p className="text-center text-xs leading-relaxed text-emerald-900/75 dark:text-emerald-100/70">
+                  {t("payLaterNote")}
+                </p>
+              </div>
             ) : (
               <button
                 type="button"

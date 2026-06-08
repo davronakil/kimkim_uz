@@ -8,6 +8,7 @@ import {
   listEventComments,
   listEventExpenses,
   listEventMembers,
+  listEventPaymentSummaries,
 } from "@/lib/db/queries";
 import {
   buildBalancesFromExpenses,
@@ -37,10 +38,11 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const [members, comments, expenses] = await Promise.all([
+  const [members, comments, expenses, paymentSummaries] = await Promise.all([
     listEventMembers(id),
     listEventComments(id),
     listEventExpenses(id),
+    listEventPaymentSummaries(id),
   ]);
 
   const balances = buildBalancesFromExpenses(
@@ -70,6 +72,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     comments,
     expenses,
     settlements,
+    paymentSummaries,
     canEdit,
   });
 }

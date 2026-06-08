@@ -14,6 +14,7 @@ import { eventPaymentsEnabled } from "@/lib/stripe/checkout";
 
 const joinSchema = z.object({
   code: z.string().min(4).max(32),
+  pay_later: z.boolean().optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
   }
 
   const env = await getEnv();
-  if (eventPaymentsEnabled(event, env.STRIPE_SECRET_KEY)) {
+  if (eventPaymentsEnabled(event, env.STRIPE_SECRET_KEY) && !parsed.data.pay_later) {
     const paid = await hasCompletedEventPayment(event.id, user.id);
     if (!paid) {
       return NextResponse.json({ error: "Payment required" }, { status: 402 });
