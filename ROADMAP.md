@@ -15,6 +15,10 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 - Telegram DM notifications (comments, expenses, joins, edits, 24h/1h reminders)
 - PWA + offline event details
 - Bilingual EN/UZ UI (casual Uzbek tone)
+- Payment modes (Free, Split, Pay yourself, Paid) + Stripe Checkout for paid events
+- Beautiful invite landing for logged-out guests
+- Telegram bot commands: create event, list events, bilingual EN/UZ
+- Telegram group link: `/link`, group announcements, post invite from web
 
 ## Phase 2 — polish & trust
 
@@ -22,15 +26,15 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 |----------|------|-------|
 | ~~P0~~ | ~~Expense edit~~ | Shipped |
 | ~~P0~~ | ~~Transfer ownership~~ | Shipped |
-| P1 | Comment delete | Own comments only |
-| P1 | Onboarding | First visit: start bot + create event tips |
-| P1 | Empty states | Events list, join page, post-login |
-| P2 | Telegram group link | `events.telegram_chat_id` — group announcements |
-| P2 | Export settlement | Share “who owes whom” as image/text |
+| ~~P1~~ | ~~Comment delete~~ | Shipped — own comments, blocked if has replies |
+| ~~P1~~ | ~~Onboarding~~ | Shipped — dismissible banner on events list |
+| ~~P1~~ | ~~Empty states~~ | Shipped — events list, comments, login |
+| ~~P2~~ | ~~Telegram group link~~ | Shipped — `/link`, announcements, share to group |
+| ~~P2~~ | ~~Export settlement~~ | Shipped — copy + Telegram share |
 
 ## Phase 3 — growth
 
-- Share event to Telegram group in one tap
+- ~~Share event to Telegram group in one tap~~ — shipped via "Post invite to group"
 - Recurring events / templates (“Friday dinner” preset)
 - UZS + USD toggle per event
 - Public event page (read-only, no login) for large gatherings
@@ -46,7 +50,7 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 
 ## Not planned (for now)
 
-- Payment processing (Payme/Click) — settlement is informational only
+- Local payment rails (Payme/Click) — Stripe for paid tickets; expense settlement stays informational
 - Native iOS/Android apps — PWA + Telegram Mini App is enough
 - Full Splitwise parity — keep it lightweight for friend groups
 

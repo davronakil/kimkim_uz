@@ -1,7 +1,25 @@
 import { getDb } from "@/lib/cloudflare";
 import { generateInviteCode } from "@/lib/utils";
-import type { Comment, Event, EventMember, Expense, User } from "@/types";
+import type {
+  Comment,
+  Event,
+  EventMember,
+  EventPayment,
+  EventPaymentMode,
+  EventPaymentStatus,
+  Expense,
+  User,
+} from "@/types";
 import { nestComments } from "@/lib/expense/settlement";
+
+function normalizeEvent<T extends Partial<Event>>(row: T | null): (T & { payment_mode: EventPaymentMode }) | null {
+  if (!row) return null;
+  return {
+    ...row,
+    payment_mode: (row.payment_mode as EventPaymentMode | undefined) ?? "free",
+    ticket_currency: row.ticket_currency ?? "UZS",
+  };
+}
 
 export async function listUserEvents(userId: string): Promise<Event[]> {
   const db = await getDb();
@@ -16,17 +34,16 @@ export async function listUserEvents(userId: string): Promise<Event[]> {
     .bind(userId)
     .all<Event>();
 
-  return result.results ?? [];
+  return (result.results ?? []).map((row) => normalizeEvent(row)!);
 }
 
 export async function getEventByInviteCode(code: string): Promise<Event | null> {
   const db = await getDb();
-  return (
-    (await db
-      .prepare("SELECT * FROM events WHERE invite_code = ?")
-      .bind(code)
-      .first<Event>()) ?? null
-  );
+  const row = await db
+    .prepare("SELECT * FROM events WHERE invite_code = ?")
+    .bind(code)
+    .first<Event>();
+  return normalizeEvent(row);
 }
 
 export async function joinEvent(eventId: string, userId: string): Promise<boolean> {
@@ -44,14 +61,174 @@ export async function joinEvent(eventId: string, userId: string): Promise<boolea
   return true;
 }
 
-export async function getEventById(eventId: string): Promise<Event | null> {
+export async function getUserById(userId: string): Promise<User | null> {
+  const db = await getDb();
+  return (
+    (await db.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<User>()) ?? null
+  );
+}
+
+export async function getUserByTelegramId(telegramId: string): Promise<User | null> {
   const db = await getDb();
   return (
     (await db
-      .prepare("SELECT * FROM events WHERE id = ?")
-      .bind(eventId)
-      .first<Event>()) ?? null
+      .prepare("SELECT * FROM users WHERE telegram_id = ?")
+      .bind(telegramId)
+      .first<User>()) ?? null
   );
+}
+
+export async function isEventOwnerByTelegramId(
+  eventId: string,
+  telegramId: string,
+): Promise<boolean> {
+  const db = await getDb();
+  const row = await db
+    .prepare(
+      `SELECT 1
+       FROM event_members em
+       JOIN users u ON u.id = em.user_id
+       WHERE em.event_id = ? AND u.telegram_id = ? AND em.role = 'owner'`,
+    )
+    .bind(eventId, telegramId)
+    .first();
+  return Boolean(row);
+}
+
+export async function setEventTelegramGroup(eventId: string, chatId: string): Promise<void> {
+  const db = await getDb();
+  await db
+    .prepare(
+      `UPDATE events SET telegram_chat_id = ?, updated_at = datetime('now') WHERE id = ?`,
+    )
+    .bind(chatId, eventId)
+    .run();
+}
+
+export async function clearEventTelegramGroup(eventId: string): Promise<void> {
+  const db = await getDb();
+  await db
+    .prepare(
+      `UPDATE events SET telegram_chat_id = NULL, updated_at = datetime('now') WHERE id = ?`,
+    )
+    .bind(eventId)
+    .run();
+}
+
+export async function getEventByTelegramGroupId(chatId: string): Promise<Event | null> {
+  const db = await getDb();
+  const row = await db
+    .prepare("SELECT * FROM events WHERE telegram_chat_id = ?")
+    .bind(chatId)
+    .first<Event>();
+  return normalizeEvent(row);
+}
+
+export async function upsertEventPayment({
+  id,
+  eventId,
+  userId,
+  stripeCheckoutSessionId,
+  stripePaymentIntentId,
+  amountCents,
+  currency,
+  status,
+}: {
+  id: string;
+  eventId: string;
+  userId: string;
+  stripeCheckoutSessionId: string;
+  stripePaymentIntentId: string | null;
+  amountCents: number;
+  currency: string;
+  status: EventPaymentStatus;
+}) {
+  const db = await getDb();
+  await db
+    .prepare(
+      `INSERT INTO event_payments (
+        id, event_id, user_id, stripe_checkout_session_id, stripe_payment_intent_id,
+        amount_cents, currency, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(stripe_checkout_session_id) DO UPDATE SET
+        stripe_payment_intent_id = excluded.stripe_payment_intent_id,
+        amount_cents = excluded.amount_cents,
+        currency = excluded.currency,
+        status = excluded.status,
+        updated_at = datetime('now')`,
+    )
+    .bind(
+      id,
+      eventId,
+      userId,
+      stripeCheckoutSessionId,
+      stripePaymentIntentId,
+      amountCents,
+      currency,
+      status,
+    )
+    .run();
+}
+
+export async function createPendingEventPayment({
+  id,
+  eventId,
+  userId,
+  stripeCheckoutSessionId,
+  amountCents,
+  currency,
+}: {
+  id: string;
+  eventId: string;
+  userId: string;
+  stripeCheckoutSessionId: string;
+  amountCents: number;
+  currency: string;
+}) {
+  await upsertEventPayment({
+    id,
+    eventId,
+    userId,
+    stripeCheckoutSessionId,
+    stripePaymentIntentId: null,
+    amountCents,
+    currency,
+    status: "pending",
+  });
+}
+
+export async function hasCompletedEventPayment(eventId: string, userId: string): Promise<boolean> {
+  const db = await getDb();
+  const row = await db
+    .prepare(
+      `SELECT 1 FROM event_payments
+       WHERE event_id = ? AND user_id = ? AND status = 'completed'
+       LIMIT 1`,
+    )
+    .bind(eventId, userId)
+    .first();
+  return Boolean(row);
+}
+
+export async function getEventPaymentBySessionId(
+  sessionId: string,
+): Promise<EventPayment | null> {
+  const db = await getDb();
+  return (
+    (await db
+      .prepare("SELECT * FROM event_payments WHERE stripe_checkout_session_id = ?")
+      .bind(sessionId)
+      .first<EventPayment>()) ?? null
+  );
+}
+
+export async function getEventById(eventId: string): Promise<Event | null> {
+  const db = await getDb();
+  const row = await db
+    .prepare("SELECT * FROM events WHERE id = ?")
+    .bind(eventId)
+    .first<Event>();
+  return normalizeEvent(row);
 }
 
 export async function isEventMember(eventId: string, userId: string): Promise<boolean> {

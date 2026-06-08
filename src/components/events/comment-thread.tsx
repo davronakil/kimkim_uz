@@ -1,19 +1,23 @@
 "use client";
 
+import { MessageCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Comment } from "@/types";
 import { displayName } from "@/lib/utils";
 
 function CommentItem({
   comment,
   eventId,
+  currentUserId,
   depth = 0,
   onPosted,
   readOnly = false,
 }: {
   comment: Comment & { replies?: Comment[] };
   eventId: string;
+  currentUserId?: string;
   depth?: number;
   onPosted: () => void;
   readOnly?: boolean;
@@ -22,6 +26,10 @@ function CommentItem({
   const [replying, setReplying] = useState(false);
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const canDelete = !readOnly && currentUserId && comment.user_id === currentUserId;
 
   async function submit(parentId?: string) {
     setSubmitting(true);
@@ -34,6 +42,28 @@ function CommentItem({
     setBody("");
     setReplying(false);
     onPosted();
+  }
+
+  async function remove() {
+    setDeleting(true);
+    setDeleteError(null);
+    const response = await fetch(`/api/events/${eventId}/comments/${comment.id}`, {
+      method: "DELETE",
+    });
+    setDeleting(false);
+
+    if (response.status === 409) {
+      setDeleteError(t("deleteHasReplies"));
+      return;
+    }
+
+    if (response.ok) {
+      setConfirmDelete(false);
+      onPosted();
+      return;
+    }
+
+    setDeleteError(t("deleteError"));
   }
 
   return (
@@ -56,14 +86,48 @@ function CommentItem({
         <p className="whitespace-pre-wrap text-base leading-relaxed text-zinc-700 sm:text-sm dark:text-zinc-200">
           {comment.body}
         </p>
+        {deleteError ? (
+          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{deleteError}</p>
+        ) : null}
         {!readOnly ? (
-          <button
-            type="button"
-            onClick={() => setReplying((value) => !value)}
-            className="mt-3 min-h-11 text-sm font-medium text-emerald-600 hover:text-emerald-700 sm:min-h-0"
-          >
-            {t("reply")}
-          </button>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setReplying((value) => !value)}
+              className="min-h-11 text-sm font-medium text-emerald-600 hover:text-emerald-700 sm:min-h-0"
+            >
+              {t("reply")}
+            </button>
+            {canDelete ? (
+              confirmDelete ? (
+                <>
+                  <button
+                    type="button"
+                    disabled={deleting}
+                    onClick={() => void remove()}
+                    className="min-h-11 text-sm font-medium text-red-600 hover:text-red-700 sm:min-h-0"
+                  >
+                    {deleting ? t("deleting") : t("confirmDelete")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(false)}
+                    className="min-h-11 text-sm font-medium text-zinc-500 sm:min-h-0"
+                  >
+                    {t("cancelDelete")}
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(true)}
+                  className="min-h-11 text-sm font-medium text-zinc-500 hover:text-red-600 sm:min-h-0"
+                >
+                  {t("delete")}
+                </button>
+              )
+            ) : null}
+          </div>
         ) : null}
         {replying && !readOnly ? (
           <div className="mt-3 space-y-3">
@@ -91,6 +155,7 @@ function CommentItem({
           <CommentItem
             comment={reply}
             eventId={eventId}
+            currentUserId={currentUserId}
             depth={depth + 1}
             onPosted={onPosted}
             readOnly={readOnly}
@@ -104,11 +169,13 @@ function CommentItem({
 export function CommentThread({
   eventId,
   comments,
+  currentUserId,
   onPosted,
   readOnly = false,
 }: {
   eventId: string;
   comments: Comment[];
+  currentUserId?: string;
   onPosted: () => void;
   readOnly?: boolean;
 }) {
@@ -151,13 +218,18 @@ export function CommentThread({
       ) : null}
 
       {comments.length === 0 ? (
-        <p className="text-base text-zinc-500 sm:text-sm">{t("empty")}</p>
+        <EmptyState
+          icon={MessageCircle}
+          title={t("emptyTitle")}
+          description={t("empty")}
+        />
       ) : (
         comments.map((comment) => (
           <CommentItem
             key={comment.id}
             comment={comment}
             eventId={eventId}
+            currentUserId={currentUserId}
             onPosted={onPosted}
             readOnly={readOnly}
           />

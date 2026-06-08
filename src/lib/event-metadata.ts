@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { alternateOgLocales, intlLocale, isLocale, ogLocaleTag } from "@/lib/locale";
+import { buildEventOgCardUrl } from "@/lib/og/event-card-url";
 import { buildAppUrl } from "@/lib/telegram/bot";
 import { resolveServerGoogleMapsApiKey } from "@/lib/google-static-map";
 import type { Event } from "@/types";
@@ -7,7 +9,7 @@ function formatEventOgDescription(event: Event, locale: string) {
   const parts = [event.title];
   if (event.location_name) parts.push(event.location_name);
 
-  const dateLocale = locale === "uz" ? "uz-UZ" : "en-US";
+  const dateLocale = intlLocale(locale as "en" | "uz" | "ru");
   const formattedDate = new Intl.DateTimeFormat(dateLocale, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -22,7 +24,7 @@ function formatEventOgDescription(event: Event, locale: string) {
   return parts.join(" · ");
 }
 
-async function resolveEventOgImage(event: Event): Promise<string | undefined> {
+async function resolveEventOgImage(event: Event, locale: string): Promise<string> {
   if (event.cover_image_key) {
     return buildAppUrl(`/api/media/${event.cover_image_key}`);
   }
@@ -34,7 +36,8 @@ async function resolveEventOgImage(event: Event): Promise<string | undefined> {
     }
   }
 
-  return undefined;
+  const cardLocale = isLocale(locale) ? locale : "en";
+  return buildEventOgCardUrl(event.id, cardLocale);
 }
 
 export async function buildEventShareMetadata(
@@ -43,21 +46,21 @@ export async function buildEventShareMetadata(
   pagePath: string,
 ): Promise<Metadata> {
   const description = formatEventOgDescription(event, locale);
-  const imageUrl = await resolveEventOgImage(event);
-  const ogLocale = locale === "uz" ? "uz_UZ" : "en_US";
+  const imageUrl = await resolveEventOgImage(event, locale);
+  const ogLocale = ogLocaleTag(locale as "en" | "uz" | "ru");
 
-  const openGraphImages = imageUrl
-    ? [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: event.cover_image_key
-            ? event.title
-            : (event.location_name ?? event.title),
-        },
-      ]
-    : undefined;
+  const openGraphImages = [
+    {
+      url: imageUrl,
+      width: 1200,
+      height: 630,
+      alt: event.cover_image_key
+        ? event.title
+        : event.location_name
+          ? `${event.title} — ${event.location_name}`
+          : event.title,
+    },
+  ];
 
   return {
     title: event.title,
@@ -71,15 +74,15 @@ export async function buildEventShareMetadata(
       url: pagePath,
       siteName: "KimKim",
       locale: ogLocale,
-      alternateLocale: locale === "uz" ? ["en_US"] : ["uz_UZ"],
+      alternateLocale: alternateOgLocales(locale as "en" | "uz" | "ru"),
       type: "website",
       images: openGraphImages,
     },
     twitter: {
-      card: imageUrl ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: event.title,
       description,
-      images: imageUrl ? [imageUrl] : undefined,
+      images: [imageUrl],
     },
   };
 }

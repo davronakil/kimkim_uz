@@ -68,9 +68,17 @@ export function verifyTelegramWebAppInitData(
   return data;
 }
 
-export function buildTelegramShareUrl(text: string, url: string): string {
-  const params = new URLSearchParams({ url, text });
-  return `https://t.me/share/url?${params.toString()}`;
+/** Share a link via Telegram. Uses percent-encoding so spaces are not sent as "+". */
+export function buildTelegramShareUrl(url: string, text?: string): string {
+  const encodedUrl = encodeURIComponent(url);
+  if (!text?.trim()) {
+    return `https://t.me/share/url?url=${encodedUrl}`;
+  }
+  return `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(text.trim())}`;
+}
+
+export function buildShareMessage(text: string, url: string): string {
+  return `${text.trim()}\n${url}`;
 }
 
 export function buildTelegramDeepLink(botUsername: string, startParam: string): string {

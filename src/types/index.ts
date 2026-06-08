@@ -15,6 +15,8 @@ export type EventMember = User & {
   role: "owner" | "member";
 };
 
+export type EventPaymentMode = "free" | "split" | "pay_yourself" | "paid";
+
 export type Event = {
   id: string;
   creator_id: string;
@@ -27,6 +29,9 @@ export type Event = {
   location_lat: number | null;
   location_lng: number | null;
   cover_image_key: string | null;
+  payment_mode: EventPaymentMode;
+  ticket_price_cents: number | null;
+  ticket_currency: string;
   invite_code: string | null;
   telegram_chat_id: string | null;
   created_at: string;
@@ -81,11 +86,28 @@ export type TelegramLoginPayload = {
   hash: string;
 };
 
+export type EventPaymentStatus = "pending" | "completed" | "failed";
+
+export type EventPayment = {
+  id: string;
+  event_id: string;
+  user_id: string;
+  stripe_checkout_session_id: string;
+  stripe_payment_intent_id: string | null;
+  amount_cents: number;
+  currency: string;
+  status: EventPaymentStatus;
+  created_at: string;
+  updated_at: string;
+};
+
 export type CloudflareEnv = Cloudflare.Env & {
   SESSION_SECRET: string;
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_BOT_USERNAME: string;
   CRON_SECRET?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?: string;
   NEXT_PUBLIC_APP_URL?: string;
 };

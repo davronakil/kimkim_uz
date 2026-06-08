@@ -1,6 +1,10 @@
 import { getDb } from "@/lib/cloudflare";
 import { getEventById, listEventMembers } from "@/lib/db/queries";
+import { formatLocaleDateTime, intlLocale, resolveUserLocale } from "@/lib/locale";
 import { buildAppUrl, sendTelegramMessage } from "@/lib/telegram/bot";
+import { notifyEventGroup, ownerLocaleForEvent } from "@/lib/telegram/group";
+import { t } from "@/lib/telegram/i18n";
+import type { BotLocale } from "@/lib/telegram/types";
 import type { Event, User } from "@/types";
 
 function escapeHtml(text: string): string {
@@ -21,29 +25,28 @@ function displayName(user: Pick<User, "first_name" | "last_name" | "username">):
   return full || user.username || "Someone";
 }
 
-function localeFor(user: Pick<User, "language_code">): "en" | "uz" {
-  return user.language_code === "uz" ? "uz" : "en";
+function localeFor(user: Pick<User, "language_code">): BotLocale {
+  return resolveUserLocale(user);
 }
 
-function eventUrl(eventId: string, locale: "en" | "uz"): string {
+function eventUrl(eventId: string, locale: BotLocale): string {
   return buildAppUrl(`/${locale}/events/${eventId}`);
 }
 
-function openEventButton(eventId: string, locale: "en" | "uz") {
+function openEventButton(eventId: string, locale: BotLocale) {
   return {
     parse_mode: "HTML" as const,
     reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: locale === "uz" ? "Eventni ochish" : "Open event",
-            url: eventUrl(eventId, locale),
-          },
-        ],
-      ],
+      inline_keyboard: [[{ text: t(locale).openEvent, url: eventUrl(eventId, locale) }]],
     },
   };
 }
+
+const changeLabels = {
+  en: { title: "title", time: "date/time", location: "location", description: "description" },
+  uz: { title: "nomi", time: "vaqt", location: "joy", description: "qisqacha" },
+  ru: { title: "название", time: "дата/время", location: "место", description: "описание" },
+} as const;
 
 async function listNotifiableMembers(
   eventId: string,
@@ -58,7 +61,7 @@ async function listNotifiableMembers(
 async function notifyMembers(
   eventId: string,
   excludeUserId: string | undefined,
-  buildMessage: (locale: "en" | "uz", event: Event) => string,
+  buildMessage: (locale: BotLocale, event: Event) => string,
 ) {
   const event = await getEventById(eventId);
   if (!event) return;
@@ -87,13 +90,21 @@ export async function notifyNewComment(input: {
   await notifyMembers(input.eventId, input.authorUserId, (locale, event) => {
     const title = escapeHtml(event.title);
     if (input.parentId) {
-      return locale === "uz"
-        ? `💬 <b>${authorName}</b> <b>${title}</b> ichida javob yozdi:\n"${preview}"`
-        : `💬 <b>${authorName}</b> replied in <b>${title}</b>:\n"${preview}"`;
+      if (locale === "uz") {
+        return `💬 <b>${authorName}</b> <b>${title}</b> ichida javob yozdi:\n"${preview}"`;
+      }
+      if (locale === "ru") {
+        return `💬 <b>${authorName}</b> ответил(а) в <b>${title}</b>:\n"${preview}"`;
+      }
+      return `💬 <b>${authorName}</b> replied in <b>${title}</b>:\n"${preview}"`;
     }
-    return locale === "uz"
-      ? `💬 <b>${authorName}</b> <b>${title}</b> ga yozdi:\n"${preview}"`
-      : `💬 <b>${authorName}</b> commented on <b>${title}</b>:\n"${preview}"`;
+    if (locale === "uz") {
+      return `💬 <b>${authorName}</b> <b>${title}</b> ga yozdi:\n"${preview}"`;
+    }
+    if (locale === "ru") {
+      return `💬 <b>${authorName}</b> прокомментировал(а) <b>${title}</b>:\n"${preview}"`;
+    }
+    return `💬 <b>${authorName}</b> commented on <b>${title}</b>:\n"${preview}"`;
   });
 }
 
@@ -110,9 +121,13 @@ export async function notifyNewExpense(input: {
 
   await notifyMembers(input.eventId, input.authorUserId, (locale, event) => {
     const title = escapeHtml(event.title);
-    return locale === "uz"
-      ? `💰 <b>${authorName}</b> <b>${title}</b> ga xarajat qo'shdi: ${description} — ${amount}`
-      : `💰 <b>${authorName}</b> added an expense to <b>${title}</b>: ${description} — ${amount}`;
+    if (locale === "uz") {
+      return `💰 <b>${authorName}</b> <b>${title}</b> ga xarajat qo'shdi: ${description} — ${amount}`;
+    }
+    if (locale === "ru") {
+      return `💰 <b>${authorName}</b> добавил(а) расход в <b>${title}</b>: ${description} — ${amount}`;
+    }
+    return `💰 <b>${authorName}</b> added an expense to <b>${title}</b>: ${description} — ${amount}`;
   });
 }
 
@@ -125,30 +140,25 @@ export async function notifyEventUpdated(input: {
   if (input.changes.length === 0) return;
 
   const editorName = escapeHtml(displayName(input.editor));
-  const changeLabels = {
-    en: {
-      title: "title",
-      time: "date/time",
-      location: "location",
-      description: "description",
-    },
-    uz: {
-      title: "nomi",
-      time: "vaqt",
-      location: "joy",
-      description: "qisqacha",
-    },
-  } as const;
 
-  await notifyMembers(input.eventId, input.editorUserId, (locale, event) => {
+  const buildUpdate = (locale: BotLocale, event: Event) => {
     const title = escapeHtml(event.title);
     const labels = changeLabels[locale];
     const summary = input.changes.map((change) => labels[change]).join(", ");
+    if (locale === "uz") {
+      return `📅 <b>${editorName}</b> <b>${title}</b> ni yangiladi: ${summary}.`;
+    }
+    if (locale === "ru") {
+      return `📅 <b>${editorName}</b> обновил(а) <b>${title}</b>: ${summary}.`;
+    }
+    return `📅 <b>${editorName}</b> updated <b>${title}</b>: ${summary}.`;
+  };
 
-    return locale === "uz"
-      ? `📅 <b>${editorName}</b> <b>${title}</b> ni yangiladi: ${summary}.`
-      : `📅 <b>${editorName}</b> updated <b>${title}</b>: ${summary}.`;
-  });
+  await notifyMembers(input.eventId, input.editorUserId, buildUpdate);
+
+  await notifyEventGroup(input.eventId, buildUpdate, (locale, event) => [
+    { text: t(locale).openEvent, url: eventUrl(event.id, locale) },
+  ]);
 }
 
 export async function notifyMemberJoined(input: {
@@ -158,28 +168,47 @@ export async function notifyMemberJoined(input: {
 }) {
   const memberName = escapeHtml(displayName(input.member));
 
-  await notifyMembers(input.eventId, input.memberUserId, (locale, event) => {
+  const buildJoin = (locale: BotLocale, event: Event) => {
     const title = escapeHtml(event.title);
-    return locale === "uz"
-      ? `👋 <b>${memberName}</b> <b>${title}</b> ga qo'shildi.`
-      : `👋 <b>${memberName}</b> joined <b>${title}</b>.`;
-  });
+    if (locale === "uz") {
+      return `👋 <b>${memberName}</b> <b>${title}</b> ga qo'shildi.`;
+    }
+    if (locale === "ru") {
+      return `👋 <b>${memberName}</b> присоединился(ась) к <b>${title}</b>.`;
+    }
+    return `👋 <b>${memberName}</b> joined <b>${title}</b>.`;
+  };
+
+  await notifyMembers(input.eventId, input.memberUserId, buildJoin);
+
+  await notifyEventGroup(input.eventId, buildJoin);
+}
+
+function reminderText(locale: BotLocale, title: string, timeLabel: string, window: "24h" | "1h") {
+  if (window === "24h") {
+    if (locale === "uz") {
+      return `⏰ <b>${title}</b> 24 soatdan keyin boshlanadi (${escapeHtml(timeLabel)}).`;
+    }
+    if (locale === "ru") {
+      return `⏰ <b>${title}</b> начнётся примерно через 24 часа (${escapeHtml(timeLabel)}).`;
+    }
+    return `⏰ <b>${title}</b> starts in about 24 hours (${escapeHtml(timeLabel)}).`;
+  }
+  if (locale === "uz") {
+    return `⏰ <b>${title}</b> 1 soatdan keyin boshlanadi (${escapeHtml(timeLabel)}).`;
+  }
+  if (locale === "ru") {
+    return `⏰ <b>${title}</b> начнётся примерно через 1 час (${escapeHtml(timeLabel)}).`;
+  }
+  return `⏰ <b>${title}</b> starts in about 1 hour (${escapeHtml(timeLabel)}).`;
 }
 
 export async function processEventReminders() {
   const db = await getDb();
 
   const windows = [
-    {
-      type: "24h" as const,
-      minOffset: "+23 hours",
-      maxOffset: "+25 hours",
-    },
-    {
-      type: "1h" as const,
-      minOffset: "+45 minutes",
-      maxOffset: "+75 minutes",
-    },
+    { type: "24h" as const, minOffset: "+23 hours", maxOffset: "+25 hours" },
+    { type: "1h" as const, minOffset: "+45 minutes", maxOffset: "+75 minutes" },
   ];
 
   for (const window of windows) {
@@ -193,6 +222,43 @@ export async function processEventReminders() {
       .all<Event>();
 
     for (const event of events.results ?? []) {
+      if (event.telegram_chat_id) {
+        const groupAlreadySent = await db
+          .prepare(
+            `SELECT 1 FROM event_group_reminder_logs
+             WHERE event_id = ? AND reminder_type = ?`,
+          )
+          .bind(event.id, window.type)
+          .first();
+
+        if (!groupAlreadySent) {
+          const groupLocale = await ownerLocaleForEvent(event);
+          const title = escapeHtml(event.title);
+          const timeLabel = formatLocaleDateTime(new Date(event.starts_at), groupLocale, {
+            dateStyle: "medium",
+            timeStyle: "short",
+          });
+          const groupText = reminderText(groupLocale, title, timeLabel, window.type);
+
+          try {
+            await sendTelegramMessage(
+              Number(event.telegram_chat_id),
+              groupText,
+              openEventButton(event.id, groupLocale),
+            );
+            await db
+              .prepare(
+                `INSERT INTO event_group_reminder_logs (event_id, reminder_type)
+                 VALUES (?, ?)`,
+              )
+              .bind(event.id, window.type)
+              .run();
+          } catch (groupError) {
+            console.error("Group reminder failed:", groupError);
+          }
+        }
+      }
+
       const members = await listNotifiableMembers(event.id);
 
       for (const member of members) {
@@ -208,20 +274,11 @@ export async function processEventReminders() {
 
         const locale = localeFor(member);
         const title = escapeHtml(event.title);
-        const startsAt = new Date(event.starts_at);
-        const timeLabel = startsAt.toLocaleString(locale === "uz" ? "uz-UZ" : "en-US", {
+        const timeLabel = new Date(event.starts_at).toLocaleString(intlLocale(locale), {
           dateStyle: "medium",
           timeStyle: "short",
         });
-
-        const text =
-          window.type === "24h"
-            ? locale === "uz"
-              ? `⏰ <b>${title}</b> 24 soatdan keyin boshlanadi (${escapeHtml(timeLabel)}).`
-              : `⏰ Reminder: <b>${title}</b> starts in about 24 hours (${escapeHtml(timeLabel)}).`
-            : locale === "uz"
-              ? `⏰ <b>${title}</b> 1 soatdan keyin boshlanadi (${escapeHtml(timeLabel)}).`
-              : `⏰ Reminder: <b>${title}</b> starts in about 1 hour (${escapeHtml(timeLabel)}).`;
+        const text = reminderText(locale, title, timeLabel, window.type);
 
         try {
           await sendTelegramMessage(

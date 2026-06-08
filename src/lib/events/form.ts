@@ -1,15 +1,39 @@
 import { z } from "zod";
+import { defaultPaymentMode, eventPaymentModes } from "@/lib/events/payment-mode";
+import { majorToCents } from "@/lib/utils";
 
-export const eventFormSchema = z.object({
-  title: z.string().min(2).max(120),
-  description: z.string().max(5000).optional(),
-  starts_at: z.string(),
-  ends_at: z.string().optional(),
-  location_name: z.string().optional(),
-  location_address: z.string().optional(),
-  location_lat: z.number().optional(),
-  location_lng: z.number().optional(),
-});
+const ticketCurrencies = ["UZS", "USD"] as const;
+
+export const eventFormSchema = z
+  .object({
+    title: z.string().min(2).max(120),
+    description: z.string().max(5000).optional(),
+    starts_at: z.string(),
+    ends_at: z.string().optional(),
+    location_name: z.string().optional(),
+    location_address: z.string().optional(),
+    location_lat: z.number().optional(),
+    location_lng: z.number().optional(),
+    payment_mode: z.enum(eventPaymentModes).default(defaultPaymentMode),
+    ticket_price: z.coerce.number().optional(),
+    ticket_currency: z.enum(ticketCurrencies).default("UZS"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.payment_mode === "paid" && (!data.ticket_price || data.ticket_price <= 0)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["ticket_price"],
+        message: "Ticket price is required for paid events",
+      });
+    }
+  });
+
+export function resolveTicketPriceCents(paymentMode: string, ticketPrice?: number) {
+  if (paymentMode !== "paid" || !ticketPrice || ticketPrice <= 0) {
+    return null;
+  }
+  return majorToCents(ticketPrice);
+}
 
 export function parseEventFormData(formData: FormData) {
   const lat = formData.get("location_lat");
@@ -24,6 +48,9 @@ export function parseEventFormData(formData: FormData) {
     location_address: formData.get("location_address") || undefined,
     location_lat: lat ? Number(lat) : undefined,
     location_lng: lng ? Number(lng) : undefined,
+    payment_mode: formData.get("payment_mode") || defaultPaymentMode,
+    ticket_price: formData.get("ticket_price") || undefined,
+    ticket_currency: formData.get("ticket_currency") || "UZS",
   });
 }
 

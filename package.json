@@ -12,10 +12,12 @@
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "db:migrate:local": "wrangler d1 migrations apply kimkim-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply kimkim-db --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply kimkim-db --remote",
+    "bot:commands": "curl -s -H \"Authorization: Bearer $(grep '^CRON_SECRET=' .dev.vars | cut -d= -f2-)\" \"${NEXT_PUBLIC_APP_URL:-https://kimkim.uz}/api/telegram/webhook?setup=commands\""
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.19.11",
+    "@resvg/resvg-wasm": "^2.6.2",
     "clsx": "^2.1.1",
     "jose": "^6.2.3",
     "lucide-react": "^1.17.0",

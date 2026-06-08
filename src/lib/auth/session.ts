@@ -1,6 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { nanoid } from "nanoid";
+import type { Locale } from "@/i18n/config";
+import { resolveLocaleFromTelegramCode } from "@/lib/locale";
 import { getDb, getEnv } from "@/lib/cloudflare";
 import type { User } from "@/types";
 
@@ -140,6 +142,8 @@ export async function upsertTelegramUser(input: {
   username?: string | null;
   photo_url?: string | null;
   language_code?: string | null;
+  /** App locale from page URL, bot picker, or invite deep link. */
+  appLocale?: Locale | null;
 }): Promise<User> {
   const db = await getDb();
   const existing = await db
@@ -160,7 +164,7 @@ export async function upsertTelegramUser(input: {
         input.last_name ?? null,
         input.username ?? null,
         input.photo_url ?? null,
-        input.language_code ?? null,
+        input.appLocale ?? null,
         existing.id,
       )
       .run();
@@ -171,8 +175,12 @@ export async function upsertTelegramUser(input: {
       last_name: input.last_name ?? null,
       username: input.username ?? null,
       photo_url: input.photo_url ?? null,
+      language_code: input.appLocale ?? existing.language_code,
     };
   }
+
+  const initialLocale =
+    input.appLocale ?? resolveLocaleFromTelegramCode(input.language_code);
 
   const id = nanoid();
   await db
@@ -187,7 +195,7 @@ export async function upsertTelegramUser(input: {
       input.first_name,
       input.last_name ?? null,
       input.photo_url ?? null,
-      input.language_code ?? "en",
+      initialLocale,
     )
     .run();
 

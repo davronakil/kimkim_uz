@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { intlLocale, isLocale } from "@/lib/locale";
 import { customAlphabet } from "nanoid";
 import { twMerge } from "tailwind-merge";
 
@@ -14,7 +15,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatMoney(cents: number, currency = "UZS", locale = "en"): string {
   const amount = cents / 100;
-  return new Intl.NumberFormat(locale === "uz" ? "uz-UZ" : "en-US", {
+  const intl = isLocale(locale) ? intlLocale(locale) : locale === "uz" ? "uz-UZ" : "en-US";
+  return new Intl.NumberFormat(intl, {
     style: "currency",
     currency,
     maximumFractionDigits: currency === "UZS" ? 0 : 2,

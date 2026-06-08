@@ -3,7 +3,11 @@
 import { Check, Copy, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { buildTelegramDeepLink, buildTelegramShareUrl } from "@/lib/auth/telegram";
+import {
+  buildShareMessage,
+  buildTelegramDeepLink,
+  buildTelegramShareUrl,
+} from "@/lib/auth/telegram";
 
 export function InvitePanel({
   eventId,
@@ -33,14 +37,12 @@ export function InvitePanel({
       ? `${window.location.origin}${invitePath}`
       : `https://kimkim.uz${invitePath}`;
 
-  const telegramShare = buildTelegramShareUrl(
-    t("shareText", { title: eventTitle }),
-    inviteUrl,
-  );
-  const telegramBotLink = buildTelegramDeepLink(botUsername, `join_${inviteCode}`);
+  const shareMessage = t("shareText", { title: eventTitle });
+  const telegramShare = buildTelegramShareUrl(inviteUrl, shareMessage);
+  const telegramBotLink = buildTelegramDeepLink(botUsername, `${locale}_join_${inviteCode}`);
 
   async function copyLink() {
-    await navigator.clipboard.writeText(inviteUrl);
+    await navigator.clipboard.writeText(buildShareMessage(shareMessage, inviteUrl));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }

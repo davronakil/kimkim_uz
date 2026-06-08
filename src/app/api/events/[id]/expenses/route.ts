@@ -105,7 +105,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       eventId,
       author: user,
       description: parsed.data.description,
-      amountLabel: formatMoney(amountCents, parsed.data.currency, user.language_code === "uz" ? "uz" : "en"),
+      amountLabel: formatMoney(amountCents, parsed.data.currency, user.language_code),
       authorUserId: user.id,
     }),
   );

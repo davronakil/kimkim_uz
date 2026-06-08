@@ -42,6 +42,7 @@ export function TelegramLoginButton({
           ...user,
           id: String(user.id),
           auth_date: String(user.auth_date),
+          app_locale: locale,
         }),
       });
 

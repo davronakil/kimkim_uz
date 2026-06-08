@@ -7,6 +7,7 @@ import {
   upsertTelegramUser,
 } from "@/lib/auth/session";
 import { getEnv } from "@/lib/cloudflare";
+import { isLocale, resolveLocaleFromTelegramCode } from "@/lib/locale";
 
 const loginSchema = z.object({
   id: z.string(),
@@ -16,6 +17,7 @@ const loginSchema = z.object({
   photo_url: z.string().optional(),
   auth_date: z.string(),
   hash: z.string(),
+  app_locale: z.string().optional(),
 });
 
 function isSecureRequest(request: NextRequest) {
@@ -39,12 +41,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid Telegram auth" }, { status: 401 });
   }
 
+  const appLocale = parsed.data.app_locale && isLocale(parsed.data.app_locale)
+    ? parsed.data.app_locale
+    : null;
+
   const user = await upsertTelegramUser({
     telegram_id: parsed.data.id,
     first_name: parsed.data.first_name,
     last_name: parsed.data.last_name,
     username: parsed.data.username,
     photo_url: parsed.data.photo_url,
+    appLocale,
   });
 
   const token = await createSession(user.id);
@@ -82,6 +89,7 @@ export async function PUT(request: NextRequest) {
     username: telegramUser.username,
     photo_url: telegramUser.photo_url,
     language_code: telegramUser.language_code,
+    appLocale: resolveLocaleFromTelegramCode(telegramUser.language_code),
   });
 
   const token = await createSession(user.id);

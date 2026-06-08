@@ -13,7 +13,7 @@ import {
   buildBalancesFromExpenses,
   calculateSettlements,
 } from "@/lib/expense/settlement";
-import { parseEventFormData } from "@/lib/events/form";
+import { parseEventFormData, resolveTicketPriceCents } from "@/lib/events/form";
 import { notifyEventUpdated } from "@/lib/telegram/notifications";
 
 type RouteContext = {
@@ -143,7 +143,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       `UPDATE events SET
         title = ?, description = ?, starts_at = ?, ends_at = ?,
         location_name = ?, location_address = ?, location_lat = ?, location_lng = ?,
-        cover_image_key = ?, updated_at = datetime('now')
+        cover_image_key = ?, payment_mode = ?, ticket_price_cents = ?, ticket_currency = ?,
+        updated_at = datetime('now')
        WHERE id = ?`,
     )
     .bind(
@@ -156,6 +157,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       locationLat,
       locationLng,
       coverImageKey,
+      payload.data.payment_mode,
+      resolveTicketPriceCents(payload.data.payment_mode, payload.data.ticket_price),
+      payload.data.payment_mode === "paid" ? payload.data.ticket_currency : event.ticket_currency ?? "UZS",
       id,
     )
     .run();

@@ -1,5 +1,8 @@
 import { Link } from "@/i18n/navigation";
+import { intlLocale } from "@/lib/locale";
+import type { Locale } from "@/i18n/config";
 import { CalendarDays, MapPin } from "lucide-react";
+import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import type { Event } from "@/types";
 
 type EventCardProps = {
@@ -31,16 +34,19 @@ export function EventCard({ event, locale, past = false }: EventCardProps) {
         )}
       </div>
       <div className="space-y-2 p-4 sm:p-5">
-        <h3 className="text-lg font-semibold leading-snug group-hover:text-emerald-600 sm:text-xl">
-          {event.title}
-        </h3>
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-lg font-semibold leading-snug group-hover:text-emerald-600 sm:text-xl">
+            {event.title}
+          </h3>
+          <PaymentModeBadge mode={event.payment_mode ?? "free"} size="sm" />
+        </div>
         <p className="line-clamp-2 text-base text-zinc-600 sm:text-sm dark:text-zinc-300">
           {event.description || "—"}
         </p>
         <div className="flex flex-wrap gap-3 text-sm text-zinc-500">
           <span className="inline-flex items-center gap-1">
             <CalendarDays className="h-4 w-4" />
-            {startsAt.toLocaleString(locale === "uz" ? "uz-UZ" : "en-US", {
+            {startsAt.toLocaleString(intlLocale(locale as Locale), {
               dateStyle: "medium",
               timeStyle: "short",
             })}

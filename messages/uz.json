@@ -8,7 +8,7 @@
     "delete": "O'chirish",
     "edit": "Tahrirlash",
     "back": "Orqaga",
-    "share": "Share",
+    "share": "Ulashish",
     "signIn": "Kirish",
     "signOut": "Chiqish",
     "createEvent": "Yangi event",
@@ -64,6 +64,9 @@
     "detailTitle": "Kim bor?",
     "upcomingTitle": "Yaqinda",
     "pastTitle": "Bo'lgan eventlar",
+    "emptyTitle": "Birinchi event shu yerdan boshlanadi",
+    "noUpcomingTitle": "Hozircha reja yo'q",
+    "noUpcomingBody": "To'y, gap, sunnat to'y yoki choyxona yarating — keyin odamlarni chaqiring.",
     "ownerBadge": "Admin",
     "leaveEvent": "Chiqib ketish",
     "leaveConfirm": "Eventdan chiqasizmi? Keyin link orqali yana qo'shilasiz.",
@@ -98,6 +101,31 @@
       "saveError": "Saqlanmadi. Yana bir marta urinib ko'ring.",
       "deleteError": "O'chirilmadi. Yana urinib ko'ring."
     },
+    "paymentMode": {
+      "fieldLabel": "To'lov turi",
+      "labels": {
+        "free": "Bepul",
+        "split": "Hisobni bo'lish",
+        "pay_yourself": "O'zing to'la",
+        "paid": "Pullik"
+      },
+      "short": {
+        "free": "Pul kerak emas",
+        "split": "Xarajatni adolatli bo'lish",
+        "pay_yourself": "Har kim o'ziniki",
+        "paid": "Qo'shilish uchun to'lov"
+      },
+      "hints": {
+        "free": "Mehmonlardan pul olinmaydi.",
+        "split": "Xarajatlar yoziladi va ishtirokchilar o'rtasida bo'linadi.",
+        "pay_yourself": "Har kim o'z qismini o'zi to'laydi.",
+        "paid": "Mehmonlar KimKim orqali karta bilan to'lab qo'shiladi."
+      },
+      "ticketPrice": "Chipta narxi",
+      "ticketPricePlaceholder": "masalan, 150000",
+      "ticketCurrency": "Valyuta",
+      "ticketHint": "Qo'shilishda mehmonlar shu summani Stripe orqali to'laydi."
+    },
     "tabs": {
       "overview": "Asosiy",
       "comments": "Chat",
@@ -108,7 +136,14 @@
       "placeholder": "Nimadir yozing...",
       "reply": "Javob",
       "post": "Yuborish",
-      "empty": "Hali hech kim yozmagan. Birinchi bo'ling."
+      "empty": "Hali hech kim yozmagan. Birinchi bo'ling.",
+      "emptyTitle": "Suhbatni boshlang",
+      "delete": "O'chirish",
+      "confirmDelete": "Ha, o'chirilsin",
+      "cancelDelete": "Bekor",
+      "deleting": "O'chirilmoqda...",
+      "deleteHasReplies": "Avval javoblarni o'chiring, keyin bu izohni.",
+      "deleteError": "O'chirilmadi. Yana urinib ko'ring."
     },
     "expenses": {
       "title": "Xarajatlar",
@@ -126,7 +161,10 @@
       "empty": "Hali xarajat yo'q.",
       "edit": "Tahrirlash",
       "delete": "O'chirish",
-      "owes": "{from} → {to}: {amount}"
+      "owes": "{from} → {to}: {amount}",
+      "copySettlement": "Qarzlarni copy",
+      "settlementCopied": "Copy bo'ldi!",
+      "shareSettlement": "Telegramda share"
     },
     "notifications": {
       "enableHint": "Botni Telegramda start qiling — izoh, xarajat va eslatmalar shu yerga keladi.",
@@ -142,17 +180,61 @@
       "shareText": "Mening eventimga qo'shil: {title}",
       "regenerate": "Yangi link",
       "regenerateConfirm": "Yangi link yaratilsinmi? Eski link ishlamay qoladi."
+    },
+    "telegramGroup": {
+      "title": "Telegram guruhi",
+      "subtitle": "Gap/to'y guruhingizga qo'shilishlar, o'zgarishlar va eslatmalar keladi.",
+      "step1": "KimKim botini Telegram guruhga qo'shing (pastdagi tugma).",
+      "step2": "Organizator sifatida guruhda shu buyruqni yuboring:",
+      "copyCommand": "Buyruqni copy",
+      "copied": "Copy bo'ldi!",
+      "addBotToGroup": "Botni guruhga qo'shish",
+      "linked": "Guruh ulandi",
+      "linkedHint": "KimKim kimdir qo'shilganda, reja o'zgarganda va event oldidan xabar beradi.",
+      "shareToGroup": "Invite ni guruhga yuborish",
+      "unlink": "Guruhni uzish"
     }
   },
   "join": {
     "loading": "Link tekshirilmoqda...",
     "notFound": "Link noto'g'ri yoki eskirgan.",
     "eyebrow": "Sizni chaqirishdi!",
+    "headline": "Sizni chaqirishdi!",
+    "intro": "Sizni ushbu eventga taklif qilishdi. Kelasizmi — host bilsin, pastdan qo'shiling.",
+    "expensesNote": "Bu eventda xarajatlar KimKim orqali yoziladi va kim kimga qarz ekanini ko'rasiz — qo'shilgach ochiladi.",
+    "paidNote": "Joyingizni tasdiqlash uchun karta bilan to'lang. To'lovdan keyin eventga qo'shilasiz.",
+    "paidNotConfigured": "Bu pullik event, lekin host hali chipta narxini qo'ymagan.",
+    "ticketPrice": "Chipta: {price}",
     "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
-    "join": "Qo'shilish",
+    "join": "Kelaman — qo'shilish",
     "joining": "Qo'shilmoqda...",
+    "payAndJoin": "{price} to'lab qo'shilish",
+    "startingCheckout": "To'lov ochilmoqda...",
+    "confirmingPayment": "To'lov tekshirilmoqda...",
+    "paymentSuccess": "To'lov qabul qilindi — xush kelibsiz!",
+    "paymentPending": "To'lov qabul qilindi. Event ko'rinmasa, birozdan keyin yangilang.",
+    "checkoutCancelled": "To'lov bekor qilindi. Tayyor bo'lsangiz, qayta urinib ko'ring.",
+    "checkoutError": "To'lovni boshlab bo'lmadi. Yana urinib ko'ring.",
     "openEvent": "Eventni ochish",
-    "loginToJoin": "Avval Telegram bilan kiring."
+    "loginTitle": "RSVP uchun kiring",
+    "loginBody": "Telegram bilan kiring — bir daqiqa, host kelishingizni biladi.",
+    "loginBodyPaid": "Avval Telegram bilan kiring, keyin karta orqali joyingizni band qiling.",
+    "loginToJoin": "Avval Telegram bilan kiring.",
+    "alreadyJoined": "Siz ro'yxatdasiz"
+  },
+  "onboarding": {
+    "eyebrow": "Tez start",
+    "title": "KimKimga xush kelibsiz",
+    "subtitle": "Birinchi gathering uchun 3 qadam — to'y, gap, sunnat to'y va boshqalar.",
+    "dismiss": "Yopish",
+    "step1Title": "Event yarating",
+    "step1Body": "Sana, joy va to'lov turini qo'shing.",
+    "step1Action": "Event yaratish",
+    "step2Title": "Odamlarni chaqiring",
+    "step2Body": "Invite linkni Telegramda yuboring — mehmonlar RSVP qiladi.",
+    "step3Title": "Bildirishnomalar",
+    "step3Body": "KimKim botini start qiling — izoh, xarajat va eslatmalar keladi.",
+    "step3Action": "Botni ochish"
   },
   "pwa": {
     "offlineTitle": "Internet yo'q",

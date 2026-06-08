@@ -64,6 +64,9 @@
     "detailTitle": "Event details",
     "upcomingTitle": "Upcoming",
     "pastTitle": "Past events",
+    "emptyTitle": "Your first event starts here",
+    "noUpcomingTitle": "Nothing on the calendar",
+    "noUpcomingBody": "Create a wedding, gap circle, sunnat to'y, or choyxona night — then invite your people.",
     "ownerBadge": "Organizer",
     "leaveEvent": "Leave event",
     "leaveConfirm": "Leave this event? You can rejoin with an invite link.",
@@ -98,6 +101,31 @@
       "saveError": "Could not save event. Please try again.",
       "deleteError": "Could not delete event. Please try again."
     },
+    "paymentMode": {
+      "fieldLabel": "Cost & payment",
+      "labels": {
+        "free": "Free",
+        "split": "Split the bill",
+        "pay_yourself": "Pay for yourself",
+        "paid": "Paid"
+      },
+      "short": {
+        "free": "No cost expected",
+        "split": "Share costs fairly",
+        "pay_yourself": "Everyone covers their own",
+        "paid": "Payment required to join"
+      },
+      "hints": {
+        "free": "Guests don't need to pay anything.",
+        "split": "Costs are tracked and split between attendees.",
+        "pay_yourself": "Each person pays for their own share.",
+        "paid": "Guests pay by card to join through KimKim."
+      },
+      "ticketPrice": "Ticket price",
+      "ticketPricePlaceholder": "e.g. 150000",
+      "ticketCurrency": "Currency",
+      "ticketHint": "Guests will pay this amount via Stripe when they join."
+    },
     "tabs": {
       "overview": "Overview",
       "comments": "Comments",
@@ -108,7 +136,14 @@
       "placeholder": "Write a comment...",
       "reply": "Reply",
       "post": "Post",
-      "empty": "No comments yet. Start the conversation."
+      "empty": "No comments yet. Start the conversation.",
+      "emptyTitle": "Start the conversation",
+      "delete": "Delete",
+      "confirmDelete": "Confirm delete",
+      "cancelDelete": "Cancel",
+      "deleting": "Deleting...",
+      "deleteHasReplies": "Delete replies first before removing this comment.",
+      "deleteError": "Could not delete comment. Try again."
     },
     "expenses": {
       "title": "Expenses",
@@ -126,7 +161,10 @@
       "empty": "No expenses yet.",
       "edit": "Edit",
       "delete": "Delete",
-      "owes": "{from} owes {to} {amount}"
+      "owes": "{from} owes {to} {amount}",
+      "copySettlement": "Copy balances",
+      "settlementCopied": "Copied!",
+      "shareSettlement": "Share on Telegram"
     },
     "notifications": {
       "enableHint": "Start the KimKim bot on Telegram to get comment, expense, and reminder notifications.",
@@ -142,17 +180,61 @@
       "shareText": "Join my event: {title}",
       "regenerate": "New invite link",
       "regenerateConfirm": "Generate a new invite link? The old link will stop working."
+    },
+    "telegramGroup": {
+      "title": "Telegram group",
+      "subtitle": "Announce joins, schedule changes, and reminders in your gap/wedding group chat.",
+      "step1": "Add the KimKim bot to your Telegram group (use the button below).",
+      "step2": "As the organizer, send this command in the group:",
+      "copyCommand": "Copy command",
+      "copied": "Copied!",
+      "addBotToGroup": "Add bot to group",
+      "linked": "Group connected",
+      "linkedHint": "KimKim will post when someone joins, when details change, and before the event starts.",
+      "shareToGroup": "Post invite to group",
+      "unlink": "Disconnect group"
     }
   },
   "join": {
     "loading": "Loading invite...",
     "notFound": "This invite link is invalid or expired.",
     "eyebrow": "You're invited",
+    "headline": "You're invited!",
+    "intro": "You've been invited to this event. Let the host know if you're coming by joining below.",
+    "expensesNote": "This event uses KimKim to track and settle shared expenses — you'll see who owes what after you join.",
+    "paidNote": "Pay securely by card to confirm your spot. You'll join the event right after payment.",
+    "paidNotConfigured": "This is a paid event, but the host hasn't set a ticket price yet.",
+    "ticketPrice": "Ticket: {price}",
     "memberCount": "{count, plural, one {# person going} other {# people going}}",
-    "join": "Join event",
+    "join": "I'm coming — join event",
     "joining": "Joining...",
+    "payAndJoin": "Pay {price} & join",
+    "startingCheckout": "Opening checkout...",
+    "confirmingPayment": "Confirming your payment...",
+    "paymentSuccess": "Payment received — welcome to the event!",
+    "paymentPending": "Payment received. If you don't see the event yet, refresh in a moment.",
+    "checkoutCancelled": "Checkout cancelled. You can try again when you're ready.",
+    "checkoutError": "Could not start checkout. Please try again.",
     "openEvent": "Open event",
-    "loginToJoin": "Sign in with Telegram to join this event."
+    "loginTitle": "Sign in to RSVP",
+    "loginBody": "Use Telegram to join — it only takes a moment and helps the host know you're coming.",
+    "loginBodyPaid": "Sign in with Telegram first, then pay by card to secure your spot.",
+    "loginToJoin": "Sign in with Telegram to join this event.",
+    "alreadyJoined": "You're on the guest list"
+  },
+  "onboarding": {
+    "eyebrow": "Quick start",
+    "title": "Welcome to KimKim",
+    "subtitle": "Three steps to your first gathering — weddings, gap circles, sunnat to'y, and more.",
+    "dismiss": "Dismiss",
+    "step1Title": "Create an event",
+    "step1Body": "Add the date, place, and who's paying for what.",
+    "step1Action": "Create event",
+    "step2Title": "Invite your people",
+    "step2Body": "Share the invite link in Telegram so guests can RSVP.",
+    "step3Title": "Turn on notifications",
+    "step3Body": "Start the KimKim bot so you get comments, expenses, and reminders.",
+    "step3Action": "Open bot"
   },
   "pwa": {
     "offlineTitle": "You're offline",

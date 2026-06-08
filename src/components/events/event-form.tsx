@@ -4,6 +4,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LocationPicker, type LocationValue } from "@/components/events/location-picker";
+import { PaymentModePicker } from "@/components/events/payment-mode-picker";
 import { toDatetimeLocalValue } from "@/lib/events/form";
 import type { Event } from "@/types";
 
@@ -137,6 +138,12 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
           className="kk-textarea"
         />
       </div>
+
+      <PaymentModePicker
+        defaultValue={event?.payment_mode ?? "free"}
+        defaultTicketPriceCents={event?.ticket_price_cents}
+        defaultTicketCurrency={event?.ticket_currency ?? "UZS"}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">

@@ -163,7 +163,32 @@ Custom domains `kimkim.uz` and `www.kimkim.uz` are configured in `wrangler.jsonc
 2. Set the login domain: `/setdomain` → `kimkim.uz`
 3. Optional: set Mini App URL to `https://kimkim.uz/en`
 4. Register the webhook: `https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://kimkim.uz/api/telegram/webhook`
-5. Users must **start the bot** (`/start`) to receive DM notifications
+5. Register bot commands (menu): `npm run bot:commands` (uses `CRON_SECRET` from `.dev.vars`)
+6. Users must **start the bot** (`/start`) to receive DM notifications
+
+### Bot commands (EN / UZ)
+
+The bot detects language from Telegram (`language_code`) or `/lang uz` / `/lang en`.
+
+| Command | What it does |
+|---------|----------------|
+| `/create` | Guided flow: title → date/time → description → event link |
+| `/events` | Lists your upcoming events with links |
+| `/help` | Command reference |
+| `/cancel` | Stops the current flow |
+| `/lang uz` | Switch to Uzbek |
+
+Natural phrases work too: `create event`, `event yarat`, `my events`, `eventlarim`.
+
+### Telegram group announcements
+
+Link a gap/wedding group so KimKim posts joins, schedule changes, and reminders there:
+
+1. On the event **Overview** tab (organizer), open **Telegram group**
+2. Tap **Add bot to group**, then send `/link INVITE_CODE` in the group
+3. Use **Post invite to group** to share the RSVP link anytime
+
+Group commands: `/link`, `/unlink`, `/event`
 
 ### Telegram notifications
 

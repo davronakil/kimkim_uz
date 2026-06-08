@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, LayoutGrid, MapPin, MessageSquare, Pencil, Receipt, Share2 } from "lucide-react";
+import { CalendarDays, LayoutGrid, MapPin, MessageSquare, Pencil, Receipt } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
@@ -9,14 +9,16 @@ import { useOnlineStatus } from "@/lib/offline/use-online-status";
 import { CommentThread } from "@/components/events/comment-thread";
 import { ExpensePanel } from "@/components/events/expense-panel";
 import { InvitePanel } from "@/components/events/invite-panel";
+import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import { LeaveEventButton } from "@/components/events/leave-event-button";
 import { MemberList } from "@/components/events/member-list";
 import { TransferOwnershipPanel } from "@/components/events/transfer-ownership-panel";
+import { TelegramGroupPanel } from "@/components/events/telegram-group-panel";
 import { TelegramNotifyBanner } from "@/components/events/telegram-notify-banner";
+import type { Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
+import { intlLocale } from "@/lib/locale";
 import type { Comment, Event, EventMember, Expense, Settlement } from "@/types";
-import { buildTelegramShareUrl } from "@/lib/auth/telegram";
-
 type EventPayload = {
   event: Event;
   members: EventMember[];
@@ -103,10 +105,6 @@ export function EventWorkspace({
 
   const { event, members, comments, expenses, settlements } = data;
   const startsAt = new Date(event.starts_at);
-  const shareUrl =
-    typeof window !== "undefined"
-      ? buildTelegramShareUrl(event.title, window.location.href)
-      : "#";
 
   function renderTabContent() {
     if (tab === "overview") {
@@ -121,6 +119,14 @@ export function EventWorkspace({
               botUsername={botUsername}
               locale={locale}
               canRegenerate={canEdit}
+            />
+          ) : null}
+          {canEdit && event.invite_code ? (
+            <TelegramGroupPanel
+              eventId={eventId}
+              inviteCode={event.invite_code}
+              botUsername={botUsername}
+              linked={Boolean(event.telegram_chat_id)}
             />
           ) : null}
           <section className="kk-card p-5 sm:p-6">
@@ -154,6 +160,7 @@ export function EventWorkspace({
         <CommentThread
           eventId={eventId}
           comments={comments}
+          currentUserId={currentUserId}
           onPosted={load}
           readOnly={!online}
         />
@@ -195,6 +202,7 @@ export function EventWorkspace({
           <div className="space-y-4 p-5 sm:p-6">
             <div className="space-y-3">
               <h1 className="text-2xl font-semibold leading-tight sm:text-3xl">{event.title}</h1>
+              <PaymentModeBadge mode={event.payment_mode ?? "free"} size="sm" />
               {event.description ? (
                 <p className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
                   {event.description}
@@ -202,28 +210,17 @@ export function EventWorkspace({
               ) : null}
             </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-              {canEdit ? (
-                <Link href={`/events/${eventId}/edit`} className="kk-btn-secondary w-full sm:w-auto">
-                  <Pencil className="h-4 w-4" />
-                  {common("edit")}
-                </Link>
-              ) : null}
-              <a
-                href={shareUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="kk-btn-secondary w-full sm:w-auto"
-              >
-                <Share2 className="h-4 w-4" />
-                {common("share")}
-              </a>
-            </div>
+            {canEdit ? (
+              <Link href={`/events/${eventId}/edit`} className="kk-btn-secondary w-full sm:w-auto">
+                <Pencil className="h-4 w-4" />
+                {common("edit")}
+              </Link>
+            ) : null}
 
             <div className="space-y-2 text-base text-zinc-600 dark:text-zinc-300">
               <p className="inline-flex items-start gap-2.5">
                 <CalendarDays className="mt-0.5 h-5 w-5 shrink-0" />
-                {startsAt.toLocaleString(locale === "uz" ? "uz-UZ" : "en-US", {
+                {startsAt.toLocaleString(intlLocale(locale as Locale), {
                   dateStyle: "full",
                   timeStyle: "short",
                 })}

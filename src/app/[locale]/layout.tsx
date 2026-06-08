@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { locales, type Locale } from "@/i18n/config";
+import { alternateOgLocales, ogLocaleTag } from "@/lib/locale";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -58,18 +59,15 @@ export async function generateMetadata({
     },
     alternates: {
       canonical: localePath,
-      languages: {
-        en: "/en",
-        uz: "/uz",
-      },
+      languages: Object.fromEntries(locales.map((code) => [code, `/${code}`])),
     },
     openGraph: {
       title: t("ogTitle"),
       description: t("description"),
       url: localePath,
       siteName: "KimKim",
-      locale: locale === "uz" ? "uz_UZ" : "en_US",
-      alternateLocale: locale === "uz" ? ["en_US"] : ["uz_UZ"],
+      locale: ogLocaleTag(locale as Locale),
+      alternateLocale: alternateOgLocales(locale as Locale),
       type: "website",
     },
     twitter: {

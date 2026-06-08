@@ -1,8 +1,10 @@
 "use client";
 
+import { Copy, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { Expense, Settlement, User } from "@/types";
+import { buildTelegramShareUrl } from "@/lib/auth/telegram";
 import { centsToMajor, displayName, formatMoney } from "@/lib/utils";
 
 export function ExpensePanel({
@@ -28,6 +30,7 @@ export function ExpensePanel({
   const [amount, setAmount] = useState("");
   const [payerId, setPayerId] = useState(members[0]?.id ?? "");
   const [splitMode, setSplitMode] = useState<"equal" | "custom">("equal");
+  const [copiedSettlement, setCopiedSettlement] = useState(false);
   const [splitIds, setSplitIds] = useState<string[]>(members.map((member) => member.id));
   const [customAmounts, setCustomAmounts] = useState<Record<string, string>>(() =>
     Object.fromEntries(members.map((member) => [member.id, ""])),
@@ -351,7 +354,70 @@ export function ExpensePanel({
       </section>
 
       <section className="space-y-3">
-        <h3 className="kk-section-title">{t("settlementTitle")}</h3>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h3 className="kk-section-title">{t("settlementTitle")}</h3>
+          {settlements.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const lines = settlements.map((settlement) => {
+                    const from = memberMap.get(settlement.from_user_id);
+                    const to = memberMap.get(settlement.to_user_id);
+                    return t("owes", {
+                      from: from ? displayName(from) : "?",
+                      to: to ? displayName(to) : "?",
+                      amount: formatMoney(
+                        settlement.amount_cents,
+                        settlement.currency,
+                        locale,
+                      ),
+                    });
+                  });
+                  void navigator.clipboard.writeText(
+                    `${t("settlementTitle")}\n${lines.join("\n")}`,
+                  );
+                  setCopiedSettlement(true);
+                  window.setTimeout(() => setCopiedSettlement(false), 2000);
+                }}
+                className="kk-btn-secondary inline-flex min-h-10 gap-2 text-sm"
+              >
+                <Copy className="h-4 w-4" />
+                {copiedSettlement ? t("settlementCopied") : t("copySettlement")}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const lines = settlements.map((settlement) => {
+                    const from = memberMap.get(settlement.from_user_id);
+                    const to = memberMap.get(settlement.to_user_id);
+                    return t("owes", {
+                      from: from ? displayName(from) : "?",
+                      to: to ? displayName(to) : "?",
+                      amount: formatMoney(
+                        settlement.amount_cents,
+                        settlement.currency,
+                        locale,
+                      ),
+                    });
+                  });
+                  window.open(
+                    buildTelegramShareUrl(
+                      window.location.href,
+                      `${t("settlementTitle")}\n${lines.join("\n")}`,
+                    ),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                }}
+                className="kk-btn-secondary inline-flex min-h-10 gap-2 text-sm"
+              >
+                <Share2 className="h-4 w-4" />
+                {t("shareSettlement")}
+              </button>
+            </div>
+          ) : null}
+        </div>
         {settlements.length === 0 ? (
           <p className="text-sm text-zinc-500">{t("settlementEmpty")}</p>
         ) : (
