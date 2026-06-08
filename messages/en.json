@@ -97,6 +97,34 @@
       "titlePlaceholder": "e.g. Wedding, Gap circle, Sunnat to'y, Choyxona...",
       "description": "Description",
       "descriptionPlaceholder": "Guest notes, venue details, gap rules — anything the group needs.",
+      "templatesTitle": "Start from a template",
+      "templatesSubtitle": "Pick a common gathering and KimKim will prefill the basics.",
+      "templates": {
+        "gap": {
+          "title": "Gap circle",
+          "description": "Monthly gap with friends. Add the location, then track expenses here so everyone knows their share."
+        },
+        "choyxona": {
+          "title": "Choyxona",
+          "description": "Choyxona meetup. Guests can RSVP, follow updates, and cover their own order at the venue."
+        },
+        "wedding": {
+          "title": "Wedding",
+          "description": "Wedding invite with date, place, guest notes, and updates for everyone attending."
+        },
+        "birthday": {
+          "title": "Birthday",
+          "description": "Birthday gathering. Invite friends, coordinate details, and split shared costs if needed."
+        },
+        "sunnat": {
+          "title": "Sunnat to'y",
+          "description": "Sunnat to'y invite with family notes, location, timing, and reminders for guests."
+        },
+        "paid": {
+          "title": "Paid event",
+          "description": "Ticketed event. Set a price, let guests pay by card or settle with the host later, and track who has paid."
+        }
+      },
       "startsAt": "Date & time",
       "endsAt": "End time (optional)",
       "location": "Location",

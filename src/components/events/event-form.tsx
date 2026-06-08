@@ -6,7 +6,7 @@ import { useState } from "react";
 import { LocationPicker, type LocationValue } from "@/components/events/location-picker";
 import { PaymentModePicker } from "@/components/events/payment-mode-picker";
 import { toDatetimeLocalValue } from "@/lib/events/form";
-import type { Event } from "@/types";
+import type { Event, EventPaymentMode } from "@/types";
 
 type EventFormProps = {
   mode: "create" | "edit";
@@ -34,16 +34,72 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [removeCover, setRemoveCover] = useState(false);
+  const [title, setTitle] = useState(event?.title ?? "");
+  const [description, setDescription] = useState(event?.description ?? "");
+  const [paymentMode, setPaymentMode] = useState<EventPaymentMode>(
+    event?.payment_mode ?? "free",
+  );
+  const [paymentPickerKey, setPaymentPickerKey] = useState(0);
   const [location, setLocation] = useState<LocationValue | null>(
     event ? eventToLocation(event) : null,
   );
   const [locationCleared, setLocationCleared] = useState(false);
 
   const initialLocation = event ? eventToLocation(event) : null;
+  const templates: Array<{
+    id: string;
+    title: string;
+    description: string;
+    paymentMode: EventPaymentMode;
+  }> = [
+    {
+      id: "gap",
+      title: t("templates.gap.title"),
+      description: t("templates.gap.description"),
+      paymentMode: "split",
+    },
+    {
+      id: "choyxona",
+      title: t("templates.choyxona.title"),
+      description: t("templates.choyxona.description"),
+      paymentMode: "pay_yourself",
+    },
+    {
+      id: "wedding",
+      title: t("templates.wedding.title"),
+      description: t("templates.wedding.description"),
+      paymentMode: "free",
+    },
+    {
+      id: "birthday",
+      title: t("templates.birthday.title"),
+      description: t("templates.birthday.description"),
+      paymentMode: "split",
+    },
+    {
+      id: "sunnat",
+      title: t("templates.sunnat.title"),
+      description: t("templates.sunnat.description"),
+      paymentMode: "free",
+    },
+    {
+      id: "paid",
+      title: t("templates.paid.title"),
+      description: t("templates.paid.description"),
+      paymentMode: "paid",
+    },
+  ];
 
   function handleLocationSelect(value: LocationValue | null) {
     setLocation(value);
     setLocationCleared(value === null && Boolean(initialLocation));
+  }
+
+  function applyTemplate(template: (typeof templates)[number]) {
+    setTitle(template.title);
+    setDescription(template.description);
+    setPaymentMode(template.paymentMode);
+    setPaymentPickerKey((value) => value + 1);
   }
 
   async function onSubmit(formEvent: React.FormEvent<HTMLFormElement>) {
@@ -111,6 +167,29 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
       onSubmit={onSubmit}
       className="space-y-5 rounded-3xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6"
     >
+      {mode === "create" ? (
+        <section className="space-y-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 dark:border-emerald-900 dark:bg-emerald-950/30">
+          <div className="space-y-1">
+            <p className="kk-label">{t("templatesTitle")}</p>
+            <p className="text-sm leading-relaxed text-emerald-950/75 dark:text-emerald-100/75">
+              {t("templatesSubtitle")}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {templates.map((template) => (
+              <button
+                key={template.id}
+                type="button"
+                onClick={() => applyTemplate(template)}
+                className="rounded-full border border-emerald-200 bg-white px-3.5 py-2 text-sm font-semibold text-emerald-950 transition hover:border-emerald-400 hover:bg-emerald-100 active:scale-[0.98] dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100 dark:hover:bg-emerald-900"
+              >
+                {template.title}
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <div className="space-y-2">
         <label htmlFor="title" className="kk-label">
           {t("title")}
@@ -119,7 +198,8 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
           id="title"
           name="title"
           required
-          defaultValue={event?.title ?? ""}
+          value={title}
+          onChange={(inputEvent) => setTitle(inputEvent.target.value)}
           placeholder={t("titlePlaceholder")}
           className="kk-input"
         />
@@ -133,14 +213,16 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
           id="description"
           name="description"
           rows={4}
-          defaultValue={event?.description ?? ""}
+          value={description}
+          onChange={(inputEvent) => setDescription(inputEvent.target.value)}
           placeholder={t("descriptionPlaceholder")}
           className="kk-textarea"
         />
       </div>
 
       <PaymentModePicker
-        defaultValue={event?.payment_mode ?? "free"}
+        key={paymentPickerKey}
+        defaultValue={paymentMode}
         defaultTicketPriceCents={event?.ticket_price_cents}
         defaultTicketCurrency={event?.ticket_currency ?? "UZS"}
       />

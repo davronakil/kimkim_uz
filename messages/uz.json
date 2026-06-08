@@ -97,6 +97,34 @@
       "titlePlaceholder": "Masalan: To'y, Gap, Sunnat to'y, Choyxona...",
       "description": "Qisqacha",
       "descriptionPlaceholder": "Mehmonlar, joy yoki gap qoidalari — hammaga kerakli narsa.",
+      "templatesTitle": "Tayyor namunadan boshlang",
+      "templatesSubtitle": "Kerakli turini tanlang — KimKim asosiy maydonlarni o'zi to'ldiradi.",
+      "templates": {
+        "gap": {
+          "title": "Gap",
+          "description": "Do'stlar bilan navbatdagi gap. Joyni qo'shing, xarajatlarni shu yerda yozing, hamma o'z ulushini ko'rsin."
+        },
+        "choyxona": {
+          "title": "Choyxona",
+          "description": "Choyxona uchrashuvi. Mehmonlar kelishini bildiradi, yangiliklarni ko'radi va joyida o'z hisobini yopadi."
+        },
+        "wedding": {
+          "title": "To'y",
+          "description": "To'y taklifi: sana, joy, mehmonlar uchun izohlar va yangiliklar bitta joyda."
+        },
+        "birthday": {
+          "title": "Tug'ilgan kun",
+          "description": "Tug'ilgan kun uchrashuvi. Do'stlarni chaqiring, tafsilotlarni kelishing va kerak bo'lsa xarajatni bo'ling."
+        },
+        "sunnat": {
+          "title": "Sunnat to'y",
+          "description": "Sunnat to'y taklifi: oila uchun izohlar, joy, vaqt va mehmonlarga eslatmalar."
+        },
+        "paid": {
+          "title": "Pullik event",
+          "description": "Chiptali event. Narx qo'ying, mehmonlar karta bilan yoki keyin hostga to'laydi, kim to'laganini kuzating."
+        }
+      },
       "startsAt": "Qachon?",
       "endsAt": "Tugashi (shart emas)",
       "location": "Qayerda?",
