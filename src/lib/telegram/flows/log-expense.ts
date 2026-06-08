@@ -48,7 +48,6 @@ export async function startLogExpenseFlow(chatId: number, user: User, locale: Bo
   await sendTelegramMessage(chatId, t(locale).expensePickEvent, {
     reply_markup: expenseEventPickerKeyboard(
       memberEvents.map((event) => ({ id: event!.id, title: event!.title })),
-      locale,
     ),
   });
 }

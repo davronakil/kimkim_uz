@@ -29,10 +29,7 @@ export function inviteRsvpKeyboard({
   };
 }
 
-export function expenseEventPickerKeyboard(
-  events: Array<{ id: string; title: string }>,
-  locale: BotLocale,
-) {
+export function expenseEventPickerKeyboard(events: Array<{ id: string; title: string }>) {
   return {
     inline_keyboard: events.slice(0, 6).map((event) => [
       {

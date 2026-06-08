@@ -2,10 +2,28 @@
 
 import { Bot, Link2, PartyPopper, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Link } from "@/i18n/navigation";
 
 const storageKey = "kimkim:onboarding-dismissed";
+const onboardingChangeEvent = "kimkim:onboarding-change";
+
+function subscribeOnboarding(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(onboardingChangeEvent, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(onboardingChangeEvent, callback);
+  };
+}
+
+function getOnboardingVisible() {
+  return localStorage.getItem(storageKey) !== "1";
+}
+
+function getServerOnboardingVisible() {
+  return false;
+}
 
 export function EventsOnboarding({
   botUsername,
@@ -15,16 +33,15 @@ export function EventsOnboarding({
   eventCount: number;
 }) {
   const t = useTranslations("onboarding");
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (localStorage.getItem(storageKey) === "1") return;
-    setVisible(true);
-  }, []);
+  const visible = useSyncExternalStore(
+    subscribeOnboarding,
+    getOnboardingVisible,
+    getServerOnboardingVisible,
+  );
 
   function dismiss() {
     localStorage.setItem(storageKey, "1");
-    setVisible(false);
+    window.dispatchEvent(new Event(onboardingChangeEvent));
   }
 
   if (!visible) return null;

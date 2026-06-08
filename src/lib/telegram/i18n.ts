@@ -4,9 +4,9 @@ import type { BotLocale } from "@/lib/telegram/types";
 const messages = {
   en: {
     welcome:
-      "KimKim.uz — plan events and split expenses. Use the commands below or just type naturally.",
+      "KimKim.uz — who's coming, where to meet, who owes what. /create to start, or type /help.",
     welcomeInvite: (title: string) =>
-      `You're invited to <b>${title}</b>. Tap a button to RSVP.`,
+      `You're invited to <b>${title}</b>. Tap below to RSVP.`,
     inviteNotFound: "This invite link was not found or has expired.",
     joinButton: "Join event",
     rsvpGoing: "I'm coming",
@@ -66,9 +66,9 @@ const messages = {
   },
   uz: {
     welcome:
-      "KimKim.uz — event qil, pulni bo'lish. Buyruqlar yoki oddiy matn bilan yozing.",
+      "KimKim.uz — kim keladi, qayerda, pul kimda. /create bilan boshlang yoki /help.",
     welcomeInvite: (title: string) =>
-      `Sizni <b>${title}</b> eventiga chaqirishdi. RSVP uchun tugmani bosing.`,
+      `Sizni <b>${title}</b> ga chaqirishdi. Qo'shilish uchun tugmani bosing.`,
     inviteNotFound: "Bu link topilmadi yoki eskirgan.",
     joinButton: "Qo'shilish",
     rsvpGoing: "Kelaman",
@@ -110,7 +110,7 @@ const messages = {
     createSuccess: (title: string, when: string) =>
       `Tayyor! <b>${title}</b> — ${when}.`,
     openEvent: "Eventni ochish",
-    shareInvite: "Invite share",
+    shareInvite: "Taklifni ulashish",
     noEvents: "Yaqin event yo'q. /create bilan yarating.",
     eventsHeader: "<b>Yaqin eventlar</b>",
     eventLine: (title: string, when: string) => `• <b>${title}</b> — ${when}`,
@@ -128,9 +128,9 @@ const messages = {
   },
   ru: {
     welcome:
-      "KimKim.uz — планируйте события и делите расходы. Команды ниже или просто напишите текстом.",
+      "KimKim.uz — кто придёт, где встречаемся, кто кому должен. /create чтобы начать, или /help.",
     welcomeInvite: (title: string) =>
-      `Вас приглашают на <b>${title}</b>. Нажмите кнопку, чтобы ответить.`,
+      `Вас приглашают на <b>${title}</b>. Нажмите ниже, чтобы подтвердить участие.`,
     inviteNotFound: "Ссылка не найдена или устарела.",
     joinButton: "Присоединиться",
     rsvpGoing: "Приду",

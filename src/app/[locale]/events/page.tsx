@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Link, redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { listUserEvents } from "@/lib/db/queries";
+import { partitionEventsByDate } from "@/lib/events/partition-by-date";
 
 export default async function EventsPage({
   params,
@@ -27,11 +28,7 @@ export default async function EventsPage({
     process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME ??
     process.env.TELEGRAM_BOT_USERNAME ??
     "kimkimuzbot";
-  const now = Date.now();
-  const upcoming = events.filter((event) => new Date(event.starts_at).getTime() >= now);
-  const past = events
-    .filter((event) => new Date(event.starts_at).getTime() < now)
-    .sort((a, b) => new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime());
+  const { upcoming, past } = partitionEventsByDate(events);
 
   return (
     <div className="space-y-6">

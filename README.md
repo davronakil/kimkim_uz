@@ -2,20 +2,23 @@
 
 **[kimkim.uz](https://kimkim.uz)** — plan weddings, gap circles, sunnat to'y, aqiqa, challari, choyxona, and any gathering. Coordinate guests, discuss in threads, split expenses, and sign in with Telegram.
 
-Built for **English** and **Oʻzbek** speakers, deployed on Cloudflare Workers.
+Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on Cloudflare Workers.
 
 ---
 
 ## Features
 
 - **Events** — to'y, gap, sunnat to'y, aqiqa, challari, choyxona, birthdays; date/time, location, cover image
-- **Invites** — shareable links, bot deep links, link rotation
-- **Members** — join, leave, organizer can remove members
-- **Threaded comments** — nested discussion on each event
-- **Expense splitting** — equal or custom splits, settlement, delete
-- **Telegram** — Login Widget + Mini App, bot DMs for activity and reminders
+- **Invites** — shareable links, locale-aware bot deep links, link rotation, RSVP landing page
+- **Payment modes** — Free, Split the bill, Pay for yourself, Paid (Stripe Checkout)
+- **Members** — join, leave, transfer ownership, remove member
+- **Threaded comments** — nested discussion; delete own comments (no replies)
+- **Expense splitting** — equal or custom splits, settlement copy/share, delete
+- **Telegram bot** — create events, log expenses, RSVP buttons, group linking, bilingual + Russian
+- **Notifications** — DM + group announcements; 24h / 1h reminders
+- **OG previews** — cover photo → map pin → auto-generated event card
 - **PWA** — installable, offline cached event details
-- **Bilingual UI** — English and Uzbek (`/en`, `/uz`)
+- **Trilingual UI** — `/en`, `/uz`, `/ru`
 
 See [ROADMAP.md](./ROADMAP.md) for what's next.
 
@@ -30,6 +33,7 @@ See [ROADMAP.md](./ROADMAP.md) for what's next.
 | Hosting | [Cloudflare Workers](https://developers.cloudflare.com/workers/) via [@opennextjs/cloudflare](https://opennext.js.org/cloudflare) |
 | Database | [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) |
 | Media | [Cloudflare R2](https://developers.cloudflare.com/r2/) |
+| Payments | [Stripe](https://stripe.com/) Checkout (paid events) |
 | Auth | [Telegram Login](https://core.telegram.org/widgets/login) + Web App initData |
 
 ---
@@ -42,13 +46,15 @@ Browser / Telegram Mini App
         ▼
 Next.js on Cloudflare Workers (OpenNext)
         │
-   ┌────┴────┬──────────┐
-   ▼         ▼          ▼
-  D1        R2      Telegram API
-(events,   (covers)  (auth, share)
- comments,
+   ┌────┴────┬──────────┬─────────┐
+   ▼         ▼          ▼         ▼
+  D1        R2      Telegram   Stripe
+(events,   (covers)  (auth,    (paid
+ comments,           bot)       tickets)
  expenses)
 ```
+
+Hourly cron → event reminders (`worker-scheduled.mjs`).
 
 ---
 
@@ -58,8 +64,9 @@ Next.js on Cloudflare Workers (OpenNext)
 
 - Node.js 20+
 - A [Cloudflare](https://dash.cloudflare.com/) account
-- A [Telegram bot](https://t.me/BotFather) (for login)
-- A Google Maps API key with Places enabled (optional; manual location fallback without it)
+- A [Telegram bot](https://t.me/BotFather) (for login + notifications)
+- Google Maps API key with Places enabled (optional; manual location fallback without it)
+- Stripe account (optional; only for paid events)
 
 ### 1. Clone and install
 
@@ -77,7 +84,7 @@ This is a **public repository**. Never commit real credentials.
 cp .dev.vars.example .dev.vars
 ```
 
-Edit `.dev.vars` with your values:
+See [.dev.vars.example](./.dev.vars.example) for all variables. Minimum for local dev:
 
 | Variable | Description |
 |----------|-------------|
@@ -86,6 +93,7 @@ Edit `.dev.vars` with your values:
 | `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` | Bot username without `@` |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Google Maps Places API key |
 | `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` for local dev |
+| `CRON_SECRET` | Random string for cron auth |
 
 ### 3. Database migrations (local)
 
@@ -99,117 +107,49 @@ npm run db:migrate:local
 npm run dev
 ```
 
-Open [http://localhost:3000/en](http://localhost:3000/en) or [http://localhost:3000/uz](http://localhost:3000/uz).
+Open [http://localhost:3000/en](http://localhost:3000/en), [/uz](http://localhost:3000/uz), or [/ru](http://localhost:3000/ru).
 
 ---
 
-## Deploy to production (kimkim.uz)
+## Deploy to production
 
-### Cloudflare resources
-
-```bash
-# Create D1 database — copy the database_id into wrangler.jsonc
-npx wrangler d1 create kimkim-db
-
-# Create R2 bucket for cover images
-npx wrangler r2 bucket create kimkim-media
-```
-
-### Secrets (production)
-
-Set via Wrangler — **never** in git:
-
-```bash
-npx wrangler secret put SESSION_SECRET
-npx wrangler secret put TELEGRAM_BOT_TOKEN
-```
-
-### Google Maps API key (important)
-
-The location picker reads `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`. Because it runs in the **browser**, this value must be available to the Worker at runtime:
-
-1. Cloudflare dashboard → **Workers & Pages** → `kimkim-uz` → **Settings** → **Variables**
-2. Add a **plain-text** variable (not encrypted secret):
-   - Name: `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
-   - Value: your Google API key
-3. Also keep it in `.dev.vars` for local dev and for builds run on your machine.
-
-Do **not** use a different name like `GOOGLE_MAPS_API_KEY` — the app looks for `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` exactly.
-
-In [Google Cloud Console](https://console.cloud.google.com/apis/credentials), enable **Maps JavaScript API** and **Places API**, then restrict the key by HTTP referrer:
-
-- `https://kimkim.uz/*`
-- `https://www.kimkim.uz/*`
-- `http://localhost:*/*`
-
-After adding or changing the variable, redeploy: `npm run deploy`.
-
-### Other public vars
-
-`NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` are set in `wrangler.jsonc`. Secrets (`SESSION_SECRET`, `TELEGRAM_BOT_TOKEN`, `CRON_SECRET`) use `wrangler secret put`.
-
-### Migrate and deploy
+Full checklist: [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md).
 
 ```bash
 npm run db:migrate:remote
 npm run deploy
 ```
 
-Custom domains `kimkim.uz` and `www.kimkim.uz` are configured in `wrangler.jsonc`. Ensure DNS for the zone points to Cloudflare.
+Custom domains `kimkim.uz` and `www.kimkim.uz` are in `wrangler.jsonc`.
 
-### Telegram bot setup
-
-1. Create a bot with [@BotFather](https://t.me/BotFather)
-2. Set the login domain: `/setdomain` → `kimkim.uz`
-3. Optional: set Mini App URL to `https://kimkim.uz/en`
-4. Register the webhook: `https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://kimkim.uz/api/telegram/webhook`
-5. Register bot commands (menu): `npm run bot:commands` (uses `CRON_SECRET` from `.dev.vars`)
-6. Users must **start the bot** (`/start`) to receive DM notifications
-
-### Bot commands (EN / UZ)
-
-The bot detects language from Telegram (`language_code`) or `/lang uz` / `/lang en`.
-
-| Command | What it does |
-|---------|----------------|
-| `/create` | Guided flow: title → date/time → description → event link |
-| `/events` | Lists your upcoming events with links |
-| `/help` | Command reference |
-| `/cancel` | Stops the current flow |
-| `/lang uz` | Switch to Uzbek |
-
-Natural phrases work too: `create event`, `event yarat`, `my events`, `eventlarim`.
-
-### Telegram group announcements
-
-Link a gap/wedding group so KimKim posts joins, schedule changes, and reminders there:
-
-1. On the event **Overview** tab (organizer), open **Telegram group**
-2. Tap **Add bot to group**, then send `/link INVITE_CODE` in the group
-3. Use **Post invite to group** to share the RSVP link anytime
-
-Group commands: `/link`, `/unlink`, `/event`
-
-### Telegram notifications
-
-KimKim sends Telegram DMs when:
-
-- Someone comments or replies on an event
-- A new expense is added
-- Someone joins an event
-- An event is about to start (24h and 1h reminders)
-
-Reminders run on an hourly cron trigger. Set a secret before deploying:
+### Secrets (production)
 
 ```bash
-wrangler secret put CRON_SECRET
+npx wrangler secret put SESSION_SECRET
+npx wrangler secret put TELEGRAM_BOT_TOKEN
+npx wrangler secret put CRON_SECRET
+npx wrangler secret put STRIPE_SECRET_KEY        # paid events
+npx wrangler secret put STRIPE_WEBHOOK_SECRET    # paid events
 ```
 
-Add the same value to `.dev.vars` for local cron testing:
+### Google Maps API key
 
-```bash
-curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:8787/api/cron/event-reminders
-```
+The location picker needs `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` as a **plain-text** Worker variable (browser-side). Also keep it in `.dev.vars` for local builds.
+
+Enable **Maps JavaScript API** and **Places API** in [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Restrict by HTTP referrer:
+
+- `https://kimkim.uz/*`
+- `https://www.kimkim.uz/*`
+- `http://localhost:*/*`
+
+### Telegram bot
+
+1. Create bot with [@BotFather](https://t.me/BotFather)
+2. `/setdomain` → `kimkim.uz`
+3. Set webhook: `https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://kimkim.uz/api/telegram/webhook`
+4. Users must **start the bot** (`/start`) to receive DM notifications
+
+Bot reference: [docs/TELEGRAM.md](./docs/TELEGRAM.md).
 
 ---
 
@@ -217,12 +157,14 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:8787/api/cron/even
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Next.js dev server (with Cloudflare bindings via OpenNext) |
-| `npm run build` | Production Next.js build |
+| `npm run dev` | Next.js dev server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint (src only; `.open-next` ignored) |
 | `npm run preview` | Build + preview in Workers runtime locally |
 | `npm run deploy` | Build + deploy to Cloudflare Workers |
 | `npm run db:migrate:local` | Apply D1 migrations locally |
-| `npm run db:migrate:remote` | Apply D1 migrations to production D1 |
+| `npm run db:migrate:remote` | Apply D1 migrations to production |
+| `npm run bot:commands` | Register Telegram bot command menu |
 | `npm run cf-typegen` | Regenerate Cloudflare binding types |
 
 ---
@@ -231,15 +173,36 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:8787/api/cron/even
 
 ```
 src/
-├── app/[locale]/          # Localized pages (en, uz)
-├── app/api/               # Route handlers (auth, events, media)
-├── components/            # UI components
+├── app/[locale]/          # Pages (en, uz, ru)
+├── app/api/               # REST routes (auth, events, stripe, telegram, og)
+├── components/            # UI
 ├── i18n/                  # next-intl routing & config
-├── lib/                   # Auth, DB queries, expense settlement
-messages/                  # en.json, uz.json translations
-migrations/                # D1 SQL migrations
+├── lib/
+│   ├── telegram/          # Bot handler, flows, notifications
+│   ├── events/            # Create, payment mode, RSVP
+│   ├── expense/           # Splits, settlement
+│   ├── og/                # Dynamic social preview cards
+│   └── stripe/            # Checkout + webhook
+docs/                      # TELEGRAM, DATABASE, DEPLOYMENT guides
+messages/                  # en.json, uz.json, ru.json
+migrations/                # D1 SQL migrations (0001–0008)
 wrangler.jsonc             # Cloudflare Worker config
+AGENTS.md                  # Notes for AI coding assistants
 ```
+
+Database schema: [docs/DATABASE.md](./docs/DATABASE.md).
+
+---
+
+## Open Graph images
+
+Share previews use this priority:
+
+1. Event **cover photo** (R2)
+2. **Map snapshot** (if lat/lng + Google Maps key)
+3. **Generated card** — `/api/og/event/{id}/card?locale=ru`
+
+Cards include title, date, location, payment mode, and themed styling. SVG output (1200×630), cached 24h.
 
 ---
 
@@ -248,12 +211,24 @@ wrangler.jsonc             # Cloudflare Worker config
 - **Do not commit** `.dev.vars`, `.env*`, API tokens, or bot tokens
 - `.dev.vars` and `.wrangler/` are gitignored
 - Use Wrangler secrets and the Cloudflare dashboard for production credentials
-- Restrict your Google Maps API key to `kimkim.uz` and localhost
+- Restrict Google Maps API key to `kimkim.uz` and localhost
 
-If you discover a security issue, please report it privately rather than in a public issue.
+Report security issues privately, not in public GitHub issues.
+
+---
+
+## Documentation
+
+| Doc | Contents |
+|-----|----------|
+| [ROADMAP.md](./ROADMAP.md) | Shipped features, Phase 3, ops backlog |
+| [docs/TELEGRAM.md](./docs/TELEGRAM.md) | Bot commands, webhooks, notifications |
+| [docs/DATABASE.md](./docs/DATABASE.md) | Tables, migrations |
+| [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Production checklist |
+| [AGENTS.md](./AGENTS.md) | Quick reference for AI assistants |
 
 ---
 
 ## Roadmap
 
-v1 is complete. Phase 2 priorities (expense edit, ownership transfer, onboarding) are tracked in [ROADMAP.md](./ROADMAP.md).
+v1 and Phase 2 are complete. Growth items (templates, public pages, UZS/USD toggle) are in [ROADMAP.md](./ROADMAP.md).

@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "KimKim",
-    "tagline": "Weddings, gap circles, sunnat to'y, aqiqa — plan it all.",
+    "tagline": "Who's coming? KimKim knows.",
     "loading": "Loading...",
     "save": "Save",
     "cancel": "Cancel",
@@ -13,21 +13,21 @@
     "signOut": "Sign out",
     "createEvent": "Create event",
     "myEvents": "My events",
-    "noEvents": "No events yet. Start a wedding, gap circle, sunnat to'y, choyxona, or any gathering.",
+    "noEvents": "No events yet. Create your first gathering and invite your people.",
     "language": "Language"
   },
   "meta": {
-    "title": "KimKim — Weddings, gap circles, sunnat to'y & more",
-    "description": "Coordinate guests, location, and expenses for weddings, gap circles, sunnat to'y, aqiqa, challari, choyxona, and any gathering. Sign in with Telegram.",
-    "ogTitle": "KimKim — Uzbek celebrations & gatherings",
+    "title": "KimKim — Plan weddings, gap circles & gatherings",
+    "description": "Who's coming, where to meet, who owes what — for weddings, gap circles, sunnat to'y, choyxona, and more. Sign in with Telegram.",
+    "ogTitle": "KimKim — Plan every gathering in one place",
     "keywords": "event planning, wedding, gap circle, sunnat to'y, aqiqa, challari, choyxona, birthday, Telegram, Uzbekistan"
   },
   "home": {
-    "heroTitle": "Plan Uzbek celebrations — from gap circles to weddings",
-    "heroSubtitle": "Coordinate who's coming, where to meet, and who owes what. Weddings, gap circles, sunnat to'y, aqiqa, challari, birthdays, and choyxona nights.",
+    "heroTitle": "Who's coming?\nKimKim knows.",
+    "heroSubtitle": "Guests, location, and expenses — sorted in one place.",
     "heroTitleSignedIn": "Welcome back",
-    "heroSubtitleSignedIn": "Your weddings, gap circles, sunnat to'y, and more — all in one place.",
-    "ctaSignedOut": "Continue with Telegram",
+    "heroSubtitleSignedIn": "Your events, guests, and expenses — all here.",
+    "ctaSignedOut": "Sign in with Telegram",
     "ctaSignedIn": "Go to my events",
     "useCases": {
       "wedding": "Wedding",
@@ -39,19 +39,19 @@
       "challari": "Challari"
     },
     "features": {
-      "eventsTitle": "Any kind of event",
-      "eventsBody": "Weddings, gap circles, sunnat to'y, aqiqa, challari, birthdays, or a choyxona gathering — date, place, and guest list in one spot.",
+      "eventsTitle": "Any gathering",
+      "eventsBody": "Date, place, and guest list — whether it's a wedding, gap circle, or choyxona night.",
       "commentsTitle": "Plan together",
-      "commentsBody": "Threaded comments keep venue picks, tasks, and updates organized as the group decides.",
-      "expensesTitle": "Money made clear",
-      "expensesBody": "Track who paid, split costs fairly, and see balances — useful for gap pools, choyxona bills, and family celebrations.",
-      "telegramTitle": "Built for Telegram",
-      "telegramBody": "Invite family and friends by link. Get reminders and updates in Telegram."
+      "commentsBody": "Threaded comments for venue picks, tasks, and updates — nothing gets lost in the chat.",
+      "expensesTitle": "Split costs fairly",
+      "expensesBody": "Log who paid, split the bill, and see who owes whom — no awkward math later.",
+      "telegramTitle": "Lives in Telegram",
+      "telegramBody": "Share invite links, get reminders, and stay updated where your people already are."
     }
   },
   "auth": {
     "title": "Sign in with Telegram",
-    "subtitle": "Use Telegram to create or join weddings, gap circles, sunnat to'y, choyxona, and any event.",
+    "subtitle": "One tap to create or join events — no password needed.",
     "telegramHint": "We only receive your public Telegram profile.",
     "miniAppHint": "Opened from Telegram? You are already signed in."
   },
@@ -66,7 +66,7 @@
     "pastTitle": "Past events",
     "emptyTitle": "Your first event starts here",
     "noUpcomingTitle": "Nothing on the calendar",
-    "noUpcomingBody": "Create a wedding, gap circle, sunnat to'y, or choyxona night — then invite your people.",
+    "noUpcomingBody": "Create an event and share the invite link — takes less than a minute.",
     "ownerBadge": "Organizer",
     "leaveEvent": "Leave event",
     "leaveConfirm": "Leave this event? You can rejoin with an invite link.",
@@ -167,12 +167,12 @@
       "shareSettlement": "Share on Telegram"
     },
     "notifications": {
-      "enableHint": "Start the KimKim bot on Telegram to get comment, expense, and reminder notifications.",
+      "enableHint": "Start the KimKim bot to get comments, expenses, and reminders in Telegram.",
       "openBot": "Enable notifications"
     },
     "invite": {
       "title": "Invite friends",
-      "subtitle": "Share this link so others can join the event.",
+      "subtitle": "Send this link — guests can RSVP in one tap.",
       "copy": "Copy link",
       "copied": "Copied!",
       "shareTelegram": "Share on Telegram",
@@ -183,7 +183,7 @@
     },
     "telegramGroup": {
       "title": "Telegram group",
-      "subtitle": "Announce joins, schedule changes, and reminders in your gap/wedding group chat.",
+      "subtitle": "Post joins, updates, and reminders straight to your group chat.",
       "step1": "Add the KimKim bot to your Telegram group (use the button below).",
       "step2": "As the organizer, send this command in the group:",
       "copyCommand": "Copy command",
@@ -199,10 +199,10 @@
     "loading": "Loading invite...",
     "notFound": "This invite link is invalid or expired.",
     "eyebrow": "You're invited",
-    "headline": "You're invited!",
-    "intro": "You've been invited to this event. Let the host know if you're coming by joining below.",
-    "expensesNote": "This event uses KimKim to track and settle shared expenses — you'll see who owes what after you join.",
-    "paidNote": "Pay securely by card to confirm your spot. You'll join the event right after payment.",
+    "headline": "Join the gathering",
+    "intro": "Tap below to RSVP — the host will see you're coming.",
+    "expensesNote": "Shared expenses are tracked here — you'll see who owes what after you join.",
+    "paidNote": "Pay by card to secure your spot. You'll join right after checkout.",
     "paidNotConfigured": "This is a paid event, but the host hasn't set a ticket price yet.",
     "ticketPrice": "Ticket: {price}",
     "memberCount": "{count, plural, one {# person going} other {# people going}}",
@@ -217,21 +217,21 @@
     "checkoutError": "Could not start checkout. Please try again.",
     "openEvent": "Open event",
     "loginTitle": "Sign in to RSVP",
-    "loginBody": "Use Telegram to join — it only takes a moment and helps the host know you're coming.",
-    "loginBodyPaid": "Sign in with Telegram first, then pay by card to secure your spot.",
+    "loginBody": "Sign in with Telegram — quick, and the host knows you're coming.",
+    "loginBodyPaid": "Sign in with Telegram, then pay by card to confirm your spot.",
     "loginToJoin": "Sign in with Telegram to join this event.",
     "alreadyJoined": "You're on the guest list"
   },
   "onboarding": {
     "eyebrow": "Quick start",
     "title": "Welcome to KimKim",
-    "subtitle": "Three steps to your first gathering — weddings, gap circles, sunnat to'y, and more.",
+    "subtitle": "Three steps to your first event.",
     "dismiss": "Dismiss",
     "step1Title": "Create an event",
     "step1Body": "Add the date, place, and who's paying for what.",
     "step1Action": "Create event",
     "step2Title": "Invite your people",
-    "step2Body": "Share the invite link in Telegram so guests can RSVP.",
+    "step2Body": "Send the invite link — guests RSVP in one tap.",
     "step3Title": "Turn on notifications",
     "step3Body": "Start the KimKim bot so you get comments, expenses, and reminders.",
     "step3Action": "Open bot"
@@ -242,6 +242,6 @@
     "offlineCachedAt": "Saved {time}"
   },
   "footer": {
-    "madeIn": "For families, friends, and gap circles — in Uzbekistan and beyond."
+    "madeIn": "Made for families, friends, and gap circles — in Uzbekistan and beyond."
   }
 }

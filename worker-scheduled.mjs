@@ -10,9 +10,11 @@ async function runReminders(env) {
   });
 }
 
-export default {
+const worker = {
   fetch: openNextWorker.default.fetch,
   async scheduled(event, env, ctx) {
     ctx.waitUntil(runReminders(env));
   },
 };
+
+export default worker;

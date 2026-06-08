@@ -4,7 +4,7 @@ import type { EventPaymentMode } from "@/types";
 const labels = {
   en: {
     brand: "KimKim.uz",
-    tagline: "Plan · Invite · Split",
+    tagline: "Who's coming · Where · Who pays",
     date: "When",
     location: "Where",
     payment: {
@@ -16,7 +16,7 @@ const labels = {
   },
   uz: {
     brand: "KimKim.uz",
-    tagline: "Reja · Taklif · Bo'lish",
+    tagline: "Kim keladi · Qayerda · Kim to'laydi",
     date: "Qachon",
     location: "Qayerda",
     payment: {
@@ -28,7 +28,7 @@ const labels = {
   },
   ru: {
     brand: "KimKim.uz",
-    tagline: "План · Приглашение · Расходы",
+    tagline: "Кто придёт · Где · Кто платит",
     date: "Когда",
     location: "Где",
     payment: {

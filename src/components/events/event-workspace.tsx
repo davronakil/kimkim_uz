@@ -61,25 +61,22 @@ export function EventWorkspace({
   const [tab, setTab] = useState<EventTab>("overview");
   const [data, setData] = useState<EventPayload>(initialData);
   const [cachedAt, setCachedAt] = useState<number | null>(null);
-  const [usingCache, setUsingCache] = useState(false);
 
   useEffect(() => {
     cacheEventDetail(eventId, initialData);
   }, [eventId, initialData]);
 
   useEffect(() => {
-    if (online) {
-      setUsingCache(false);
-      return;
-    }
+    if (online) return;
 
     const cached = getCachedEventDetail<EventPayload>(eventId);
     if (cached) {
       setData(cached.data);
       setCachedAt(cached.cachedAt);
-      setUsingCache(true);
     }
   }, [online, eventId]);
+
+  const usingCache = !online && cachedAt !== null;
 
   const load = useCallback(async () => {
     if (!online) return;
@@ -90,7 +87,6 @@ export function EventWorkspace({
         const next = (await response.json()) as EventPayload;
         setData(next);
         cacheEventDetail(eventId, next);
-        setUsingCache(false);
         setCachedAt(null);
       }
     } catch {
@@ -98,7 +94,6 @@ export function EventWorkspace({
       if (cached) {
         setData(cached.data);
         setCachedAt(cached.cachedAt);
-        setUsingCache(true);
       }
     }
   }, [eventId, online]);

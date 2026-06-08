@@ -1,4 +1,3 @@
-import type { Locale } from "@/i18n/config";
 import { isLocale, resolveLocaleFromTelegramCode, resolveUserLocale } from "@/lib/locale";
 import type { User } from "@/types";
 import type { BotLocale, TelegramUser } from "@/lib/telegram/types";

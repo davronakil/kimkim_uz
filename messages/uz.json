@@ -13,20 +13,20 @@
     "signOut": "Chiqish",
     "createEvent": "Yangi event",
     "myEvents": "Eventlarim",
-    "noEvents": "Hali event yo'q. To'y, gap, sunnat to'y yoki choyxona — birinchisini yarating!",
+    "noEvents": "Hali event yo'q. Birinchisini yarating va odamlarni chaqiring.",
     "language": "Til"
   },
   "meta": {
     "title": "KimKim — Kim keladi? KimKim biladi.",
-    "description": "To'y, gap, sunnat to'y, aqiqa, challari yoki choyxona — kim keladi, qayerda uchrashamiz va pul kimda. Telegram bilan kirish.",
-    "ogTitle": "KimKim — To'y, gap, sunnat to'y va boshqalar",
+    "description": "Kim keladi, qayerda uchrashamiz, pul kimda — to'y, gap, sunnat to'y, choyxona va boshqalar. Telegram bilan kirish.",
+    "ogTitle": "KimKim — Barcha tadbirlar bir joyda",
     "keywords": "event, to'y, gap, tug'ilgan kun, sunnat to'y, aqiqa, challari, choyxona, Telegram, O'zbekiston"
   },
   "home": {
     "heroTitle": "Kim keladi?\nKimKim biladi.",
-    "heroSubtitle": "To'y, gap, sunnat to'y, aqiqa, challari yoki choyxona — kim keladi, qayerda uchrashamiz va pul kimda ekanini bir joyda hal qiling.",
+    "heroSubtitle": "Kim keladi, qayerda uchrashamiz, pul kimda — hammasi bir joyda.",
     "heroTitleSignedIn": "Qaytib keldingiz",
-    "heroSubtitleSignedIn": "To'yingiz, gapingiz, sunnat to'yingiz — barcha tadbirlaringiz shu yerda.",
+    "heroSubtitleSignedIn": "Eventlar, mehmonlar va xarajatlar — hammasi shu yerda.",
     "ctaSignedOut": "Telegram bilan kirish",
     "ctaSignedIn": "Eventlarimga o'tish",
     "useCases": {
@@ -40,18 +40,18 @@
     },
     "features": {
       "eventsTitle": "Har qanday tadbir",
-      "eventsBody": "To'y, gap, sunnat to'y, aqiqa, challari, tug'ilgan kun yoki choyxona — sana, joy va mehmonlar ro'yxati tayyor.",
-      "commentsTitle": "Reja va muhokama",
-      "commentsBody": "Kim nima deydi, nima taklif qiladi — hammasi tartibli, bir joyda.",
-      "expensesTitle": "Pul va gap hisobi",
-      "expensesBody": "Kim to'ladi, kim kimga qarz, gap navbati — adolatli va aniq.",
+      "eventsBody": "Sana, joy va mehmonlar — to'y, gap yoki choyxona bo'lishidan qat'i nazar.",
+      "commentsTitle": "Birga rejalashtiring",
+      "commentsBody": "Joy tanlash, vazifalar, yangiliklar — chatda yo'qolmaydi, shu yerda.",
+      "expensesTitle": "Hisobni adolatli bo'ling",
+      "expensesBody": "Kim to'ladi, kim kimga qarz — keyin hisob-kitob qilmaysiz.",
       "telegramTitle": "Telegram'da yashaydi",
-      "telegramBody": "Oilaga va do'stlarga link yuboring. Eslatmalar bot orqali keladi."
+      "telegramBody": "Taklif linki, eslatmalar va yangiliklar — odamlar allaqachon shu yerda."
     }
   },
   "auth": {
     "title": "Telegram bilan kirish",
-    "subtitle": "To'y, gap, sunnat to'y, choyxona yoki boshqa event — yaratish va qo'shilish uchun Telegram yetadi.",
+    "subtitle": "Bir marta bosish — event yaratish yoki qo'shilish. Parol kerak emas.",
     "telegramHint": "Faqat ochiq profil ma'lumotlaringizni olamiz.",
     "miniAppHint": "Telegram ichidamisan? Allaqachon kirding."
   },
@@ -66,7 +66,7 @@
     "pastTitle": "Bo'lgan eventlar",
     "emptyTitle": "Birinchi event shu yerdan boshlanadi",
     "noUpcomingTitle": "Hozircha reja yo'q",
-    "noUpcomingBody": "To'y, gap, sunnat to'y yoki choyxona yarating — keyin odamlarni chaqiring.",
+    "noUpcomingBody": "Event yarating va taklif linkini yuboring — bir daqiqadan kam.",
     "ownerBadge": "Admin",
     "leaveEvent": "Chiqib ketish",
     "leaveConfirm": "Eventdan chiqasizmi? Keyin link orqali yana qo'shilasiz.",
@@ -167,12 +167,12 @@
       "shareSettlement": "Telegramda share"
     },
     "notifications": {
-      "enableHint": "Botni Telegramda start qiling — izoh, xarajat va eslatmalar shu yerga keladi.",
+      "enableHint": "KimKim botini start qiling — izohlar, xarajatlar va eslatmalar Telegramga keladi.",
       "openBot": "Botni ochish"
     },
     "invite": {
       "title": "Do'stlarni chaqirish",
-      "subtitle": "Shu linkni yuboring — eventga qo'shilishadi.",
+      "subtitle": "Shu linkni yuboring — mehmonlar bir bosishda qo'shiladi.",
       "copy": "Linkni copy qilish",
       "copied": "Copy bo'ldi!",
       "shareTelegram": "Telegramda share",
@@ -183,7 +183,7 @@
     },
     "telegramGroup": {
       "title": "Telegram guruhi",
-      "subtitle": "Gap/to'y guruhingizga qo'shilishlar, o'zgarishlar va eslatmalar keladi.",
+      "subtitle": "Qo'shilishlar, yangiliklar va eslatmalar to'g'ridan-to'g'ri guruhga tushadi.",
       "step1": "KimKim botini Telegram guruhga qo'shing (pastdagi tugma).",
       "step2": "Organizator sifatida guruhda shu buyruqni yuboring:",
       "copyCommand": "Buyruqni copy",
@@ -191,18 +191,18 @@
       "addBotToGroup": "Botni guruhga qo'shish",
       "linked": "Guruh ulandi",
       "linkedHint": "KimKim kimdir qo'shilganda, reja o'zgarganda va event oldidan xabar beradi.",
-      "shareToGroup": "Invite ni guruhga yuborish",
+      "shareToGroup": "Taklifni guruhga yuborish",
       "unlink": "Guruhni uzish"
     }
   },
   "join": {
     "loading": "Link tekshirilmoqda...",
     "notFound": "Link noto'g'ri yoki eskirgan.",
-    "eyebrow": "Sizni chaqirishdi!",
-    "headline": "Sizni chaqirishdi!",
-    "intro": "Sizni ushbu eventga taklif qilishdi. Kelasizmi — host bilsin, pastdan qo'shiling.",
-    "expensesNote": "Bu eventda xarajatlar KimKim orqali yoziladi va kim kimga qarz ekanini ko'rasiz — qo'shilgach ochiladi.",
-    "paidNote": "Joyingizni tasdiqlash uchun karta bilan to'lang. To'lovdan keyin eventga qo'shilasiz.",
+    "eyebrow": "Sizni chaqirishdi",
+    "headline": "Qo'shiling",
+    "intro": "Pastdan bosing — tashkilotchi kelishingizni ko'radi.",
+    "expensesNote": "Umumiy xarajatlar shu yerda yoziladi — qo'shilgach kim kimga qarz ekanini ko'rasiz.",
+    "paidNote": "Joyingizni band qilish uchun karta bilan to'lang. To'lovdan keyin darhol qo'shilasiz.",
     "paidNotConfigured": "Bu pullik event, lekin host hali chipta narxini qo'ymagan.",
     "ticketPrice": "Chipta: {price}",
     "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
@@ -217,21 +217,21 @@
     "checkoutError": "To'lovni boshlab bo'lmadi. Yana urinib ko'ring.",
     "openEvent": "Eventni ochish",
     "loginTitle": "RSVP uchun kiring",
-    "loginBody": "Telegram bilan kiring — bir daqiqa, host kelishingizni biladi.",
-    "loginBodyPaid": "Avval Telegram bilan kiring, keyin karta orqali joyingizni band qiling.",
+    "loginBody": "Telegram bilan kiring — tez, tashkilotchi kelishingizni biladi.",
+    "loginBodyPaid": "Avval Telegram bilan kiring, keyin karta bilan joyingizni tasdiqlang.",
     "loginToJoin": "Avval Telegram bilan kiring.",
     "alreadyJoined": "Siz ro'yxatdasiz"
   },
   "onboarding": {
     "eyebrow": "Tez start",
     "title": "KimKimga xush kelibsiz",
-    "subtitle": "Birinchi gathering uchun 3 qadam — to'y, gap, sunnat to'y va boshqalar.",
+    "subtitle": "Birinchi event uchun 3 qadam.",
     "dismiss": "Yopish",
     "step1Title": "Event yarating",
     "step1Body": "Sana, joy va to'lov turini qo'shing.",
     "step1Action": "Event yaratish",
     "step2Title": "Odamlarni chaqiring",
-    "step2Body": "Invite linkni Telegramda yuboring — mehmonlar RSVP qiladi.",
+    "step2Body": "Taklif linkini yuboring — mehmonlar bir bosishda qo'shiladi.",
     "step3Title": "Bildirishnomalar",
     "step3Body": "KimKim botini start qiling — izoh, xarajat va eslatmalar keladi.",
     "step3Action": "Botni ochish"
@@ -242,6 +242,6 @@
     "offlineCachedAt": "Oxirgi yangilanish: {time}"
   },
   "footer": {
-    "madeIn": "Oila, do'stlar va gap jamoalari uchun — O'zbekiston va undan tashqari."
+    "madeIn": "Oila, do'stlar va gaplar uchun — O'zbekiston va undan tashqari."
   }
 }

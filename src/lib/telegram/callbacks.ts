@@ -14,7 +14,7 @@ import { languagePickerKeyboard } from "@/lib/telegram/keyboards";
 import { linkTelegramChat } from "@/lib/telegram/chat";
 import { resolveBotLocale } from "@/lib/telegram/locale";
 import { notifyMemberJoined } from "@/lib/telegram/notifications";
-import type { BotLocale, TelegramCallbackQuery } from "@/lib/telegram/types";
+import type { TelegramCallbackQuery } from "@/lib/telegram/types";
 
 export async function handleCallbackQuery(query: TelegramCallbackQuery) {
   const data = query.data ?? "";

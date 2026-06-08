@@ -1,0 +1,53 @@
+# Database (Cloudflare D1)
+
+KimKim uses a single D1 database (`kimkim-db`) with SQLite migrations in `migrations/`.
+
+## Apply migrations
+
+```bash
+npm run db:migrate:local    # local .wrangler state
+npm run db:migrate:remote   # production
+```
+
+## Schema overview
+
+### Core
+
+| Table | Purpose |
+|-------|---------|
+| `users` | Telegram users; `language_code` is app locale (`en` / `uz` / `ru`) |
+| `sessions` | JWT session records |
+| `events` | Events with location, cover, payment mode, invite code, linked Telegram group |
+| `event_members` | Membership; `owner` or `member` |
+| `comments` | Threaded discussion (`parent_id`) |
+| `expenses` | Who paid, amount in cents, currency |
+| `expense_splits` | Per-user split amounts |
+
+### Invites & payments
+
+| Table | Migration | Purpose |
+|-------|-----------|---------|
+| `invite_code` on `events` | `0002` | Rotatable invite links |
+| `payment_mode`, ticket fields | `0004` | Free / split / pay_yourself / paid |
+| `event_payments` | `0005` | Stripe checkout records |
+
+### Telegram
+
+| Table | Migration | Purpose |
+|-------|-----------|---------|
+| `event_reminder_logs` | `0003` | Per-user reminder dedup (24h / 1h) |
+| `telegram_chat_id` on `users` | `0003` | DM notification target |
+| `bot_sessions` | `0006` | Multi-step bot flows |
+| `event_group_reminder_logs` | `0007` | Group reminder dedup |
+| `event_rsvps` | `0008` | RSVP status (`going` / `declined`) |
+
+## Notable columns on `events`
+
+- `telegram_chat_id` — linked Telegram group for announcements
+- `payment_mode` — `free` | `split` | `pay_yourself` | `paid`
+- `ticket_price_cents`, `ticket_currency` — for Stripe paid events
+- `invite_code` — public join slug
+
+## Queries
+
+All DB access goes through `src/lib/db/queries.ts`. Do not run raw SQL from route handlers except migrations.

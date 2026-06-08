@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.19.11",
-    "@resvg/resvg-wasm": "^2.6.2",
     "clsx": "^2.1.1",
     "jose": "^6.2.3",
     "lucide-react": "^1.17.0",

@@ -198,7 +198,7 @@ export function LocationPicker({ onSelect, initialValue }: LocationPickerProps) 
             ) : null}
 
             {predictions.map((prediction) => (
-              <li key={prediction.placeId} role="option">
+              <li key={prediction.placeId} role="option" aria-selected={false}>
                 <button
                   type="button"
                   className="flex min-h-12 w-full flex-col items-start px-4 py-3 text-left hover:bg-zinc-50 active:bg-zinc-100 dark:hover:bg-zinc-800"
