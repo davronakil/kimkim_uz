@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { locales, type Locale } from "@/i18n/config";
 import { alternateOgLocales, isLocale, ogLocaleTag } from "@/lib/locale";
+import { appBaseUrl } from "@/lib/seo";
 import { buildAppUrl } from "@/lib/telegram/bot";
 
 export function resolveMetadataLocale(locale: string): Locale {
@@ -16,10 +17,6 @@ export function localizedLanguageAlternates(pagePath: string) {
   };
 }
 
-function appBaseUrl() {
-  return (process.env.NEXT_PUBLIC_APP_URL ?? "https://kimkim.uz").replace(/\/$/, "");
-}
-
 export function buildSitePageMetadata({
   locale,
   pagePath,
@@ -27,6 +24,7 @@ export function buildSitePageMetadata({
   description,
   ogTitle = title,
   keywords,
+  robots,
 }: {
   locale: string;
   pagePath: string;
@@ -34,6 +32,7 @@ export function buildSitePageMetadata({
   description: string;
   ogTitle?: string;
   keywords?: string;
+  robots?: Metadata["robots"];
 }): Metadata {
   const metadataLocale = resolveMetadataLocale(locale);
   const baseUrl = appBaseUrl();
@@ -50,6 +49,7 @@ export function buildSitePageMetadata({
     title,
     description,
     keywords,
+    robots,
     alternates: {
       canonical: pagePath,
       languages: localizedLanguageAlternates(pagePath),

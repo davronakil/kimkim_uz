@@ -24,6 +24,10 @@ export async function generateMetadata({
     title: events("editTitle"),
     description: meta("description"),
     ogTitle: meta("ogTitle"),
+    robots: {
+      index: false,
+      follow: false,
+    },
   });
 }
 

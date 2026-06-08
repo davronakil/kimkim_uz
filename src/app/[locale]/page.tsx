@@ -1,8 +1,15 @@
 import { CalendarDays, MessageSquare, Receipt, Send } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { localeNames, locales, type Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { eventUseCaseKeys } from "@/lib/event-use-cases";
+import {
+  absoluteUrl,
+  appBaseUrl,
+  JsonLd,
+  localeLanguageTag,
+} from "@/lib/seo";
 
 export default async function HomePage({
   params,
@@ -14,7 +21,46 @@ export default async function HomePage({
 
   const t = await getTranslations("home");
   const common = await getTranslations("common");
+  const meta = await getTranslations("meta");
   const user = await getCurrentUser();
+  const baseUrl = appBaseUrl();
+  const localeCode = locale as Locale;
+  const siteUrl = absoluteUrl(`/${locale}`, baseUrl);
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "KimKim",
+      url: siteUrl,
+      description: meta("description"),
+      inLanguage: localeLanguageTag(localeCode),
+      availableLanguage: locales.map((code) => ({
+        "@type": "Language",
+        name: localeNames[code],
+        alternateName: code,
+      })),
+      potentialAction: {
+        "@type": "RegisterAction",
+        target: absoluteUrl(`/${locale}/login`, baseUrl),
+        name: t("ctaSignedOut"),
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "KimKim",
+      applicationCategory: "LifestyleApplication",
+      operatingSystem: "Web, Telegram",
+      url: siteUrl,
+      description: meta("description"),
+      image: absoluteUrl(`/api/og/site?locale=${locale}`, baseUrl),
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+    },
+  ];
 
   const features = [
     {
@@ -41,6 +87,7 @@ export default async function HomePage({
 
   return (
     <div className="space-y-10 sm:space-y-16">
+      <JsonLd data={jsonLd} />
       <section className="relative overflow-hidden rounded-3xl border border-zinc-200/80 bg-white px-5 py-10 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:px-10 sm:py-16">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.12),transparent_55%)]" />
         <div className="relative mx-auto max-w-2xl space-y-5">

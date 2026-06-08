@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { locales, type Locale } from "@/i18n/config";
 import { alternateOgLocales, ogLocaleTag } from "@/lib/locale";
+import { appBaseUrl } from "@/lib/seo";
 import { buildAppUrl } from "@/lib/telegram/bot";
 import "../globals.css";
 
@@ -23,10 +24,6 @@ const geistMono = Geist_Mono({
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
-}
-
-function appBaseUrl() {
-  return (process.env.NEXT_PUBLIC_APP_URL ?? "https://kimkim.uz").replace(/\/$/, "");
 }
 
 export async function generateMetadata({
@@ -55,6 +52,17 @@ export async function generateMetadata({
     description: t("description"),
     keywords: t("keywords"),
     applicationName: "KimKim",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
     manifest: "/manifest.webmanifest",
     appleWebApp: {
       capable: true,

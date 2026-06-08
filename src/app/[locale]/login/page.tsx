@@ -23,6 +23,10 @@ export async function generateMetadata({
     title: auth("title"),
     description: auth("subtitle"),
     ogTitle: meta("ogTitle"),
+    robots: {
+      index: false,
+      follow: false,
+    },
   });
 }
 

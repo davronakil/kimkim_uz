@@ -67,6 +67,10 @@ export async function buildEventShareMetadata(
   return {
     title: event.title,
     description,
+    robots: {
+      index: false,
+      follow: true,
+    },
     alternates: {
       canonical: pagePath,
       languages: localizedLanguageAlternates(pagePath),
