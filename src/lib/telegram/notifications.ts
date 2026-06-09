@@ -5,7 +5,7 @@ import { buildAppUrl, sendTelegramMessage } from "@/lib/telegram/bot";
 import { notifyEventGroup, ownerLocaleForEvent } from "@/lib/telegram/group";
 import { t } from "@/lib/telegram/i18n";
 import type { BotLocale } from "@/lib/telegram/types";
-import type { Event, User } from "@/types";
+import type { Event, EventRsvpStatus, User } from "@/types";
 
 function escapeHtml(text: string): string {
   return text
@@ -47,6 +47,12 @@ const changeLabels = {
   uz: { title: "nomi", time: "vaqt", location: "joy", description: "qisqacha" },
   ru: { title: "название", time: "дата/время", location: "место", description: "описание" },
 } as const;
+
+const rsvpLabels: Record<BotLocale, Record<EventRsvpStatus, string>> = {
+  en: { going: "going", maybe: "maybe", declined: "can't go" },
+  uz: { going: "keladi", maybe: "balki", declined: "kela olmaydi" },
+  ru: { going: "придёт", maybe: "возможно", declined: "не сможет" },
+};
 
 async function listNotifiableMembers(
   eventId: string,
@@ -211,6 +217,33 @@ export async function notifyMemberJoined(input: {
   await notifyMembers(input.eventId, input.memberUserId, buildJoin);
 
   await notifyEventGroup(input.eventId, buildJoin);
+}
+
+export async function notifyRsvpChanged(input: {
+  eventId: string;
+  member: Pick<User, "first_name" | "last_name" | "username">;
+  memberUserId: string;
+  status: EventRsvpStatus;
+}) {
+  const memberName = escapeHtml(displayName(input.member));
+
+  const buildRsvp = (locale: BotLocale, event: Event) => {
+    const title = escapeHtml(event.title);
+    const status = escapeHtml(rsvpLabels[locale][input.status]);
+    if (locale === "uz") {
+      return `📝 <b>${memberName}</b> <b>${title}</b> uchun RSVP holatini o'zgartirdi: <b>${status}</b>.`;
+    }
+    if (locale === "ru") {
+      return `📝 <b>${memberName}</b> обновил(а) RSVP для <b>${title}</b>: <b>${status}</b>.`;
+    }
+    return `📝 <b>${memberName}</b> updated RSVP for <b>${title}</b>: <b>${status}</b>.`;
+  };
+
+  await notifyMembers(input.eventId, input.memberUserId, buildRsvp);
+
+  await notifyEventGroup(input.eventId, buildRsvp, (locale, event) => [
+    { text: t(locale).openEvent, url: eventUrl(event.id, locale) },
+  ]);
 }
 
 function reminderText(locale: BotLocale, title: string, timeLabel: string, window: "24h" | "1h") {

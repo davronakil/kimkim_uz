@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
+import { runInBackground } from "@/lib/cloudflare";
 import { getEventById, isEventMember } from "@/lib/db/queries";
-import { upsertEventRsvp } from "@/lib/events/rsvp";
+import { getEventRsvp, upsertEventRsvp } from "@/lib/events/rsvp";
+import { notifyRsvpChanged } from "@/lib/telegram/notifications";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -34,7 +36,19 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Invalid RSVP status" }, { status: 400 });
   }
 
+  const previousStatus = (await getEventRsvp(id, user.id)) ?? "going";
   await upsertEventRsvp(id, user.id, parsed.data.status);
+
+  if (previousStatus !== parsed.data.status) {
+    void runInBackground(
+      notifyRsvpChanged({
+        eventId: id,
+        member: user,
+        memberUserId: user.id,
+        status: parsed.data.status,
+      }),
+    );
+  }
 
   return NextResponse.json({ ok: true, status: parsed.data.status });
 }
