@@ -528,6 +528,12 @@
         "catalogPending": "Pending listings",
         "catalogApproved": "Live listings",
         "vouches": "Community vouches"
+      },
+      "topReferrers": {
+        "title": "Top referrers",
+        "subtitle": "Members whose invite links brought in the most guests.",
+        "total": "{count, plural, one {# total} other {# total}}",
+        "recent": "{count, plural, one {# in 7d} other {# in 7d}}"
       }
     },
     "catalog": {

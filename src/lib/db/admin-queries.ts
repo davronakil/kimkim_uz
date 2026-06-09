@@ -14,10 +14,16 @@ export type PlatformOverviewStats = {
   publicEvents: number;
   referralJoins: number;
   referralJoins7d: number;
+  topReferrers: AdminTopReferrer[];
   catalogPending: number;
   catalogApproved: number;
   catalogRejected: number;
   vouches: number;
+};
+
+export type AdminTopReferrer = Pick<User, "id" | "username" | "first_name" | "last_name"> & {
+  referral_count: number;
+  recent_referral_count: number;
 };
 
 export type AdminUserRow = Pick<
@@ -66,20 +72,38 @@ function eventSearchClause(q?: string) {
 
 export async function getPlatformOverviewStats(): Promise<PlatformOverviewStats> {
   const db = await getDb();
-  const row = await db
-    .prepare(
-      `SELECT
-         (SELECT COUNT(*) FROM users) AS users,
-         (SELECT COUNT(*) FROM events) AS events,
-         (SELECT COUNT(*) FROM events WHERE visibility = 'public') AS publicEvents,
-         (SELECT COUNT(*) FROM event_referrals) AS referralJoins,
-         (SELECT COUNT(*) FROM event_referrals WHERE created_at >= datetime('now', '-7 days')) AS referralJoins7d,
-         (SELECT COUNT(*) FROM business_listings WHERE status = 'pending') AS catalogPending,
-         (SELECT COUNT(*) FROM business_listings WHERE status = 'approved') AS catalogApproved,
-         (SELECT COUNT(*) FROM business_listings WHERE status = 'rejected') AS catalogRejected,
-         (SELECT COUNT(*) FROM business_listing_vouches) AS vouches`,
-    )
-    .first<PlatformOverviewStats>();
+  const [row, topReferrersResult] = await Promise.all([
+    db
+      .prepare(
+        `SELECT
+           (SELECT COUNT(*) FROM users) AS users,
+           (SELECT COUNT(*) FROM events) AS events,
+           (SELECT COUNT(*) FROM events WHERE visibility = 'public') AS publicEvents,
+           (SELECT COUNT(*) FROM event_referrals) AS referralJoins,
+           (SELECT COUNT(*) FROM event_referrals WHERE created_at >= datetime('now', '-7 days')) AS referralJoins7d,
+           (SELECT COUNT(*) FROM business_listings WHERE status = 'pending') AS catalogPending,
+           (SELECT COUNT(*) FROM business_listings WHERE status = 'approved') AS catalogApproved,
+           (SELECT COUNT(*) FROM business_listings WHERE status = 'rejected') AS catalogRejected,
+           (SELECT COUNT(*) FROM business_listing_vouches) AS vouches`,
+      )
+      .first<Omit<PlatformOverviewStats, "topReferrers">>(),
+    db
+      .prepare(
+        `SELECT
+           u.id,
+           u.username,
+           u.first_name,
+           u.last_name,
+           COUNT(er.id) AS referral_count,
+           SUM(CASE WHEN er.created_at >= datetime('now', '-7 days') THEN 1 ELSE 0 END) AS recent_referral_count
+         FROM event_referrals er
+         JOIN users u ON u.id = er.referrer_user_id
+         GROUP BY u.id
+         ORDER BY referral_count DESC, recent_referral_count DESC, u.first_name ASC
+         LIMIT 5`,
+      )
+      .all<AdminTopReferrer>(),
+  ]);
 
   return {
     users: row?.users ?? 0,
@@ -87,6 +111,11 @@ export async function getPlatformOverviewStats(): Promise<PlatformOverviewStats>
     publicEvents: row?.publicEvents ?? 0,
     referralJoins: row?.referralJoins ?? 0,
     referralJoins7d: row?.referralJoins7d ?? 0,
+    topReferrers: (topReferrersResult.results ?? []).map((referrer) => ({
+      ...referrer,
+      referral_count: Number(referrer.referral_count ?? 0),
+      recent_referral_count: Number(referrer.recent_referral_count ?? 0),
+    })),
     catalogPending: row?.catalogPending ?? 0,
     catalogApproved: row?.catalogApproved ?? 0,
     catalogRejected: row?.catalogRejected ?? 0,

@@ -528,6 +528,12 @@
         "catalogPending": "Tekshiruvdagi e'lonlar",
         "catalogApproved": "Faol e'lonlar",
         "vouches": "Jamoa tavsiyalari"
+      },
+      "topReferrers": {
+        "title": "Eng faol taklifchilar",
+        "subtitle": "Linki orqali eng ko'p mehmon olib kelgan a'zolar.",
+        "total": "{count} jami",
+        "recent": "{count} 7 kunda"
       }
     },
     "catalog": {

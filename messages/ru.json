@@ -528,6 +528,12 @@
         "catalogPending": "На модерации",
         "catalogApproved": "Опубликовано",
         "vouches": "Рекомендации"
+      },
+      "topReferrers": {
+        "title": "Лучшие приглашающие",
+        "subtitle": "Участники, чьи ссылки привели больше всего гостей.",
+        "total": "{count, plural, one {# всего} few {# всего} many {# всего} other {# всего}}",
+        "recent": "{count, plural, one {# за 7 дней} few {# за 7 дней} many {# за 7 дней} other {# за 7 дней}}"
       }
     },
     "catalog": {

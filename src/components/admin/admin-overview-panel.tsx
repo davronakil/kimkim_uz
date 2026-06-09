@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
+  Award,
   CalendarRange,
   Compass,
   GitBranch,
@@ -12,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import type { PlatformOverviewStats } from "@/lib/db/admin-queries";
+import { displayName } from "@/lib/utils";
 
 type AdminOverviewPanelProps = {
   onNavigate: (tab: "catalog" | "events" | "users") => void;
@@ -116,6 +118,46 @@ export function AdminOverviewPanel({ onNavigate }: AdminOverviewPanelProps) {
           );
         })}
       </div>
+
+      {stats.topReferrers.length > 0 ? (
+        <section className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h3 className="text-base font-semibold">{t("topReferrers.title")}</h3>
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                {t("topReferrers.subtitle")}
+              </p>
+            </div>
+            <Award className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <div className="mt-4 divide-y divide-zinc-100 dark:divide-zinc-800">
+            {stats.topReferrers.map((referrer, index) => (
+              <div
+                key={referrer.id}
+                className="grid gap-3 py-3 sm:grid-cols-[auto_1fr_auto] sm:items-center"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                  {index + 1}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{displayName(referrer)}</p>
+                  <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    {referrer.username ? `@${referrer.username}` : referrer.id}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 sm:justify-end">
+                  <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+                    {t("topReferrers.total", { count: referrer.referral_count })}
+                  </span>
+                  <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                    {t("topReferrers.recent", { count: referrer.recent_referral_count })}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <div className="space-y-3">
         <h3 className="text-base font-semibold">{t("toolsTitle")}</h3>
