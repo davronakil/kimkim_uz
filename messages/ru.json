@@ -523,6 +523,8 @@
         "users": "Пользователи",
         "events": "События",
         "publicEvents": "Публичные события",
+        "referralJoins": "Входы по приглашениям",
+        "referralJoins7d": "Приглашения за 7 дней",
         "catalogPending": "На модерации",
         "catalogApproved": "Опубликовано",
         "vouches": "Рекомендации"

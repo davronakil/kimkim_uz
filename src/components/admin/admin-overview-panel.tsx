@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import {
   CalendarRange,
   Compass,
+  GitBranch,
   Store,
   ThumbsUp,
   Users,
@@ -49,6 +50,13 @@ export function AdminOverviewPanel({ onNavigate }: AdminOverviewPanelProps) {
       value: stats.publicEvents,
       icon: Compass,
       action: () => onNavigate("events"),
+    },
+    { label: t("stats.referralJoins"), value: stats.referralJoins, icon: GitBranch },
+    {
+      label: t("stats.referralJoins7d"),
+      value: stats.referralJoins7d,
+      icon: GitBranch,
+      highlight: stats.referralJoins7d > 0,
     },
     {
       label: t("stats.catalogPending"),

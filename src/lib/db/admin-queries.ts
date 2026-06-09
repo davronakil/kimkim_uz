@@ -12,6 +12,8 @@ export type PlatformOverviewStats = {
   users: number;
   events: number;
   publicEvents: number;
+  referralJoins: number;
+  referralJoins7d: number;
   catalogPending: number;
   catalogApproved: number;
   catalogRejected: number;
@@ -70,6 +72,8 @@ export async function getPlatformOverviewStats(): Promise<PlatformOverviewStats>
          (SELECT COUNT(*) FROM users) AS users,
          (SELECT COUNT(*) FROM events) AS events,
          (SELECT COUNT(*) FROM events WHERE visibility = 'public') AS publicEvents,
+         (SELECT COUNT(*) FROM event_referrals) AS referralJoins,
+         (SELECT COUNT(*) FROM event_referrals WHERE created_at >= datetime('now', '-7 days')) AS referralJoins7d,
          (SELECT COUNT(*) FROM business_listings WHERE status = 'pending') AS catalogPending,
          (SELECT COUNT(*) FROM business_listings WHERE status = 'approved') AS catalogApproved,
          (SELECT COUNT(*) FROM business_listings WHERE status = 'rejected') AS catalogRejected,
@@ -81,6 +85,8 @@ export async function getPlatformOverviewStats(): Promise<PlatformOverviewStats>
     users: row?.users ?? 0,
     events: row?.events ?? 0,
     publicEvents: row?.publicEvents ?? 0,
+    referralJoins: row?.referralJoins ?? 0,
+    referralJoins7d: row?.referralJoins7d ?? 0,
     catalogPending: row?.catalogPending ?? 0,
     catalogApproved: row?.catalogApproved ?? 0,
     catalogRejected: row?.catalogRejected ?? 0,

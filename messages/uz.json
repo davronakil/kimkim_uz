@@ -523,6 +523,8 @@
         "users": "Foydalanuvchilar",
         "events": "Tadbirlar",
         "publicEvents": "Ommaviy tadbirlar",
+        "referralJoins": "Taklif orqali qo'shilganlar",
+        "referralJoins7d": "Takliflar, 7 kun",
         "catalogPending": "Tekshiruvdagi e'lonlar",
         "catalogApproved": "Faol e'lonlar",
         "vouches": "Jamoa tavsiyalari"

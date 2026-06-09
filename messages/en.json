@@ -523,6 +523,8 @@
         "users": "Users",
         "events": "Events",
         "publicEvents": "Public events",
+        "referralJoins": "Referral joins",
+        "referralJoins7d": "Referral joins, 7d",
         "catalogPending": "Pending listings",
         "catalogApproved": "Live listings",
         "vouches": "Community vouches"
