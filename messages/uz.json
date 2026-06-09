@@ -98,7 +98,9 @@
       "declined": "Kela olmaydi",
       "statusTitle": "RSVP holatingiz",
       "statusSubtitle": "Javobingizni istalgan payt o'zgartiring — admin oxirgi holatni ko'rsin.",
-      "statusError": "RSVP yangilanmadi. Qayta urinib ko'ring."
+      "statusError": "RSVP yangilanmadi. Qayta urinib ko'ring.",
+      "summaryTitle": "RSVP xulosasi",
+      "summarySubtitle": "{count, plural, one {# ta javob yozilgan} other {# ta javob yozilgan}}"
     },
     "notifications": {
       "title": "Telegram yangiliklari",

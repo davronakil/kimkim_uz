@@ -98,7 +98,9 @@
       "declined": "Не сможет",
       "statusTitle": "Ваш RSVP",
       "statusSubtitle": "Меняйте ответ в любое время, чтобы у организатора был актуальный список.",
-      "statusError": "Не удалось обновить RSVP. Попробуйте ещё раз."
+      "statusError": "Не удалось обновить RSVP. Попробуйте ещё раз.",
+      "summaryTitle": "Сводка RSVP",
+      "summarySubtitle": "{count, plural, one {# ответ записан} few {# ответа записано} many {# ответов записано} other {# ответа записано}}"
     },
     "notifications": {
       "title": "Уведомления в Telegram",

@@ -14,6 +14,7 @@ import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import { NotificationPreferencesPanel } from "@/components/events/notification-preferences-panel";
 import { PaidEventSummaryPanel } from "@/components/events/paid-event-summary-panel";
 import { PayoutMethodPanel } from "@/components/events/payout-method-panel";
+import { RsvpSummaryPanel } from "@/components/events/rsvp-summary-panel";
 import { RsvpStatusPanel } from "@/components/events/rsvp-status-panel";
 import { LeaveEventButton } from "@/components/events/leave-event-button";
 import { MemberList } from "@/components/events/member-list";
@@ -125,6 +126,7 @@ export function EventWorkspace({
       return (
         <div className="space-y-4">
           {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
+          <RsvpSummaryPanel members={members} />
           <RsvpStatusPanel
             eventId={eventId}
             initialStatus={currentRsvpStatus}

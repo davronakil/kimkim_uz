@@ -98,7 +98,9 @@
       "declined": "Can't go",
       "statusTitle": "Your RSVP",
       "statusSubtitle": "Update your answer anytime so the host has the latest count.",
-      "statusError": "Could not update your RSVP. Try again."
+      "statusError": "Could not update your RSVP. Try again.",
+      "summaryTitle": "RSVP summary",
+      "summarySubtitle": "{count, plural, one {# response recorded} other {# responses recorded}}"
     },
     "notifications": {
       "title": "Telegram updates",
