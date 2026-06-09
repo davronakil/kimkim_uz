@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { locales } from "@/i18n/config";
+import { defaultLocale, locales } from "@/i18n/config";
 import { listPublicEventsForSitemap } from "@/lib/db/queries";
 import { absoluteUrl, appBaseUrl } from "@/lib/seo";
 
@@ -13,11 +13,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: absoluteUrl(`/${locale}`, baseUrl),
     lastModified: now,
     changeFrequency: "weekly" as const,
-    priority: locale === "en" ? 1 : 0.9,
+    priority: locale === defaultLocale ? 1 : 0.9,
     alternates: {
       languages: {
         ...Object.fromEntries(locales.map((code) => [code, absoluteUrl(`/${code}`, baseUrl)])),
-        "x-default": absoluteUrl("/en", baseUrl),
+        "x-default": absoluteUrl(`/${defaultLocale}`, baseUrl),
       },
     },
   }));
@@ -32,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...Object.fromEntries(
           locales.map((code) => [code, absoluteUrl(`/${code}/discover`, baseUrl)]),
         ),
-        "x-default": absoluteUrl("/en/discover", baseUrl),
+        "x-default": absoluteUrl(`/${defaultLocale}/discover`, baseUrl),
       },
     },
   }));
@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...Object.fromEntries(
           locales.map((code) => [code, absoluteUrl(`/${code}/catalog`, baseUrl)]),
         ),
-        "x-default": absoluteUrl("/en/catalog", baseUrl),
+        "x-default": absoluteUrl(`/${defaultLocale}/catalog`, baseUrl),
       },
     },
   }));
@@ -65,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const lastModified = event.updated_at ? new Date(event.updated_at) : new Date(event.starts_at);
 
     return {
-      url: absoluteUrl(`/en${pathWithoutLocale}`, baseUrl),
+      url: absoluteUrl(`/${defaultLocale}${pathWithoutLocale}`, baseUrl),
       lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.7,
@@ -74,7 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           ...Object.fromEntries(
             locales.map((code) => [code, absoluteUrl(`/${code}${pathWithoutLocale}`, baseUrl)]),
           ),
-          "x-default": absoluteUrl(`/en${pathWithoutLocale}`, baseUrl),
+          "x-default": absoluteUrl(`/${defaultLocale}${pathWithoutLocale}`, baseUrl),
         },
       },
     };

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { locales, type Locale } from "@/i18n/config";
+import { defaultLocale, locales, type Locale } from "@/i18n/config";
 import { alternateOgLocales, isLocale, ogLocaleTag } from "@/lib/locale";
 import { appBaseUrl } from "@/lib/seo";
 import { buildAppUrl } from "@/lib/telegram/bot";
 
 export function resolveMetadataLocale(locale: string): Locale {
-  return isLocale(locale) ? locale : "en";
+  return isLocale(locale) ? locale : defaultLocale;
 }
 
 export function localizedLanguageAlternates(pagePath: string) {
@@ -13,7 +13,7 @@ export function localizedLanguageAlternates(pagePath: string) {
 
   return {
     ...Object.fromEntries(locales.map((code) => [code, `/${code}${pathWithoutLocale}`])),
-    "x-default": `/en${pathWithoutLocale}`,
+    "x-default": `/${defaultLocale}${pathWithoutLocale}`,
   };
 }
 

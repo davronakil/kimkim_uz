@@ -1,4 +1,4 @@
-import { locales, localeNames, type Locale } from "@/i18n/config";
+import { defaultLocale, locales, localeNames, type Locale } from "@/i18n/config";
 
 export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
@@ -9,7 +9,8 @@ export function resolveLocaleFromTelegramCode(code?: string | null): Locale {
   const lower = code?.toLowerCase() ?? "";
   if (lower.startsWith("uz")) return "uz";
   if (lower.startsWith("ru")) return "ru";
-  return "en";
+  if (lower.startsWith("en")) return "en";
+  return defaultLocale;
 }
 
 /** Prefer a stored app locale; fall back to Telegram tag or English. */

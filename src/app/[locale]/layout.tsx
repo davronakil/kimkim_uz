@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
-import { locales, type Locale } from "@/i18n/config";
+import { defaultLocale, locales, type Locale } from "@/i18n/config";
 import { alternateOgLocales, ogLocaleTag } from "@/lib/locale";
 import { appBaseUrl } from "@/lib/seo";
 import { buildAppUrl } from "@/lib/telegram/bot";
@@ -80,7 +80,7 @@ export async function generateMetadata({
       canonical: localePath,
       languages: {
         ...Object.fromEntries(locales.map((code) => [code, `/${code}`])),
-        "x-default": "/en",
+        "x-default": `/${defaultLocale}`,
       },
     },
     openGraph: {
