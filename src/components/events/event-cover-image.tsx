@@ -6,12 +6,14 @@ type EventCoverFields = Pick<Event, "cover_image_key" | "title" | "id" | "starts
 export function EventCoverImage({
   event,
   locale,
+  creatorName,
   variant = "hero",
   className = "",
   alt,
 }: {
   event: EventCoverFields;
   locale?: string;
+  creatorName?: string | null;
   variant?: "card" | "hero";
   className?: string;
   alt?: string;
@@ -33,6 +35,7 @@ export function EventCoverImage({
       eventId={event.id}
       startsAt={event.starts_at}
       locale={locale}
+      creatorName={creatorName}
       variant={variant}
       className={className}
     />

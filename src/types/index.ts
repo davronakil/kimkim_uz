@@ -54,6 +54,9 @@ export type BusinessListingWithVouches = BusinessListing & {
   vouch_count: number;
 };
 
+export type BusinessListingWithRepresentativeFields = BusinessListingWithVouches &
+  Pick<User, "first_name" | "last_name" | "username">;
+
 export type BusinessListingEntitlement = {
   user_id: string;
   included_slots: number;
@@ -88,6 +91,12 @@ export type Event = {
   telegram_chat_id: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type EventWithCreator = Event & {
+  creator_first_name: string;
+  creator_last_name: string | null;
+  creator_username: string | null;
 };
 
 export type Comment = {

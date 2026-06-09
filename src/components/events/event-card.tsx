@@ -4,15 +4,21 @@ import type { Locale } from "@/i18n/config";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { CalendarDays, MapPin } from "lucide-react";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
-import type { Event } from "@/types";
+import type { EventWithCreator } from "@/types";
+import { displayName } from "@/lib/utils";
 
 type EventCardProps = {
-  event: Event;
+  event: EventWithCreator;
   locale: string;
   past?: boolean;
 };
 
 export function EventCard({ event, locale, past = false }: EventCardProps) {
+  const creatorName = displayName({
+    first_name: event.creator_first_name,
+    last_name: event.creator_last_name,
+    username: event.creator_username,
+  });
   const startsAt = new Date(event.starts_at);
 
   return (
@@ -24,6 +30,7 @@ export function EventCard({ event, locale, past = false }: EventCardProps) {
         <EventCoverImage
           event={event}
           locale={locale}
+          creatorName={creatorName}
           variant="card"
           className="h-full w-full object-cover"
         />

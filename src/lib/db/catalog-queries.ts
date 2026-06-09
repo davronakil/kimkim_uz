@@ -5,14 +5,16 @@ import type {
   BusinessListing,
   BusinessListingEntitlement,
   BusinessListingStatus,
-  BusinessListingWithVouches,
+  BusinessListingWithRepresentativeFields,
   PlatformAdmin,
   User,
 } from "@/types";
 
 const approvedListingSelect = `
-  SELECT bl.*, COUNT(blv.user_id) AS vouch_count
+  SELECT bl.*, COUNT(blv.user_id) AS vouch_count,
+         u.first_name, u.last_name, u.username
   FROM business_listings bl
+  JOIN users u ON u.id = bl.representative_user_id
   LEFT JOIN business_listing_vouches blv ON blv.listing_id = bl.id
 `;
 
@@ -33,7 +35,7 @@ export async function getBusinessListingById(id: string): Promise<BusinessListin
 
 export async function listApprovedBusinessListings(
   category?: string,
-): Promise<BusinessListingWithVouches[]> {
+): Promise<BusinessListingWithRepresentativeFields[]> {
   const db = await getDb();
   const query = category
     ? `${approvedListingSelect}
@@ -44,8 +46,8 @@ export async function listApprovedBusinessListings(
        ${approvedListingGroup}`;
 
   const result = category
-    ? await db.prepare(query).bind(category).all<BusinessListingWithVouches>()
-    : await db.prepare(query).all<BusinessListingWithVouches>();
+    ? await db.prepare(query).bind(category).all<BusinessListingWithRepresentativeFields>()
+    : await db.prepare(query).all<BusinessListingWithRepresentativeFields>();
 
   return (result.results ?? []).map((row) => ({
     ...row,

@@ -9,12 +9,14 @@ type BusinessCoverFields = Pick<
 export function BusinessCoverImage({
   listing,
   categoryLabel,
+  submittedByName,
   variant = "hero",
   className = "",
   alt,
 }: {
   listing: BusinessCoverFields;
   categoryLabel: string;
+  submittedByName?: string | null;
   variant?: "card" | "hero";
   className?: string;
   alt?: string;
@@ -37,6 +39,7 @@ export function BusinessCoverImage({
       category={listing.category}
       categoryLabel={categoryLabel}
       locationName={listing.location_name}
+      submittedByName={submittedByName}
       variant={variant}
       className={className}
     />

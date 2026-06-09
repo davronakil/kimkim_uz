@@ -22,6 +22,7 @@ import { TelegramNotifyBanner } from "@/components/events/telegram-notify-banner
 import type { Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
 import { intlLocale } from "@/lib/locale";
+import { displayName } from "@/lib/utils";
 import type {
   Comment,
   Event,
@@ -112,6 +113,8 @@ export function EventWorkspace({
 
   const { event, members, comments, expenses, settlements, paymentSummaries } = data;
   const startsAt = new Date(event.starts_at);
+  const owner = members.find((member) => member.role === "owner");
+  const creatorName = owner ? displayName(owner) : null;
 
   function renderTabContent() {
     if (tab === "overview") {
@@ -216,6 +219,7 @@ export function EventWorkspace({
             <EventCoverImage
               event={event}
               locale={locale}
+              creatorName={creatorName}
               variant="hero"
               className="h-full w-full object-cover"
             />

@@ -30,6 +30,13 @@ export function displayName(
   return full || user.username || "User";
 }
 
+export function personInitial(name: string) {
+  const trimmed = name.trim();
+  if (!trimmed) return "?";
+  const first = [...trimmed][0];
+  return first?.toLocaleUpperCase() ?? "?";
+}
+
 export function centsToMajor(cents: number): number {
   return cents / 100;
 }

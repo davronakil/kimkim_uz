@@ -1,4 +1,6 @@
+import { CoverSubmitterBadge } from "@/components/ui/cover-submitter-badge";
 import { resolveBusinessCoverAccent } from "@/lib/catalog/cover-theme";
+import { personInitial } from "@/lib/utils";
 
 function hashUnit(listingId: string, salt: number) {
   let hash = salt;
@@ -8,19 +10,13 @@ function hashUnit(listingId: string, salt: number) {
   return (hash % 1000) / 1000;
 }
 
-function businessInitial(name: string) {
-  const trimmed = name.trim();
-  if (!trimmed) return "K";
-  const first = [...trimmed][0];
-  return first?.toLocaleUpperCase() ?? "K";
-}
-
 type BusinessCoverPlaceholderProps = {
   name: string;
   listingId: string;
   category: string;
   categoryLabel: string;
   locationName?: string | null;
+  submittedByName?: string | null;
   variant?: "card" | "hero";
   className?: string;
 };
@@ -31,11 +27,12 @@ export function BusinessCoverPlaceholder({
   category,
   categoryLabel,
   locationName,
+  submittedByName,
   variant = "hero",
   className = "",
 }: BusinessCoverPlaceholderProps) {
   const accent = resolveBusinessCoverAccent(category, listingId);
-  const initial = businessInitial(name);
+  const initial = personInitial(name);
   const isCard = variant === "card";
 
   const blobA = {
@@ -108,50 +105,34 @@ export function BusinessCoverPlaceholder({
         {accent.emoji}
       </span>
 
-      <div
-        className={`pointer-events-none absolute rounded-2xl border border-white/25 bg-white/15 shadow-lg backdrop-blur-md ${
-          isCard
-            ? "bottom-3 left-3 max-w-[70%] px-2.5 py-2"
-            : "bottom-5 left-5 max-w-[min(100%,20rem)] px-4 py-3 sm:bottom-6 sm:left-6"
-        }`}
-      >
-        <p
-          className={`font-semibold uppercase tracking-[0.18em] text-white/75 ${
-            isCard ? "text-[9px]" : "text-[10px] sm:text-xs"
+      {isCard ? (
+        <div className="pointer-events-none absolute bottom-3 left-3 max-w-[70%] rounded-2xl border border-white/25 bg-white/15 px-2.5 py-2 shadow-lg backdrop-blur-md">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/75">
+            {categoryLabel}
+          </p>
+          {locationName ? (
+            <p className="mt-1 line-clamp-2 text-xs font-medium leading-snug text-white">
+              {locationName}
+            </p>
+          ) : (
+            <p className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-white">
+              {name}
+            </p>
+          )}
+        </div>
+      ) : null}
+
+      {submittedByName ? (
+        <div
+          className={`pointer-events-none absolute inset-x-0 top-0 flex items-start ${
+            isCard ? "p-3" : "p-5 sm:p-6"
           }`}
         >
-          {categoryLabel}
-        </p>
-        {locationName ? (
-          <p
-            className={`mt-1 line-clamp-2 font-medium leading-snug text-white ${
-              isCard ? "text-xs" : "text-sm sm:text-base"
-            }`}
-          >
-            {locationName}
-          </p>
-        ) : (
-          <p
-            className={`mt-1 line-clamp-2 font-semibold leading-snug text-white ${
-              isCard ? "text-sm" : "text-base sm:text-lg"
-            }`}
-          >
-            {name}
-          </p>
-        )}
-      </div>
-
-      {!isCard ? (
-        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-5 sm:p-6">
-          <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur-sm">
-            <span
-              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-sm font-extrabold"
-              style={{ color: accent.gradientFrom }}
-            >
-              K
-            </span>
-            <span className="text-sm font-semibold text-white/90">KimKim</span>
-          </div>
+          <CoverSubmitterBadge
+            name={submittedByName}
+            accentColor={accent.gradientFrom}
+            variant={variant}
+          />
         </div>
       ) : null}
     </div>

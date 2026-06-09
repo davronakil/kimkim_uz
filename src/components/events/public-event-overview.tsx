@@ -30,11 +30,13 @@ export function PublicEventOverview({
   locale,
   memberCount,
   loggedIn,
+  creatorName,
 }: {
   event: PublicEvent;
   locale: string;
   memberCount: number;
   loggedIn: boolean;
+  creatorName?: string | null;
 }) {
   const t = useTranslations("events.public");
   const startsAt = new Date(event.starts_at);
@@ -52,6 +54,7 @@ export function PublicEventOverview({
             <EventCoverImage
               event={event}
               locale={locale}
+              creatorName={creatorName}
               variant="hero"
               className="absolute inset-0 h-full w-full object-cover"
             />

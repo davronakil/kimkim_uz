@@ -10,6 +10,7 @@ import type {
   EventPaymentSource,
   EventPaymentSummary,
   EventPaymentStatus,
+  EventWithCreator,
   Expense,
   User,
 } from "@/types";
@@ -42,33 +43,37 @@ export async function listPublicEventsForSitemap(): Promise<
   return result.results ?? [];
 }
 
-export async function listPublicEvents(): Promise<Event[]> {
+export async function listPublicEvents(): Promise<EventWithCreator[]> {
   const db = await getDb();
   const result = await db
     .prepare(
-      `SELECT *
-       FROM events
-       WHERE visibility = 'public'
-         AND starts_at >= datetime('now', '-90 days')
-       ORDER BY starts_at ASC`,
+      `SELECT e.*, u.first_name AS creator_first_name, u.last_name AS creator_last_name,
+              u.username AS creator_username
+       FROM events e
+       JOIN users u ON u.id = e.creator_id
+       WHERE e.visibility = 'public'
+         AND e.starts_at >= datetime('now', '-90 days')
+       ORDER BY e.starts_at ASC`,
     )
-    .all<Event>();
+    .all<EventWithCreator>();
 
   return (result.results ?? []).map((row) => normalizeEvent(row)!);
 }
 
-export async function listUserEvents(userId: string): Promise<Event[]> {
+export async function listUserEvents(userId: string): Promise<EventWithCreator[]> {
   const db = await getDb();
   const result = await db
     .prepare(
-      `SELECT e.*
+      `SELECT e.*, u.first_name AS creator_first_name, u.last_name AS creator_last_name,
+              u.username AS creator_username
        FROM events e
+       JOIN users u ON u.id = e.creator_id
        JOIN event_members em ON em.event_id = e.id
        WHERE em.user_id = ?
        ORDER BY e.starts_at ASC`,
     )
     .bind(userId)
-    .all<Event>();
+    .all<EventWithCreator>();
 
   return (result.results ?? []).map((row) => normalizeEvent(row)!);
 }

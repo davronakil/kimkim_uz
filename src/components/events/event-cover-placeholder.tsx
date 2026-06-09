@@ -1,5 +1,7 @@
+import { CoverSubmitterBadge } from "@/components/ui/cover-submitter-badge";
 import { intlLocale } from "@/lib/locale";
 import { resolveEventOgAccent } from "@/lib/og/event-theme";
+import { personInitial } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 
 function hashUnit(eventId: string, salt: number) {
@@ -10,18 +12,12 @@ function hashUnit(eventId: string, salt: number) {
   return (hash % 1000) / 1000;
 }
 
-function eventInitial(title: string) {
-  const trimmed = title.trim();
-  if (!trimmed) return "K";
-  const first = [...trimmed][0];
-  return first?.toLocaleUpperCase() ?? "K";
-}
-
 type EventCoverPlaceholderProps = {
   title: string;
   eventId: string;
   startsAt: string;
   locale?: string;
+  creatorName?: string | null;
   variant?: "card" | "hero";
   className?: string;
 };
@@ -31,6 +27,7 @@ export function EventCoverPlaceholder({
   eventId,
   startsAt,
   locale = "en",
+  creatorName,
   variant = "hero",
   className = "",
 }: EventCoverPlaceholderProps) {
@@ -40,7 +37,7 @@ export function EventCoverPlaceholder({
   const month = date.toLocaleString(intl, { month: "short", timeZone: "Asia/Tashkent" }).toUpperCase();
   const day = date.toLocaleString(intl, { day: "numeric", timeZone: "Asia/Tashkent" });
   const weekday = date.toLocaleString(intl, { weekday: "short", timeZone: "Asia/Tashkent" });
-  const initial = eventInitial(title);
+  const initial = personInitial(title);
 
   const blobA = {
     left: `${12 + hashUnit(eventId, 3) * 28}%`,
@@ -138,17 +135,17 @@ export function EventCoverPlaceholder({
         ) : null}
       </div>
 
-      {!isCard ? (
-        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-5 sm:p-6">
-          <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur-sm">
-            <span
-              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-sm font-extrabold"
-              style={{ color: accent.gradientFrom }}
-            >
-              K
-            </span>
-            <span className="text-sm font-semibold text-white/90">KimKim</span>
-          </div>
+      {creatorName ? (
+        <div
+          className={`pointer-events-none absolute inset-x-0 top-0 flex items-start ${
+            isCard ? "p-3" : "p-5 sm:p-6"
+          }`}
+        >
+          <CoverSubmitterBadge
+            name={creatorName}
+            accentColor={accent.gradientFrom}
+            variant={variant}
+          />
         </div>
       ) : null}
     </div>

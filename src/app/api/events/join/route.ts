@@ -11,6 +11,7 @@ import {
   joinEvent,
   listEventMembers,
 } from "@/lib/db/queries";
+import { displayName } from "@/lib/utils";
 import { eventPaymentsEnabled } from "@/lib/stripe/checkout";
 
 const joinSchema = z.object({
@@ -31,6 +32,7 @@ export async function GET(request: NextRequest) {
   }
 
   const members = await listEventMembers(event.id);
+  const owner = members.find((member) => member.role === "owner");
   const user = await getCurrentUser();
   const joined = user ? await isEventMember(event.id, user.id) : false;
   const env = await getEnv();
@@ -55,6 +57,7 @@ export async function GET(request: NextRequest) {
       invite_code: event.invite_code,
     },
     member_count: members.length,
+    creator_name: owner ? displayName(owner) : null,
     joined,
     logged_in: Boolean(user),
     payments_enabled: paymentsEnabled,

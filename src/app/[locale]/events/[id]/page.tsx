@@ -8,6 +8,7 @@ import { buildEventJsonLd } from "@/lib/event-json-ld";
 import { buildEventDetailMetadata } from "@/lib/event-metadata";
 import { isPublicEvent } from "@/lib/events/visibility";
 import { JsonLd } from "@/lib/seo";
+import { displayName } from "@/lib/utils";
 import {
   buildBalancesFromExpenses,
   calculateSettlements,
@@ -54,6 +55,7 @@ export default async function EventDetailPage({
 
   if (!user || !member) {
     const members = await listEventMembers(id);
+    const owner = members.find((member) => member.role === "owner");
     const jsonLd = isPublicEvent(event.visibility)
       ? await buildEventJsonLd(event, locale)
       : null;
@@ -66,6 +68,7 @@ export default async function EventDetailPage({
           locale={locale}
           memberCount={members.length}
           loggedIn={Boolean(user)}
+          creatorName={owner ? displayName(owner) : null}
         />
       </>
     );

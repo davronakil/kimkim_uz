@@ -27,6 +27,7 @@ type JoinPreview = {
     | "ticket_currency"
     | "invite_code"
   >;
+  creator_name: string | null;
   member_count: number;
   joined: boolean;
   logged_in: boolean;
@@ -182,7 +183,8 @@ export function JoinEventPanel({
     );
   }
 
-  const { event, member_count, joined, logged_in, payments_enabled, rsvp_status } = preview;
+  const { event, member_count, joined, logged_in, payments_enabled, rsvp_status, creator_name } =
+    preview;
   const paymentMode = event.payment_mode ?? "free";
   const startsAt = new Date(event.starts_at);
   const loginRedirect = `/join/${code}`;
@@ -199,6 +201,7 @@ export function JoinEventPanel({
           <EventCoverImage
             event={event}
             locale={locale}
+            creatorName={creator_name}
             variant="hero"
             className="absolute inset-0 h-full w-full object-cover"
           />

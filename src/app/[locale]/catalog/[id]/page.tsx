@@ -91,30 +91,35 @@ export default async function CatalogDetailPage({
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="aspect-[21/9] overflow-hidden">
+        <div className="aspect-[4/3] overflow-hidden sm:aspect-[21/9]">
           <BusinessCoverImage
             listing={listing}
             categoryLabel={tCategories(listing.category as Parameters<typeof tCategories>[0])}
+            submittedByName={displayName(listing)}
             variant="hero"
             className="h-full w-full object-cover"
           />
         </div>
-        <div className="space-y-4 p-5 sm:p-8">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold sm:text-3xl">{listing.name}</h1>
-            <CategoryBadge category={listing.category} locale={locale} />
-            {listing.status !== "approved" ? (
-              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100">
-                {listing.status === "pending" ? t("statusPending") : t("statusRejected")}
-              </span>
-            ) : null}
+        <div className="space-y-5 p-5 sm:space-y-6 sm:p-8">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold leading-tight sm:text-3xl">{listing.name}</h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <CategoryBadge category={listing.category} locale={locale} />
+              {listing.status !== "approved" ? (
+                <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+                  {listing.status === "pending" ? t("statusPending") : t("statusRejected")}
+                </span>
+              ) : null}
+            </div>
           </div>
 
           {listing.description ? (
-            <p className="whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">{listing.description}</p>
+            <p className="whitespace-pre-wrap leading-relaxed text-zinc-700 dark:text-zinc-300">
+              {listing.description}
+            </p>
           ) : null}
 
-          <div className="flex flex-wrap gap-4 text-sm text-zinc-600 dark:text-zinc-300">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-zinc-600 dark:text-zinc-300">
             {listing.location_name ? (
               <span className="inline-flex items-center gap-1.5">
                 <MapPin className="h-4 w-4" />
@@ -158,7 +163,7 @@ export default async function CatalogDetailPage({
           ) : null}
 
           {listing.status === "approved" ? (
-            <div className="border-t border-zinc-200 pt-4 dark:border-zinc-800">
+            <div className="border-t border-zinc-100 pt-5 dark:border-zinc-800">
               <BusinessVouchButton
                 listingId={listing.id}
                 initialCount={vouchSummary.count}
@@ -168,11 +173,6 @@ export default async function CatalogDetailPage({
               />
             </div>
           ) : null}
-
-          <div className="border-t border-zinc-200 pt-4 dark:border-zinc-800">
-            <p className="text-sm text-zinc-500">{t("representative")}</p>
-            <p className="font-medium">{displayName(listing)}</p>
-          </div>
         </div>
       </div>
     </div>

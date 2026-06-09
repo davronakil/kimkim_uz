@@ -2,10 +2,11 @@ import { Link } from "@/i18n/navigation";
 import { MapPin, ThumbsUp } from "lucide-react";
 import { BusinessCoverImage } from "@/components/catalog/business-cover-image";
 import { CategoryBadge } from "@/components/catalog/category-badge";
-import type { BusinessListingWithVouches } from "@/types";
+import type { BusinessListingWithRepresentativeFields } from "@/types";
+import { displayName } from "@/lib/utils";
 
 type BusinessCardProps = {
-  listing: BusinessListingWithVouches;
+  listing: BusinessListingWithRepresentativeFields;
   locale: string;
   categoryLabel: string;
 };
@@ -20,6 +21,7 @@ export function BusinessCard({ listing, locale, categoryLabel }: BusinessCardPro
         <BusinessCoverImage
           listing={listing}
           categoryLabel={categoryLabel}
+          submittedByName={displayName(listing)}
           variant="card"
           className="h-full w-full object-cover transition group-hover:scale-[1.02]"
         />
