@@ -93,6 +93,15 @@
       "markPaid": "Mark paid",
       "markUnpaid": "Mark unpaid"
     },
+    "activity": {
+      "title": "Latest activity",
+      "subtitle": "Recent joins, comments, and expenses in one place.",
+      "joinedTitle": "{name} joined",
+      "joinedBody": "Added to the guest list.",
+      "commentTitle": "{name} commented",
+      "expenseTitle": "{name} logged {amount}",
+      "unknown": "Someone"
+    },
     "referrals": {
       "title": "Invite impact",
       "subtitle": "{count, plural, one {# guest joined through a member link.} other {# guests joined through member links.}}",

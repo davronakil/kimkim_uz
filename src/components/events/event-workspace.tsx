@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
 import { cacheEventDetail, getCachedEventDetail } from "@/lib/offline/event-cache";
 import { useOnlineStatus } from "@/lib/offline/use-online-status";
+import { ActivityTimelinePanel } from "@/components/events/activity-timeline-panel";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { CommentThread } from "@/components/events/comment-thread";
 import { ExpensePanel } from "@/components/events/expense-panel";
@@ -128,6 +129,12 @@ export function EventWorkspace({
         <div className="space-y-4">
           {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
           <RsvpSummaryPanel members={members} />
+          <ActivityTimelinePanel
+            members={members}
+            comments={comments}
+            expenses={expenses}
+            locale={locale}
+          />
           <RsvpStatusPanel
             eventId={eventId}
             initialStatus={currentRsvpStatus}

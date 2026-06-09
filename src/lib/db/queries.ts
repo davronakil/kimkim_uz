@@ -613,6 +613,7 @@ export async function listEventMembers(eventId: string): Promise<EventMember[]> 
       `SELECT
          u.*,
          em.role,
+         em.joined_at,
          COALESCE(r.status, 'going') AS rsvp_status,
          er.source AS referral_source,
          er.referrer_user_id,

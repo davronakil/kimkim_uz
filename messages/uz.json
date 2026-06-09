@@ -93,6 +93,15 @@
       "markPaid": "To'landi deb belgilash",
       "markUnpaid": "To'lanmadi deb belgilash"
     },
+    "activity": {
+      "title": "Oxirgi faollik",
+      "subtitle": "Qo'shilishlar, izohlar va xarajatlar bir joyda.",
+      "joinedTitle": "{name} qo'shildi",
+      "joinedBody": "Mehmonlar ro'yxatiga qo'shildi.",
+      "commentTitle": "{name} izoh yozdi",
+      "expenseTitle": "{name} {amount} xarajat qo'shdi",
+      "unknown": "Kimdir"
+    },
     "referrals": {
       "title": "Taklif natijasi",
       "subtitle": "{count} mehmon a'zolar tarqatgan link orqali qo'shildi.",

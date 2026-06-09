@@ -16,6 +16,7 @@ export type User = {
 
 export type EventMember = User & {
   role: "owner" | "member";
+  joined_at: string;
   rsvp_status: EventRsvpStatus | null;
   referral_source: EventReferralSource | null;
   referrer_user_id: string | null;
