@@ -21,6 +21,10 @@ KimKim includes a **Yelp-style business directory** at `/[locale]/catalog` where
 | `/catalog/manage` | Logged in | Manage listings, buy extra slots |
 | `/admin` | Platform admin | Review pending listings; superadmin manages admins |
 
+## SEO
+
+Approved listings are indexable public pages. They are added to `sitemap.xml` and include `LocalBusiness` JSON-LD on the detail page. Pending and rejected listings are not publicly indexable.
+
 ## Categories
 
 Defined in `src/lib/catalog/categories.ts` with labels in `messages/*.json` under `catalog.categories`.

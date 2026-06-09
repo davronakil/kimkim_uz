@@ -7,12 +7,14 @@ import { CategoryBadge } from "@/components/catalog/category-badge";
 import { BusinessVouchButton } from "@/components/catalog/business-vouch-button";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
+import { buildBusinessListingJsonLd } from "@/lib/catalog/json-ld";
 import {
   getBusinessListingVouchSummary,
   getBusinessListingWithRepresentative,
 } from "@/lib/db/catalog-queries";
 import { normalizeStoredCategory } from "@/lib/catalog/categories";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
+import { JsonLd } from "@/lib/seo";
 import { displayName } from "@/lib/utils";
 import { isPlatformAdmin } from "@/lib/platform/admin";
 
@@ -71,6 +73,18 @@ export default async function CatalogDetailPage({
     listing.status === "approved"
       ? await getBusinessListingVouchSummary(id, user?.id)
       : { count: 0, vouchedByMe: false };
+  const categoryLabel = tCategories(
+    normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
+  );
+  const jsonLd =
+    listing.status === "approved"
+      ? buildBusinessListingJsonLd({
+          listing,
+          locale,
+          categoryLabel,
+          vouchCount: vouchSummary.count,
+        })
+      : null;
   const mapsUrl =
     listing.location_lat != null && listing.location_lng != null
       ? `https://www.google.com/maps/search/?api=1&query=${listing.location_lat},${listing.location_lng}`
@@ -80,6 +94,7 @@ export default async function CatalogDetailPage({
 
   return (
     <div className="space-y-6">
+      {jsonLd ? <JsonLd data={jsonLd} /> : null}
       <div className="flex flex-wrap items-center gap-3">
         <Link href="/catalog" className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">
           ← {t("backToCatalog")}
@@ -95,9 +110,7 @@ export default async function CatalogDetailPage({
         <div className="aspect-[4/3] overflow-hidden sm:aspect-[21/9]">
           <BusinessCoverImage
             listing={listing}
-            categoryLabel={tCategories(
-              normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
-            )}
+            categoryLabel={categoryLabel}
             submittedByName={displayName(listing)}
             variant="hero"
             className="h-full w-full object-cover"

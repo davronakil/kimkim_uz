@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { defaultLocale, locales } from "@/i18n/config";
+import { listApprovedBusinessListingsForSitemap } from "@/lib/db/catalog-queries";
 import { listPublicEventsForSitemap } from "@/lib/db/queries";
 import { absoluteUrl, appBaseUrl } from "@/lib/seo";
 
@@ -53,9 +54,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   let publicEvents: Awaited<ReturnType<typeof listPublicEventsForSitemap>> = [];
+  let catalogListings: Awaited<ReturnType<typeof listApprovedBusinessListingsForSitemap>> =
+    [];
 
   try {
-    publicEvents = await listPublicEventsForSitemap();
+    [publicEvents, catalogListings] = await Promise.all([
+      listPublicEventsForSitemap(),
+      listApprovedBusinessListingsForSitemap(),
+    ]);
   } catch {
     return [...homeEntries, ...discoverEntries, ...catalogEntries];
   }
@@ -80,5 +86,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  return [...homeEntries, ...discoverEntries, ...catalogEntries, ...eventEntries];
+  const catalogDetailEntries = catalogListings.map((listing) => {
+    const pathWithoutLocale = `/catalog/${listing.id}`;
+    const lastModified = listing.updated_at
+      ? new Date(listing.updated_at)
+      : listing.published_at
+        ? new Date(listing.published_at)
+        : now;
+
+    return {
+      url: absoluteUrl(`/${defaultLocale}${pathWithoutLocale}`, baseUrl),
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.65,
+      alternates: {
+        languages: {
+          ...Object.fromEntries(
+            locales.map((code) => [code, absoluteUrl(`/${code}${pathWithoutLocale}`, baseUrl)]),
+          ),
+          "x-default": absoluteUrl(`/${defaultLocale}${pathWithoutLocale}`, baseUrl),
+        },
+      },
+    };
+  });
+
+  return [
+    ...homeEntries,
+    ...discoverEntries,
+    ...catalogEntries,
+    ...eventEntries,
+    ...catalogDetailEntries,
+  ];
 }

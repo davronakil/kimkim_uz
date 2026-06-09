@@ -70,6 +70,23 @@ export async function listApprovedBusinessListings(
   }));
 }
 
+export async function listApprovedBusinessListingsForSitemap(): Promise<
+  Array<Pick<BusinessListing, "id" | "updated_at" | "published_at">>
+> {
+  const db = await getDb();
+  const result = await db
+    .prepare(
+      `SELECT id, updated_at, published_at
+       FROM business_listings
+       WHERE status = 'approved'
+       ORDER BY published_at DESC, updated_at DESC
+       LIMIT 1000`,
+    )
+    .all<Pick<BusinessListing, "id" | "updated_at" | "published_at">>();
+
+  return result.results ?? [];
+}
+
 export async function getBusinessListingVouchCount(listingId: string) {
   const db = await getDb();
   const row = await db
