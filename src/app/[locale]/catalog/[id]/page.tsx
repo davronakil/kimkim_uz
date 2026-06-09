@@ -15,6 +15,7 @@ import {
 import { normalizeStoredCategory } from "@/lib/catalog/categories";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
 import { JsonLd } from "@/lib/seo";
+import { buildAppUrl } from "@/lib/telegram/bot";
 import { displayName } from "@/lib/utils";
 import { isPlatformAdmin } from "@/lib/platform/admin";
 
@@ -36,12 +37,18 @@ export async function generateMetadata({
     });
   }
 
+  const imageUrl = listing.cover_image_key
+    ? buildAppUrl(`/api/media/${listing.cover_image_key}`)
+    : buildAppUrl(`/api/og/catalog/${listing.id}?locale=${locale}`);
+
   return buildSitePageMetadata({
     locale,
     pagePath: `/${locale}/catalog/${id}`,
     title: listing.name,
     description: listing.description ?? listing.name,
     ogTitle: listing.name,
+    imageUrl,
+    imageAlt: listing.name,
   });
 }
 

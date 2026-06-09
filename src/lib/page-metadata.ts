@@ -25,6 +25,8 @@ export function buildSitePageMetadata({
   ogTitle = title,
   keywords,
   robots,
+  imageUrl: customImageUrl,
+  imageAlt,
 }: {
   locale: string;
   pagePath: string;
@@ -33,15 +35,18 @@ export function buildSitePageMetadata({
   ogTitle?: string;
   keywords?: string;
   robots?: Metadata["robots"];
+  imageUrl?: string;
+  imageAlt?: string;
 }): Metadata {
   const metadataLocale = resolveMetadataLocale(locale);
   const baseUrl = appBaseUrl();
-  const imageUrl = buildAppUrl(`/api/og/site?locale=${metadataLocale}`, baseUrl);
+  const imageUrl =
+    customImageUrl ?? buildAppUrl(`/api/og/site?locale=${metadataLocale}`, baseUrl);
   const image = {
     url: imageUrl,
     width: 1200,
     height: 630,
-    alt: ogTitle,
+    alt: imageAlt ?? ogTitle,
   };
 
   return {
