@@ -62,8 +62,9 @@ Natural phrases also work: `create event`, `event yarat`, `xarajat qo'sh`, etc.
 | `t.me/bot?start=en_join_CODE` | English |
 | `t.me/bot?start=uz_join_CODE` | Uzbek |
 | `t.me/bot?start=ru_join_CODE` | Russian |
+| `t.me/bot?start=en_join_CODE_ref_USER` | English with invite referrer tracking |
 
-The web invite panel generates locale-prefixed links automatically.
+The web invite panel generates locale-prefixed links automatically and includes a referrer id for attribution.
 
 ### RSVP inline buttons
 

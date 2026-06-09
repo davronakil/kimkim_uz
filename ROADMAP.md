@@ -47,10 +47,10 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 | Priority | Item | Notes |
 |----------|------|-------|
 | P1 | Event templates | Shipped: gap, choyxona, wedding, birthday, sunnat, paid |
-| P1 | UZS + USD toggle per event | Display + expense currency |
+| P1 | UZS + USD toggle per event | Shipped: expense currency for shared costs + settlements |
 | P2 | Public read-only event page | Shipped for `/events/:id`; browse at `/discover` |
 | P2 | Business catalog | Shipped: submit, admin review, vouches, Stripe extra slots |
-| P2 | Referral tracking | Invite source via bot start param |
+| P2 | Referral tracking | Shipped: web, Telegram bot, and Stripe checkout invite attribution |
 | P3 | PNG OG cards | Shipped for generated site/event cards |
 
 ## Housekeeping / ops

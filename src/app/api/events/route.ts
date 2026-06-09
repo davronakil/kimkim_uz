@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     locationLat: payload.data.location_lat ?? null,
     locationLng: payload.data.location_lng ?? null,
     paymentMode: payload.data.payment_mode,
+    expenseCurrency: payload.data.expense_currency,
     ticketPriceCents: resolveTicketPriceCents(
       payload.data.payment_mode,
       payload.data.ticket_price,

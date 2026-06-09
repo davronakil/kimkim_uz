@@ -9,8 +9,10 @@ export type InlineButton =
 export function inviteRsvpKeyboard({
   labels,
   inviteCode,
+  referrerUserId,
 }: {
   inviteCode: string;
+  referrerUserId?: string;
   labels: {
     going: string;
     maybe: string;
@@ -19,12 +21,13 @@ export function inviteRsvpKeyboard({
     eventUrl: string;
   };
 }) {
+  const refSuffix = referrerUserId ? `:${referrerUserId}` : "";
   return {
     inline_keyboard: [
       [
-        { text: labels.going, callback_data: `rsvp:y:${inviteCode}` },
-        { text: labels.maybe, callback_data: `rsvp:m:${inviteCode}` },
-        { text: labels.declined, callback_data: `rsvp:n:${inviteCode}` },
+        { text: labels.going, callback_data: `rsvp:y:${inviteCode}${refSuffix}` },
+        { text: labels.maybe, callback_data: `rsvp:m:${inviteCode}${refSuffix}` },
+        { text: labels.declined, callback_data: `rsvp:n:${inviteCode}${refSuffix}` },
       ],
       [{ text: labels.openEvent, url: labels.eventUrl }],
     ],

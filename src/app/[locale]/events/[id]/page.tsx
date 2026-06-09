@@ -9,10 +9,7 @@ import { buildEventDetailMetadata } from "@/lib/event-metadata";
 import { isPublicEvent } from "@/lib/events/visibility";
 import { JsonLd } from "@/lib/seo";
 import { displayName } from "@/lib/utils";
-import {
-  buildBalancesFromExpenses,
-  calculateSettlements,
-} from "@/lib/expense/settlement";
+import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
 import {
   getEventById,
   getEventMemberRole,
@@ -81,23 +78,16 @@ export default async function EventDetailPage({
     listEventPaymentSummaries(id),
   ]);
 
-  const balances = buildBalancesFromExpenses(
+  const settlements = calculateSettlementsFromExpenses(
     expenses.map((expense) => ({
       payer_id: expense.payer_id,
       amount_cents: expense.amount_cents,
+      currency: expense.currency,
       splits: (expense.splits ?? []).map((split) => ({
         user_id: split.user_id,
         amount_cents: split.amount_cents,
       })),
     })),
-  );
-
-  const settlements = calculateSettlements(
-    [...balances.entries()].map(([userId, balanceCents]) => ({
-      userId,
-      balanceCents,
-    })),
-    expenses[0]?.currency ?? "UZS",
   );
 
   const [canEdit, role, botUsername] = await Promise.all([

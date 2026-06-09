@@ -5,6 +5,7 @@ import {
   getUserById,
   isEventMember,
   joinEvent,
+  recordEventReferral,
   upsertEventPayment,
 } from "@/lib/db/queries";
 import {
@@ -59,6 +60,14 @@ export async function fulfillCheckoutSession(sessionId: string, expectedUserId?:
   await upsertEventRsvp(eventId, userId, "going");
 
   if (!wasMember) {
+    await recordEventReferral({
+      eventId,
+      inviteCode: session.metadata?.invite_code ?? event.invite_code ?? "",
+      referredUserId: userId,
+      referrerUserId: session.metadata?.referrer_user_id,
+      source: "stripe",
+    });
+
     const member = await getUserById(userId);
     if (member) {
       void runInBackground(

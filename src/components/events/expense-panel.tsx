@@ -13,6 +13,7 @@ export function ExpensePanel({
   expenses,
   settlements,
   locale,
+  currency = "UZS",
   onAdded,
   readOnly = false,
 }: {
@@ -21,6 +22,7 @@ export function ExpensePanel({
   expenses: Expense[];
   settlements: Settlement[];
   locale: string;
+  currency?: string;
   onAdded: () => void;
   readOnly?: boolean;
 }) {
@@ -109,6 +111,7 @@ export function ExpensePanel({
       ? {
           description,
           amount: amountNumber,
+          currency,
           payer_id: payerId,
           split_mode: "equal" as const,
           split_user_ids: splitIds,
@@ -116,6 +119,7 @@ export function ExpensePanel({
       : {
           description,
           amount: amountNumber,
+          currency,
           payer_id: payerId,
           split_mode: "custom" as const,
           custom_splits: splitIds.map((userId) => ({

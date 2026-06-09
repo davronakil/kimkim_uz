@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/cloudflare";
 import { generateInviteCode } from "@/lib/utils";
+import { nanoid } from "nanoid";
 import type {
   Comment,
   Event,
@@ -10,17 +11,25 @@ import type {
   EventPaymentSource,
   EventPaymentSummary,
   EventPaymentStatus,
+  EventReferralSource,
   EventWithCreator,
   Expense,
   User,
 } from "@/types";
 import { nestComments } from "@/lib/expense/settlement";
 
-function normalizeEvent<T extends Partial<Event>>(row: T | null): (T & { payment_mode: EventPaymentMode; visibility: Event["visibility"] }) | null {
+function normalizeEvent<T extends Partial<Event>>(
+  row: T | null,
+): (T & {
+  expense_currency: string;
+  payment_mode: EventPaymentMode;
+  visibility: Event["visibility"];
+}) | null {
   if (!row) return null;
   return {
     ...row,
     payment_mode: (row.payment_mode as EventPaymentMode | undefined) ?? "free",
+    expense_currency: row.expense_currency ?? "UZS",
     ticket_currency: row.ticket_currency ?? "UZS",
     visibility: row.visibility === "public" ? "public" : "private",
   };
@@ -100,6 +109,49 @@ export async function joinEvent(eventId: string, userId: string): Promise<boolea
     .run();
 
   return true;
+}
+
+export async function recordEventReferral({
+  eventId,
+  inviteCode,
+  referredUserId,
+  referrerUserId,
+  source,
+}: {
+  eventId: string;
+  inviteCode: string;
+  referredUserId: string;
+  referrerUserId?: string | null;
+  source: EventReferralSource;
+}) {
+  if (
+    !inviteCode ||
+    !referrerUserId ||
+    referrerUserId === referredUserId ||
+    !/^[A-Za-z0-9_-]{4,64}$/.test(referrerUserId)
+  ) {
+    return;
+  }
+
+  const db = await getDb();
+  await db
+    .prepare(
+      `INSERT OR IGNORE INTO event_referrals (
+        id, event_id, invite_code, referred_user_id, referrer_user_id, source
+      )
+       SELECT ?, ?, ?, ?, ?, ?
+       WHERE EXISTS (SELECT 1 FROM users WHERE id = ?)`,
+    )
+    .bind(
+      nanoid(),
+      eventId,
+      inviteCode,
+      referredUserId,
+      referrerUserId,
+      source,
+      referrerUserId,
+    )
+    .run();
 }
 
 export async function getUserById(userId: string): Promise<User | null> {
@@ -558,10 +610,20 @@ export async function listEventMembers(eventId: string): Promise<EventMember[]> 
   const db = await getDb();
   const result = await db
     .prepare(
-      `SELECT u.*, em.role, COALESCE(r.status, 'going') AS rsvp_status
+      `SELECT
+         u.*,
+         em.role,
+         COALESCE(r.status, 'going') AS rsvp_status,
+         er.source AS referral_source,
+         er.referrer_user_id,
+         ref.username AS referrer_username,
+         ref.first_name AS referrer_first_name,
+         ref.last_name AS referrer_last_name
        FROM users u
        JOIN event_members em ON em.user_id = u.id
        LEFT JOIN event_rsvps r ON r.event_id = em.event_id AND r.user_id = u.id
+       LEFT JOIN event_referrals er ON er.event_id = em.event_id AND er.referred_user_id = u.id
+       LEFT JOIN users ref ON ref.id = er.referrer_user_id
        WHERE em.event_id = ?
        ORDER BY CASE em.role WHEN 'owner' THEN 0 ELSE 1 END, u.first_name ASC`,
     )

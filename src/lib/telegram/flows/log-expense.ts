@@ -105,18 +105,18 @@ export async function handleLogExpenseStep(
     return;
   }
 
+  const event = await getEventById(eventId);
   const { amountCents, currency } = await createExpenseRecord({
     eventId,
     payerId: user.id,
     description: parsed.description,
     amount: parsed.amount,
-    currency: "UZS",
+    currency: event?.expense_currency ?? "UZS",
     splitUserIds: members.map((member) => member.id),
   });
 
   await clearBotSession(chatId);
 
-  const event = await getEventById(eventId);
   const amountLabel = formatMoney(amountCents, currency, locale);
 
   void runInBackground(

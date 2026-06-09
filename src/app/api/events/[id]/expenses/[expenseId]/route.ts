@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/cloudflare";
-import { isEventMember, listEventMembers } from "@/lib/db/queries";
+import { getEventById, isEventMember, listEventMembers } from "@/lib/db/queries";
 import { buildExpenseSplits } from "@/lib/expense/mutations";
+import { eventCurrencies } from "@/lib/events/form";
 
 const expenseSchema = z
   .object({
     description: z.string().min(1).max(500),
     amount: z.number().positive(),
-    currency: z.string().default("UZS"),
+    currency: z.enum(eventCurrencies).optional(),
     payer_id: z.string(),
     split_mode: z.enum(["equal", "custom"]).default("equal"),
     split_user_ids: z.array(z.string()).optional(),
@@ -66,6 +67,11 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const event = await getEventById(eventId);
+  if (!event) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const parsed = expenseSchema.safeParse(await request.json());
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid expense" }, { status: 400 });
@@ -73,6 +79,10 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
   const members = await listEventMembers(eventId);
   const memberIds = new Set(members.map((m) => m.id));
+  if (!memberIds.has(parsed.data.payer_id)) {
+    return NextResponse.json({ error: "Invalid payer" }, { status: 400 });
+  }
+
   const built = buildExpenseSplits(parsed.data, memberIds);
   if (!built.ok) {
     return NextResponse.json({ error: built.error }, { status: 400 });
@@ -86,7 +96,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     .bind(
       parsed.data.payer_id,
       built.amountCents,
-      parsed.data.currency,
+      parsed.data.currency ?? event.expense_currency ?? "UZS",
       parsed.data.description,
       expenseId,
     )

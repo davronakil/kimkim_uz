@@ -10,10 +10,7 @@ import {
   listEventMembers,
   listEventPaymentSummaries,
 } from "@/lib/db/queries";
-import {
-  buildBalancesFromExpenses,
-  calculateSettlements,
-} from "@/lib/expense/settlement";
+import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
 import { parseEventFormData, resolveTicketPriceCents } from "@/lib/events/form";
 import { notifyEventUpdated } from "@/lib/telegram/notifications";
 
@@ -45,23 +42,16 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     listEventPaymentSummaries(id),
   ]);
 
-  const balances = buildBalancesFromExpenses(
+  const settlements = calculateSettlementsFromExpenses(
     expenses.map((expense) => ({
       payer_id: expense.payer_id,
       amount_cents: expense.amount_cents,
+      currency: expense.currency,
       splits: (expense.splits ?? []).map((split) => ({
         user_id: split.user_id,
         amount_cents: split.amount_cents,
       })),
     })),
-  );
-
-  const settlements = calculateSettlements(
-    [...balances.entries()].map(([userId, balanceCents]) => ({
-      userId,
-      balanceCents,
-    })),
-    expenses[0]?.currency ?? "UZS",
   );
 
   const canEdit = await isEventOwner(id, user.id);
@@ -146,7 +136,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       `UPDATE events SET
         title = ?, description = ?, starts_at = ?, ends_at = ?,
         location_name = ?, location_address = ?, location_lat = ?, location_lng = ?,
-        cover_image_key = ?, payment_mode = ?, ticket_price_cents = ?, ticket_currency = ?,
+        cover_image_key = ?, payment_mode = ?, expense_currency = ?, ticket_price_cents = ?, ticket_currency = ?,
         visibility = ?, updated_at = datetime('now')
        WHERE id = ?`,
     )
@@ -161,6 +151,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       locationLng,
       coverImageKey,
       payload.data.payment_mode,
+      payload.data.expense_currency,
       resolveTicketPriceCents(payload.data.payment_mode, payload.data.ticket_price),
       payload.data.payment_mode === "paid" ? payload.data.ticket_currency : event.ticket_currency ?? "UZS",
       payload.data.visibility,

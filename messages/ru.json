@@ -81,6 +81,7 @@
     "leaveEvent": "Покинуть событие",
     "leaveConfirm": "Покинуть событие? Можно вернуться по ссылке-приглашению.",
     "removeMember": "Удалить",
+    "invitedBy": "Пригласил(а): {name}",
     "transferTitle": "Передать роль организатора",
     "transferHint": "Передайте права администратора, чтобы можно было выйти из события.",
     "transferAction": "Сделать другого организатором",
@@ -248,6 +249,8 @@
       "ticketPrice": "Цена билета",
       "ticketPricePlaceholder": "например, 150000",
       "ticketCurrency": "Валюта",
+      "expenseCurrency": "Валюта расходов",
+      "expenseCurrencyHint": "Новые общие расходы и балансы будут в этой валюте.",
       "ticketHint": "Гости оплатят эту сумму через Stripe при присоединении."
     },
     "visibility": {

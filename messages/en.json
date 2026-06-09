@@ -81,6 +81,7 @@
     "leaveEvent": "Leave event",
     "leaveConfirm": "Leave this event? You can rejoin with an invite link.",
     "removeMember": "Remove",
+    "invitedBy": "Invited by {name}",
     "transferTitle": "Transfer organizer role",
     "transferHint": "Hand off admin duties so you can leave the event.",
     "transferAction": "Make someone else admin",
@@ -248,6 +249,8 @@
       "ticketPrice": "Ticket price",
       "ticketPricePlaceholder": "e.g. 150000",
       "ticketCurrency": "Currency",
+      "expenseCurrency": "Expense currency",
+      "expenseCurrencyHint": "New shared expenses and balances use this currency.",
       "ticketHint": "Guests will pay this amount via Stripe when they join."
     },
     "visibility": {

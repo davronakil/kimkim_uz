@@ -74,6 +74,35 @@ export function buildBalancesFromExpenses(
   return balances;
 }
 
+export function calculateSettlementsFromExpenses(
+  expenses: Array<{
+    payer_id: string;
+    amount_cents: number;
+    currency: string;
+    splits: Array<{ user_id: string; amount_cents: number }>;
+  }>,
+): Settlement[] {
+  const byCurrency = new Map<string, typeof expenses>();
+
+  for (const expense of expenses) {
+    const currency = expense.currency || "UZS";
+    const currencyExpenses = byCurrency.get(currency) ?? [];
+    currencyExpenses.push(expense);
+    byCurrency.set(currency, currencyExpenses);
+  }
+
+  return [...byCurrency.entries()].flatMap(([currency, currencyExpenses]) => {
+    const balances = buildBalancesFromExpenses(currencyExpenses);
+    return calculateSettlements(
+      [...balances.entries()].map(([userId, balanceCents]) => ({
+        userId,
+        balanceCents,
+      })),
+      currency,
+    );
+  });
+}
+
 export function nestComments<T extends { id: string; parent_id: string | null; created_at: string }>(
   comments: T[],
 ): Array<T & { replies: Array<T & { replies: [] }> }> {

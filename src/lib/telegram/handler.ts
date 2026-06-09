@@ -56,6 +56,7 @@ async function handleInviteStart(
   user: User,
   inviteCode: string,
   localeFromLink?: BotLocale,
+  referrerUserId?: string,
 ) {
   const locale = localeFromLink ?? resolveBotLocale(message.from, user);
 
@@ -72,6 +73,7 @@ async function handleInviteStart(
     parse_mode: "HTML",
     reply_markup: inviteRsvpKeyboard({
       inviteCode,
+      referrerUserId,
       labels: {
         going: strings.rsvpGoing,
         maybe: strings.rsvpMaybe,
@@ -112,7 +114,13 @@ async function handlePrivateMessage(message: TelegramMessage) {
           appLocale: join.locale,
         });
       }
-      await handleInviteStart(message, user, join.inviteCode, join.locale);
+      await handleInviteStart(
+        message,
+        user,
+        join.inviteCode,
+        join.locale,
+        join.referrerUserId,
+      );
       return;
     }
   }

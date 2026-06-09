@@ -62,6 +62,7 @@ export function JoinEventPanel({
   const [paying, setPaying] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
   const [rsvpMessage, setRsvpMessage] = useState<string | null>(null);
+  const referrerUserId = searchParams.get("ref");
 
   const load = useCallback(async () => {
     const response = await fetch(`/api/events/join?code=${encodeURIComponent(code)}`, {
@@ -128,7 +129,12 @@ export function JoinEventPanel({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ code, pay_later: payLater, rsvp_status: rsvpStatus }),
+      body: JSON.stringify({
+        code,
+        pay_later: payLater,
+        rsvp_status: rsvpStatus,
+        referrer_user_id: referrerUserId,
+      }),
     });
 
     if (response.ok) {
@@ -154,12 +160,12 @@ export function JoinEventPanel({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ code, referrer_user_id: referrerUserId }),
     });
 
     if (response.ok) {
       const data = (await response.json()) as { url: string };
-      window.location.href = data.url;
+      window.location.assign(data.url);
       return;
     }
 
@@ -187,7 +193,9 @@ export function JoinEventPanel({
     preview;
   const paymentMode = event.payment_mode ?? "free";
   const startsAt = new Date(event.starts_at);
-  const loginRedirect = `/join/${code}`;
+  const loginRedirect = referrerUserId
+    ? `/join/${code}?${new URLSearchParams({ ref: referrerUserId }).toString()}`
+    : `/join/${code}`;
   const ticketLabel =
     event.ticket_price_cents && event.ticket_price_cents > 0
       ? formatMoney(event.ticket_price_cents, event.ticket_currency ?? "UZS", locale)

@@ -13,6 +13,7 @@ import { fulfillCheckoutSession } from "@/lib/stripe/fulfill";
 
 const checkoutSchema = z.object({
   code: z.string().min(4).max(32),
+  referrer_user_id: z.string().max(128).optional().nullable(),
 });
 
 export async function GET(request: NextRequest) {
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       inviteCode: parsed.data.code,
       locale,
+      referrerUserId: parsed.data.referrer_user_id,
     });
 
     if (!session.url) {

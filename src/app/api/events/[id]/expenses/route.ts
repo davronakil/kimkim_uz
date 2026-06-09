@@ -3,16 +3,17 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getDb, runInBackground } from "@/lib/cloudflare";
-import { isEventMember, listEventMembers } from "@/lib/db/queries";
+import { getEventById, isEventMember, listEventMembers } from "@/lib/db/queries";
 import { notifyNewExpense } from "@/lib/telegram/notifications";
 import { buildExpenseSplits } from "@/lib/expense/mutations";
+import { eventCurrencies } from "@/lib/events/form";
 import { formatMoney } from "@/lib/utils";
 
 const expenseSchema = z
   .object({
     description: z.string().min(1).max(500),
     amount: z.number().positive(),
-    currency: z.string().default("UZS"),
+    currency: z.enum(eventCurrencies).optional(),
     payer_id: z.string(),
     split_mode: z.enum(["equal", "custom"]).default("equal"),
     split_user_ids: z.array(z.string()).optional(),
@@ -56,6 +57,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const event = await getEventById(eventId);
+  if (!event) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const parsed = expenseSchema.safeParse(await request.json());
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid expense" }, { status: 400 });
@@ -73,6 +79,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   const { amountCents, splits: splitEntries } = built;
+  const currency = parsed.data.currency ?? event.expense_currency ?? "UZS";
 
   const db = await getDb();
   const expenseId = nanoid();
@@ -86,7 +93,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       eventId,
       parsed.data.payer_id,
       amountCents,
-      parsed.data.currency,
+      currency,
       parsed.data.description,
     )
     .run();
@@ -105,7 +112,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       eventId,
       author: user,
       description: parsed.data.description,
-      amountLabel: formatMoney(amountCents, parsed.data.currency, user.language_code),
+      amountLabel: formatMoney(amountCents, currency, user.language_code),
       authorUserId: user.id,
     }),
   );

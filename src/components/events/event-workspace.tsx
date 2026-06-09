@@ -141,6 +141,7 @@ export function EventWorkspace({
               inviteCode={event.invite_code}
               botUsername={botUsername}
               locale={locale}
+              currentUserId={currentUserId}
               canRegenerate={canEdit}
             />
           ) : null}
@@ -213,6 +214,7 @@ export function EventWorkspace({
         expenses={expenses}
         settlements={settlements}
         locale={locale}
+        currency={event.expense_currency ?? "UZS"}
         onAdded={load}
         readOnly={!online}
       />

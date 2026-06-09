@@ -29,11 +29,13 @@ export async function createEventCheckoutSession({
   userId,
   inviteCode,
   locale,
+  referrerUserId,
 }: {
   event: Event;
   userId: string;
   inviteCode: string;
   locale: string;
+  referrerUserId?: string | null;
 }) {
   const env = await getEnv();
   const secretKey = env.STRIPE_SECRET_KEY;
@@ -47,16 +49,20 @@ export async function createEventCheckoutSession({
 
   const appUrl = env.NEXT_PUBLIC_APP_URL ?? "https://kimkim.uz";
   const currency = (event.ticket_currency ?? "UZS").toLowerCase();
+  const referralQuery = referrerUserId
+    ? `&${new URLSearchParams({ ref: referrerUserId }).toString()}`
+    : "";
 
   return stripeRequest<CheckoutSession>("/checkout/sessions", secretKey!, {
     mode: "payment",
-    success_url: `${appUrl}/${locale}/join/${inviteCode}?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${appUrl}/${locale}/join/${inviteCode}?checkout=cancelled`,
+    success_url: `${appUrl}/${locale}/join/${inviteCode}?session_id={CHECKOUT_SESSION_ID}${referralQuery}`,
+    cancel_url: `${appUrl}/${locale}/join/${inviteCode}?checkout=cancelled${referralQuery}`,
     client_reference_id: `${event.id}:${userId}`,
     metadata: {
       event_id: event.id,
       user_id: userId,
       invite_code: inviteCode,
+      ...(referrerUserId ? { referrer_user_id: referrerUserId } : {}),
     },
     line_items: [
       {

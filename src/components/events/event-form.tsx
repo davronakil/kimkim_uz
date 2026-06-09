@@ -263,6 +263,7 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
       <PaymentModePicker
         key={paymentPickerKey}
         defaultValue={paymentMode}
+        defaultExpenseCurrency={event?.expense_currency ?? "UZS"}
         defaultTicketPriceCents={event?.ticket_price_cents}
         defaultTicketCurrency={event?.ticket_currency ?? "UZS"}
       />

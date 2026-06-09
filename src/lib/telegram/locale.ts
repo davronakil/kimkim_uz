@@ -20,22 +20,27 @@ export function mapTelegramToAppLocale(code?: string | null): BotLocale {
 export type JoinStartParam = {
   inviteCode: string;
   locale?: BotLocale;
+  referrerUserId?: string;
 };
 
 export function parseJoinStartParam(startParam: string | null): JoinStartParam | null {
   if (!startParam) return null;
 
-  const withLocale = startParam.match(/^(en|uz|ru)_join_(.+)$/i);
+  const withLocale = startParam.match(/^(en|uz|ru)_join_([a-z0-9]+)(?:_ref_([A-Za-z0-9_-]+))?$/i);
   if (withLocale) {
     const locale = withLocale[1].toLowerCase();
     if (isLocale(locale)) {
-      return { locale, inviteCode: withLocale[2] };
+      return {
+        locale,
+        inviteCode: withLocale[2],
+        referrerUserId: withLocale[3],
+      };
     }
   }
 
-  const legacy = startParam.match(/^join_(.+)$/i);
+  const legacy = startParam.match(/^join_([a-z0-9]+)(?:_ref_([A-Za-z0-9_-]+))?$/i);
   if (legacy) {
-    return { inviteCode: legacy[1] };
+    return { inviteCode: legacy[1], referrerUserId: legacy[2] };
   }
 
   return null;

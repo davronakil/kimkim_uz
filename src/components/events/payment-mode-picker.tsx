@@ -8,6 +8,7 @@ import {
   eventPaymentModes,
   type EventPaymentMode,
 } from "@/lib/events/payment-mode";
+import { eventCurrencies } from "@/lib/events/form";
 import { centsToMajor } from "@/lib/utils";
 
 const modeIcons: Record<EventPaymentMode, typeof Gift> = {
@@ -17,14 +18,14 @@ const modeIcons: Record<EventPaymentMode, typeof Gift> = {
   paid: Banknote,
 };
 
-const ticketCurrencies = ["UZS", "USD"] as const;
-
 export function PaymentModePicker({
   defaultValue = defaultPaymentMode,
+  defaultExpenseCurrency = "UZS",
   defaultTicketPriceCents,
   defaultTicketCurrency = "UZS",
 }: {
   defaultValue?: EventPaymentMode;
+  defaultExpenseCurrency?: string;
   defaultTicketPriceCents?: number | null;
   defaultTicketCurrency?: string;
 }) {
@@ -66,6 +67,29 @@ export function PaymentModePicker({
         })}
       </div>
 
+      <div className="grid gap-2 rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950 sm:grid-cols-[1fr_auto] sm:items-center">
+        <div>
+          <label htmlFor="expense_currency" className="kk-label">
+            {t("expenseCurrency")}
+          </label>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            {t("expenseCurrencyHint")}
+          </p>
+        </div>
+        <select
+          id="expense_currency"
+          name="expense_currency"
+          defaultValue={defaultExpenseCurrency}
+          className="kk-input sm:w-32"
+        >
+          {eventCurrencies.map((currency) => (
+            <option key={currency} value={currency}>
+              {currency}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {selected === "paid" ? (
         <div className="grid gap-3 rounded-2xl border border-violet-200 bg-violet-50/70 p-4 dark:border-violet-900 dark:bg-violet-950/30 sm:grid-cols-[1fr_auto]">
           <div className="space-y-2">
@@ -94,7 +118,7 @@ export function PaymentModePicker({
               defaultValue={defaultTicketCurrency}
               className="kk-input"
             >
-              {ticketCurrencies.map((currency) => (
+              {eventCurrencies.map((currency) => (
                 <option key={currency} value={currency}>
                   {currency}
                 </option>

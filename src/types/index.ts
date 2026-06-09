@@ -17,6 +17,11 @@ export type User = {
 export type EventMember = User & {
   role: "owner" | "member";
   rsvp_status: EventRsvpStatus | null;
+  referral_source: EventReferralSource | null;
+  referrer_user_id: string | null;
+  referrer_username: string | null;
+  referrer_first_name: string | null;
+  referrer_last_name: string | null;
 };
 
 export type EventRsvpStatus = "going" | "maybe" | "declined";
@@ -84,6 +89,7 @@ export type Event = {
   location_lng: number | null;
   cover_image_key: string | null;
   payment_mode: EventPaymentMode;
+  expense_currency: string;
   ticket_price_cents: number | null;
   ticket_currency: string;
   invite_code: string | null;
@@ -135,6 +141,18 @@ export type Settlement = {
   to_user_id: string;
   amount_cents: number;
   currency: string;
+};
+
+export type EventReferralSource = "web" | "telegram" | "stripe";
+
+export type EventReferral = {
+  id: string;
+  event_id: string;
+  invite_code: string;
+  referred_user_id: string;
+  referrer_user_id: string | null;
+  source: EventReferralSource;
+  created_at: string;
 };
 
 export type TelegramLoginPayload = {

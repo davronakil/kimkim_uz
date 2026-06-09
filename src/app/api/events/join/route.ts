@@ -10,6 +10,7 @@ import {
   isEventMember,
   joinEvent,
   listEventMembers,
+  recordEventReferral,
 } from "@/lib/db/queries";
 import { displayName } from "@/lib/utils";
 import { eventPaymentsEnabled } from "@/lib/stripe/checkout";
@@ -18,6 +19,7 @@ const joinSchema = z.object({
   code: z.string().min(4).max(32),
   pay_later: z.boolean().optional(),
   rsvp_status: z.enum(["going", "maybe", "declined"]).optional(),
+  referrer_user_id: z.string().max(128).optional().nullable(),
 });
 
 export async function GET(request: NextRequest) {
@@ -106,6 +108,14 @@ export async function POST(request: NextRequest) {
   await upsertEventRsvp(event.id, user.id, rsvpStatus);
 
   if (!alreadyMember) {
+    await recordEventReferral({
+      eventId: event.id,
+      inviteCode: parsed.data.code,
+      referredUserId: user.id,
+      referrerUserId: parsed.data.referrer_user_id,
+      source: "web",
+    });
+
     void runInBackground(
       notifyMemberJoined({
         eventId: event.id,

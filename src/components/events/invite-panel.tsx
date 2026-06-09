@@ -15,6 +15,7 @@ export function InvitePanel({
   inviteCode: initialInviteCode,
   botUsername,
   locale,
+  currentUserId,
   canRegenerate = false,
 }: {
   eventId: string;
@@ -22,6 +23,7 @@ export function InvitePanel({
   inviteCode: string;
   botUsername: string;
   locale: string;
+  currentUserId: string;
   canRegenerate?: boolean;
 }) {
   const t = useTranslations("events.invite");
@@ -31,7 +33,8 @@ export function InvitePanel({
   const [regenerating, setRegenerating] = useState(false);
   const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false);
 
-  const invitePath = `/${locale}/join/${inviteCode}`;
+  const referralQuery = new URLSearchParams({ ref: currentUserId }).toString();
+  const invitePath = `/${locale}/join/${inviteCode}?${referralQuery}`;
   const inviteUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}${invitePath}`
@@ -39,7 +42,10 @@ export function InvitePanel({
 
   const shareMessage = t("shareText", { title: eventTitle });
   const telegramShare = buildTelegramShareUrl(inviteUrl, shareMessage);
-  const telegramBotLink = buildTelegramDeepLink(botUsername, `${locale}_join_${inviteCode}`);
+  const telegramBotLink = buildTelegramDeepLink(
+    botUsername,
+    `${locale}_join_${inviteCode}_ref_${currentUserId}`,
+  );
 
   async function copyLink() {
     await navigator.clipboard.writeText(buildShareMessage(shareMessage, inviteUrl));

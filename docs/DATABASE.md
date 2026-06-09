@@ -52,8 +52,10 @@ npm run db:migrate:remote   # production
 | `business_listings` | `0013` | Business submissions (`pending` / `approved` / `rejected`) |
 | `business_slot_payments` | `0013` | Stripe purchases for extra listing slots |
 | `business_listing_vouches` | `0014` | One vouch per user per approved listing |
+| `event_referrals` | `0017` | First invite referrer recorded when a user joins an event |
 
 Data migration `0015` renames stored category `wedding_venue` → `event_venue` on existing listings.
+Migration `0016` adds per-event `expense_currency` for shared expenses and balances.
 
 Full catalog flow: [CATALOG.md](./CATALOG.md).
 
@@ -61,9 +63,14 @@ Full catalog flow: [CATALOG.md](./CATALOG.md).
 
 - `telegram_chat_id` — linked Telegram group for announcements
 - `payment_mode` — `free` | `split` | `pay_yourself` | `paid`
+- `expense_currency` — `UZS` | `USD` for shared expense logging and settlements
 - `ticket_price_cents`, `ticket_currency` — for Stripe paid events
 - `invite_code` — public join slug
 - `visibility` — `private` (link-only, `noindex`) or `public` (sitemap + Google indexing on `/events/[id]`)
+
+## Referral tracking
+
+Invite links include `?ref=<userId>` for the member sharing the link. Telegram bot deep links include the same referrer in the `/start` payload. When a user joins, `event_referrals` stores the first attribution for `(event_id, referred_user_id)` with source `web`, `telegram`, or `stripe`.
 
 ## Event visibility & SEO
 

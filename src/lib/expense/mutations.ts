@@ -3,7 +3,7 @@ import { majorToCents } from "@/lib/utils";
 export type ExpenseInput = {
   description: string;
   amount: number;
-  currency: string;
+  currency?: string;
   payer_id: string;
   split_mode: "equal" | "custom";
   split_user_ids?: string[];

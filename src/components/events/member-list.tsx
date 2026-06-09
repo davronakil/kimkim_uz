@@ -39,6 +39,15 @@ export function MemberList({
   const paymentByUser = new Map(paymentSummaries.map((payment) => [payment.user_id, payment]));
   const showPaymentStatus = paymentMode === "paid";
 
+  function referrerName(member: EventMember) {
+    if (!member.referrer_user_id) return null;
+    const name = [member.referrer_first_name, member.referrer_last_name]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+    return name || (member.referrer_username ? `@${member.referrer_username}` : null);
+  }
+
   async function removeMember(userId: string) {
     setRemovingId(userId);
     const response = await fetch(`/api/events/${eventId}/members/${userId}`, {
@@ -74,6 +83,7 @@ export function MemberList({
           canManage && member.role !== "owner" && member.id !== currentUserId;
         const payment = paymentByUser.get(member.id);
         const paid = payment?.status === "completed";
+        const invitedBy = canManage ? referrerName(member) : null;
         const ticketLabel =
           ticketPriceCents && ticketPriceCents > 0
             ? formatMoney(ticketPriceCents, ticketCurrency, locale)
@@ -137,6 +147,11 @@ export function MemberList({
                       ? paymentT(payment?.source === "stripe" ? "paidStripe" : "paidManual")
                       : paymentT("unpaid")}
                     {ticketLabel ? ` · ${ticketLabel}` : ""}
+                  </span>
+                ) : null}
+                {invitedBy ? (
+                  <span className="basis-full text-xs text-zinc-500 dark:text-zinc-400">
+                    {t("invitedBy", { name: invitedBy })}
                   </span>
                 ) : null}
               </span>

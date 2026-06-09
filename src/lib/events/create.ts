@@ -16,6 +16,7 @@ export type CreateEventInput = {
   locationLng?: number | null;
   coverImageKey?: string | null;
   paymentMode?: EventPaymentMode;
+  expenseCurrency?: string;
   ticketPriceCents?: number | null;
   ticketCurrency?: string;
   visibility?: EventVisibility;
@@ -33,8 +34,8 @@ export async function createEventRecord(input: CreateEventInput) {
       `INSERT INTO events (
         id, creator_id, title, description, starts_at, ends_at,
         location_name, location_address, location_lat, location_lng, cover_image_key,
-        payment_mode, ticket_price_cents, ticket_currency, invite_code, visibility
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        payment_mode, expense_currency, ticket_price_cents, ticket_currency, invite_code, visibility
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       eventId,
@@ -49,6 +50,7 @@ export async function createEventRecord(input: CreateEventInput) {
       input.locationLng ?? null,
       input.coverImageKey ?? null,
       paymentMode,
+      input.expenseCurrency ?? "UZS",
       input.ticketPriceCents ?? null,
       input.ticketCurrency ?? "UZS",
       inviteCode,

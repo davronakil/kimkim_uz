@@ -81,6 +81,7 @@
     "leaveEvent": "Chiqib ketish",
     "leaveConfirm": "Eventdan chiqasizmi? Keyin link orqali yana qo'shilasiz.",
     "removeMember": "Olib tashlash",
+    "invitedBy": "{name} taklif qilgan",
     "transferTitle": "Adminni almashtirish",
     "transferHint": "Chiqib ketish uchun avval boshqasiga admin ber.",
     "transferAction": "Boshqasini admin qilish",
@@ -248,6 +249,8 @@
       "ticketPrice": "Chipta narxi",
       "ticketPricePlaceholder": "masalan, 150000",
       "ticketCurrency": "Valyuta",
+      "expenseCurrency": "Xarajat valyutasi",
+      "expenseCurrencyHint": "Yangi umumiy xarajatlar va qarzlar shu valyutada bo'ladi.",
       "ticketHint": "Qo'shilishda mehmonlar shu summani Stripe orqali to'laydi."
     },
     "visibility": {

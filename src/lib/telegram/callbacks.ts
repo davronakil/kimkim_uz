@@ -1,6 +1,10 @@
 import { upsertTelegramUser } from "@/lib/auth/session";
 import { runInBackground } from "@/lib/cloudflare";
-import { getEventByInviteCode, isEventMember } from "@/lib/db/queries";
+import {
+  getEventByInviteCode,
+  isEventMember,
+  recordEventReferral,
+} from "@/lib/db/queries";
 import { rsvpDeclined, rsvpGoing, rsvpMaybe } from "@/lib/events/rsvp";
 import { isLocale } from "@/lib/locale";
 import {
@@ -15,6 +19,13 @@ import { linkTelegramChat } from "@/lib/telegram/chat";
 import { resolveBotLocale } from "@/lib/telegram/locale";
 import { notifyMemberJoined } from "@/lib/telegram/notifications";
 import type { TelegramCallbackQuery } from "@/lib/telegram/types";
+
+function parseRsvpCallbackData(data: string, prefix: string) {
+  if (!data.startsWith(prefix)) return null;
+  const [inviteCode, referrerUserId] = data.slice(prefix.length).split(":");
+  if (!inviteCode) return null;
+  return { inviteCode, referrerUserId };
+}
 
 export async function handleCallbackQuery(query: TelegramCallbackQuery) {
   const data = query.data ?? "";
@@ -38,8 +49,13 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
   const strings = t(locale);
 
   if (data.startsWith("rsvp:y:")) {
-    const inviteCode = data.slice("rsvp:y:".length);
-    const event = await getEventByInviteCode(inviteCode);
+    const rsvp = parseRsvpCallbackData(data, "rsvp:y:");
+    if (!rsvp) {
+      await answerCallbackQuery(query.id);
+      return;
+    }
+
+    const event = await getEventByInviteCode(rsvp.inviteCode);
     if (!event) {
       await answerCallbackQuery(query.id, strings.inviteNotFound, true);
       return;
@@ -47,6 +63,14 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
 
     const { wasMember } = await rsvpGoing(event, user);
     if (!wasMember) {
+      await recordEventReferral({
+        eventId: event.id,
+        inviteCode: rsvp.inviteCode,
+        referredUserId: user.id,
+        referrerUserId: rsvp.referrerUserId,
+        source: "telegram",
+      });
+
       void runInBackground(
         notifyMemberJoined({
           eventId: event.id,
@@ -65,8 +89,13 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
   }
 
   if (data.startsWith("rsvp:n:")) {
-    const inviteCode = data.slice("rsvp:n:".length);
-    const event = await getEventByInviteCode(inviteCode);
+    const rsvp = parseRsvpCallbackData(data, "rsvp:n:");
+    if (!rsvp) {
+      await answerCallbackQuery(query.id);
+      return;
+    }
+
+    const event = await getEventByInviteCode(rsvp.inviteCode);
     if (!event) {
       await answerCallbackQuery(query.id, strings.inviteNotFound, true);
       return;
@@ -79,8 +108,13 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
   }
 
   if (data.startsWith("rsvp:m:")) {
-    const inviteCode = data.slice("rsvp:m:".length);
-    const event = await getEventByInviteCode(inviteCode);
+    const rsvp = parseRsvpCallbackData(data, "rsvp:m:");
+    if (!rsvp) {
+      await answerCallbackQuery(query.id);
+      return;
+    }
+
+    const event = await getEventByInviteCode(rsvp.inviteCode);
     if (!event) {
       await answerCallbackQuery(query.id, strings.inviteNotFound, true);
       return;
@@ -88,6 +122,14 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
 
     const { wasMember } = await rsvpMaybe(event, user);
     if (!wasMember) {
+      await recordEventReferral({
+        eventId: event.id,
+        inviteCode: rsvp.inviteCode,
+        referredUserId: user.id,
+        referrerUserId: rsvp.referrerUserId,
+        source: "telegram",
+      });
+
       void runInBackground(
         notifyMemberJoined({
           eventId: event.id,
