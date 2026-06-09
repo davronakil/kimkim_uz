@@ -1,7 +1,7 @@
 "use client";
 
-import { CheckCircle2, CircleHelp, MessageSquare, Receipt, UserPlus, XCircle } from "lucide-react";
-import { useMemo } from "react";
+import { CheckCircle2, CircleHelp, Copy, MessageSquare, Receipt, UserPlus, XCircle } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import type { Comment, EventMember, Expense } from "@/types";
 import { displayName, formatMoney } from "@/lib/utils";
@@ -45,6 +45,7 @@ export function ActivityTimelinePanel({
   const t = useTranslations("events.activity");
   const rsvpT = useTranslations("events.rsvp");
   const format = useFormatter();
+  const [copied, setCopied] = useState(false);
 
   const items = useMemo(() => {
     const activity: ActivityItem[] = [
@@ -94,11 +95,37 @@ export function ActivityTimelinePanel({
 
   if (items.length === 0) return null;
 
+  async function copyActivity() {
+    const lines = [
+      t("copyTitle"),
+      ...items.map((item) =>
+        t("copyLine", {
+          time: format.dateTime(new Date(item.at), {
+            dateStyle: "medium",
+            timeStyle: "short",
+          }),
+          title: item.title,
+          body: item.body,
+        }),
+      ),
+    ];
+
+    await navigator.clipboard.writeText(lines.join("\n"));
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
+  }
+
   return (
     <section className="kk-card space-y-4 p-5 sm:p-6">
-      <div>
-        <h2 className="kk-section-title">{t("title")}</h2>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("subtitle")}</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="kk-section-title">{t("title")}</h2>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("subtitle")}</p>
+        </div>
+        <button type="button" onClick={() => void copyActivity()} className="kk-btn-secondary w-full sm:w-auto">
+          <Copy className="h-4 w-4" />
+          {copied ? t("copied") : t("copy")}
+        </button>
       </div>
       <ol className="space-y-3">
         {items.map((item) => {

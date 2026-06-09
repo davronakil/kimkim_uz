@@ -96,6 +96,10 @@
     "activity": {
       "title": "Oxirgi faollik",
       "subtitle": "Qo'shilishlar, izohlar va xarajatlar bir joyda.",
+      "copy": "Faollikni nusxalash",
+      "copied": "Nusxalandi",
+      "copyTitle": "KimKim faollik xabari",
+      "copyLine": "{time} — {title}: {body}",
       "joinedTitle": "{name} qo'shildi",
       "joinedBody": "Mehmonlar ro'yxatiga qo'shildi.",
       "rsvpTitle": "{name} RSVPni yangiladi",

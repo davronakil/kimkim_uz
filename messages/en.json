@@ -96,6 +96,10 @@
     "activity": {
       "title": "Latest activity",
       "subtitle": "Recent joins, comments, and expenses in one place.",
+      "copy": "Copy activity",
+      "copied": "Copied",
+      "copyTitle": "KimKim activity update",
+      "copyLine": "{time} — {title}: {body}",
       "joinedTitle": "{name} joined",
       "joinedBody": "Added to the guest list.",
       "rsvpTitle": "{name} updated RSVP",
