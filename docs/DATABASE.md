@@ -53,6 +53,8 @@ npm run db:migrate:remote   # production
 | `business_slot_payments` | `0013` | Stripe purchases for extra listing slots |
 | `business_listing_vouches` | `0014` | One vouch per user per approved listing |
 
+Data migration `0015` renames stored category `wedding_venue` → `event_venue` on existing listings.
+
 Full catalog flow: [CATALOG.md](./CATALOG.md).
 
 ## Notable columns on `events`

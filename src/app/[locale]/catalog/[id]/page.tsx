@@ -11,6 +11,7 @@ import {
   getBusinessListingVouchSummary,
   getBusinessListingWithRepresentative,
 } from "@/lib/db/catalog-queries";
+import { normalizeStoredCategory } from "@/lib/catalog/categories";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
 import { displayName } from "@/lib/utils";
 import { isPlatformAdmin } from "@/lib/platform/admin";
@@ -94,7 +95,9 @@ export default async function CatalogDetailPage({
         <div className="aspect-[4/3] overflow-hidden sm:aspect-[21/9]">
           <BusinessCoverImage
             listing={listing}
-            categoryLabel={tCategories(listing.category as Parameters<typeof tCategories>[0])}
+            categoryLabel={tCategories(
+              normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
+            )}
             submittedByName={displayName(listing)}
             variant="hero"
             className="h-full w-full object-cover"

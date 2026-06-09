@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { normalizeStoredCategory } from "@/lib/catalog/categories";
 import type { BusinessCategory } from "@/lib/catalog/categories";
 
 type CategoryBadgeProps = {
@@ -11,10 +12,11 @@ type CategoryBadgeProps = {
 
 export function CategoryBadge({ category, size = "md" }: CategoryBadgeProps) {
   const t = useTranslations("catalog.categories");
+  const labelKey = normalizeStoredCategory(category) as BusinessCategory;
 
   let label = category;
   try {
-    label = t(category as BusinessCategory);
+    label = t(labelKey);
   } catch {
     // keep raw category
   }

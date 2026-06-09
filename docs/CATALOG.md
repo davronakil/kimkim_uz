@@ -25,7 +25,9 @@ KimKim includes a **Yelp-style business directory** at `/[locale]/catalog` where
 
 Defined in `src/lib/catalog/categories.ts` with labels in `messages/*.json` under `catalog.categories`.
 
-Examples: restaurant, barbershop, nail salon, dacha, gym, studio, digital marketing agency, hotel, and more.
+Examples: restaurant, banquet hall, event venue, sauna / banya, photographer, DJ, dacha, hotel, and more.
+
+Legacy slug `wedding_venue` is migrated to `event_venue` (migration `0015`).
 
 ## Admin & superadmin
 

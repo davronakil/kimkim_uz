@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Store } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { normalizeStoredCategory } from "@/lib/catalog/categories";
 import { BusinessCard } from "@/components/catalog/business-card";
 import { CatalogFilters } from "@/components/catalog/catalog-filters";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -71,7 +72,9 @@ export default async function CatalogPage({
               key={listing.id}
               listing={listing}
               locale={locale}
-              categoryLabel={tCategories(listing.category as Parameters<typeof tCategories>[0])}
+              categoryLabel={tCategories(
+                normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
+              )}
             />
           ))}
         </div>

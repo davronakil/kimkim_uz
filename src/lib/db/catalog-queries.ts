@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { getDb } from "@/lib/cloudflare";
+import { categoryFilterValues, isBusinessCategory } from "@/lib/catalog/categories";
 import { isSuperadmin } from "@/lib/platform/admin";
 import type {
   BusinessListing,
@@ -37,17 +38,31 @@ export async function listApprovedBusinessListings(
   category?: string,
 ): Promise<BusinessListingWithRepresentativeFields[]> {
   const db = await getDb();
-  const query = category
-    ? `${approvedListingSelect}
-       WHERE bl.status = 'approved' AND bl.category = ?
-       ${approvedListingGroup}`
-    : `${approvedListingSelect}
-       WHERE bl.status = 'approved'
-       ${approvedListingGroup}`;
 
-  const result = category
-    ? await db.prepare(query).bind(category).all<BusinessListingWithRepresentativeFields>()
-    : await db.prepare(query).all<BusinessListingWithRepresentativeFields>();
+  if (category) {
+    const filterValues = isBusinessCategory(category)
+      ? categoryFilterValues(category)
+      : category === "wedding_venue"
+        ? categoryFilterValues("event_venue")
+        : [category];
+    const placeholders = filterValues.map(() => "?").join(", ");
+    const query = `${approvedListingSelect}
+       WHERE bl.status = 'approved' AND bl.category IN (${placeholders})
+       ${approvedListingGroup}`;
+    const result = await db
+      .prepare(query)
+      .bind(...filterValues)
+      .all<BusinessListingWithRepresentativeFields>();
+
+    return (result.results ?? []).map((row) => ({
+      ...row,
+      vouch_count: Number(row.vouch_count ?? 0),
+    }));
+  }
+
+  const result = await db
+    .prepare(`${approvedListingSelect} WHERE bl.status = 'approved' ${approvedListingGroup}`)
+    .all<BusinessListingWithRepresentativeFields>();
 
   return (result.results ?? []).map((row) => ({
     ...row,

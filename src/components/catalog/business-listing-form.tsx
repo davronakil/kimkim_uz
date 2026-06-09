@@ -4,7 +4,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LocationPicker, type LocationValue } from "@/components/events/location-picker";
-import { businessCategories } from "@/lib/catalog/categories";
+import { businessCategories, normalizeStoredCategory } from "@/lib/catalog/categories";
 import type { BusinessListing } from "@/types";
 
 type BusinessListingFormProps = {
@@ -116,7 +116,7 @@ export function BusinessListingForm({
           id="category"
           name="category"
           required
-          defaultValue={listing?.category ?? "other"}
+          defaultValue={normalizeStoredCategory(listing?.category ?? "other")}
           className="kk-input"
         >
           {businessCategories.map((category) => (
