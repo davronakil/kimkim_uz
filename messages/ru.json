@@ -473,16 +473,92 @@
   "admin": {
     "title": "Админ",
     "nav": "Админ",
-    "subtitle": "Модерация объявлений и управление администраторами.",
+    "subtitle": "Обзор платформы, модерация и управление командой.",
     "metaDescription": "Администрирование KimKim.",
+    "tabs": {
+      "overview": "Обзор",
+      "catalog": "Каталог",
+      "events": "События",
+      "users": "Пользователи",
+      "admins": "Админы"
+    },
+    "sections": {
+      "overview": "Обзор платформы",
+      "catalog": "Каталог бизнесов",
+      "events": "События",
+      "users": "Пользователи",
+      "admins": "Администраторы"
+    },
+    "overview": {
+      "loadError": "Не удалось загрузить статистику.",
+      "toolsTitle": "Быстрые ссылки",
+      "openCatalog": "Открыть каталог",
+      "openDiscover": "Открыть Discover",
+      "openEvents": "Открыть события",
+      "stats": {
+        "users": "Пользователи",
+        "events": "События",
+        "publicEvents": "Публичные события",
+        "catalogPending": "На модерации",
+        "catalogApproved": "Опубликовано",
+        "vouches": "Рекомендации"
+      }
+    },
     "catalog": {
       "sectionTitle": "На модерации",
+      "pendingTab": "На проверке",
+      "allTab": "Все объявления",
       "emptyTitle": "Нечего проверять",
       "emptyBody": "Новые заявки появятся здесь.",
+      "allEmptyTitle": "Объявления не найдены",
+      "allEmptyBody": "Попробуйте другой фильтр.",
       "preview": "Просмотр",
       "approve": "Одобрить",
       "reject": "Отклонить",
-      "rejectReasonPlaceholder": "Причина отклонения (необязательно)"
+      "rejectReasonPlaceholder": "Причина отклонения (необязательно)",
+      "representative": "Добавил: {name}",
+      "vouchesCount": "{count} рекомендаций",
+      "status": {
+        "all": "Все",
+        "pending": "На проверке",
+        "approved": "Одобрено",
+        "rejected": "Отклонено"
+      }
+    },
+    "events": {
+      "searchPlaceholder": "Поиск по событию, месту или автору…",
+      "search": "Найти",
+      "emptyTitle": "События не найдены",
+      "emptyBody": "Попробуйте другой запрос или фильтр.",
+      "resultCount": "{count} событий",
+      "public": "Публичное",
+      "private": "Приватное",
+      "byCreator": "Автор: {name}",
+      "membersCount": "{count} участников",
+      "open": "Открыть",
+      "makePublic": "Сделать публичным",
+      "makePrivate": "Сделать приватным",
+      "prevPage": "Назад",
+      "nextPage": "Далее",
+      "pageOf": "Страница {page} из {total}",
+      "filter": {
+        "all": "Все",
+        "public": "Публичные",
+        "private": "Приватные"
+      }
+    },
+    "users": {
+      "searchPlaceholder": "Поиск по имени или @username…",
+      "search": "Найти",
+      "emptyTitle": "Пользователи не найдены",
+      "emptyBody": "Попробуйте другой запрос.",
+      "resultCount": "{count} пользователей",
+      "joined": "Регистрация: {date}",
+      "eventsCount": "{count} событий",
+      "listingsCount": "{count} объявлений",
+      "prevPage": "Назад",
+      "nextPage": "Далее",
+      "pageOf": "Страница {page} из {total}"
     },
     "admins": {
       "sectionTitle": "Администраторы",

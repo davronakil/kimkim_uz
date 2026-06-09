@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { AdminManagementPanel } from "@/components/admin/admin-management-panel";
-import { CatalogReviewPanel } from "@/components/admin/catalog-review-panel";
+import { AdminWorkspace } from "@/components/admin/admin-workspace";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
@@ -46,23 +45,13 @@ export default async function AdminPage({
   const superadmin = await isSuperadmin(user);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       <div>
         <h1 className="kk-page-title">{t("title")}</h1>
         <p className="mt-1 text-zinc-600 dark:text-zinc-300">{t("subtitle")}</p>
       </div>
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold">{t("catalog.sectionTitle")}</h2>
-        <CatalogReviewPanel locale={locale} />
-      </section>
-
-      {superadmin ? (
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold">{t("admins.sectionTitle")}</h2>
-          <AdminManagementPanel />
-        </section>
-      ) : null}
+      <AdminWorkspace locale={locale} superadmin={superadmin} />
     </div>
   );
 }

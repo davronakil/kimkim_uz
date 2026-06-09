@@ -473,16 +473,92 @@
   "admin": {
     "title": "Admin",
     "nav": "Admin",
-    "subtitle": "Biznes e'lonlarini tekshirish va adminlarni boshqarish.",
+    "subtitle": "Platforma ko'rinishi, moderatsiya va jamoa boshqaruvi.",
     "metaDescription": "KimKim platforma boshqaruvi.",
+    "tabs": {
+      "overview": "Ko'rinish",
+      "catalog": "Katalog",
+      "events": "Tadbirlar",
+      "users": "Foydalanuvchilar",
+      "admins": "Adminlar"
+    },
+    "sections": {
+      "overview": "Platforma ko'rinishi",
+      "catalog": "Biznes katalogi",
+      "events": "Tadbirlar",
+      "users": "Foydalanuvchilar",
+      "admins": "Platforma adminlari"
+    },
+    "overview": {
+      "loadError": "Statistikani yuklab bo'lmadi.",
+      "toolsTitle": "Tezkor havolalar",
+      "openCatalog": "Katalogni ochish",
+      "openDiscover": "Discover ochish",
+      "openEvents": "Tadbirlarni ochish",
+      "stats": {
+        "users": "Foydalanuvchilar",
+        "events": "Tadbirlar",
+        "publicEvents": "Ommaviy tadbirlar",
+        "catalogPending": "Tekshiruvdagi e'lonlar",
+        "catalogApproved": "Faol e'lonlar",
+        "vouches": "Jamoa tavsiyalari"
+      }
+    },
     "catalog": {
       "sectionTitle": "Tekshiruvdagi e'lonlar",
+      "pendingTab": "Tekshiruvda",
+      "allTab": "Barcha e'lonlar",
       "emptyTitle": "Tekshirish uchun hech narsa yo'q",
       "emptyBody": "Yangi arizalar shu yerda paydo bo'ladi.",
+      "allEmptyTitle": "E'lon topilmadi",
+      "allEmptyBody": "Boshqa filtrni sinab ko'ring.",
       "preview": "Ko'rish",
       "approve": "Tasdiqlash",
       "reject": "Rad etish",
-      "rejectReasonPlaceholder": "Rad etish sababi (ixtiyoriy)"
+      "rejectReasonPlaceholder": "Rad etish sababi (ixtiyoriy)",
+      "representative": "E'lon qilgan: {name}",
+      "vouchesCount": "{count} tavsiya",
+      "status": {
+        "all": "Hammasi",
+        "pending": "Kutilmoqda",
+        "approved": "Tasdiqlangan",
+        "rejected": "Rad etilgan"
+      }
+    },
+    "events": {
+      "searchPlaceholder": "Tadbir, joy yoki yaratuvchini qidiring…",
+      "search": "Qidirish",
+      "emptyTitle": "Tadbir topilmadi",
+      "emptyBody": "Boshqa qidiruv yoki filtrni sinab ko'ring.",
+      "resultCount": "{count} ta tadbir",
+      "public": "Ommaviy",
+      "private": "Shaxsiy",
+      "byCreator": "{name} yaratgan",
+      "membersCount": "{count} ishtirokchi",
+      "open": "Ochish",
+      "makePublic": "Ommaviy qilish",
+      "makePrivate": "Shaxsiy qilish",
+      "prevPage": "Oldingi",
+      "nextPage": "Keyingi",
+      "pageOf": "{page}-sahifa, jami {total}",
+      "filter": {
+        "all": "Hammasi",
+        "public": "Ommaviy",
+        "private": "Shaxsiy"
+      }
+    },
+    "users": {
+      "searchPlaceholder": "Ism yoki @username bo'yicha qidiring…",
+      "search": "Qidirish",
+      "emptyTitle": "Foydalanuvchi topilmadi",
+      "emptyBody": "Boshqa qidiruvni sinab ko'ring.",
+      "resultCount": "{count} ta foydalanuvchi",
+      "joined": "Qo'shilgan: {date}",
+      "eventsCount": "{count} tadbir",
+      "listingsCount": "{count} e'lon",
+      "prevPage": "Oldingi",
+      "nextPage": "Keyingi",
+      "pageOf": "{page}-sahifa, jami {total}"
     },
     "admins": {
       "sectionTitle": "Platforma adminlari",

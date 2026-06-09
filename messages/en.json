@@ -473,16 +473,92 @@
   "admin": {
     "title": "Admin",
     "nav": "Admin",
-    "subtitle": "Review business submissions and manage platform admins.",
+    "subtitle": "Platform overview, moderation, and team controls.",
     "metaDescription": "KimKim platform administration.",
+    "tabs": {
+      "overview": "Overview",
+      "catalog": "Catalog",
+      "events": "Events",
+      "users": "Users",
+      "admins": "Admins"
+    },
+    "sections": {
+      "overview": "Platform overview",
+      "catalog": "Business catalog",
+      "events": "Events",
+      "users": "Users",
+      "admins": "Platform admins"
+    },
+    "overview": {
+      "loadError": "Could not load platform stats.",
+      "toolsTitle": "Quick links",
+      "openCatalog": "Open catalog",
+      "openDiscover": "Open discover",
+      "openEvents": "Open events",
+      "stats": {
+        "users": "Users",
+        "events": "Events",
+        "publicEvents": "Public events",
+        "catalogPending": "Pending listings",
+        "catalogApproved": "Live listings",
+        "vouches": "Community vouches"
+      }
+    },
     "catalog": {
       "sectionTitle": "Pending listings",
+      "pendingTab": "Pending review",
+      "allTab": "All listings",
       "emptyTitle": "Nothing to review",
       "emptyBody": "New business submissions will appear here.",
+      "allEmptyTitle": "No listings found",
+      "allEmptyBody": "Try another status filter.",
       "preview": "Preview",
       "approve": "Approve",
       "reject": "Reject",
-      "rejectReasonPlaceholder": "Optional reason if rejecting"
+      "rejectReasonPlaceholder": "Optional reason if rejecting",
+      "representative": "Listed by {name}",
+      "vouchesCount": "{count} vouches",
+      "status": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    },
+    "events": {
+      "searchPlaceholder": "Search events, locations, creators…",
+      "search": "Search",
+      "emptyTitle": "No events found",
+      "emptyBody": "Try another search or filter.",
+      "resultCount": "{count} events",
+      "public": "Public",
+      "private": "Private",
+      "byCreator": "By {name}",
+      "membersCount": "{count} members",
+      "open": "Open",
+      "makePublic": "Make public",
+      "makePrivate": "Make private",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "pageOf": "Page {page} of {total}",
+      "filter": {
+        "all": "All",
+        "public": "Public",
+        "private": "Private"
+      }
+    },
+    "users": {
+      "searchPlaceholder": "Search by name or @username…",
+      "search": "Search",
+      "emptyTitle": "No users found",
+      "emptyBody": "Try another search term.",
+      "resultCount": "{count} users",
+      "joined": "Joined {date}",
+      "eventsCount": "{count} events",
+      "listingsCount": "{count} listings",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "pageOf": "Page {page} of {total}"
     },
     "admins": {
       "sectionTitle": "Platform admins",
