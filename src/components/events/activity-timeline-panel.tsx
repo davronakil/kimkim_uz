@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Receipt, UserPlus } from "lucide-react";
+import { CheckCircle2, CircleHelp, MessageSquare, Receipt, UserPlus, XCircle } from "lucide-react";
 import { useMemo } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import type { Comment, EventMember, Expense } from "@/types";
@@ -18,6 +18,19 @@ function flattenComments(comments: Comment[]): Comment[] {
   return comments.flatMap((comment) => [comment, ...flattenComments(comment.replies ?? [])]);
 }
 
+function isLaterRsvpUpdate(member: EventMember) {
+  if (!member.rsvp_updated_at) return false;
+  const joinedAt = new Date(member.joined_at).getTime();
+  const rsvpAt = new Date(member.rsvp_updated_at).getTime();
+  return Number.isFinite(joinedAt) && Number.isFinite(rsvpAt) && rsvpAt - joinedAt > 60_000;
+}
+
+function rsvpIcon(status: EventMember["rsvp_status"]) {
+  if (status === "declined") return XCircle;
+  if (status === "maybe") return CircleHelp;
+  return CheckCircle2;
+}
+
 export function ActivityTimelinePanel({
   members,
   comments,
@@ -30,6 +43,7 @@ export function ActivityTimelinePanel({
   locale: string;
 }) {
   const t = useTranslations("events.activity");
+  const rsvpT = useTranslations("events.rsvp");
   const format = useFormatter();
 
   const items = useMemo(() => {
@@ -41,6 +55,16 @@ export function ActivityTimelinePanel({
         title: t("joinedTitle", { name: displayName(member) }),
         body: t("joinedBody"),
       })),
+      ...members.filter(isLaterRsvpUpdate).map((member) => {
+        const status = member.rsvp_status ?? "going";
+        return {
+          id: `rsvp:${member.id}:${member.rsvp_updated_at}`,
+          at: member.rsvp_updated_at ?? member.joined_at,
+          icon: rsvpIcon(status),
+          title: t("rsvpTitle", { name: displayName(member) }),
+          body: t("rsvpBody", { status: rsvpT(status) }),
+        };
+      }),
       ...flattenComments(comments).map((comment) => ({
         id: `comment:${comment.id}`,
         at: comment.created_at,
@@ -66,7 +90,7 @@ export function ActivityTimelinePanel({
       .filter((item) => item.at)
       .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
       .slice(0, 8);
-  }, [comments, expenses, locale, members, t]);
+  }, [comments, expenses, locale, members, rsvpT, t]);
 
   if (items.length === 0) return null;
 

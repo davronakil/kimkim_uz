@@ -98,6 +98,8 @@
       "subtitle": "Недавние присоединения, комментарии и расходы в одном месте.",
       "joinedTitle": "{name} присоединился(ась)",
       "joinedBody": "Добавлен(а) в список гостей.",
+      "rsvpTitle": "{name} обновил(а) RSVP",
+      "rsvpBody": "Новый статус: {status}.",
       "commentTitle": "{name} оставил(а) комментарий",
       "expenseTitle": "{name} добавил(а) расход {amount}",
       "unknown": "Кто-то"

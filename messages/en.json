@@ -98,6 +98,8 @@
       "subtitle": "Recent joins, comments, and expenses in one place.",
       "joinedTitle": "{name} joined",
       "joinedBody": "Added to the guest list.",
+      "rsvpTitle": "{name} updated RSVP",
+      "rsvpBody": "Now marked as {status}.",
       "commentTitle": "{name} commented",
       "expenseTitle": "{name} logged {amount}",
       "unknown": "Someone"

@@ -98,6 +98,8 @@
       "subtitle": "Qo'shilishlar, izohlar va xarajatlar bir joyda.",
       "joinedTitle": "{name} qo'shildi",
       "joinedBody": "Mehmonlar ro'yxatiga qo'shildi.",
+      "rsvpTitle": "{name} RSVPni yangiladi",
+      "rsvpBody": "Hozirgi holat: {status}.",
       "commentTitle": "{name} izoh yozdi",
       "expenseTitle": "{name} {amount} xarajat qo'shdi",
       "unknown": "Kimdir"
