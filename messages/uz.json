@@ -93,6 +93,11 @@
       "markPaid": "To'landi deb belgilash",
       "markUnpaid": "To'lanmadi deb belgilash"
     },
+    "referrals": {
+      "title": "Taklif natijasi",
+      "subtitle": "{count} mehmon a'zolar tarqatgan link orqali qo'shildi.",
+      "count": "{count} mehmon"
+    },
     "rsvp": {
       "going": "Keladi",
       "maybe": "Balki",

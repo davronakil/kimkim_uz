@@ -93,6 +93,11 @@
       "markPaid": "Mark paid",
       "markUnpaid": "Mark unpaid"
     },
+    "referrals": {
+      "title": "Invite impact",
+      "subtitle": "{count, plural, one {# guest joined through a member link.} other {# guests joined through member links.}}",
+      "count": "{count, plural, one {# guest} other {# guests}}"
+    },
     "rsvp": {
       "going": "Going",
       "maybe": "Maybe",

@@ -14,6 +14,7 @@ import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import { NotificationPreferencesPanel } from "@/components/events/notification-preferences-panel";
 import { PaidEventSummaryPanel } from "@/components/events/paid-event-summary-panel";
 import { PayoutMethodPanel } from "@/components/events/payout-method-panel";
+import { ReferralSummaryPanel } from "@/components/events/referral-summary-panel";
 import { RsvpSummaryPanel } from "@/components/events/rsvp-summary-panel";
 import { RsvpStatusPanel } from "@/components/events/rsvp-status-panel";
 import { LeaveEventButton } from "@/components/events/leave-event-button";
@@ -153,6 +154,7 @@ export function EventWorkspace({
               linked={Boolean(event.telegram_chat_id)}
             />
           ) : null}
+          {canEdit ? <ReferralSummaryPanel members={members} /> : null}
           {canEdit && event.payment_mode === "paid" ? (
             <PaidEventSummaryPanel
               members={members}
