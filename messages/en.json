@@ -98,6 +98,8 @@
       "subtitle": "Recent joins, comments, and expenses in one place.",
       "copy": "Copy activity",
       "share": "Share activity",
+      "postToGroup": "Post to group",
+      "posting": "Posting...",
       "copied": "Copied",
       "copyTitle": "KimKim activity update",
       "copyLine": "{time} — {title}: {body}",

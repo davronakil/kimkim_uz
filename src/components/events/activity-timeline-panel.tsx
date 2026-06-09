@@ -5,6 +5,7 @@ import {
   CircleHelp,
   Copy,
   MessageSquare,
+  Megaphone,
   Receipt,
   Send,
   UserPlus,
@@ -42,20 +43,25 @@ function rsvpIcon(status: EventMember["rsvp_status"]) {
 }
 
 export function ActivityTimelinePanel({
+  eventId,
   members,
   comments,
   expenses,
   locale,
+  canPostToGroup = false,
 }: {
+  eventId: string;
   members: EventMember[];
   comments: Comment[];
   expenses: Expense[];
   locale: string;
+  canPostToGroup?: boolean;
 }) {
   const t = useTranslations("events.activity");
   const rsvpT = useTranslations("events.rsvp");
   const format = useFormatter();
   const [copied, setCopied] = useState(false);
+  const [posting, setPosting] = useState(false);
 
   const items = useMemo(() => {
     const activity: ActivityItem[] = [
@@ -135,6 +141,17 @@ export function ActivityTimelinePanel({
     );
   }
 
+  async function postToGroup() {
+    setPosting(true);
+    await fetch(`/api/events/${eventId}/telegram-group`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ action: "activity", text: activityText() }),
+    });
+    setPosting(false);
+  }
+
   return (
     <section className="kk-card space-y-4 p-5 sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -151,6 +168,17 @@ export function ActivityTimelinePanel({
             <Send className="h-4 w-4" />
             {t("share")}
           </button>
+          {canPostToGroup ? (
+            <button
+              type="button"
+              onClick={() => void postToGroup()}
+              disabled={posting}
+              className="kk-btn-secondary w-full sm:col-span-2"
+            >
+              <Megaphone className="h-4 w-4" />
+              {posting ? t("posting") : t("postToGroup")}
+            </button>
+          ) : null}
         </div>
       </div>
       <ol className="space-y-3">

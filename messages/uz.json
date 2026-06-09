@@ -98,6 +98,8 @@
       "subtitle": "Qo'shilishlar, izohlar va xarajatlar bir joyda.",
       "copy": "Faollikni nusxalash",
       "share": "Faollikni tarqatish",
+      "postToGroup": "Guruhga yuborish",
+      "posting": "Yuborilmoqda...",
       "copied": "Nusxalandi",
       "copyTitle": "KimKim faollik xabari",
       "copyLine": "{time} — {title}: {body}",

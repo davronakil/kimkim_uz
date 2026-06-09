@@ -130,10 +130,12 @@ export function EventWorkspace({
           {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
           <RsvpSummaryPanel members={members} />
           <ActivityTimelinePanel
+            eventId={eventId}
             members={members}
             comments={comments}
             expenses={expenses}
             locale={locale}
+            canPostToGroup={canEdit && Boolean(event.telegram_chat_id)}
           />
           <RsvpStatusPanel
             eventId={eventId}

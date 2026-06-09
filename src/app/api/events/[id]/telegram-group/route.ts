@@ -5,7 +5,7 @@ import {
   getEventById,
   isEventOwner,
 } from "@/lib/db/queries";
-import { postEventShareToGroup } from "@/lib/telegram/group";
+import { postActivityToEventGroup, postEventShareToGroup } from "@/lib/telegram/group";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -44,9 +44,22 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "No linked group" }, { status: 400 });
   }
 
-  const body = (await request.json().catch(() => ({}))) as { action?: string };
+  const body = (await request.json().catch(() => ({}))) as { action?: string; text?: string };
   if (body.action === "share") {
     const posted = await postEventShareToGroup(id);
+    if (!posted) {
+      return NextResponse.json({ error: "Could not post to group" }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  if (body.action === "activity") {
+    const text = body.text?.trim() ?? "";
+    if (!text || text.length > 3500) {
+      return NextResponse.json({ error: "Invalid activity text" }, { status: 400 });
+    }
+
+    const posted = await postActivityToEventGroup(id, text);
     if (!posted) {
       return NextResponse.json({ error: "Could not post to group" }, { status: 500 });
     }

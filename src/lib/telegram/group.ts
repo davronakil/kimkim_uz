@@ -246,3 +246,23 @@ export async function postEventShareToGroup(eventId: string) {
 
   return true;
 }
+
+export async function postActivityToEventGroup(eventId: string, text: string) {
+  const event = await getEventById(eventId);
+  if (!event?.telegram_chat_id) return false;
+
+  const cleanText = text.trim().slice(0, 3500);
+  if (!cleanText) return false;
+
+  const locale = await ownerLocaleForEvent(event);
+  const strings = groupT(locale);
+  const eventUrl = buildAppUrl(`/${locale}/events/${event.id}`);
+
+  await sendTelegramMessage(Number(event.telegram_chat_id), cleanText, {
+    reply_markup: {
+      inline_keyboard: [[{ text: strings.openEvent, url: eventUrl }]],
+    },
+  });
+
+  return true;
+}
