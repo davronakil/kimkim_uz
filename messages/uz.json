@@ -100,7 +100,11 @@
       "statusSubtitle": "Javobingizni istalgan payt o'zgartiring — admin oxirgi holatni ko'rsin.",
       "statusError": "RSVP yangilanmadi. Qayta urinib ko'ring.",
       "summaryTitle": "RSVP xulosasi",
-      "summarySubtitle": "{count, plural, one {# ta javob yozilgan} other {# ta javob yozilgan}}"
+      "summarySubtitle": "{count, plural, one {# ta javob yozilgan} other {# ta javob yozilgan}}",
+      "copy": "Xulosani nusxalash",
+      "copied": "Nusxalandi",
+      "copyTitle": "KimKim RSVP xulosasi",
+      "copyLine": "{status}: {count} — {names}"
     },
     "notifications": {
       "title": "Telegram yangiliklari",

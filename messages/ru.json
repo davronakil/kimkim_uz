@@ -100,7 +100,11 @@
       "statusSubtitle": "Меняйте ответ в любое время, чтобы у организатора был актуальный список.",
       "statusError": "Не удалось обновить RSVP. Попробуйте ещё раз.",
       "summaryTitle": "Сводка RSVP",
-      "summarySubtitle": "{count, plural, one {# ответ записан} few {# ответа записано} many {# ответов записано} other {# ответа записано}}"
+      "summarySubtitle": "{count, plural, one {# ответ записан} few {# ответа записано} many {# ответов записано} other {# ответа записано}}",
+      "copy": "Скопировать сводку",
+      "copied": "Скопировано",
+      "copyTitle": "Сводка RSVP KimKim",
+      "copyLine": "{status}: {count} — {names}"
     },
     "notifications": {
       "title": "Уведомления в Telegram",

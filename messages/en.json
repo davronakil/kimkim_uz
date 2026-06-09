@@ -100,7 +100,11 @@
       "statusSubtitle": "Update your answer anytime so the host has the latest count.",
       "statusError": "Could not update your RSVP. Try again.",
       "summaryTitle": "RSVP summary",
-      "summarySubtitle": "{count, plural, one {# response recorded} other {# responses recorded}}"
+      "summarySubtitle": "{count, plural, one {# response recorded} other {# responses recorded}}",
+      "copy": "Copy summary",
+      "copied": "Copied",
+      "copyTitle": "KimKim RSVP summary",
+      "copyLine": "{status}: {count} — {names}"
     },
     "notifications": {
       "title": "Telegram updates",
