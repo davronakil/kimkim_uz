@@ -14,6 +14,7 @@ import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import { NotificationPreferencesPanel } from "@/components/events/notification-preferences-panel";
 import { PaidEventSummaryPanel } from "@/components/events/paid-event-summary-panel";
 import { PayoutMethodPanel } from "@/components/events/payout-method-panel";
+import { RsvpStatusPanel } from "@/components/events/rsvp-status-panel";
 import { LeaveEventButton } from "@/components/events/leave-event-button";
 import { MemberList } from "@/components/events/member-list";
 import { TransferOwnershipPanel } from "@/components/events/transfer-ownership-panel";
@@ -28,6 +29,7 @@ import type {
   Event,
   EventMember,
   EventPaymentSummary,
+  EventRsvpStatus,
   Expense,
   Settlement,
 } from "@/types";
@@ -114,6 +116,8 @@ export function EventWorkspace({
   const { event, members, comments, expenses, settlements, paymentSummaries } = data;
   const startsAt = new Date(event.starts_at);
   const owner = members.find((member) => member.role === "owner");
+  const currentMember = members.find((member) => member.id === currentUserId);
+  const currentRsvpStatus: EventRsvpStatus = currentMember?.rsvp_status ?? "going";
   const creatorName = owner ? displayName(owner) : null;
 
   function renderTabContent() {
@@ -121,6 +125,12 @@ export function EventWorkspace({
       return (
         <div className="space-y-4">
           {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
+          <RsvpStatusPanel
+            eventId={eventId}
+            initialStatus={currentRsvpStatus}
+            onChanged={load}
+            readOnly={!online}
+          />
           <NotificationPreferencesPanel eventId={eventId} />
           {event.invite_code ? (
             <InvitePanel

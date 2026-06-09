@@ -95,7 +95,10 @@
     "rsvp": {
       "going": "Придёт",
       "maybe": "Возможно",
-      "declined": "Не сможет"
+      "declined": "Не сможет",
+      "statusTitle": "Ваш RSVP",
+      "statusSubtitle": "Меняйте ответ в любое время, чтобы у организатора был актуальный список.",
+      "statusError": "Не удалось обновить RSVP. Попробуйте ещё раз."
     },
     "notifications": {
       "title": "Уведомления в Telegram",

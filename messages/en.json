@@ -95,7 +95,10 @@
     "rsvp": {
       "going": "Going",
       "maybe": "Maybe",
-      "declined": "Can't go"
+      "declined": "Can't go",
+      "statusTitle": "Your RSVP",
+      "statusSubtitle": "Update your answer anytime so the host has the latest count.",
+      "statusError": "Could not update your RSVP. Try again."
     },
     "notifications": {
       "title": "Telegram updates",

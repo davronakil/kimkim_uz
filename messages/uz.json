@@ -95,7 +95,10 @@
     "rsvp": {
       "going": "Keladi",
       "maybe": "Balki",
-      "declined": "Kela olmaydi"
+      "declined": "Kela olmaydi",
+      "statusTitle": "RSVP holatingiz",
+      "statusSubtitle": "Javobingizni istalgan payt o'zgartiring — admin oxirgi holatni ko'rsin.",
+      "statusError": "RSVP yangilanmadi. Qayta urinib ko'ring."
     },
     "notifications": {
       "title": "Telegram yangiliklari",
