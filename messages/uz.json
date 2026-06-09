@@ -97,6 +97,7 @@
       "title": "Oxirgi faollik",
       "subtitle": "Qo'shilishlar, izohlar va xarajatlar bir joyda.",
       "copy": "Faollikni nusxalash",
+      "share": "Faollikni tarqatish",
       "copied": "Nusxalandi",
       "copyTitle": "KimKim faollik xabari",
       "copyLine": "{time} — {title}: {body}",

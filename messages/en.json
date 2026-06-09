@@ -97,6 +97,7 @@
       "title": "Latest activity",
       "subtitle": "Recent joins, comments, and expenses in one place.",
       "copy": "Copy activity",
+      "share": "Share activity",
       "copied": "Copied",
       "copyTitle": "KimKim activity update",
       "copyLine": "{time} — {title}: {body}",

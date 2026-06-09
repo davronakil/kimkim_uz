@@ -1,10 +1,20 @@
 "use client";
 
-import { CheckCircle2, CircleHelp, Copy, MessageSquare, Receipt, UserPlus, XCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  CircleHelp,
+  Copy,
+  MessageSquare,
+  Receipt,
+  Send,
+  UserPlus,
+  XCircle,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import type { Comment, EventMember, Expense } from "@/types";
 import { displayName, formatMoney } from "@/lib/utils";
+import { buildTelegramShareUrl } from "@/lib/auth/telegram";
 
 type ActivityItem = {
   id: string;
@@ -95,8 +105,8 @@ export function ActivityTimelinePanel({
 
   if (items.length === 0) return null;
 
-  async function copyActivity() {
-    const lines = [
+  function activityText() {
+    return [
       t("copyTitle"),
       ...items.map((item) =>
         t("copyLine", {
@@ -108,11 +118,21 @@ export function ActivityTimelinePanel({
           body: item.body,
         }),
       ),
-    ];
+    ].join("\n");
+  }
 
-    await navigator.clipboard.writeText(lines.join("\n"));
+  async function copyActivity() {
+    await navigator.clipboard.writeText(activityText());
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
+  }
+
+  function shareActivity() {
+    window.open(
+      buildTelegramShareUrl(window.location.href, activityText()),
+      "_blank",
+      "noopener,noreferrer",
+    );
   }
 
   return (
@@ -122,10 +142,16 @@ export function ActivityTimelinePanel({
           <h2 className="kk-section-title">{t("title")}</h2>
           <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("subtitle")}</p>
         </div>
-        <button type="button" onClick={() => void copyActivity()} className="kk-btn-secondary w-full sm:w-auto">
-          <Copy className="h-4 w-4" />
-          {copied ? t("copied") : t("copy")}
-        </button>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <button type="button" onClick={() => void copyActivity()} className="kk-btn-secondary w-full">
+            <Copy className="h-4 w-4" />
+            {copied ? t("copied") : t("copy")}
+          </button>
+          <button type="button" onClick={shareActivity} className="kk-btn-secondary w-full">
+            <Send className="h-4 w-4" />
+            {t("share")}
+          </button>
+        </div>
       </div>
       <ol className="space-y-3">
         {items.map((item) => {
