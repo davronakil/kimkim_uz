@@ -462,6 +462,8 @@
     "allCategories": "Hammasi",
     "emptyTitle": "Hali e'lon yo'q",
     "emptyBody": "Birinchi bo'lib biznesingizni qo'shing. Kirish qiling va moderatsiyaga yuboring.",
+    "filtersTitle": "Bizneslarni topish",
+    "filtersHint": "Hudud, radius, kategoriya bo'yicha qidiring yoki xaritaga o'ting.",
     "near": "Qayer atrofida",
     "nearPlaceholder": "Shahar, joy yoki mahalla qidiring",
     "locationLoading": "Xarita qidiruvi yuklanmoqda...",

@@ -462,6 +462,8 @@
     "allCategories": "All",
     "emptyTitle": "No listings yet",
     "emptyBody": "Be the first to add your business. Sign in and submit a listing for review.",
+    "filtersTitle": "Find businesses",
+    "filtersHint": "Search by area, radius, category, or switch to the map.",
     "near": "Search around",
     "nearPlaceholder": "Search a city, venue, or neighborhood",
     "locationLoading": "Loading map search...",

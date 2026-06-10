@@ -250,7 +250,43 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
 
   return (
     <div className="space-y-5">
-      <div className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="space-y-5 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">{t("filtersTitle")}</p>
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("filtersHint")}</p>
+          </div>
+
+          <div className="grid w-full grid-cols-2 gap-1 rounded-2xl border border-zinc-200 bg-zinc-50 p-1 dark:border-zinc-700 dark:bg-zinc-950 sm:w-[220px]">
+            <button
+              type="button"
+              onClick={() => setMode("list")}
+              aria-pressed={mode === "list"}
+              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition ${
+                mode === "list"
+                  ? "bg-white text-zinc-950 shadow-sm dark:bg-zinc-800 dark:text-white"
+                  : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              }`}
+            >
+              <List className="h-4 w-4" />
+              {t("listView")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("map")}
+              aria-pressed={mode === "map"}
+              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition ${
+                mode === "map"
+                  ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/25"
+                  : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              }`}
+            >
+              <Map className="h-4 w-4" />
+              {t("mapView")}
+            </button>
+          </div>
+        </div>
+
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="space-y-2">
             <label htmlFor="catalog-location-search" className="text-sm font-medium">
@@ -332,7 +368,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 lg:justify-end">
             {radiusOptions.map((radius) => (
               <button
                 key={radius}
@@ -350,7 +386,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -378,32 +414,9 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
               </button>
             ))}
           </div>
-
-          <div className="grid grid-cols-2 gap-2 rounded-full bg-zinc-100 p-1 dark:bg-zinc-800">
-            <button
-              type="button"
-              onClick={() => setMode("list")}
-              className={`inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${
-                mode === "list" ? "bg-white text-zinc-950 shadow-sm dark:bg-zinc-950 dark:text-white" : "text-zinc-600 dark:text-zinc-300"
-              }`}
-            >
-              <List className="h-4 w-4" />
-              {t("listView")}
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("map")}
-              className={`inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${
-                mode === "map" ? "bg-white text-zinc-950 shadow-sm dark:bg-zinc-950 dark:text-white" : "text-zinc-600 dark:text-zinc-300"
-              }`}
-            >
-              <Map className="h-4 w-4" />
-              {t("mapView")}
-            </button>
-          </div>
         </div>
 
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="border-t border-zinc-100 pt-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
           {activeCenter
             ? t("nearSummary", {
                 count: filteredListings.length,
