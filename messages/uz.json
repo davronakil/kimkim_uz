@@ -101,6 +101,7 @@
       "copiedInvite": "Nusxalandi",
       "copyChecklist": "Checklistni nusxalash",
       "copiedChecklist": "Nusxalandi",
+      "shareChecklist": "Checklistni tarqatish",
       "copyTitle": "KimKim admin checklist: {title}",
       "copyProgress": "{done}/{total} tayyor",
       "copyLine": "{status} {title}",

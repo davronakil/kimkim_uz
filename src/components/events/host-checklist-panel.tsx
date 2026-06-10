@@ -8,6 +8,7 @@ import {
   ExternalLink,
   MapPin,
   MessageCircle,
+  Send,
   Share2,
   Users,
   WalletCards,
@@ -15,6 +16,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { buildTelegramShareUrl } from "@/lib/auth/telegram";
 import type { Comment, Event, EventMember, EventPaymentSummary, Expense } from "@/types";
 
 type PayoutPreference = {
@@ -46,6 +48,8 @@ export function HostChecklistPanel({
   const [copiedChecklist, setCopiedChecklist] = useState(false);
 
   const isPaidEvent = event.payment_mode === "paid";
+  const eventUrl =
+    typeof window !== "undefined" ? `${window.location.origin}/${locale}/events/${event.id}` : null;
   const inviteUrl =
     event.invite_code && typeof window !== "undefined"
       ? `${window.location.origin}/${locale}/join/${event.invite_code}?${new URLSearchParams({
@@ -152,7 +156,13 @@ export function HostChecklistPanel({
   }
 
   async function copyChecklist() {
-    const lines = [
+    await navigator.clipboard.writeText(checklistText());
+    setCopiedChecklist(true);
+    window.setTimeout(() => setCopiedChecklist(false), 1800);
+  }
+
+  function checklistText() {
+    return [
       t("copyTitle", { title: event.title }),
       t("copyProgress", { done: doneCount, total: items.length }),
       "",
@@ -162,11 +172,15 @@ export function HostChecklistPanel({
           title: item.title,
         }),
       ),
-    ];
+    ].join("\n");
+  }
 
-    await navigator.clipboard.writeText(lines.join("\n"));
-    setCopiedChecklist(true);
-    window.setTimeout(() => setCopiedChecklist(false), 1800);
+  function shareChecklist() {
+    window.open(
+      buildTelegramShareUrl(eventUrl ?? window.location.href, checklistText()),
+      "_blank",
+      "noopener,noreferrer",
+    );
   }
 
   return (
@@ -187,6 +201,14 @@ export function HostChecklistPanel({
           >
             <Copy className="h-3.5 w-3.5" />
             {copiedChecklist ? t("copiedChecklist") : t("copyChecklist")}
+          </button>
+          <button
+            type="button"
+            onClick={shareChecklist}
+            className="kk-btn-secondary min-h-9 w-full gap-2 text-xs sm:w-auto"
+          >
+            <Send className="h-3.5 w-3.5" />
+            {t("shareChecklist")}
           </button>
         </div>
       </div>

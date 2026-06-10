@@ -101,6 +101,7 @@
       "copiedInvite": "Скопировано",
       "copyChecklist": "Скопировать чеклист",
       "copiedChecklist": "Скопировано",
+      "shareChecklist": "Поделиться чеклистом",
       "copyTitle": "Чеклист организатора KimKim: {title}",
       "copyProgress": "{done}/{total} готово",
       "copyLine": "{status} {title}",

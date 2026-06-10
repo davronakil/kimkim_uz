@@ -101,6 +101,7 @@
       "copiedInvite": "Copied",
       "copyChecklist": "Copy checklist",
       "copiedChecklist": "Copied",
+      "shareChecklist": "Share checklist",
       "copyTitle": "KimKim host checklist: {title}",
       "copyProgress": "{done}/{total} ready",
       "copyLine": "{status} {title}",
