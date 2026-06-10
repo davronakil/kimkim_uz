@@ -4,6 +4,8 @@ import {
   Banknote,
   CheckCircle2,
   Circle,
+  Copy,
+  ExternalLink,
   MapPin,
   MessageCircle,
   Share2,
@@ -12,6 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import type { Comment, Event, EventMember, EventPaymentSummary, Expense } from "@/types";
 
 type PayoutPreference = {
@@ -21,12 +24,16 @@ type PayoutPreference = {
 };
 
 export function HostChecklistPanel({
+  locale,
+  currentUserId,
   event,
   members,
   comments,
   expenses,
   paymentSummaries,
 }: {
+  locale: string;
+  currentUserId: string;
   event: Event;
   members: EventMember[];
   comments: Comment[];
@@ -35,8 +42,15 @@ export function HostChecklistPanel({
 }) {
   const t = useTranslations("events.hostChecklist");
   const [payoutPreference, setPayoutPreference] = useState<PayoutPreference | null>(null);
+  const [copiedInvite, setCopiedInvite] = useState(false);
 
   const isPaidEvent = event.payment_mode === "paid";
+  const inviteUrl =
+    event.invite_code && typeof window !== "undefined"
+      ? `${window.location.origin}/${locale}/join/${event.invite_code}?${new URLSearchParams({
+          ref: currentUserId,
+        }).toString()}`
+      : null;
 
   useEffect(() => {
     if (!isPaidEvent) return;
@@ -71,6 +85,7 @@ export function HostChecklistPanel({
         done: Boolean(event.invite_code),
         title: t("invite.title"),
         body: t("invite.body"),
+        action: inviteUrl ? "copyInvite" : undefined,
       },
       {
         key: "location",
@@ -78,6 +93,7 @@ export function HostChecklistPanel({
         done: Boolean(event.location_name || event.location_address || event.location_lat),
         title: t("location.title"),
         body: t("location.body"),
+        href: `/events/${event.id}/edit`,
       },
       {
         key: "guests",
@@ -85,6 +101,7 @@ export function HostChecklistPanel({
         done: members.length > 1,
         title: t("guests.title"),
         body: t("guests.body", { count: Math.max(members.length - 1, 0) }),
+        action: inviteUrl ? "copyInvite" : undefined,
       },
       {
         key: "telegram",
@@ -92,6 +109,7 @@ export function HostChecklistPanel({
         done: Boolean(event.telegram_chat_id),
         title: t("telegram.title"),
         body: t("telegram.body"),
+        href: "#telegram-group",
       },
       {
         key: "activity",
@@ -108,6 +126,7 @@ export function HostChecklistPanel({
               done: payoutReady,
               title: t("payout.title"),
               body: t("payout.body"),
+              href: "#payout-method",
             },
             {
               key: "payments",
@@ -115,13 +134,21 @@ export function HostChecklistPanel({
               done: attendeeIds.size > 0 && unpaidCount === 0,
               title: t("payments.title"),
               body: t("payments.body", { count: unpaidCount }),
+              href: "#event-members",
             },
           ]
         : []),
     ];
-  }, [comments.length, event, expenses.length, isPaidEvent, members, paymentSummaries, payoutPreference, t]);
+  }, [comments.length, event, expenses.length, inviteUrl, isPaidEvent, members, paymentSummaries, payoutPreference, t]);
 
   const doneCount = items.filter((item) => item.done).length;
+
+  async function copyInvite() {
+    if (!inviteUrl) return;
+    await navigator.clipboard.writeText(inviteUrl);
+    setCopiedInvite(true);
+    window.setTimeout(() => setCopiedInvite(false), 1800);
+  }
 
   return (
     <section className="kk-card space-y-4 p-5 sm:p-6">
@@ -136,7 +163,7 @@ export function HostChecklistPanel({
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2">
-        {items.map(({ key, icon: Icon, done, title, body }) => (
+        {items.map(({ key, icon: Icon, done, title, body, action, href }) => (
           <div
             key={key}
             className={`rounded-2xl border p-4 ${
@@ -163,6 +190,35 @@ export function HostChecklistPanel({
                 <p className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
                   {body}
                 </p>
+                {action === "copyInvite" ? (
+                  <button
+                    type="button"
+                    onClick={() => void copyInvite()}
+                    className="mt-3 inline-flex min-h-9 items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 text-xs font-semibold text-zinc-700 hover:border-emerald-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                    {copiedInvite ? t("copiedInvite") : t("copyInvite")}
+                  </button>
+                ) : null}
+                {href ? (
+                  href.startsWith("#") ? (
+                    <a
+                      href={href}
+                      className="mt-3 inline-flex min-h-9 items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 text-xs font-semibold text-zinc-700 hover:border-emerald-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      {t("open")}
+                    </a>
+                  ) : (
+                    <Link
+                      href={href}
+                      className="mt-3 inline-flex min-h-9 items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 text-xs font-semibold text-zinc-700 hover:border-emerald-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      {t("open")}
+                    </Link>
+                  )
+                ) : null}
               </div>
             </div>
           </div>

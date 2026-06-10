@@ -132,6 +132,8 @@ export function EventWorkspace({
           <RsvpSummaryPanel members={members} />
           {canEdit ? (
             <HostChecklistPanel
+              locale={locale}
+              currentUserId={currentUserId}
               event={event}
               members={members}
               comments={comments}
@@ -184,7 +186,7 @@ export function EventWorkspace({
             />
           ) : null}
           {canEdit && event.payment_mode === "paid" ? <PayoutMethodPanel /> : null}
-          <section className="kk-card p-5 sm:p-6">
+          <section id="event-members" className="kk-card scroll-mt-24 p-5 sm:p-6">
             <h2 className="kk-section-title">{t("detailTitle")}</h2>
             <MemberList
               eventId={eventId}

@@ -54,7 +54,7 @@ export function TelegramGroupPanel({
   }
 
   return (
-    <section className="kk-card space-y-4 p-5 sm:p-6">
+    <section id="telegram-group" className="kk-card scroll-mt-24 space-y-4 p-5 sm:p-6">
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300">
           <Users className="h-5 w-5" />

@@ -53,7 +53,7 @@ export function PayoutMethodPanel() {
   }
 
   return (
-    <section className="kk-card space-y-4 p-5 sm:p-6">
+    <section id="payout-method" className="kk-card scroll-mt-24 space-y-4 p-5 sm:p-6">
       <div className="flex items-start gap-3">
         <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300">
           <WalletCards className="h-5 w-5" />

@@ -97,6 +97,9 @@
       "title": "Admin checklist",
       "subtitle": "Eventni hammaga tarqatishdan oldingi tezkor tayyorgarlik.",
       "progress": "{done}/{total} tayyor",
+      "copyInvite": "Taklifni nusxalash",
+      "copiedInvite": "Nusxalandi",
+      "open": "Ochish",
       "invite": {
         "title": "Taklif linki",
         "body": "Mehmonlar link orqali qo'shiladi yoki RSVP qiladi."

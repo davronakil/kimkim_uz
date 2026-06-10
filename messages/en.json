@@ -97,6 +97,9 @@
       "title": "Host checklist",
       "subtitle": "A quick readiness check before you share the event widely.",
       "progress": "{done}/{total} ready",
+      "copyInvite": "Copy invite",
+      "copiedInvite": "Copied",
+      "open": "Open",
       "invite": {
         "title": "Invite link",
         "body": "Guests can join or RSVP from the invite page."
