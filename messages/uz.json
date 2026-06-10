@@ -81,6 +81,8 @@
     "leaveConfirm": "Eventdan chiqasizmi? Keyin link orqali yana qo'shilasiz.",
     "removeMember": "Olib tashlash",
     "invitedBy": "{name} taklif qilgan",
+    "copyGuestList": "Mehmonlarni nusxalash",
+    "copiedGuestList": "Nusxalandi",
     "transferTitle": "Adminni almashtirish",
     "transferHint": "Chiqib ketish uchun avval boshqasiga admin ber.",
     "transferAction": "Boshqasini admin qilish",

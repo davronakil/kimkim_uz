@@ -81,6 +81,8 @@
     "leaveConfirm": "Leave this event? You can rejoin with an invite link.",
     "removeMember": "Remove",
     "invitedBy": "Invited by {name}",
+    "copyGuestList": "Copy guest list",
+    "copiedGuestList": "Copied",
     "transferTitle": "Transfer organizer role",
     "transferHint": "Hand off admin duties so you can leave the event.",
     "transferAction": "Make someone else admin",
