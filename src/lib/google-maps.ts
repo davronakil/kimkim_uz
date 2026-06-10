@@ -32,6 +32,30 @@ export const locationSearchCountries = ["uz", "kz", "kg", "tj", "us"] as const;
 type GoogleMapsWindow = Window & {
   google?: {
     maps: {
+      Map: new (
+        element: HTMLElement,
+        options: {
+          center: { lat: number; lng: number };
+          zoom: number;
+          mapTypeControl?: boolean;
+          streetViewControl?: boolean;
+          fullscreenControl?: boolean;
+        },
+      ) => {
+        setCenter: (center: { lat: number; lng: number }) => void;
+        setZoom: (zoom: number) => void;
+      };
+      Marker: new (options: {
+        position: { lat: number; lng: number };
+        map: unknown;
+        title?: string;
+      }) => {
+        addListener: (eventName: string, handler: () => void) => void;
+        setMap: (map: unknown | null) => void;
+      };
+      InfoWindow: new (options: { content: string }) => {
+        open: (options: { map: unknown; anchor: unknown }) => void;
+      };
       LatLng: new (lat: number, lng: number) => unknown;
       LatLngBounds: new (sw: unknown, ne: unknown) => unknown;
       places: {
@@ -100,6 +124,8 @@ type GoogleMapsWindow = Window & {
     };
   };
 };
+
+export type GoogleMapsRuntime = NonNullable<GoogleMapsWindow["google"]>["maps"];
 
 let loaderPromise: Promise<void> | null = null;
 let runtimeApiKey: string | null = null;
@@ -190,6 +216,10 @@ function getGoogleMaps() {
     throw new Error("Google Places is not loaded");
   }
   return win.google.maps;
+}
+
+export function getLoadedGoogleMaps(): GoogleMapsRuntime {
+  return getGoogleMaps();
 }
 
 function getPlacesService() {
