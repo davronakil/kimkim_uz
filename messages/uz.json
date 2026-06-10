@@ -93,6 +93,39 @@
       "markPaid": "To'landi deb belgilash",
       "markUnpaid": "To'lanmadi deb belgilash"
     },
+    "hostChecklist": {
+      "title": "Admin checklist",
+      "subtitle": "Eventni hammaga tarqatishdan oldingi tezkor tayyorgarlik.",
+      "progress": "{done}/{total} tayyor",
+      "invite": {
+        "title": "Taklif linki",
+        "body": "Mehmonlar link orqali qo'shiladi yoki RSVP qiladi."
+      },
+      "location": {
+        "title": "Joy",
+        "body": "Mehmonlar qayerga borishini bilishi uchun joy qo'shing."
+      },
+      "guests": {
+        "title": "Mehmonlar",
+        "body": "{count} mehmon qo'shilgan."
+      },
+      "telegram": {
+        "title": "Telegram guruhi",
+        "body": "Taklif, eslatma va faollik xabarlarini guruhga yuborish uchun ulang."
+      },
+      "activity": {
+        "title": "Faollik",
+        "body": "Qo'shilishlar, izohlar yoki xarajatlar timeline'da ko'rinadi."
+      },
+      "payout": {
+        "title": "Pul olish usuli",
+        "body": "KimKim tashqarisida qanday to'lashni mehmonlarga yozib qo'ying."
+      },
+      "payments": {
+        "title": "Chipta to'lovlari",
+        "body": "{count} mehmon hali to'lashi kerak."
+      }
+    },
     "activity": {
       "title": "Oxirgi faollik",
       "subtitle": "Qo'shilishlar, izohlar va xarajatlar bir joyda.",

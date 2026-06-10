@@ -93,6 +93,39 @@
       "markPaid": "Mark paid",
       "markUnpaid": "Mark unpaid"
     },
+    "hostChecklist": {
+      "title": "Host checklist",
+      "subtitle": "A quick readiness check before you share the event widely.",
+      "progress": "{done}/{total} ready",
+      "invite": {
+        "title": "Invite link",
+        "body": "Guests can join or RSVP from the invite page."
+      },
+      "location": {
+        "title": "Location",
+        "body": "Add a place so guests know where to go."
+      },
+      "guests": {
+        "title": "Guest list",
+        "body": "{count, plural, one {# guest has joined.} other {# guests have joined.}}"
+      },
+      "telegram": {
+        "title": "Telegram group",
+        "body": "Link a group to post invites, reminders, and activity updates."
+      },
+      "activity": {
+        "title": "Activity",
+        "body": "Joins, comments, or expenses are already visible in the timeline."
+      },
+      "payout": {
+        "title": "Payout preference",
+        "body": "Tell guests how to settle outside KimKim."
+      },
+      "payments": {
+        "title": "Ticket payments",
+        "body": "{count, plural, one {# guest still needs to pay.} other {# guests still need to pay.}}"
+      }
+    },
     "activity": {
       "title": "Latest activity",
       "subtitle": "Recent joins, comments, and expenses in one place.",

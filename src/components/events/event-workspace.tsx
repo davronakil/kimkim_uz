@@ -9,6 +9,7 @@ import { useOnlineStatus } from "@/lib/offline/use-online-status";
 import { ActivityTimelinePanel } from "@/components/events/activity-timeline-panel";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { CommentThread } from "@/components/events/comment-thread";
+import { HostChecklistPanel } from "@/components/events/host-checklist-panel";
 import { ExpensePanel } from "@/components/events/expense-panel";
 import { InvitePanel } from "@/components/events/invite-panel";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
@@ -129,6 +130,15 @@ export function EventWorkspace({
         <div className="space-y-4">
           {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
           <RsvpSummaryPanel members={members} />
+          {canEdit ? (
+            <HostChecklistPanel
+              event={event}
+              members={members}
+              comments={comments}
+              expenses={expenses}
+              paymentSummaries={paymentSummaries}
+            />
+          ) : null}
           <ActivityTimelinePanel
             eventId={eventId}
             members={members}
