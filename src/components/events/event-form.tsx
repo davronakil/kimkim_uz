@@ -5,7 +5,6 @@ import {
   Cake,
   GlassWater,
   Heart,
-  Landmark,
   MessageCircle,
   type LucideIcon,
 } from "lucide-react";
@@ -95,14 +94,6 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
       description: t("templates.birthday.description"),
       paymentMode: "split",
       icon: Cake,
-    },
-    {
-      id: "sunnat",
-      title: t("templates.sunnat.title"),
-      short: t("templates.sunnat.short"),
-      description: t("templates.sunnat.description"),
-      paymentMode: "free",
-      icon: Landmark,
     },
     {
       id: "paid",

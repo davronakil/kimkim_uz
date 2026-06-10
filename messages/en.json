@@ -20,7 +20,7 @@
     "title": "KimKim - Gatherings, invites, and shared costs",
     "description": "Plan the gathering, invite your people, track RSVPs, and split costs in one calm place. Built around Telegram.",
     "ogTitle": "KimKim - Keep every gathering clear",
-    "keywords": "event planning, wedding, gap circle, sunnat to'y, aqiqa, challari, choyxona, birthday, Telegram, Uzbekistan"
+    "keywords": "event planning, wedding, gap circle, aqiqa, challari, choyxona, birthday, Telegram, Uzbekistan"
   },
   "home": {
     "heroTitle": "Plan the gathering.\nKeep everyone in sync.",
@@ -44,7 +44,6 @@
       "gap": "Gap circle",
       "birthday": "Birthday",
       "choyxona": "Choyxona",
-      "sunnat": "Sunnat to'y",
       "aqiqa": "Aqiqa",
       "challari": "Challari"
     },
@@ -233,7 +232,7 @@
     },
     "form": {
       "title": "Title",
-      "titlePlaceholder": "e.g. Wedding, Gap circle, Sunnat to'y, Choyxona...",
+      "titlePlaceholder": "e.g. Wedding, Gap circle, Birthday, Choyxona...",
       "description": "Description",
       "descriptionPlaceholder": "Guest notes, venue details, gap rules — anything the group needs.",
       "templatesTitle": "Start from a template",
@@ -258,11 +257,6 @@
           "title": "Birthday",
           "short": "Invite friends and split any shared celebration costs.",
           "description": "Birthday gathering. Invite friends, coordinate details, and split shared costs if needed."
-        },
-        "sunnat": {
-          "title": "Sunnat to'y",
-          "short": "Family event details and reminders in one place.",
-          "description": "Sunnat to'y invite with family notes, location, timing, and reminders for guests."
         },
         "paid": {
           "title": "Paid event",

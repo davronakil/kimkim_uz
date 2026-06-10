@@ -44,7 +44,6 @@
       "gap": "Gap",
       "birthday": "Tug'ilgan kun",
       "choyxona": "Choyxona",
-      "sunnat": "Sunnat to'y",
       "aqiqa": "Aqiqa",
       "challari": "Challari"
     },
@@ -233,7 +232,7 @@
     },
     "form": {
       "title": "Nomi",
-      "titlePlaceholder": "Masalan: To'y, Gap, Sunnat to'y, Choyxona...",
+      "titlePlaceholder": "Masalan: To'y, Gap, Tug'ilgan kun, Choyxona...",
       "description": "Qisqacha",
       "descriptionPlaceholder": "Mehmonlar, joy yoki gap qoidalari — hammaga kerakli narsa.",
       "templatesTitle": "Tayyor namunadan boshlang",
@@ -258,11 +257,6 @@
           "title": "Tug'ilgan kun",
           "short": "Do'stlarni chaqiring, umumiy xarajat bo'lsa bo'ling.",
           "description": "Tug'ilgan kun uchrashuvi. Do'stlarni chaqiring, tafsilotlarni kelishing va kerak bo'lsa xarajatni bo'ling."
-        },
-        "sunnat": {
-          "title": "Sunnat to'y",
-          "short": "Oilaviy event tafsilotlari va eslatmalar bir joyda.",
-          "description": "Sunnat to'y taklifi: oila uchun izohlar, joy, vaqt va mehmonlarga eslatmalar."
         },
         "paid": {
           "title": "Pullik event",
