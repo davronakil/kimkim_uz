@@ -99,6 +99,11 @@
       "progress": "{done}/{total} готово",
       "copyInvite": "Скопировать приглашение",
       "copiedInvite": "Скопировано",
+      "copyChecklist": "Скопировать чеклист",
+      "copiedChecklist": "Скопировано",
+      "copyTitle": "Чеклист организатора KimKim: {title}",
+      "copyProgress": "{done}/{total} готово",
+      "copyLine": "{status} {title}",
       "open": "Открыть",
       "invite": {
         "title": "Ссылка-приглашение",

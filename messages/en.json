@@ -99,6 +99,11 @@
       "progress": "{done}/{total} ready",
       "copyInvite": "Copy invite",
       "copiedInvite": "Copied",
+      "copyChecklist": "Copy checklist",
+      "copiedChecklist": "Copied",
+      "copyTitle": "KimKim host checklist: {title}",
+      "copyProgress": "{done}/{total} ready",
+      "copyLine": "{status} {title}",
       "open": "Open",
       "invite": {
         "title": "Invite link",

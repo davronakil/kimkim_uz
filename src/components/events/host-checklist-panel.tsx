@@ -43,6 +43,7 @@ export function HostChecklistPanel({
   const t = useTranslations("events.hostChecklist");
   const [payoutPreference, setPayoutPreference] = useState<PayoutPreference | null>(null);
   const [copiedInvite, setCopiedInvite] = useState(false);
+  const [copiedChecklist, setCopiedChecklist] = useState(false);
 
   const isPaidEvent = event.payment_mode === "paid";
   const inviteUrl =
@@ -150,16 +151,44 @@ export function HostChecklistPanel({
     window.setTimeout(() => setCopiedInvite(false), 1800);
   }
 
+  async function copyChecklist() {
+    const lines = [
+      t("copyTitle", { title: event.title }),
+      t("copyProgress", { done: doneCount, total: items.length }),
+      "",
+      ...items.map((item) =>
+        t("copyLine", {
+          status: item.done ? "[x]" : "[ ]",
+          title: item.title,
+        }),
+      ),
+    ];
+
+    await navigator.clipboard.writeText(lines.join("\n"));
+    setCopiedChecklist(true);
+    window.setTimeout(() => setCopiedChecklist(false), 1800);
+  }
+
   return (
     <section className="kk-card space-y-4 p-5 sm:p-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="kk-section-title">{t("title")}</h2>
           <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("subtitle")}</p>
         </div>
-        <span className="w-fit rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
-          {t("progress", { done: doneCount, total: items.length })}
-        </span>
+        <div className="flex flex-col gap-2 sm:items-end">
+          <span className="w-fit rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+            {t("progress", { done: doneCount, total: items.length })}
+          </span>
+          <button
+            type="button"
+            onClick={() => void copyChecklist()}
+            className="kk-btn-secondary min-h-9 w-full gap-2 text-xs sm:w-auto"
+          >
+            <Copy className="h-3.5 w-3.5" />
+            {copiedChecklist ? t("copiedChecklist") : t("copyChecklist")}
+          </button>
+        </div>
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2">

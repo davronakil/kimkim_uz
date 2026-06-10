@@ -99,6 +99,11 @@
       "progress": "{done}/{total} tayyor",
       "copyInvite": "Taklifni nusxalash",
       "copiedInvite": "Nusxalandi",
+      "copyChecklist": "Checklistni nusxalash",
+      "copiedChecklist": "Nusxalandi",
+      "copyTitle": "KimKim admin checklist: {title}",
+      "copyProgress": "{done}/{total} tayyor",
+      "copyLine": "{status} {title}",
       "open": "Ochish",
       "invite": {
         "title": "Taklif linki",
