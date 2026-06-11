@@ -4,6 +4,7 @@ import { List, LocateFixed, Map, MapPin, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { BusinessCard } from "@/components/catalog/business-card";
+import { Link } from "@/i18n/navigation";
 import { businessCategories, normalizeStoredCategory } from "@/lib/catalog/categories";
 import {
   fetchPlaceDetails,
@@ -95,6 +96,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
   const [mode, setMode] = useState<"list" | "map">("list");
   const [center, setCenter] = useState<GooglePlaceResult | null>(null);
   const [radiusKm, setRadiusKm] = useState<number>(10);
+  const [textQuery, setTextQuery] = useState("");
   const [query, setQuery] = useState("");
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [locationStatus, setLocationStatus] = useState<
@@ -160,11 +162,32 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
   const filteredListings = useMemo<ListingWithDistance[]>(() => {
     const selectedCategory = category.trim();
     const normalized = selectedCategory ? normalizeStoredCategory(selectedCategory) : "";
+    const normalizedTextQuery = textQuery.trim().toLowerCase();
     const byCategory = selectedCategory
       ? listings.filter((listing) => normalizeStoredCategory(listing.category) === normalized)
       : listings;
 
-    const withDistance = byCategory.map((listing) => {
+    const byText = normalizedTextQuery
+      ? byCategory.filter((listing) => {
+          const categoryLabel = tCategories(
+            normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
+          );
+          const haystack = [
+            listing.name,
+            listing.description,
+            listing.location_name,
+            listing.location_address,
+            categoryLabel,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+          return haystack.includes(normalizedTextQuery);
+        })
+      : byCategory;
+
+    const withDistance = byText.map((listing) => {
       const distance =
         activeCenter && hasCoordinates(listing)
           ? distanceKm(activeCenter, {
@@ -181,7 +204,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
     return withDistance
       .filter((listing) => listing.distanceKm != null && listing.distanceKm <= radiusKm)
       .sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
-  }, [activeCenter, category, listings, radiusKm]);
+  }, [activeCenter, category, listings, radiusKm, tCategories, textQuery]);
 
   useEffect(() => {
     if (mode !== "map" || locationStatus !== "ready" || !mapRef.current) return;
@@ -247,6 +270,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
 
   const showDropdown = open && query.trim().length >= 2;
   const mapListings = filteredListings.filter(hasCoordinates);
+  const filtersActive = Boolean(category || activeCenter || textQuery.trim());
 
   return (
     <div className="space-y-5">
@@ -288,83 +312,107 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
         </div>
 
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-          <div className="space-y-2">
-            <label htmlFor="catalog-location-search" className="text-sm font-medium">
-              {t("near")}
-            </label>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-              <input
-                id="catalog-location-search"
-                ref={inputRef}
-                value={query}
-                autoComplete="off"
-                role="combobox"
-                aria-expanded={showDropdown}
-                aria-controls={listboxId}
-                onChange={(event) => setQuery(event.target.value)}
-                onFocus={() => {
-                  if (predictions.length > 0) setOpen(true);
-                }}
-                onBlur={() => {
-                  window.setTimeout(() => setOpen(false), 150);
-                }}
-                placeholder={
-                  locationStatus === "loading"
-                    ? t("locationLoading")
-                    : locationStatus === "unconfigured"
-                      ? t("locationUnavailable")
-                      : t("nearPlaceholder")
-                }
-                className="kk-input py-3.5 pl-10 pr-10"
-                disabled={locationStatus === "unconfigured"}
-              />
-              {center ? (
-                <button
-                  type="button"
-                  onClick={clearLocation}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
-                  aria-label={t("clearLocation")}
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              ) : null}
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="space-y-2">
+              <label htmlFor="catalog-text-search" className="text-sm font-medium">
+                {t("searchLabel")}
+              </label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                <input
+                  id="catalog-text-search"
+                  value={textQuery}
+                  type="search"
+                  autoComplete="off"
+                  onChange={(event) => setTextQuery(event.target.value)}
+                  placeholder={t("searchPlaceholder")}
+                  className="kk-input py-3.5 pl-10"
+                />
+              </div>
+            </div>
 
-              {showDropdown ? (
-                <ul
-                  id={listboxId}
-                  role="listbox"
-                  className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900"
-                >
-                  {searching && predictions.length === 0 ? (
-                    <li className="px-4 py-3 text-sm text-zinc-500">{t("locationSearching")}</li>
-                  ) : null}
+            <div className="space-y-2">
+              <label htmlFor="catalog-location-search" className="text-sm font-medium">
+                {t("near")}
+              </label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                <input
+                  id="catalog-location-search"
+                  ref={inputRef}
+                  value={query}
+                  autoComplete="off"
+                  role="combobox"
+                  aria-expanded={showDropdown}
+                  aria-controls={listboxId}
+                  onChange={(event) => setQuery(event.target.value)}
+                  onFocus={() => {
+                    if (predictions.length > 0) setOpen(true);
+                  }}
+                  onBlur={() => {
+                    window.setTimeout(() => setOpen(false), 150);
+                  }}
+                  placeholder={
+                    locationStatus === "loading"
+                      ? t("locationLoading")
+                      : locationStatus === "unconfigured"
+                        ? t("locationUnavailable")
+                        : t("nearPlaceholder")
+                  }
+                  className="kk-input py-3.5 pl-10 pr-10"
+                  disabled={locationStatus === "unconfigured"}
+                />
+                {center ? (
+                  <button
+                    type="button"
+                    onClick={clearLocation}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                    aria-label={t("clearLocation")}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                ) : null}
 
-                  {predictions.map((prediction) => (
-                    <li key={prediction.placeId} role="option" aria-selected={false}>
-                      <button
-                        type="button"
-                        className="flex min-h-12 w-full flex-col items-start px-4 py-3 text-left hover:bg-zinc-50 active:bg-zinc-100 dark:hover:bg-zinc-800"
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => void choosePrediction(prediction)}
-                      >
-                        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                          {prediction.mainText}
-                        </span>
-                        {prediction.secondaryText ? (
-                          <span className="text-xs text-zinc-500">
-                            {prediction.secondaryText}
+                {showDropdown ? (
+                  <ul
+                    id={listboxId}
+                    role="listbox"
+                    className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900"
+                  >
+                    {searching && predictions.length === 0 ? (
+                      <li className="px-4 py-3 text-sm text-zinc-500">
+                        {t("locationSearching")}
+                      </li>
+                    ) : null}
+
+                    {predictions.map((prediction) => (
+                      <li key={prediction.placeId} role="option" aria-selected={false}>
+                        <button
+                          type="button"
+                          className="flex min-h-12 w-full flex-col items-start px-4 py-3 text-left hover:bg-zinc-50 active:bg-zinc-100 dark:hover:bg-zinc-800"
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => void choosePrediction(prediction)}
+                        >
+                          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                            {prediction.mainText}
                           </span>
-                        ) : null}
-                      </button>
-                    </li>
-                  ))}
+                          {prediction.secondaryText ? (
+                            <span className="text-xs text-zinc-500">
+                              {prediction.secondaryText}
+                            </span>
+                          ) : null}
+                        </button>
+                      </li>
+                    ))}
 
-                  {!searching && predictions.length === 0 ? (
-                    <li className="px-4 py-3 text-sm text-zinc-500">{t("locationNoResults")}</li>
-                  ) : null}
-                </ul>
-              ) : null}
+                    {!searching && predictions.length === 0 ? (
+                      <li className="px-4 py-3 text-sm text-zinc-500">
+                        {t("locationNoResults")}
+                      </li>
+                    ) : null}
+                  </ul>
+                ) : null}
+              </div>
             </div>
           </div>
 
@@ -486,8 +534,15 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
         </div>
       ) : filteredListings.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
-          <p className="font-medium">{t("emptyTitle")}</p>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("emptyBody")}</p>
+          <p className="font-medium">
+            {filtersActive ? t("noMatchesTitle") : t("emptyTitle")}
+          </p>
+          <p className="mx-auto mt-1 max-w-md text-sm text-zinc-500 dark:text-zinc-400">
+            {filtersActive ? t("noMatchesBody") : t("emptyBody")}
+          </p>
+          <Link href="/catalog/manage" className="kk-btn-primary mt-5">
+            {t("addBusiness")}
+          </Link>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -499,6 +554,11 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
               categoryLabel={tCategories(
                 normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
               )}
+              distanceLabel={
+                listing.distanceKm != null
+                  ? t("distanceKm", { distance: listing.distanceKm.toFixed(1) })
+                  : null
+              }
             />
           ))}
         </div>

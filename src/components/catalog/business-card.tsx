@@ -9,9 +9,10 @@ type BusinessCardProps = {
   listing: BusinessListingWithRepresentativeFields;
   locale: string;
   categoryLabel: string;
+  distanceLabel?: string | null;
 };
 
-export function BusinessCard({ listing, locale, categoryLabel }: BusinessCardProps) {
+export function BusinessCard({ listing, locale, categoryLabel, distanceLabel }: BusinessCardProps) {
   return (
     <Link
       href={`/catalog/${listing.id}`}
@@ -43,7 +44,12 @@ export function BusinessCard({ listing, locale, categoryLabel }: BusinessCardPro
               {listing.vouch_count}
             </span>
           ) : null}
-          {listing.location_name ? (
+          {distanceLabel ? (
+            <span className="inline-flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
+              <MapPin className="h-4 w-4" />
+              {distanceLabel}
+            </span>
+          ) : listing.location_name ? (
             <span className="inline-flex items-center gap-1">
               <MapPin className="h-4 w-4" />
               {listing.location_name}
