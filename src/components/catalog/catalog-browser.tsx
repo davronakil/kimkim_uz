@@ -271,6 +271,17 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
   const showDropdown = open && query.trim().length >= 2;
   const mapListings = filteredListings.filter(hasCoordinates);
   const filtersActive = Boolean(category || activeCenter || textQuery.trim());
+  const recentListings = useMemo(
+    () =>
+      [...listings]
+        .sort((a, b) => {
+          const first = Date.parse(a.published_at ?? a.updated_at ?? a.created_at);
+          const second = Date.parse(b.published_at ?? b.updated_at ?? b.created_at);
+          return second - first;
+        })
+        .slice(0, 4),
+    [listings],
+  );
 
   return (
     <div className="space-y-5">
@@ -474,6 +485,52 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
             : t("allSummary", { count: filteredListings.length })}
         </p>
       </div>
+
+      {!filtersActive && mode === "list" && recentListings.length > 0 ? (
+        <section className="space-y-3">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <h2 className="text-base font-semibold text-zinc-950 dark:text-zinc-50">
+                {t("recentTitle")}
+              </h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("recentSubtitle")}</p>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {recentListings.map((listing) => (
+              <Link
+                key={listing.id}
+                href={`/catalog/${listing.id}`}
+                className="group rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold group-hover:text-emerald-600">
+                      {listing.name}
+                    </p>
+                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                      {tCategories(
+                        normalizeStoredCategory(listing.category) as Parameters<
+                          typeof tCategories
+                        >[0],
+                      )}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                    {t("newBadge")}
+                  </span>
+                </div>
+                {listing.location_name ? (
+                  <p className="mt-3 flex items-center gap-1 truncate text-sm text-zinc-500 dark:text-zinc-400">
+                    <MapPin className="h-4 w-4 shrink-0" />
+                    {listing.location_name}
+                  </p>
+                ) : null}
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {mode === "map" ? (
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.8fr)]">
