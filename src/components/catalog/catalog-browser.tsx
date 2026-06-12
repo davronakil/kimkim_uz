@@ -2,9 +2,10 @@
 
 import { List, LocateFixed, Map, MapPin, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { BusinessCard } from "@/components/catalog/business-card";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { businessCategories, normalizeStoredCategory } from "@/lib/catalog/categories";
 import {
   fetchPlaceDetails,
@@ -20,7 +21,6 @@ import type { BusinessListingWithRepresentativeFields } from "@/types";
 
 type CatalogBrowserProps = {
   listings: BusinessListingWithRepresentativeFields[];
-  initialCategory?: string;
 };
 
 type ListingWithDistance = BusinessListingWithRepresentativeFields & {
@@ -82,17 +82,19 @@ function escapeHtml(value: string) {
   });
 }
 
-export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProps) {
+export function CatalogBrowser({ listings }: CatalogBrowserProps) {
   const t = useTranslations("catalog");
   const tCategories = useTranslations("catalog.categories");
   const locale = useLocale();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const category = searchParams.get("category") ?? "";
   const listboxId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<InstanceType<GoogleMapsRuntime["Map"]> | null>(null);
   const markerRefs = useRef<Array<InstanceType<GoogleMapsRuntime["Marker"]>>>([]);
   const searchRequestRef = useRef(0);
-  const [category, setCategory] = useState(initialCategory ?? "");
   const [mode, setMode] = useState<"list" | "map">("list");
   const [center, setCenter] = useState<GooglePlaceResult | null>(null);
   const [radiusKm, setRadiusKm] = useState<number>(10);
@@ -260,6 +262,14 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
     setOpen(false);
   }
 
+  function setCategoryFilter(nextCategory: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (nextCategory) params.set("category", nextCategory);
+    else params.delete("category");
+    const query = params.toString();
+    router.replace(query ? `/catalog?${query}` : "/catalog", { scroll: false });
+  }
+
   function clearLocation() {
     setCenter(null);
     setQuery("");
@@ -271,6 +281,10 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
   const showDropdown = open && query.trim().length >= 2;
   const mapListings = filteredListings.filter(hasCoordinates);
   const filtersActive = Boolean(category || activeCenter || textQuery.trim());
+  const topVouchedListings = useMemo(
+    () => listings.filter((listing) => listing.vouch_count > 0).slice(0, 3),
+    [listings],
+  );
   const recentListings = useMemo(
     () =>
       [...listings]
@@ -450,7 +464,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
             <div className="flex w-max min-w-full gap-2 sm:w-auto sm:min-w-0 sm:flex-wrap">
               <button
                 type="button"
-                onClick={() => setCategory("")}
+                onClick={() => setCategoryFilter("")}
                 className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition ${
                   !category
                     ? "bg-emerald-500 text-white"
@@ -463,7 +477,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
                 <button
                   key={businessCategory}
                   type="button"
-                  onClick={() => setCategory(businessCategory)}
+                  onClick={() => setCategoryFilter(businessCategory)}
                   className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition ${
                     category === businessCategory
                       ? "bg-emerald-500 text-white"
@@ -487,6 +501,29 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
             : t("allSummary", { count: filteredListings.length })}
         </p>
       </div>
+
+      {!filtersActive && mode === "list" && topVouchedListings.length > 0 ? (
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-base font-semibold text-zinc-950 dark:text-zinc-50">
+              {t("topVouchedTitle")}
+            </h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("topVouchedSubtitle")}</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {topVouchedListings.map((listing) => (
+              <BusinessCard
+                key={listing.id}
+                listing={listing}
+                locale={locale}
+                categoryLabel={tCategories(
+                  normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
+                )}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {!filtersActive && mode === "list" && recentListings.length > 0 ? (
         <section className="space-y-3">

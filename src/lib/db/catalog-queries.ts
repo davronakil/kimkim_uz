@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { getDb } from "@/lib/cloudflare";
-import { categoryFilterValues, isBusinessCategory } from "@/lib/catalog/categories";
+import { categoryFilterValues, isBusinessCategory, normalizeStoredCategory } from "@/lib/catalog/categories";
 import { isSuperadmin } from "@/lib/platform/admin";
 import type {
   BusinessListing,
@@ -62,6 +62,48 @@ export async function listApprovedBusinessListings(
 
   const result = await db
     .prepare(`${approvedListingSelect} WHERE bl.status = 'approved' ${approvedListingGroup}`)
+    .all<BusinessListingWithRepresentativeFields>();
+
+  return (result.results ?? []).map((row) => ({
+    ...row,
+    vouch_count: Number(row.vouch_count ?? 0),
+  }));
+}
+
+export async function listFeaturedBusinessListings(
+  limit = 3,
+): Promise<BusinessListingWithRepresentativeFields[]> {
+  const db = await getDb();
+  const result = await db
+    .prepare(
+      `${approvedListingSelect} WHERE bl.status = 'approved' ${approvedListingGroup} LIMIT ?`,
+    )
+    .bind(limit)
+    .all<BusinessListingWithRepresentativeFields>();
+
+  return (result.results ?? []).map((row) => ({
+    ...row,
+    vouch_count: Number(row.vouch_count ?? 0),
+  }));
+}
+
+export async function listRelatedBusinessListings(
+  listingId: string,
+  category: string,
+  limit = 3,
+): Promise<BusinessListingWithRepresentativeFields[]> {
+  const db = await getDb();
+  const filterValues = categoryFilterValues(normalizeStoredCategory(category));
+  const placeholders = filterValues.map(() => "?").join(", ");
+  const query = `${approvedListingSelect}
+     WHERE bl.status = 'approved'
+       AND bl.id != ?
+       AND bl.category IN (${placeholders})
+     ${approvedListingGroup}
+     LIMIT ?`;
+  const result = await db
+    .prepare(query)
+    .bind(listingId, ...filterValues, limit)
     .all<BusinessListingWithRepresentativeFields>();
 
   return (result.results ?? []).map((row) => ({

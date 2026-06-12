@@ -1,18 +1,38 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CatalogBrowser } from "@/components/catalog/catalog-browser";
 import { Link } from "@/i18n/navigation";
+import { isStoredBusinessCategory, normalizeStoredCategory } from "@/lib/catalog/categories";
 import { getCurrentUser } from "@/lib/auth/session";
 import { listApprovedBusinessListings } from "@/lib/db/catalog-queries";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ category?: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const { category: categoryParam } = await searchParams;
   const catalog = await getTranslations({ locale, namespace: "catalog" });
+  const normalizedCategory = categoryParam ? normalizeStoredCategory(categoryParam) : null;
+  const hasCategory = Boolean(categoryParam && isStoredBusinessCategory(categoryParam));
+
+  if (hasCategory && normalizedCategory) {
+    const categoryLabel = catalog(`categories.${normalizedCategory}`);
+    const pagePath = `/${locale}/catalog?category=${normalizedCategory}`;
+
+    return buildSitePageMetadata({
+      locale,
+      pagePath,
+      title: `${categoryLabel} — ${catalog("title")}`,
+      description: catalog("categoryMetaDescription", { category: categoryLabel }),
+      ogTitle: `${categoryLabel} — ${catalog("title")}`,
+    });
+  }
 
   return buildSitePageMetadata({
     locale,
@@ -25,13 +45,10 @@ export async function generateMetadata({
 
 export default async function CatalogPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ category?: string }>;
 }) {
   const { locale } = await params;
-  const { category } = await searchParams;
   setRequestLocale(locale);
 
   const t = await getTranslations("catalog");
@@ -56,7 +73,9 @@ export default async function CatalogPage({
         )}
       </div>
 
-      <CatalogBrowser listings={listings} initialCategory={category} />
+      <Suspense fallback={<div className="min-h-[320px] animate-pulse rounded-2xl bg-zinc-100 dark:bg-zinc-900" />}>
+        <CatalogBrowser listings={listings} />
+      </Suspense>
     </div>
   );
 }

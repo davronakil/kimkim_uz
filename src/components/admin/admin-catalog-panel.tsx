@@ -152,40 +152,42 @@ export function AdminCatalogPanel({ locale }: { locale: string }) {
                 </Link>
               </div>
 
-              {listing.status === "pending" ? (
-                <>
-                  <textarea
-                    value={rejectReasons[listing.id] ?? ""}
-                    onChange={(e) =>
-                      setRejectReasons((prev) => ({ ...prev, [listing.id]: e.target.value }))
-                    }
-                    placeholder={t("rejectReasonPlaceholder")}
-                    rows={2}
-                    className="kk-input"
-                  />
-
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      disabled={busyId === listing.id}
-                      onClick={() => void review(listing.id, "approve")}
-                      className="kk-btn-primary"
-                    >
-                      <Check className="h-4 w-4" />
-                      {t("approve")}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busyId === listing.id}
-                      onClick={() => void review(listing.id, "reject")}
-                      className="kk-btn-secondary text-red-600"
-                    >
-                      <X className="h-4 w-4" />
-                      {t("reject")}
-                    </button>
-                  </div>
-                </>
+              {listing.status === "pending" || listing.status === "approved" ? (
+                <textarea
+                  value={rejectReasons[listing.id] ?? ""}
+                  onChange={(e) =>
+                    setRejectReasons((prev) => ({ ...prev, [listing.id]: e.target.value }))
+                  }
+                  placeholder={t("rejectReasonPlaceholder")}
+                  rows={2}
+                  className="kk-input"
+                />
               ) : null}
+
+              <div className="flex flex-wrap gap-2">
+                {listing.status !== "approved" ? (
+                  <button
+                    type="button"
+                    disabled={busyId === listing.id}
+                    onClick={() => void review(listing.id, "approve")}
+                    className="kk-btn-primary"
+                  >
+                    <Check className="h-4 w-4" />
+                    {listing.status === "rejected" ? t("republish") : t("approve")}
+                  </button>
+                ) : null}
+                {listing.status !== "rejected" ? (
+                  <button
+                    type="button"
+                    disabled={busyId === listing.id}
+                    onClick={() => void review(listing.id, "reject")}
+                    className="kk-btn-secondary text-red-600"
+                  >
+                    <X className="h-4 w-4" />
+                    {listing.status === "approved" ? t("unpublish") : t("reject")}
+                  </button>
+                ) : null}
+              </div>
             </div>
           ))}
         </div>

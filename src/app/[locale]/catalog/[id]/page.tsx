@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ExternalLink, MapPin, Phone } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { RelatedBusinessListings } from "@/components/catalog/related-business-listings";
+import { BusinessShareActions } from "@/components/catalog/business-share-actions";
 import { BusinessCoverImage } from "@/components/catalog/business-cover-image";
 import { CategoryBadge } from "@/components/catalog/category-badge";
 import { BusinessVouchButton } from "@/components/catalog/business-vouch-button";
@@ -106,11 +108,16 @@ export default async function CatalogDetailPage({
         <Link href="/catalog" className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">
           ← {t("backToCatalog")}
         </Link>
-        {isOwner ? (
-          <Link href={`/catalog/${id}/edit`} className="kk-btn-secondary ml-auto">
-            {common("edit")}
-          </Link>
-        ) : null}
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          {listing.status === "approved" ? (
+            <BusinessShareActions listingName={listing.name} />
+          ) : null}
+          {isOwner ? (
+            <Link href={`/catalog/${id}/edit`} className="kk-btn-secondary">
+              {common("edit")}
+            </Link>
+          ) : null}
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
@@ -127,7 +134,12 @@ export default async function CatalogDetailPage({
           <div className="space-y-2">
             <h1 className="text-2xl font-bold leading-tight sm:text-3xl">{listing.name}</h1>
             <div className="flex flex-wrap items-center gap-2">
-              <CategoryBadge category={listing.category} locale={locale} />
+              <Link
+                href={`/catalog?category=${normalizeStoredCategory(listing.category)}`}
+                className="transition hover:opacity-80"
+              >
+                <CategoryBadge category={listing.category} locale={locale} />
+              </Link>
               {listing.status !== "approved" ? (
                 <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100">
                   {listing.status === "pending" ? t("statusPending") : t("statusRejected")}
@@ -198,6 +210,14 @@ export default async function CatalogDetailPage({
           ) : null}
         </div>
       </div>
+
+      {listing.status === "approved" ? (
+        <RelatedBusinessListings
+          listingId={listing.id}
+          category={listing.category}
+          locale={locale}
+        />
+      ) : null}
     </div>
   );
 }

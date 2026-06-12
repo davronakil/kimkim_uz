@@ -1,5 +1,6 @@
 import { CalendarDays, MessageSquare, Receipt, Send, Store } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { HomeFeaturedCatalog } from "@/components/catalog/home-featured-catalog";
 import { localeNames, locales, type Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -174,6 +175,7 @@ export default async function HomePage({
             ))}
           </div>
         </div>
+        <HomeFeaturedCatalog locale={locale} />
         <Store className="pointer-events-none absolute -bottom-6 -right-4 h-28 w-28 text-emerald-500/10 sm:h-36 sm:w-36" />
       </section>
 
