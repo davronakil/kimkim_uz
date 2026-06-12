@@ -296,6 +296,27 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
         .slice(0, 4),
     [listings],
   );
+  const featuredListingIds = useMemo(() => {
+    if (filtersActive || mode !== "list") return new Set<string>();
+    return new Set([
+      ...topVouchedListings.map((listing) => listing.id),
+      ...recentListings.map((listing) => listing.id),
+    ]);
+  }, [filtersActive, mode, recentListings, topVouchedListings]);
+  const mainListings = useMemo(
+    () =>
+      featuredListingIds.size > 0
+        ? filteredListings.filter((listing) => !featuredListingIds.has(listing.id))
+        : filteredListings,
+    [featuredListingIds, filteredListings],
+  );
+
+  const mobileCardRail =
+    "-mx-4 flex min-w-0 gap-3 overflow-x-auto overscroll-x-contain px-4 pb-1 snap-x snap-mandatory [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden";
+  const mobileCardRailItem =
+    "w-[min(17.5rem,calc(100vw-3rem))] shrink-0 snap-start sm:w-auto sm:min-w-0 sm:shrink";
+  const recentRailItem =
+    "w-[min(17.5rem,calc(100vw-3rem))] shrink-0 snap-start sm:w-auto sm:min-w-0 sm:shrink";
 
   return (
     <div className="min-w-0 max-w-full space-y-5">
@@ -510,16 +531,17 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("topVouchedSubtitle")}</p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className={mobileCardRail}>
             {topVouchedListings.map((listing) => (
-              <BusinessCard
-                key={listing.id}
-                listing={listing}
-                locale={locale}
-                categoryLabel={tCategories(
-                  normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
-                )}
-              />
+              <div key={listing.id} className={mobileCardRailItem}>
+                <BusinessCard
+                  listing={listing}
+                  locale={locale}
+                  categoryLabel={tCategories(
+                    normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
+                  )}
+                />
+              </div>
             ))}
           </div>
         </section>
@@ -535,12 +557,12 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
               <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("recentSubtitle")}</p>
             </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="-mx-4 flex min-w-0 gap-3 overflow-x-auto overscroll-x-contain px-4 pb-1 snap-x snap-mandatory [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
             {recentListings.map((listing) => (
               <Link
                 key={listing.id}
                 href={`/catalog/${listing.id}`}
-                className="group rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900"
+                className={`${recentRailItem} group rounded-2xl border border-zinc-200 bg-white p-3.5 shadow-sm transition active:scale-[0.99] sm:p-4 sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -640,25 +662,26 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
             {t("addBusiness")}
           </Link>
         </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredListings.map((listing) => (
-            <BusinessCard
-              key={listing.id}
-              listing={listing}
-              locale={locale}
-              categoryLabel={tCategories(
-                normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
-              )}
-              distanceLabel={
-                listing.distanceKm != null
-                  ? t("distanceKm", { distance: listing.distanceKm.toFixed(1) })
-                  : null
-              }
-            />
+      ) : mainListings.length > 0 ? (
+        <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {mainListings.map((listing) => (
+            <div key={listing.id} className="min-w-0">
+              <BusinessCard
+                listing={listing}
+                locale={locale}
+                categoryLabel={tCategories(
+                  normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
+                )}
+                distanceLabel={
+                  listing.distanceKm != null
+                    ? t("distanceKm", { distance: listing.distanceKm.toFixed(1) })
+                    : null
+                }
+              />
+            </div>
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

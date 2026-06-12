@@ -334,6 +334,12 @@
       "comments": "Comments",
       "expenses": "Expenses"
     },
+    "sectionNav": {
+      "commentsHint": "Discuss plans, venue, and updates",
+      "expensesHint": "Track shared costs and balances",
+      "commentsCount": "{count, plural, one {# comment} other {# comments}}",
+      "expensesCount": "{count, plural, one {# expense} other {# expenses}}"
+    },
     "comments": {
       "title": "Discussion",
       "placeholder": "Write a comment...",

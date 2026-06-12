@@ -22,22 +22,25 @@ export async function HomeFeaturedCatalog({ locale }: HomeFeaturedCatalogProps) 
           <h3 className="text-lg font-semibold text-zinc-950 dark:text-zinc-50">
             {t("featuredTitle")}
           </h3>
-          <p className="text-sm text-zinc-600 dark:text-zinc-300">{t("featuredSubtitle")}</p>
+          {t("featuredSubtitle") ? (
+            <p className="text-sm text-zinc-600 dark:text-zinc-300">{t("featuredSubtitle")}</p>
+          ) : null}
         </div>
         <Link href="/catalog" className="text-sm font-medium text-emerald-600 hover:text-emerald-700">
           {t("featuredViewAll")} →
         </Link>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {featured.map((listing) => (
-          <BusinessCard
-            key={listing.id}
-            listing={listing}
-            locale={locale}
-            categoryLabel={tCategories(
-              normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
-            )}
-          />
+          <div key={listing.id} className="min-w-0">
+            <BusinessCard
+              listing={listing}
+              locale={locale}
+              categoryLabel={tCategories(
+                normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
+              )}
+            />
+          </div>
         ))}
       </div>
     </div>

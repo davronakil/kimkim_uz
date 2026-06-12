@@ -34,8 +34,8 @@
     "catalogBody": "Каталог в духе Yelp: барбершопы, салоны, рестораны, дачи и сервисы — от реальных представителей, с отметками доверия от сообщества KimKim.",
     "catalogBrowse": "Смотреть каталог",
     "catalogListBusiness": "Добавить бизнес",
-    "featuredTitle": "Рекомендуют сообщество",
-    "featuredSubtitle": "Самые проверенные бизнесы на KimKim.",
+    "featuredTitle": "Рекомендуемые бизнесы и услуги",
+    "featuredSubtitle": "",
     "featuredViewAll": "Все бизнесы",
     "catalogPoints": [
       "Фильтр по категориям — от ресторанов до digital-агентств",
@@ -333,6 +333,12 @@
       "overview": "Обзор",
       "comments": "Комментарии",
       "expenses": "Расходы"
+    },
+    "sectionNav": {
+      "commentsHint": "Обсуждайте планы, место и обновления",
+      "expensesHint": "Отслеживайте общие расходы и балансы",
+      "commentsCount": "{count, plural, one {# комментарий} few {# комментария} many {# комментариев} other {# комментария}}",
+      "expensesCount": "{count, plural, one {# расход} few {# расхода} many {# расходов} other {# расхода}}"
     },
     "comments": {
       "title": "Обсуждение",

@@ -16,25 +16,25 @@ export function BusinessCard({ listing, locale, categoryLabel, distanceLabel }: 
   return (
     <Link
       href={`/catalog/${listing.id}`}
-      className="group min-w-0 touch-manipulation overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900"
+      className="group flex w-full min-w-0 max-w-full touch-manipulation flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900"
     >
-      <div className="aspect-[16/9] overflow-hidden">
+      <div className="aspect-[16/9] min-w-0 overflow-hidden">
         <BusinessCoverImage
           listing={listing}
           categoryLabel={categoryLabel}
           submittedByName={displayName(listing)}
           variant="card"
-          className="h-full w-full object-cover transition group-hover:scale-[1.02]"
+          className="h-full w-full max-w-full object-cover transition group-hover:scale-[1.02]"
         />
       </div>
-      <div className="space-y-2 p-4 sm:p-5">
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <h3 className="min-w-0 break-words text-lg font-semibold leading-snug group-hover:text-emerald-600 sm:text-xl">
+      <div className="min-w-0 space-y-2 p-3.5 sm:p-5">
+        <div className="flex min-w-0 flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+          <h3 className="min-w-0 break-words text-base font-semibold leading-snug group-hover:text-emerald-600 sm:text-lg">
             {listing.name}
           </h3>
           <CategoryBadge category={listing.category} locale={locale} size="sm" />
         </div>
-        <p className="line-clamp-2 text-base text-zinc-600 sm:text-sm dark:text-zinc-300">
+        <p className="line-clamp-2 text-sm text-zinc-600 dark:text-zinc-300">
           {listing.description || "—"}
         </p>
         <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">

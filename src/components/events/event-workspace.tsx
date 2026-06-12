@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, LayoutGrid, MapPin, MessageSquare, Pencil, Receipt } from "lucide-react";
+import { CalendarDays, MapPin, MessageSquare, Pencil, Receipt } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
@@ -46,14 +46,9 @@ type EventPayload = {
   paymentSummaries: EventPaymentSummary[];
 };
 
-const tabs = ["overview", "comments", "expenses"] as const;
-type EventTab = (typeof tabs)[number];
-
-const tabIcons: Record<EventTab, typeof LayoutGrid> = {
-  overview: LayoutGrid,
-  comments: MessageSquare,
-  expenses: Receipt,
-};
+function scrollToSection(sectionId: string) {
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 export function EventWorkspace({
   eventId,
@@ -77,7 +72,6 @@ export function EventWorkspace({
   const t = useTranslations("events");
   const common = useTranslations("common");
   const online = useOnlineStatus();
-  const [tab, setTab] = useState<EventTab>("overview");
   const [data, setData] = useState<EventPayload>(initialData);
   const [cachedAt, setCachedAt] = useState<number | null>(null);
 
@@ -124,128 +118,100 @@ export function EventWorkspace({
   const currentRsvpStatus: EventRsvpStatus = currentMember?.rsvp_status ?? "going";
   const creatorName = owner ? displayName(owner) : null;
 
-  function renderTabContent() {
-    if (tab === "overview") {
-      return (
-        <div className="space-y-4">
-          {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
-          <RsvpSummaryPanel members={members} />
-          {canEdit ? (
-            <HostChecklistPanel
-              locale={locale}
-              currentUserId={currentUserId}
-              event={event}
-              members={members}
-              comments={comments}
-              expenses={expenses}
-              paymentSummaries={paymentSummaries}
-            />
-          ) : null}
-          <ActivityTimelinePanel
-            eventId={eventId}
+  function renderOverview() {
+    return (
+      <div className="space-y-4">
+        {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
+        <RsvpSummaryPanel members={members} />
+        {canEdit ? (
+          <HostChecklistPanel
+            locale={locale}
+            currentUserId={currentUserId}
+            event={event}
             members={members}
             comments={comments}
             expenses={expenses}
-            locale={locale}
-            canPostToGroup={canEdit && Boolean(event.telegram_chat_id)}
+            paymentSummaries={paymentSummaries}
           />
-          <RsvpStatusPanel
-            eventId={eventId}
-            initialStatus={currentRsvpStatus}
-            onChanged={load}
-            readOnly={!online}
-          />
-          <NotificationPreferencesPanel eventId={eventId} />
-          {event.invite_code ? (
-            <InvitePanel
-              eventId={eventId}
-              eventTitle={event.title}
-              inviteCode={event.invite_code}
-              botUsername={botUsername}
-              locale={locale}
-              currentUserId={currentUserId}
-              canRegenerate={canEdit}
-            />
-          ) : null}
-          {canEdit && event.invite_code ? (
-            <TelegramGroupPanel
-              eventId={eventId}
-              inviteCode={event.invite_code}
-              botUsername={botUsername}
-              linked={Boolean(event.telegram_chat_id)}
-            />
-          ) : null}
-          {canEdit ? <ReferralSummaryPanel members={members} /> : null}
-          {canEdit && event.payment_mode === "paid" ? (
-            <PaidEventSummaryPanel
-              members={members}
-              paymentSummaries={paymentSummaries}
-              ticketPriceCents={event.ticket_price_cents}
-              ticketCurrency={event.ticket_currency}
-              locale={locale}
-            />
-          ) : null}
-          {canEdit && event.payment_mode === "paid" ? <PayoutMethodPanel /> : null}
-          <section id="event-members" className="kk-card scroll-mt-24 p-5 sm:p-6">
-            <h2 className="kk-section-title">{t("detailTitle")}</h2>
-            <MemberList
-              eventId={eventId}
-              members={members}
-              paymentMode={event.payment_mode ?? "free"}
-              paymentSummaries={paymentSummaries}
-              ticketPriceCents={event.ticket_price_cents}
-              ticketCurrency={event.ticket_currency}
-              locale={locale}
-              currentUserId={currentUserId}
-              canManage={canEdit}
-              onChanged={load}
-            />
-          </section>
-          {canEdit ? (
-            <TransferOwnershipPanel
-              eventId={eventId}
-              members={members}
-              currentUserId={currentUserId}
-            />
-          ) : null}
-          {canLeave ? (
-            <section className="kk-card p-5 sm:p-6">
-              <LeaveEventButton eventId={eventId} />
-            </section>
-          ) : null}
-        </div>
-      );
-    }
-
-    if (tab === "comments") {
-      return (
-        <CommentThread
+        ) : null}
+        <ActivityTimelinePanel
           eventId={eventId}
+          members={members}
           comments={comments}
-          currentUserId={currentUserId}
-          onPosted={load}
+          expenses={expenses}
+          locale={locale}
+          canPostToGroup={canEdit && Boolean(event.telegram_chat_id)}
+        />
+        <RsvpStatusPanel
+          eventId={eventId}
+          initialStatus={currentRsvpStatus}
+          onChanged={load}
           readOnly={!online}
         />
-      );
-    }
-
-    return (
-      <ExpensePanel
-        key={members.map((member) => member.id).join("-")}
-        eventId={eventId}
-        members={members}
-        expenses={expenses}
-        settlements={settlements}
-        locale={locale}
-        currency={event.expense_currency ?? "UZS"}
-        onAdded={load}
-        readOnly={!online}
-      />
+        <NotificationPreferencesPanel eventId={eventId} />
+        {event.invite_code ? (
+          <InvitePanel
+            eventId={eventId}
+            eventTitle={event.title}
+            inviteCode={event.invite_code}
+            botUsername={botUsername}
+            locale={locale}
+            currentUserId={currentUserId}
+            canRegenerate={canEdit}
+          />
+        ) : null}
+        {canEdit && event.invite_code ? (
+          <TelegramGroupPanel
+            eventId={eventId}
+            inviteCode={event.invite_code}
+            botUsername={botUsername}
+            linked={Boolean(event.telegram_chat_id)}
+          />
+        ) : null}
+        {canEdit ? <ReferralSummaryPanel members={members} /> : null}
+        {canEdit && event.payment_mode === "paid" ? (
+          <PaidEventSummaryPanel
+            members={members}
+            paymentSummaries={paymentSummaries}
+            ticketPriceCents={event.ticket_price_cents}
+            ticketCurrency={event.ticket_currency}
+            locale={locale}
+          />
+        ) : null}
+        {canEdit && event.payment_mode === "paid" ? <PayoutMethodPanel /> : null}
+        <section id="event-members" className="kk-card scroll-mt-24 p-5 sm:p-6">
+          <h2 className="kk-section-title">{t("detailTitle")}</h2>
+          <MemberList
+            eventId={eventId}
+            members={members}
+            paymentMode={event.payment_mode ?? "free"}
+            paymentSummaries={paymentSummaries}
+            ticketPriceCents={event.ticket_price_cents}
+            ticketCurrency={event.ticket_currency}
+            locale={locale}
+            currentUserId={currentUserId}
+            canManage={canEdit}
+            onChanged={load}
+          />
+        </section>
+        {canEdit ? (
+          <TransferOwnershipPanel
+            eventId={eventId}
+            members={members}
+            currentUserId={currentUserId}
+          />
+        ) : null}
+        {canLeave ? (
+          <section className="kk-card p-5 sm:p-6">
+            <LeaveEventButton eventId={eventId} />
+          </section>
+        ) : null}
+      </div>
     );
   }
 
   return (
-    <div className="pb-safe-nav sm:pb-0">
+    <div>
       <div className="space-y-5 sm:space-y-6">
         {!online || usingCache ? (
           <OfflineBanner cachedAt={usingCache ? (cachedAt ?? undefined) : undefined} />
@@ -307,50 +273,89 @@ export function EventWorkspace({
           </div>
         </section>
 
-        {/* Desktop tabs */}
-        <div className="hidden flex-wrap gap-2 sm:flex">
-          {tabs.map((value) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setTab(value)}
-              className={tab === value ? "kk-chip-active" : "kk-chip-inactive"}
-            >
-              {t(`tabs.${value}`)}
-            </button>
-          ))}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => scrollToSection("event-comments")}
+            className="kk-card flex min-h-[5.5rem] flex-col items-start gap-2 p-4 text-left transition active:scale-[0.99] sm:min-h-0 sm:p-5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:sm:hover:border-emerald-900"
+          >
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+              <MessageSquare className="h-5 w-5" />
+              {t("tabs.comments")}
+            </span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              {t("sectionNav.commentsHint")}
+            </span>
+            <span className="mt-auto text-sm font-medium text-zinc-700 dark:text-zinc-200">
+              {t("sectionNav.commentsCount", { count: comments.length })}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollToSection("event-expenses")}
+            className="kk-card flex min-h-[5.5rem] flex-col items-start gap-2 p-4 text-left transition active:scale-[0.99] sm:min-h-0 sm:p-5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:sm:hover:border-emerald-900"
+          >
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+              <Receipt className="h-5 w-5" />
+              {t("tabs.expenses")}
+            </span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              {t("sectionNav.expensesHint")}
+            </span>
+            <span className="mt-auto text-sm font-medium text-zinc-700 dark:text-zinc-200">
+              {t("sectionNav.expensesCount", { count: expenses.length })}
+            </span>
+          </button>
         </div>
 
-        {renderTabContent()}
+        <section id="event-comments" className="scroll-mt-6 space-y-4">
+          <div className="flex items-center gap-2.5">
+            <div className="inline-flex rounded-xl bg-emerald-50 p-2 dark:bg-emerald-950/50">
+              <MessageSquare className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold sm:text-xl">{t("comments.title")}</h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                {t("sectionNav.commentsHint")}
+              </p>
+            </div>
+          </div>
+          <CommentThread
+            eventId={eventId}
+            comments={comments}
+            currentUserId={currentUserId}
+            onPosted={load}
+            readOnly={!online}
+          />
+        </section>
+
+        <section id="event-expenses" className="scroll-mt-6 space-y-4">
+          <div className="flex items-center gap-2.5">
+            <div className="inline-flex rounded-xl bg-emerald-50 p-2 dark:bg-emerald-950/50">
+              <Receipt className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold sm:text-xl">{t("expenses.title")}</h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                {t("sectionNav.expensesHint")}
+              </p>
+            </div>
+          </div>
+          <ExpensePanel
+            key={members.map((member) => member.id).join("-")}
+            eventId={eventId}
+            members={members}
+            expenses={expenses}
+            settlements={settlements}
+            locale={locale}
+            currency={event.expense_currency ?? "UZS"}
+            onAdded={load}
+            readOnly={!online}
+          />
+        </section>
+
+        {renderOverview()}
       </div>
-
-      {/* Mobile bottom nav */}
-      <nav
-        aria-label="Event sections"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/90 bg-white/95 pb-safe backdrop-blur-md sm:hidden dark:border-zinc-800 dark:bg-zinc-950/95"
-      >
-        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-1 px-2 py-2">
-          {tabs.map((value) => {
-            const Icon = tabIcons[value];
-            const active = tab === value;
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setTab(value)}
-                className={`flex min-h-14 touch-manipulation flex-col items-center justify-center gap-1 rounded-xl px-2 text-xs font-medium transition active:scale-[0.98] ${
-                  active
-                    ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
-                    : "text-zinc-500"
-                }`}
-              >
-                <Icon className={`h-5 w-5 ${active ? "text-emerald-600 dark:text-emerald-400" : ""}`} />
-                {t(`tabs.${value}`)}
-              </button>
-            );
-          })}
-        </div>
-      </nav>
     </div>
   );
 }

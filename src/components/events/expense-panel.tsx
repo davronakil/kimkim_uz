@@ -295,7 +295,6 @@ export function ExpensePanel({
       ) : null}
 
       <section className="space-y-3">
-        <h3 className="kk-section-title">{t("title")}</h3>
         {expenses.length === 0 ? (
           <p className="text-sm text-zinc-500">{t("empty")}</p>
         ) : (

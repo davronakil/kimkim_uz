@@ -334,6 +334,12 @@
       "comments": "Chat",
       "expenses": "Hisob-Kitob"
     },
+    "sectionNav": {
+      "commentsHint": "Reja, joy va yangiliklar haqida gapiring",
+      "expensesHint": "Umumiy xarajatlar va balanslarni kuzating",
+      "commentsCount": "{count, plural, one {# ta izoh} other {# ta izoh}}",
+      "expensesCount": "{count, plural, one {# ta xarajat} other {# ta xarajat}}"
+    },
     "comments": {
       "title": "Suhbat",
       "placeholder": "Nimadir yozing...",
