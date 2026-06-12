@@ -34,7 +34,10 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 - Map OG snapshot when location has coordinates
 - Public read-only event pages for non-members and logged-out visitors
 - **Public discover** page (`/discover`) for indexable events
-- **Business catalog** (`/catalog`) — Yelp-style directory with admin approval and community vouches
+- **Business catalog** (`/catalog`) — Yelp-style directory with admin approval, community vouches, map/list browse, and shareable category filters
+- Event pages show **comments and expenses inline** (no tab switching)
+- Default locale **Uzbek** with browser detection + persistent cookie
+- Expanded **admin dashboard** (overview, catalog moderation, events, users, admins)
 - Event creation templates
 - RSVP states: going / maybe / can't go
 - Paid-event host payment summary
@@ -52,6 +55,14 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 | P2 | Business catalog | Shipped: submit, admin review, vouches, Stripe extra slots |
 | P2 | Referral tracking | Shipped: web, Telegram bot, and Stripe checkout invite attribution |
 | P3 | PNG OG cards | Shipped for generated site/event cards |
+
+### Recent catalog & UX (2026-06)
+
+- 30 refreshed business categories (migration `0015`: `wedding_venue` → `event_venue`)
+- Homepage featured listings, top-vouched + recently-added rails on browse
+- Listing share (copy link, Telegram, native share), related businesses, category SEO metadata
+- Admin: unpublish / republish listings; catalog dynamic cover placeholders
+- Mobile catalog overflow and card-width fixes
 
 ## Housekeeping / ops
 
@@ -78,4 +89,4 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 
 ---
 
-Update this file when scope changes. Last reviewed: 2026-06-08.
+Update this file when scope changes. Last reviewed: 2026-06-09.

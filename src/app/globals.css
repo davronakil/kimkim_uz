@@ -118,10 +118,6 @@
   .pb-safe {
     padding-bottom: max(0.75rem, var(--safe-bottom));
   }
-
-  .pb-safe-nav {
-    padding-bottom: calc(4.5rem + var(--safe-bottom));
-  }
 }
 
 /* Google Places autocomplete dropdown above modals/header */

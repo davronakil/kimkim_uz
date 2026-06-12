@@ -10,7 +10,7 @@ Quick orientation for AI assistants working in this repo.
 
 ## Locales
 
-`en`, `uz`, `ru` — config in `src/i18n/config.ts`, messages in `messages/*.json`.
+`en`, `uz`, `ru` — config in `src/i18n/config.ts`, messages in `messages/*.json`. Default locale is **`uz`**; first-visit browser detection with a persistent cookie.
 
 Bot strings are separate: `src/lib/telegram/i18n.ts`.
 
@@ -23,7 +23,7 @@ Bot strings are separate: `src/lib/telegram/i18n.ts`.
 
 | Task | Command / path |
 |------|----------------|
-| Local dev | `npm run dev` → http://localhost:3000/en |
+| Local dev | `npm run dev` → http://localhost:3000/uz |
 | Migrate DB | `npm run db:migrate:local` |
 | Deploy | `npm run deploy` |
 | Bot webhook | `src/app/api/telegram/webhook/route.ts` |
@@ -38,6 +38,7 @@ Bot strings are separate: `src/lib/telegram/i18n.ts`.
 - Telegram handler: `src/lib/telegram/handler.ts`
 - OG images: cover → map → generated card (`src/lib/og/`)
 - Platform admin / superadmin: `src/lib/platform/admin.ts` (`davron_tx`)
+- Admin UI: `src/components/admin/admin-workspace.tsx`
 
 ## Public pages
 

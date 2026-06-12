@@ -15,11 +15,18 @@ KimKim includes a **Yelp-style business directory** at `/[locale]/catalog` where
 
 | Path | Access | Purpose |
 |------|--------|---------|
-| `/catalog` | Public | Browse approved listings by category |
-| `/catalog/[id]` | Public (approved) | Business detail + vouch button |
+| `/catalog` | Public | Browse approved listings (map/list, search, category filters in URL) |
+| `/catalog/[id]` | Public (approved) | Business detail, vouch, share, related listings |
 | `/catalog/submit` | Logged in | New listing (requires available slot) |
 | `/catalog/manage` | Logged in | Manage listings, buy extra slots |
-| `/admin` | Platform admin | Review pending listings; superadmin manages admins |
+| `/admin` | Platform admin | Tabbed dashboard: overview, catalog review (approve/reject/unpublish/republish), events, users, admins |
+
+## Discovery & sharing
+
+- **Homepage** — top-vouched featured listings when approved listings exist
+- **Browse** — “Most vouched” and “Recently added” rails; category chips sync to `?category=` (shareable URLs)
+- **Detail** — related businesses in the same category; copy link / Telegram / native share
+- **SEO** — category-filtered catalog pages get dedicated titles/descriptions; listings in `sitemap.xml` with `LocalBusiness` JSON-LD
 
 ## SEO
 
@@ -37,7 +44,7 @@ Legacy slug `wedding_venue` is migrated to `event_venue` (migration `0015`).
 
 - **Superadmin** — Telegram username `davron_tx` (hardcoded in `src/lib/platform/admin.ts`); auto-promoted on first admin check.
 - **Superadmin catalog powers** — unlimited business listings; new submissions publish immediately (no admin review queue).
-- **Admins** — granted by superadmin; can approve/reject catalog submissions from other users.
+- **Admins** — granted by superadmin; can approve, reject, unpublish, or republish catalog listings.
 - Superadmin cannot be removed via the admin UI.
 
 ## Stripe extra slots
@@ -58,7 +65,7 @@ Checkout metadata: `purchase_type: business_slot`. Fulfillment in `src/lib/strip
 | Categories | `src/lib/catalog/categories.ts` |
 | Platform admin | `src/lib/platform/admin.ts` |
 | Vouch API | `POST /api/catalog/[id]/vouch` |
-| UI | `src/components/catalog/*` |
+| UI | `src/components/catalog/*` (browse: `catalog-browser.tsx`) |
 
 ## Database
 
