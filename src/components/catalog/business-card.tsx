@@ -16,7 +16,7 @@ export function BusinessCard({ listing, locale, categoryLabel, distanceLabel }: 
   return (
     <Link
       href={`/catalog/${listing.id}`}
-      className="group touch-manipulation overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900"
+      className="group min-w-0 touch-manipulation overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900"
     >
       <div className="aspect-[16/9] overflow-hidden">
         <BusinessCoverImage
@@ -28,8 +28,8 @@ export function BusinessCard({ listing, locale, categoryLabel, distanceLabel }: 
         />
       </div>
       <div className="space-y-2 p-4 sm:p-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-lg font-semibold leading-snug group-hover:text-emerald-600 sm:text-xl">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <h3 className="min-w-0 break-words text-lg font-semibold leading-snug group-hover:text-emerald-600 sm:text-xl">
             {listing.name}
           </h3>
           <CategoryBadge category={listing.category} locale={locale} size="sm" />

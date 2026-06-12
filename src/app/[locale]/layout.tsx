@@ -134,7 +134,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <ServiceWorkerRegister />
           <SiteHeader />
-          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-5 pb-8 sm:px-5 sm:py-8">
+          <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 overflow-x-clip px-4 py-5 pb-8 sm:px-5 sm:py-8">
             {children}
           </main>
           <SiteFooter />

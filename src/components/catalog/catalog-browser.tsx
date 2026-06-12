@@ -284,8 +284,8 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
   );
 
   return (
-    <div className="space-y-5">
-      <div className="space-y-5 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5">
+    <div className="min-w-0 max-w-full space-y-5">
+      <div className="min-w-0 max-w-full space-y-5 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">{t("filtersTitle")}</p>
@@ -433,7 +433,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
                 key={radius}
                 type="button"
                 onClick={() => setRadiusKm(radius)}
-                className={`rounded-full px-3 py-2 text-sm font-medium transition ${
+                className={`shrink-0 rounded-full px-3 py-2 text-sm font-medium transition ${
                   radiusKm === radius
                     ? "bg-emerald-500 text-white"
                     : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
@@ -445,33 +445,35 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setCategory("")}
-              className={`rounded-full px-3 py-1.5 text-sm transition ${
-                !category
-                  ? "bg-emerald-500 text-white"
-                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-              }`}
-            >
-              {t("allCategories")}
-            </button>
-            {businessCategories.map((businessCategory) => (
+        <div className="min-w-0 space-y-3">
+          <div className="-mx-4 overflow-x-auto overscroll-x-contain px-4 [scrollbar-width:none] sm:mx-0 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+            <div className="flex w-max min-w-full gap-2 sm:w-auto sm:min-w-0 sm:flex-wrap">
               <button
-                key={businessCategory}
                 type="button"
-                onClick={() => setCategory(businessCategory)}
-                className={`rounded-full px-3 py-1.5 text-sm transition ${
-                  category === businessCategory
+                onClick={() => setCategory("")}
+                className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition ${
+                  !category
                     ? "bg-emerald-500 text-white"
                     : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
                 }`}
               >
-                {tCategories(businessCategory)}
+                {t("allCategories")}
               </button>
-            ))}
+              {businessCategories.map((businessCategory) => (
+                <button
+                  key={businessCategory}
+                  type="button"
+                  onClick={() => setCategory(businessCategory)}
+                  className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition ${
+                    category === businessCategory
+                      ? "bg-emerald-500 text-white"
+                      : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+                  }`}
+                >
+                  {tCategories(businessCategory)}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -533,10 +535,10 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
       ) : null}
 
       {mode === "map" ? (
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.8fr)]">
-          <div className="min-h-[420px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,0.8fr)]">
+          <div className="min-w-0 min-h-[420px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
             {locationStatus === "ready" ? (
-              <div ref={mapRef} className="h-[420px] w-full" />
+              <div ref={mapRef} className="h-[420px] w-full max-w-full" />
             ) : (
               <div className="flex h-[420px] flex-col items-center justify-center gap-3 p-6 text-center">
                 <LocateFixed className="h-8 w-8 text-emerald-600" />
@@ -546,7 +548,7 @@ export function CatalogBrowser({ listings, initialCategory }: CatalogBrowserProp
               </div>
             )}
           </div>
-          <div className="max-h-[420px] space-y-3 overflow-auto rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="min-w-0 max-h-[420px] space-y-3 overflow-auto rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
             {mapListings.length === 0 ? (
               <p className="p-3 text-sm text-zinc-500 dark:text-zinc-400">{t("noNearby")}</p>
             ) : (
