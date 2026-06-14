@@ -16,7 +16,7 @@ export async function HomeFeaturedCatalog({ locale }: HomeFeaturedCatalogProps) 
   if (featured.length === 0) return null;
 
   return (
-    <div className="space-y-4 border-t border-emerald-100 pt-6 dark:border-emerald-900/40">
+    <div className="mt-8 space-y-4 border-t border-emerald-100 pt-8 dark:border-white/10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h3 className="text-lg font-semibold text-zinc-950 dark:text-zinc-50">
