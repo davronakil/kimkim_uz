@@ -8,7 +8,7 @@ Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on
 
 ## Features
 
-- **Events** — to'y, gap, sunnat to'y, aqiqa, challari, choyxona, birthdays; date/time, location, cover image
+- **Events** — to'y, "gap", choyxona, weddings, parties, anything; date/time, location, cover image
 - **Public discover** — `/discover` lists events hosts mark as public (indexable, sitemap)
 - **Invites** — shareable links, locale-aware bot deep links, link rotation, RSVP landing page
 - **Payment modes** — Free, Split the bill, Pay for yourself, Paid (Stripe Checkout)
