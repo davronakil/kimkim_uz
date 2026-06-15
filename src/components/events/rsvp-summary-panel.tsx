@@ -29,6 +29,12 @@ const statusStyles: Record<
 
 const statuses: EventRsvpStatus[] = ["going", "maybe", "declined"];
 
+function partySize(member: EventMember) {
+  return member.rsvp_status === "declined"
+    ? 0
+    : 1 + (member.additional_guest_count ?? 0);
+}
+
 export function RsvpSummaryPanel({ members }: { members: EventMember[] }) {
   const t = useTranslations("events.rsvp");
   const [copied, setCopied] = useState(false);
@@ -49,16 +55,26 @@ export function RsvpSummaryPanel({ members }: { members: EventMember[] }) {
         maybe: grouped.maybe.length,
         declined: grouped.declined.length,
       },
+      partyCounts: {
+        going: grouped.going.reduce((sum, member) => sum + partySize(member), 0),
+        maybe: grouped.maybe.reduce((sum, member) => sum + partySize(member), 0),
+        declined: 0,
+      },
     };
   }, [members]);
 
   const copyText = [
     t("copyTitle"),
     ...statuses.map((status) => {
-      const names = summary.grouped[status].map(displayName).join(", ");
+      const names = summary.grouped[status]
+        .map((member) => {
+          const extras = member.additional_guest_count ?? 0;
+          return extras > 0 ? `${displayName(member)} +${extras}` : displayName(member);
+        })
+        .join(", ");
       return t("copyLine", {
         status: t(status),
-        count: summary.counts[status],
+        count: summary.partyCounts[status] || summary.counts[status],
         names: names || "-",
       });
     }),
@@ -80,7 +96,10 @@ export function RsvpSummaryPanel({ members }: { members: EventMember[] }) {
         <div>
           <h2 className="kk-section-title">{t("summaryTitle")}</h2>
           <p className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-            {t("summarySubtitle", { count: members.length })}
+            {t("summarySubtitle", {
+              count: members.length,
+              partyCount: summary.partyCounts.going + summary.partyCounts.maybe,
+            })}
           </p>
         </div>
         <button
@@ -105,6 +124,11 @@ export function RsvpSummaryPanel({ members }: { members: EventMember[] }) {
                 {summary.counts[status]}
               </div>
               <div className="mt-1 text-xs font-medium sm:text-sm">{t(status)}</div>
+              {status !== "declined" ? (
+                <div className="mt-1 text-xs opacity-80">
+                  {t("partyCount", { count: summary.partyCounts[status] })}
+                </div>
+              ) : null}
             </div>
           );
         })}

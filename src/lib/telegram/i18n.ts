@@ -16,6 +16,13 @@ const messages = {
     rsvpAlreadyGoing: "You're already on the guest list.",
     rsvpMaybeConfirmed: "Got it — marked as maybe.",
     rsvpDeclinedConfirmed: "Got it — marked as can't make it.",
+    rsvpGuestPrompt: (title: string) =>
+      `Are you bringing anyone else to <b>${title}</b>?`,
+    rsvpGuestOnlyMe: "Only me",
+    rsvpGuestSaved: (count: number) =>
+      count === 0
+        ? "Saved: only you."
+        : `Saved: you + ${count} ${count === 1 ? "guest" : "guests"}.`,
     openApp: "Open KimKim.uz",
     help: `<b>KimKim bot</b>
 
@@ -75,11 +82,16 @@ const messages = {
     joinButton: "Qo'shilish",
     rsvpGoing: "Kelaman",
     rsvpMaybe: "Balki",
-    rsvpDeclined: "Bora olmayman",
+    rsvpDeclined: "Kela olmiman",
     rsvpGoingConfirmed: "Ro'yxatga qo'shildingiz!",
     rsvpAlreadyGoing: "Siz allaqachon ro'yxatdasiz.",
     rsvpMaybeConfirmed: "Tushundik — balki deb belgilandi.",
     rsvpDeclinedConfirmed: "Tushundik — bora olmaysiz deb belgilandi.",
+    rsvpGuestPrompt: (title: string) =>
+      `<b>${title}</b> ga yana kimnidir olib kelasizmi?`,
+    rsvpGuestOnlyMe: "Faqat men",
+    rsvpGuestSaved: (count: number) =>
+      count === 0 ? "Saqlandi: faqat siz." : `Saqlandi: siz + ${count} mehmon.`,
     openApp: "Saytni ochish",
     help: `<b>KimKim bot</b>
 
@@ -144,6 +156,11 @@ const messages = {
     rsvpAlreadyGoing: "Вы уже в списке гостей.",
     rsvpMaybeConfirmed: "Понятно — отметили как возможно.",
     rsvpDeclinedConfirmed: "Понятно — отметили, что не сможете прийти.",
+    rsvpGuestPrompt: (title: string) =>
+      `Берёте кого-нибудь с собой на <b>${title}</b>?`,
+    rsvpGuestOnlyMe: "Только я",
+    rsvpGuestSaved: (count: number) =>
+      count === 0 ? "Сохранено: только вы." : `Сохранено: вы + ${count}.`,
     openApp: "Открыть KimKim.uz",
     help: `<b>Бот KimKim</b>
 

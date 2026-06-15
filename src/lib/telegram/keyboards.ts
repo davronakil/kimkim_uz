@@ -45,6 +45,30 @@ export function expenseEventPickerKeyboard(events: Array<{ id: string; title: st
   };
 }
 
+export function rsvpGuestCountKeyboard({
+  eventId,
+  labels,
+}: {
+  eventId: string;
+  labels: {
+    onlyMe: string;
+    openEvent: string;
+    eventUrl: string;
+  };
+}) {
+  return {
+    inline_keyboard: [
+      [
+        { text: labels.onlyMe, callback_data: `rsvpg:0:${eventId}` },
+        { text: "+1", callback_data: `rsvpg:1:${eventId}` },
+        { text: "+2", callback_data: `rsvpg:2:${eventId}` },
+        { text: "+3", callback_data: `rsvpg:3:${eventId}` },
+      ],
+      [{ text: labels.openEvent, url: labels.eventUrl }],
+    ],
+  };
+}
+
 export function buildEventOpenUrl(eventId: string, locale: BotLocale) {
   return buildAppUrl(`/${locale}/events/${eventId}`);
 }

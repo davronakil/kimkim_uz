@@ -9,6 +9,7 @@ export async function createExpenseRecord({
   amount,
   currency = "UZS",
   splitUserIds,
+  splitWeights,
 }: {
   eventId: string;
   payerId: string;
@@ -16,6 +17,7 @@ export async function createExpenseRecord({
   amount: number;
   currency?: string;
   splitUserIds: string[];
+  splitWeights?: Record<string, number>;
 }) {
   const memberIds = new Set(splitUserIds);
   const built = buildExpenseSplits(
@@ -26,6 +28,7 @@ export async function createExpenseRecord({
       payer_id: payerId,
       split_mode: "equal",
       split_user_ids: splitUserIds,
+      split_weights: splitWeights,
     },
     memberIds,
   );

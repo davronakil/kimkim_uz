@@ -12,6 +12,7 @@ type RouteContext = {
 
 const rsvpSchema = z.object({
   status: z.enum(["going", "maybe", "declined"]),
+  additional_guest_count: z.number().int().min(0).max(20).optional(),
 });
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
@@ -36,19 +37,34 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Invalid RSVP status" }, { status: 400 });
   }
 
-  const previousStatus = (await getEventRsvp(id, user.id)) ?? "going";
-  await upsertEventRsvp(id, user.id, parsed.data.status);
+  const previousRsvp = await getEventRsvp(id, user.id);
+  const previousStatus = previousRsvp?.status ?? "going";
+  const previousAdditionalGuestCount = previousRsvp?.additional_guest_count ?? 0;
+  const additionalGuestCount =
+    parsed.data.status === "declined"
+      ? 0
+      : (parsed.data.additional_guest_count ?? previousRsvp?.additional_guest_count ?? 0);
+  const statusChanged = previousStatus !== parsed.data.status;
+  const guestCountChanged = previousAdditionalGuestCount !== additionalGuestCount;
 
-  if (previousStatus !== parsed.data.status) {
+  await upsertEventRsvp(id, user.id, parsed.data.status, additionalGuestCount);
+
+  if (statusChanged || guestCountChanged) {
     void runInBackground(
       notifyRsvpChanged({
         eventId: id,
         member: user,
         memberUserId: user.id,
         status: parsed.data.status,
+        additionalGuestCount,
+        guestCountChanged,
       }),
     );
   }
 
-  return NextResponse.json({ ok: true, status: parsed.data.status });
+  return NextResponse.json({
+    ok: true,
+    status: parsed.data.status,
+    additional_guest_count: additionalGuestCount,
+  });
 }

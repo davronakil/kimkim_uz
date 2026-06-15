@@ -168,13 +168,17 @@
       "declined": "Can't go",
       "statusTitle": "Your RSVP",
       "statusSubtitle": "Update your answer anytime so the host has the latest count.",
+      "additionalGuestsLabel": "Extra people you're bringing",
+      "additionalGuestsHint": "{count, plural, =0 {Only you will be counted for shared expenses.} one {You and # extra guest will be counted for shared expenses.} other {You and # extra guests will be counted for shared expenses.}}",
+      "additionalGuestsShort": "+{count}",
       "statusError": "Could not update your RSVP. Try again.",
       "summaryTitle": "RSVP summary",
-      "summarySubtitle": "{count, plural, one {# response recorded} other {# responses recorded}}",
+      "summarySubtitle": "{count, plural, one {# response recorded} other {# responses recorded}} · {partyCount, plural, one {# person counted} other {# people counted}}",
       "copy": "Copy summary",
       "copied": "Copied",
       "copyTitle": "KimKim RSVP summary",
-      "copyLine": "{status}: {count} — {names}"
+      "copyLine": "{status}: {count} — {names}",
+      "partyCount": "{count, plural, one {# person} other {# people}}"
     },
     "notifications": {
       "title": "Telegram updates",
@@ -363,6 +367,7 @@
       "splitAmong": "Split among",
       "splitEqual": "Split equally",
       "splitCustom": "Custom amounts",
+      "equalShareCount": "{count, plural, one {# share} other {# shares}}",
       "customAmount": "Amount",
       "customTotal": "Split total: {current} / {target}",
       "settlementTitle": "Who owes whom",

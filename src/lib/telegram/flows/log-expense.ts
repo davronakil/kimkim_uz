@@ -113,6 +113,9 @@ export async function handleLogExpenseStep(
     amount: parsed.amount,
     currency: event?.expense_currency ?? "UZS",
     splitUserIds: members.map((member) => member.id),
+    splitWeights: Object.fromEntries(
+      members.map((member) => [member.id, 1 + (member.additional_guest_count ?? 0)]),
+    ),
   });
 
   await clearBotSession(chatId);

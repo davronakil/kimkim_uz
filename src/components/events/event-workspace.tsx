@@ -116,6 +116,7 @@ export function EventWorkspace({
   const owner = members.find((member) => member.role === "owner");
   const currentMember = members.find((member) => member.id === currentUserId);
   const currentRsvpStatus: EventRsvpStatus = currentMember?.rsvp_status ?? "going";
+  const currentAdditionalGuestCount = currentMember?.additional_guest_count ?? 0;
   const creatorName = owner ? displayName(owner) : null;
 
   function renderOverview() {
@@ -145,6 +146,7 @@ export function EventWorkspace({
         <RsvpStatusPanel
           eventId={eventId}
           initialStatus={currentRsvpStatus}
+          initialAdditionalGuestCount={currentAdditionalGuestCount}
           onChanged={load}
           readOnly={!online}
         />
@@ -342,7 +344,9 @@ export function EventWorkspace({
             </div>
           </div>
           <ExpensePanel
-            key={members.map((member) => member.id).join("-")}
+            key={members
+              .map((member) => `${member.id}:${member.additional_guest_count ?? 0}`)
+              .join("-")}
             eventId={eventId}
             members={members}
             expenses={expenses}

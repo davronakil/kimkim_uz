@@ -7,6 +7,8 @@ import type { Expense, Settlement, User } from "@/types";
 import { buildTelegramShareUrl } from "@/lib/auth/telegram";
 import { centsToMajor, displayName, formatMoney } from "@/lib/utils";
 
+type ExpenseMember = User & { additional_guest_count?: number };
+
 export function ExpensePanel({
   eventId,
   members,
@@ -18,7 +20,7 @@ export function ExpensePanel({
   readOnly = false,
 }: {
   eventId: string;
-  members: User[];
+  members: ExpenseMember[];
   expenses: Expense[];
   settlements: Settlement[];
   locale: string;
@@ -149,6 +151,7 @@ export function ExpensePanel({
   }
 
   const memberMap = new Map(members.map((member) => [member.id, member]));
+  const shareCount = (member: ExpenseMember) => 1 + (member.additional_guest_count ?? 0);
   const canSubmit =
     description &&
     amountNumber > 0 &&
@@ -247,7 +250,14 @@ export function ExpensePanel({
                       checked={splitIds.includes(member.id)}
                       onChange={() => toggleSplit(member.id)}
                     />
-                    {displayName(member)}
+                    <span className="min-w-0">
+                      <span className="block truncate">{displayName(member)}</span>
+                      {shareCount(member) > 1 && splitMode === "equal" ? (
+                        <span className="block text-xs text-zinc-500 dark:text-zinc-400">
+                          {t("equalShareCount", { count: shareCount(member) })}
+                        </span>
+                      ) : null}
+                    </span>
                   </label>
                   {splitMode === "custom" && splitIds.includes(member.id) ? (
                     <input

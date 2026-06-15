@@ -87,7 +87,11 @@ export function MemberList({
     const lines = members.map((member, index) => {
       const payment = paymentByUser.get(member.id);
       const paid = payment?.status === "completed";
-      const labels = [rsvpT(member.rsvp_status ?? "going")];
+      const extraGuests = member.additional_guest_count ?? 0;
+      const labels = [
+        rsvpT(member.rsvp_status ?? "going"),
+        ...(extraGuests > 0 ? [rsvpT("additionalGuestsShort", { count: extraGuests })] : []),
+      ];
 
       if (showPaymentStatus) {
         labels.push(
@@ -155,6 +159,13 @@ export function MemberList({
                   {member.role === "owner" ? (
                     <span className="w-fit rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
                       {t("ownerBadge")}
+                    </span>
+                  ) : null}
+                  {(member.additional_guest_count ?? 0) > 0 ? (
+                    <span className="w-fit rounded-full bg-sky-100 px-2.5 py-1 text-xs font-medium text-sky-800 dark:bg-sky-950 dark:text-sky-200">
+                      {rsvpT("additionalGuestsShort", {
+                        count: member.additional_guest_count,
+                      })}
                     </span>
                   ) : null}
                   <span

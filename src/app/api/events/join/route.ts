@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
   const env = await getEnv();
   const paymentsEnabled = eventPaymentsEnabled(event, env.STRIPE_SECRET_KEY);
   const hasPaid = user ? await hasCompletedEventPayment(event.id, user.id) : false;
-  const rsvpStatus = user ? await getEventRsvp(event.id, user.id) : null;
+  const rsvp = user ? await getEventRsvp(event.id, user.id) : null;
 
   return NextResponse.json({
     event: {
@@ -64,7 +64,8 @@ export async function GET(request: NextRequest) {
     logged_in: Boolean(user),
     payments_enabled: paymentsEnabled,
     has_paid: hasPaid,
-    rsvp_status: rsvpStatus,
+    rsvp_status: rsvp?.status ?? null,
+    additional_guest_count: rsvp?.additional_guest_count ?? 0,
   });
 }
 

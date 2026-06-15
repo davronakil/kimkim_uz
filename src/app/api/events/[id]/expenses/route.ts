@@ -73,7 +73,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Invalid payer" }, { status: 400 });
   }
 
-  const built = buildExpenseSplits(parsed.data, memberIds);
+  const splitWeights = Object.fromEntries(
+    members.map((m) => [m.id, 1 + (m.additional_guest_count ?? 0)]),
+  );
+  const built = buildExpenseSplits({ ...parsed.data, split_weights: splitWeights }, memberIds);
   if (!built.ok) {
     return NextResponse.json({ error: built.error }, { status: 400 });
   }

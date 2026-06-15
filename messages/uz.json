@@ -11,27 +11,27 @@
     "share": "Tarqatish",
     "signIn": "Kirish",
     "signOut": "Chiqib ketish",
-    "createEvent": "Yangi event",
-    "myEvents": "Eventlarim",
-    "noEvents": "Hali event yo'q. Birinchisini yarating va odamlarni chaqiring.",
+    "createEvent": "Yangi yig'ilish",
+    "myEvents": "Yig'ilishlarim",
+    "noEvents": "Hali yig'ilishlar yo'q. Birinchisini yarating va odamlarni chaqiring.",
     "language": "Til"
   },
   "meta": {
     "title": "KimKim — Kim, Qayerda, Qachon?",
     "description": "Kim keladi, qayerda uchrashamiz, hisob kitob + biznes katalog. To'y, gap, choyxona. Hammasi bir joyda. Telegram bilan ulangan.",
     "ogTitle": "KimKim — Kim, Qayerda, Qachon?",
-    "keywords": "event, to'y, gap, tug'ilgan kun, aqiqa, challari, choyxona, Telegram, O'zbekiston, eventlar, tadbirlar, hisob kitob, biznes katalog, taklif, rejalar, taklifnoma"
+    "keywords": "yig'ilish, to'y, gap, tug'ilgan kun, aqiqa, challari, choyxona, Telegram, O'zbekiston, yig'ilishlar, tadbirlar, hisob kitob, biznes katalog, taklif, rejalar, taklifnoma"
   },
   "home": {
     "heroTitle": "KimKim, Qayerda, Qachon?\n",
     "heroSubtitle": "KimKim, Qayerda, Qachon + Hisob Kitob + Biznes Katalogi. To'y, gap, choyxona. Hammasi bir joyda.",
     "heroTitleSignedIn": "Hammani bir joyga yig'ishga tayyormisiz?",
-    "heroSubtitleSignedIn": "Sayohat, kechki ovqat, uchrashuv yoki guruh eventini rejalashtiring. Mehmonlar, yangiliklar va xarajatlar — hammasi bir joyda.",
+    "heroSubtitleSignedIn": "Sayohat, kechki ovqat, uchrashuv yoki guruh yig'ilishini rejalashtiring. Mehmonlar, yangiliklar va xarajatlar — hammasi bir joyda.",
     "ctaSignedOut": "Telegram bilan kirish",
-    "ctaSignedIn": "Eventlarim",
+    "ctaSignedIn": "Yig'ilishlarim",
     "catalogCta": "Katalogni ko'rish",
-    "catalogTitle": "Ishonchli mahalliy bizneslarni toping",
-    "catalogBody": "Yelp uslubidagi katalog: sartaroshxonalar, salonlar, restoranlar, dachalar va xizmatlar — haqiqiy vakillar tomonidan e'lon qilinadi va KimKim jamoasi tavsiya qiladi.",
+    "catalogTitle": "Atrofdagi ishonchli mahalliy bizneslar katalogi",
+    "catalogBody": "O'zbek biznes katalogi: sartaroshxonalar, salonlar, restoranlar, dachalar va xizmatlar — haqiqiy vakillar tomonidan e'lon qilinadi va KimKim jamoasi tavsiya qiladi.",
     "catalogBrowse": "Bizneslarni ko'rish",
     "catalogListBusiness": "Biznes qo'shish",
     "featuredTitle": "Jamiyat ishonadi",
@@ -54,34 +54,34 @@
       "eventsTitle": "Har qanday tadbir",
       "eventsBody": "Sana, joy va mehmonlar — to'y, gap yoki choyxona bo'lishidan qat'i nazar.",
       "commentsTitle": "Birga rejalashtiring",
-      "commentsBody": "Joy tanlash, vazifalar, yangiliklar — chatda yo'qolmaydi, shu yerda.",
+      "commentsBody": "Joy tanlash, vazifalar, yangiliklar — shu yerda.",
       "expensesTitle": "Hisobni adolatli bo'ling",
-      "expensesBody": "Kim to'ladi, kim kimga qarz — keyin hisob-kitob qilmaysiz.",
+      "expensesBody": "Kim to'ladi, kim kimga qarz — hisob-kitob ichida.",
       "telegramTitle": "Telegram'da yashaydi",
-      "telegramBody": "Taklif linki, eslatmalar va yangiliklar — odamlar allaqachon shu yerda."
+      "telegramBody": "Taklif linki, eslatmalar va yangiliklar — shu yerda."
     }
   },
   "auth": {
     "title": "Telegram bilan kirish",
-    "subtitle": "Bir marta bosish — event yaratish yoki qo'shilish. Parol kerak emas.",
+    "subtitle": "Bir marta bosish — yig'ilish yaratish yoki qo'shilish. Parol kerak emas.",
     "telegramHint": "Faqat ochiq profil ma'lumotlaringizni olamiz.",
     "miniAppHint": "Telegram ichidamisan? Allaqachon kirding."
   },
   "events": {
-    "title": "Eventlar",
-    "newTitle": "Yangi event",
-    "editTitle": "Eventni tahrirlash",
-    "deleteEvent": "Eventni o'chirish",
+    "title": "Yig'ilishlar",
+    "newTitle": "Yangi yig'ilish",
+    "editTitle": "Yig'ilishni tahrirlash",
+    "deleteEvent": "Yig'ilishni o'chirish",
     "deleteConfirm": "Butunlay o'chirilsinmi? Izohlar va xarajatlar ham ketadi.",
     "detailTitle": "Kim bor?",
     "upcomingTitle": "Yaqinda",
-    "pastTitle": "Bo'lgan eventlar",
-    "emptyTitle": "Birinchi event shu yerdan boshlanadi",
+    "pastTitle": "Bo'lgan yig'ilishlar",
+    "emptyTitle": "Birinchi yig'ilish shu yerdan boshlanadi",
     "noUpcomingTitle": "Hozircha reja yo'q",
-    "noUpcomingBody": "Event yarating va taklif linkini yuboring — bir daqiqadan kam.",
+    "noUpcomingBody": "Yig'ilish yarating va taklif linkini yuboring — bir daqiqadan kam.",
     "ownerBadge": "Admin",
     "leaveEvent": "Chiqib ketish",
-    "leaveConfirm": "Eventdan chiqasizmi? Keyin link orqali yana qo'shilasiz.",
+    "leaveConfirm": "Yig'ilishdan chiqasizmi? Keyin link orqali yana qo'shilasiz.",
     "removeMember": "Olib tashlash",
     "invitedBy": "{name} taklif qilgan",
     "copyGuestList": "Mehmonlarni nusxalash",
@@ -89,7 +89,7 @@
     "transferTitle": "Adminni almashtirish",
     "transferHint": "Chiqib ketish uchun avval boshqasiga admin ber.",
     "transferAction": "Boshqasini admin qilish",
-    "transferConfirm": "U admin bo'ladi. Siz oddiy a'zo bo'lasiz.",
+    "transferConfirm": "U admin bo'ladi. Men oddiy a'zo bo'laman.",
     "memberPayments": {
       "paidStripe": "Karta orqali to'langan",
       "paidManual": "To'langan",
@@ -99,7 +99,7 @@
     },
     "hostChecklist": {
       "title": "Admin checklist",
-      "subtitle": "Eventni hammaga tarqatishdan oldingi tezkor tayyorgarlik.",
+      "subtitle": "Yig'ilishni hammaga tarqatishdan oldingi tezkor tayyorgarlik.",
       "progress": "{done}/{total} tayyor",
       "copyInvite": "Taklifni nusxalash",
       "copiedInvite": "Nusxalandi",
@@ -163,22 +163,26 @@
       "count": "{count} mehmon"
     },
     "rsvp": {
-      "going": "Keladi",
+      "going": "Kelaman",
       "maybe": "Balki",
-      "declined": "Kela olmaydi",
-      "statusTitle": "RSVP holatingiz",
-      "statusSubtitle": "Javobingizni istalgan payt o'zgartiring — admin oxirgi holatni ko'rsin.",
+      "declined": "Kela olmayman",
+      "statusTitle": "RSVP holatim",
+      "statusSubtitle": "Javobimni istalgan payt o'zgartiraman — admin oxirgi holatni ko'rsin.",
+      "additionalGuestsLabel": "O'zim bilan nechta odam olib kelaman?",
+      "additionalGuestsHint": "{count, plural, =0 {Xarajatlarda faqat o'zim hisoblanaman.} one {Xarajatlarda men va # qo'shimcha mehmon hisoblanamiz.} other {Xarajatlarda men va # qo'shimcha mehmon hisoblanamiz.}}",
+      "additionalGuestsShort": "+{count}",
       "statusError": "RSVP yangilanmadi. Qayta urinib ko'ring.",
       "summaryTitle": "RSVP xulosasi",
-      "summarySubtitle": "{count, plural, one {# ta javob yozilgan} other {# ta javob yozilgan}}",
+      "summarySubtitle": "{count, plural, one {# ta javob yozilgan} other {# ta javob yozilgan}} · {partyCount} kishi hisobda",
       "copy": "Xulosani nusxalash",
       "copied": "Nusxalandi",
       "copyTitle": "KimKim RSVP xulosasi",
-      "copyLine": "{status}: {count} — {names}"
+      "copyLine": "{status}: {count} — {names}",
+      "partyCount": "{count} kishi"
     },
     "notifications": {
       "title": "Telegram yangiliklari",
-      "subtitle": "Bu eventdagi izoh va xarajatlar haqida qanday xabar olasiz?",
+      "subtitle": "Bu yig'ilishdagi izoh va xarajatlar haqida qanday xabar olasiz?",
       "saving": "Saqlanmoqda...",
       "instant": {
         "title": "Har yangilikda",
@@ -190,7 +194,7 @@
       },
       "muted": {
         "title": "O'chiq",
-        "body": "Izoh va xarajat xabarlari kelmaydi. Event eslatmalari keladi."
+        "body": "Izoh va xarajat xabarlari kelmaydi. Yig'ilish eslatmalari keladi."
       },
       "enableHint": "KimKim botini start qiling — izohlar, xarajatlar va eslatmalar Telegramga keladi.",
       "openBot": "Botni ochish"
@@ -225,15 +229,15 @@
       "updated": "Pul olish usuli saqlandi."
     },
     "public": {
-      "eyebrow": "Event ko'rinishi",
+      "eyebrow": "Yig'ilish ko'rinishi",
       "title": "Qo'shilishdan oldin rejani ko'ring",
-      "bodyLoggedOut": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash yoki yopiq event faolligini ko'rish uchun Telegram bilan kiring.",
-      "bodyLoggedIn": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash va yopiq event faolligini ko'rish uchun eventga qo'shiling.",
+      "bodyLoggedOut": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash yoki yopiq yig'ilish faolligini ko'rish uchun Telegram bilan kiring.",
+      "bodyLoggedIn": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash va yopiq yig'ilish faolligini ko'rish uchun yig'ilishga qo'shiling.",
       "ticketPrice": "Chipta: {price}",
       "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
       "ctaBody": "Mehmonlar ro'yxatiga qo'shilish uchun taklif sahifasi orqali kiring.",
       "signInAction": "Kirish va qo'shilish",
-      "joinAction": "Eventga qo'shilish"
+      "joinAction": "Yig'ilishga qo'shilish"
     },
     "form": {
       "title": "Nomi",
@@ -264,9 +268,9 @@
           "description": "Tug'ilgan kun uchrashuvi. Do'stlarni chaqiring, tafsilotlarni kelishing va kerak bo'lsa xarajatni bo'ling."
         },
         "paid": {
-          "title": "Pullik event",
-          "short": "Chiptali event, karta yoki qo'lda to'lov kuzatuvi bilan.",
-          "description": "Chiptali event. Narx qo'ying, mehmonlar karta bilan yoki keyin hostga to'laydi, kim to'laganini kuzating."
+          "title": "Pullik yig'ilish",
+          "short": "Chiptali yig'ilish, karta yoki qo'lda to'lov kuzatuvi bilan.",
+          "description": "Chiptali yig'ilish. Narx qo'ying, mehmonlar karta bilan yoki keyin hostga to'laydi, kim to'laganini kuzating."
         }
       },
       "startsAt": "Qachon?",
@@ -285,7 +289,7 @@
       "coverImage": "Asosiy rasm",
       "coverReplaceHint": "Yangi rasm yuklasangiz, eskisi almashtiriladi.",
       "removeCover": "Rasmni olib tashlash",
-      "submit": "Event yaratish",
+      "submit": "Yig'ilish yaratish",
       "saveChanges": "Saqlash",
       "saveError": "Saqlanmadi. Yana bir marta urinib ko'ring.",
       "deleteError": "O'chirilmadi. Yana urinib ko'ring."
@@ -318,15 +322,15 @@
       "ticketHint": "Qo'shilishda mehmonlar shu summani Stripe orqali to'laydi."
     },
     "visibility": {
-      "fieldLabel": "Kim bu eventni topishi mumkin?",
-      "subtitle": "Yopiq eventlar Google'da chiqmaydi. Ochiq eventlar qidiruvda ko'rinishi mumkin.",
+      "fieldLabel": "Kim bu yig'ilishni topishi mumkin?",
+      "subtitle": "Yopiq yig'ilishlar Google'da chiqmaydi. Ochiq yig'ilishlar qidiruvda ko'rinishi mumkin.",
       "private": {
-        "title": "Faqat link",
-        "hint": "Faqat link bilan ochiladi. Qidiruv tizimlariga kirmaydi."
+        "title": "Faqat link orqali",
+        "hint": "Faqat link orqali ochiladi. Qidiruv tizimlariga kirmaydi."
       },
       "public": {
         "title": "Ochiq",
-        "hint": "Sitemapga qo'shiladi va Google qidiruvida chiqishi mumkin."
+        "hint": "Afishaga qo'shiladi va Google'da chiqishi mumkin."
       }
     },
     "tabs": {
@@ -363,6 +367,7 @@
       "splitAmong": "Kimga bo'linadi?",
       "splitEqual": "Teng bo'lish",
       "splitCustom": "O'zim belgilayman",
+      "equalShareCount": "{count} ulush",
       "customAmount": "Summa",
       "customTotal": "Jami: {current} / {target}",
       "settlementTitle": "Kim kimga qarz?",
@@ -382,7 +387,7 @@
       "copied": "Copy bo'ldi!",
       "shareTelegram": "Telegramda share",
       "openInBot": "Botda ochish",
-      "shareText": "Mening eventimga qo'shil: {title}",
+      "shareText": "Mening yig'ilishimga qo'shiling: {title}",
       "regenerate": "Yangi link",
       "regenerateConfirm": "Yangi link yaratilsinmi? Eski link ishlamay qoladi."
     },
@@ -395,7 +400,7 @@
       "copied": "Copy bo'ldi!",
       "addBotToGroup": "Botni guruhga qo'shish",
       "linked": "Guruh ulandi",
-      "linkedHint": "KimKim kimdir qo'shilganda, reja o'zgarganda va event oldidan xabar beradi.",
+      "linkedHint": "KimKim kimdir qo'shilganda, reja o'zgarganda va yig'ilish oldidan xabar beradi.",
       "shareToGroup": "Taklifni guruhga yuborish",
       "unlink": "Guruhni uzish"
     }
@@ -405,42 +410,42 @@
     "notFound": "Link noto'g'ri yoki eskirgan.",
     "eyebrow": "Sizni chaqirishdi",
     "headline": "Qo'shiling",
-    "intro": "Pastdan bosing — tashkilotchi kelishingizni ko'radi.",
-    "expensesNote": "Umumiy xarajatlar shu yerda yoziladi — qo'shilgach kim kimga qarz ekanini ko'rasiz.",
-    "paidNote": "Joyingizni band qilish uchun karta bilan to'lang. To'lovdan keyin darhol qo'shilasiz.",
-    "paidNotConfigured": "Bu pullik event, lekin host hali chipta narxini qo'ymagan.",
+    "intro": "Pastdan tanlayman — tashkilotchi RSVP javobimni ko'radi.",
+    "expensesNote": "Umumiy xarajatlar shu yerda yoziladi — qo'shilgach kim kimga qarz ekanini ko'raman.",
+    "paidNote": "Joyimni band qilish uchun karta bilan to'layman. To'lovdan keyin darhol qo'shilaman.",
+    "paidNotConfigured": "Bu pullik yig'ilish, lekin host hali chipta narxini qo'ymagan.",
     "ticketPrice": "Chipta: {price}",
     "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
     "join": "Kelaman — qo'shilish",
     "maybe": "Balki",
-    "cantGo": "Bora olmayman",
-    "declinedSaved": "Tushundik — siz kela olmaysiz deb belgilandi.",
-    "declinedCurrent": "Siz hozir kela olmaysiz deb belgilangansiz.",
+    "cantGo": "Kela olmiman",
+    "declinedSaved": "Tushundik — javobim: kela olmiman.",
+    "declinedCurrent": "Hozirgi javobim: kela olmiman.",
     "joining": "Qo'shilmoqda...",
     "payAndJoin": "{price} to'lab qo'shilish",
     "joinPayLater": "Qo'shilib, keyin hostga to'lash",
-    "payLaterNote": "Tashkilotchi to'lov holatingizni ko'radi va KimKimdan tashqarida to'laganingizdan keyin sizni to'langan deb belgilaydi.",
+    "payLaterNote": "Tashkilotchi to'lov holatimni ko'radi va KimKimdan tashqarida to'laganimdan keyin meni to'langan deb belgilaydi.",
     "startingCheckout": "To'lov ochilmoqda...",
     "confirmingPayment": "To'lov tekshirilmoqda...",
-    "paymentSuccess": "To'lov qabul qilindi — xush kelibsiz!",
-    "paymentPending": "To'lov qabul qilindi. Event ko'rinmasa, birozdan keyin yangilang.",
+    "paymentSuccess": "To'lov qabul qilindi — ro'yxatdaman!",
+    "paymentPending": "To'lov qabul qilindi. yig'ilish ko'rinmasa, birozdan keyin yangilang.",
     "checkoutCancelled": "To'lov bekor qilindi. Tayyor bo'lsangiz, qayta urinib ko'ring.",
     "checkoutError": "To'lovni boshlab bo'lmadi. Yana urinib ko'ring.",
-    "openEvent": "Eventni ochish",
+    "openEvent": "Yig'ilishni ochish",
     "loginTitle": "RSVP uchun kiring",
-    "loginBody": "Telegram bilan kiring — tez, tashkilotchi kelishingizni biladi.",
-    "loginBodyPaid": "Avval Telegram bilan kiring, keyin karta bilan joyingizni tasdiqlang.",
+    "loginBody": "Telegram bilan kiraman — tez, tashkilotchi RSVP javobimni ko'radi.",
+    "loginBodyPaid": "Avval Telegram bilan kiraman, keyin karta bilan joyimni tasdiqlayman.",
     "loginToJoin": "Avval Telegram bilan kiring.",
-    "alreadyJoined": "Siz ro'yxatdasiz"
+    "alreadyJoined": "Ro'yxatdaman"
   },
   "onboarding": {
     "eyebrow": "Tez start",
     "title": "KimKimga xush kelibsiz",
-    "subtitle": "Birinchi event uchun 3 qadam.",
+    "subtitle": "Birinchi yig'ilish uchun 3 qadam.",
     "dismiss": "Yopish",
-    "step1Title": "Event yarating",
+    "step1Title": "Yig'ilishni yarating",
     "step1Body": "Sana, joy va to'lov turini qo'shing.",
-    "step1Action": "Event yaratish",
+    "step1Action": "Yig'ilishni yaratish",
     "step2Title": "Odamlarni chaqiring",
     "step2Body": "Taklif linkini yuboring — mehmonlar bir bosishda qo'shiladi.",
     "step3Title": "Bildirishnomalar",
@@ -498,7 +503,7 @@
     "topVouchedTitle": "Eng ko'p tavsiya qilingan",
     "topVouchedSubtitle": "Jamiyat tavsiya qiladigan joylar.",
     "shareText": "KimKim'da {name} ni ko'ring",
-    "shareTelegram": "Telegramda ulashish",
+    "shareTelegram": "Telegramda tarqatish",
     "copyLink": "Linkni nusxalash",
     "linkCopied": "Nusxalandi!",
     "relatedTitle": "Shunga o'xshash",
@@ -520,7 +525,7 @@
     "submitPublish": "Nashr qilish",
     "editTitle": "E'lonni tahrirlash",
     "submitListing": "E'lon yuborish",
-    "myListings": "E'lonlaringiz",
+    "myListings": "E'lonlarim",
     "noListingsTitle": "E'lonlar yo'q",
     "noListingsBody": "Birinchi biznesingiz uchun bepul slotdan foydalaning.",
     "statusPending": "Tekshiruvda",
@@ -538,7 +543,7 @@
     "slotPurchaseError": "To'lovni boshlab bo'lmadi. Keyinroq urinib ko'ring.",
     "vouch": {
       "vouch": "Tavsiya qilaman",
-      "vouched": "Siz tavsiya qildingiz",
+      "vouched": "Tavsiya qilaman",
       "hint": "Yaxshi tajriba bo'lgan bo'lsa, bu joyni tavsiya qilish uchun bosing.",
       "count": "{count, plural, one {# ta tavsiya} other {# ta tavsiya}}",
       "signInPrompt": "Ishonadigan bizneslarni tavsiya qilish uchun kiring.",
@@ -576,7 +581,7 @@
       "tailor": "Tikuvchilik",
       "cleaning_service": "Tozalash xizmati",
       "other": "Boshqa",
-      "wedding_venue": "To'y joyi"
+      "wedding_venue": "To'y xona"
     },
     "form": {
       "name": "Biznes nomi",
@@ -715,11 +720,11 @@
     "errorDescription": "KimKim kutilmagan muammoga duch keldi. Qayta urinib ko'ring yoki pastdan xavfsiz yo'lni tanlang.",
     "goHome": "Bosh sahifa",
     "tryAgain": "Qayta urinish",
-    "tipHomeSignedIn": "Bosh sahifadan boshlang — eventlaringizga qaytish oson.",
+    "tipHomeSignedIn": "Bosh sahifadan boshlang — yig'ilishlaringizga qaytish oson.",
     "tipHomeSignedOut": "Bosh sahifaga qayting, Telegram bilan kiring va davom eting.",
     "tipExplore": "Bosh sahifada KimKim taklif, mehmonlar va xarajatlar bilan qanday ishlashini ko'rasiz.",
-    "tipEvents": "Eventlar ro'yxatini oching — faol tadbiringiz shu yerda.",
-    "tipCreate": "Yangi reja qilmoqchi bo'lsangiz, yangi event yarating.",
+    "tipEvents": "yig'ilishlar ro'yxatini oching — faol tadbiringiz shu yerda.",
+    "tipCreate": "Yangi reja qilmoqchi bo'lsangiz, yangi yig'ilish yarating.",
     "tipRetry": "Vaqtinchalik muammo bo'lishi mumkin — sahifani yangilab ko'ring."
   }
 }

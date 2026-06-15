@@ -54,6 +54,20 @@ const rsvpLabels: Record<BotLocale, Record<EventRsvpStatus, string>> = {
   ru: { going: "придёт", maybe: "возможно", declined: "не сможет" },
 };
 
+function rsvpGuestCountLabel(locale: BotLocale, count: number): string {
+  if (locale === "uz") {
+    return count === 0 ? "Qo'shimcha mehmon yo'q." : `+${count} qo'shimcha mehmon bilan.`;
+  }
+  if (locale === "ru") {
+    return count === 0
+      ? "Без дополнительных гостей."
+      : `Берёт с собой ещё ${count}.`;
+  }
+  return count === 0
+    ? "No extra guests."
+    : `Bringing ${count} extra ${count === 1 ? "guest" : "guests"}.`;
+}
+
 async function listNotifiableMembers(
   eventId: string,
   excludeUserId?: string,
@@ -224,19 +238,26 @@ export async function notifyRsvpChanged(input: {
   member: Pick<User, "first_name" | "last_name" | "username">;
   memberUserId: string;
   status: EventRsvpStatus;
+  additionalGuestCount?: number;
+  guestCountChanged?: boolean;
 }) {
   const memberName = escapeHtml(displayName(input.member));
 
   const buildRsvp = (locale: BotLocale, event: Event) => {
     const title = escapeHtml(event.title);
     const status = escapeHtml(rsvpLabels[locale][input.status]);
+    const guestCount = input.additionalGuestCount ?? 0;
+    const guestText =
+      input.status !== "declined" && (input.guestCountChanged || guestCount > 0)
+        ? ` ${escapeHtml(rsvpGuestCountLabel(locale, guestCount))}`
+        : "";
     if (locale === "uz") {
-      return `📝 <b>${memberName}</b> <b>${title}</b> uchun RSVP holatini o'zgartirdi: <b>${status}</b>.`;
+      return `📝 <b>${memberName}</b> <b>${title}</b> uchun RSVP holatini o'zgartirdi: <b>${status}</b>.${guestText}`;
     }
     if (locale === "ru") {
-      return `📝 <b>${memberName}</b> обновил(а) RSVP для <b>${title}</b>: <b>${status}</b>.`;
+      return `📝 <b>${memberName}</b> обновил(а) RSVP для <b>${title}</b>: <b>${status}</b>.${guestText}`;
     }
-    return `📝 <b>${memberName}</b> updated RSVP for <b>${title}</b>: <b>${status}</b>.`;
+    return `📝 <b>${memberName}</b> updated RSVP for <b>${title}</b>: <b>${status}</b>.${guestText}`;
   };
 
   await notifyMembers(input.eventId, input.memberUserId, buildRsvp);

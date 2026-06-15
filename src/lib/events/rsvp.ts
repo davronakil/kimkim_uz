@@ -6,21 +6,23 @@ export async function upsertEventRsvp(
   eventId: string,
   userId: string,
   status: EventRsvpStatus,
+  additionalGuestCount = 0,
 ) {
   const db = await getDb();
   await db
     .prepare(
-      `INSERT INTO event_rsvps (event_id, user_id, status, updated_at)
-       VALUES (?, ?, ?, datetime('now'))
+      `INSERT INTO event_rsvps (event_id, user_id, status, additional_guest_count, updated_at)
+       VALUES (?, ?, ?, ?, datetime('now'))
        ON CONFLICT(event_id, user_id) DO UPDATE SET
          status = excluded.status,
+         additional_guest_count = excluded.additional_guest_count,
          updated_at = datetime('now')`,
     )
-    .bind(eventId, userId, status)
+    .bind(eventId, userId, status, additionalGuestCount)
     .run();
 }
 
-export async function getEventRsvp(
+export async function getEventRsvpStatus(
   eventId: string,
   userId: string,
 ): Promise<EventRsvpStatus | null> {
@@ -32,20 +34,46 @@ export async function getEventRsvp(
   return row?.status ?? null;
 }
 
+export async function getEventRsvp(
+  eventId: string,
+  userId: string,
+): Promise<{ status: EventRsvpStatus; additional_guest_count: number } | null> {
+  const db = await getDb();
+  const row = await db
+    .prepare(
+      "SELECT status, COALESCE(additional_guest_count, 0) AS additional_guest_count FROM event_rsvps WHERE event_id = ? AND user_id = ?",
+    )
+    .bind(eventId, userId)
+    .first<{ status: EventRsvpStatus; additional_guest_count: number }>();
+  return row ?? null;
+}
+
 export async function rsvpGoing(event: Event, user: User) {
   const wasMember = await isEventMember(event.id, user.id);
+  const previousRsvp = await getEventRsvp(event.id, user.id);
   await joinEvent(event.id, user.id);
-  await upsertEventRsvp(event.id, user.id, "going");
+  await upsertEventRsvp(
+    event.id,
+    user.id,
+    "going",
+    previousRsvp?.additional_guest_count ?? 0,
+  );
   return { wasMember, joined: true };
 }
 
 export async function rsvpMaybe(event: Event, user: User) {
   const wasMember = await isEventMember(event.id, user.id);
+  const previousRsvp = await getEventRsvp(event.id, user.id);
   await joinEvent(event.id, user.id);
-  await upsertEventRsvp(event.id, user.id, "maybe");
+  await upsertEventRsvp(
+    event.id,
+    user.id,
+    "maybe",
+    previousRsvp?.additional_guest_count ?? 0,
+  );
   return { wasMember, joined: true };
 }
 
 export async function rsvpDeclined(eventId: string, userId: string) {
-  await upsertEventRsvp(eventId, userId, "declined");
+  await upsertEventRsvp(eventId, userId, "declined", 0);
 }

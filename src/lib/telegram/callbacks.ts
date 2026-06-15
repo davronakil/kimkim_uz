@@ -2,10 +2,17 @@ import { upsertTelegramUser } from "@/lib/auth/session";
 import { runInBackground } from "@/lib/cloudflare";
 import {
   getEventByInviteCode,
+  getEventById,
   isEventMember,
   recordEventReferral,
 } from "@/lib/db/queries";
-import { rsvpDeclined, rsvpGoing, rsvpMaybe } from "@/lib/events/rsvp";
+import {
+  getEventRsvp,
+  rsvpDeclined,
+  rsvpGoing,
+  rsvpMaybe,
+  upsertEventRsvp,
+} from "@/lib/events/rsvp";
 import { isLocale } from "@/lib/locale";
 import {
   answerCallbackQuery,
@@ -14,10 +21,14 @@ import {
 } from "@/lib/telegram/bot";
 import { startLogExpenseForEvent } from "@/lib/telegram/flows/log-expense";
 import { t } from "@/lib/telegram/i18n";
-import { languagePickerKeyboard } from "@/lib/telegram/keyboards";
+import {
+  buildEventOpenUrl,
+  languagePickerKeyboard,
+  rsvpGuestCountKeyboard,
+} from "@/lib/telegram/keyboards";
 import { linkTelegramChat } from "@/lib/telegram/chat";
 import { resolveBotLocale } from "@/lib/telegram/locale";
-import { notifyMemberJoined } from "@/lib/telegram/notifications";
+import { notifyMemberJoined, notifyRsvpChanged } from "@/lib/telegram/notifications";
 import type { TelegramCallbackQuery } from "@/lib/telegram/types";
 
 function parseRsvpCallbackData(data: string, prefix: string) {
@@ -25,6 +36,42 @@ function parseRsvpCallbackData(data: string, prefix: string) {
   const [inviteCode, referrerUserId] = data.slice(prefix.length).split(":");
   if (!inviteCode) return null;
   return { inviteCode, referrerUserId };
+}
+
+function parseRsvpGuestCallbackData(data: string) {
+  if (!data.startsWith("rsvpg:")) return null;
+  const [, countRaw, eventId] = data.split(":");
+  const count = Number(countRaw);
+  if (!eventId || !Number.isInteger(count) || count < 0 || count > 20) return null;
+  return { eventId, count };
+}
+
+async function showGuestCountPicker({
+  chatId,
+  messageId,
+  eventId,
+  eventTitle,
+  locale,
+}: {
+  chatId: number;
+  messageId: number;
+  eventId: string;
+  eventTitle: string;
+  locale: ReturnType<typeof resolveBotLocale>;
+}) {
+  const strings = t(locale);
+  await sendTelegramMessage(chatId, strings.rsvpGuestPrompt(eventTitle), {
+    parse_mode: "HTML",
+    reply_markup: rsvpGuestCountKeyboard({
+      eventId,
+      labels: {
+        onlyMe: strings.rsvpGuestOnlyMe,
+        openEvent: strings.openEvent,
+        eventUrl: buildEventOpenUrl(eventId, locale),
+      },
+    }),
+  });
+  await editMessageReplyMarkup(chatId, messageId);
 }
 
 export async function handleCallbackQuery(query: TelegramCallbackQuery) {
@@ -61,6 +108,7 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
       return;
     }
 
+    const previousRsvp = await getEventRsvp(event.id, user.id);
     const { wasMember } = await rsvpGoing(event, user);
     if (!wasMember) {
       await recordEventReferral({
@@ -78,13 +126,29 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
           memberUserId: user.id,
         }),
       );
+    } else if (previousRsvp?.status !== "going") {
+      void runInBackground(
+        notifyRsvpChanged({
+          eventId: event.id,
+          member: user,
+          memberUserId: user.id,
+          status: "going",
+          additionalGuestCount: previousRsvp?.additional_guest_count ?? 0,
+        }),
+      );
     }
 
     await answerCallbackQuery(
       query.id,
       wasMember ? strings.rsvpAlreadyGoing : strings.rsvpGoingConfirmed,
     );
-    await editMessageReplyMarkup(message.chat.id, message.message_id);
+    await showGuestCountPicker({
+      chatId: message.chat.id,
+      messageId: message.message_id,
+      eventId: event.id,
+      eventTitle: event.title,
+      locale,
+    });
     return;
   }
 
@@ -101,7 +165,21 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
       return;
     }
 
+    const wasMember = await isEventMember(event.id, user.id);
+    const previousRsvp = await getEventRsvp(event.id, user.id);
     await rsvpDeclined(event.id, user.id);
+    if (wasMember && (previousRsvp?.status !== "declined" || previousRsvp.additional_guest_count !== 0)) {
+      void runInBackground(
+        notifyRsvpChanged({
+          eventId: event.id,
+          member: user,
+          memberUserId: user.id,
+          status: "declined",
+          additionalGuestCount: 0,
+          guestCountChanged: (previousRsvp?.additional_guest_count ?? 0) !== 0,
+        }),
+      );
+    }
     await answerCallbackQuery(query.id, strings.rsvpDeclinedConfirmed);
     await editMessageReplyMarkup(message.chat.id, message.message_id);
     return;
@@ -120,6 +198,7 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
       return;
     }
 
+    const previousRsvp = await getEventRsvp(event.id, user.id);
     const { wasMember } = await rsvpMaybe(event, user);
     if (!wasMember) {
       await recordEventReferral({
@@ -137,9 +216,68 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
           memberUserId: user.id,
         }),
       );
+    } else if (previousRsvp?.status !== "maybe") {
+      void runInBackground(
+        notifyRsvpChanged({
+          eventId: event.id,
+          member: user,
+          memberUserId: user.id,
+          status: "maybe",
+          additionalGuestCount: previousRsvp?.additional_guest_count ?? 0,
+        }),
+      );
     }
 
     await answerCallbackQuery(query.id, strings.rsvpMaybeConfirmed);
+    await showGuestCountPicker({
+      chatId: message.chat.id,
+      messageId: message.message_id,
+      eventId: event.id,
+      eventTitle: event.title,
+      locale,
+    });
+    return;
+  }
+
+  if (data.startsWith("rsvpg:")) {
+    const parsed = parseRsvpGuestCallbackData(data);
+    if (!parsed) {
+      await answerCallbackQuery(query.id);
+      return;
+    }
+
+    const event = await getEventById(parsed.eventId);
+    if (!event) {
+      await answerCallbackQuery(query.id, strings.inviteNotFound, true);
+      return;
+    }
+
+    const member = await isEventMember(event.id, user.id);
+    if (!member) {
+      await answerCallbackQuery(query.id, strings.expenseNotMember, true);
+      return;
+    }
+
+    const previousRsvp = await getEventRsvp(event.id, user.id);
+    const status = previousRsvp?.status ?? "going";
+    const previousCount = previousRsvp?.additional_guest_count ?? 0;
+
+    await upsertEventRsvp(event.id, user.id, status, parsed.count);
+
+    if (previousCount !== parsed.count) {
+      void runInBackground(
+        notifyRsvpChanged({
+          eventId: event.id,
+          member: user,
+          memberUserId: user.id,
+          status,
+          additionalGuestCount: parsed.count,
+          guestCountChanged: true,
+        }),
+      );
+    }
+
+    await answerCallbackQuery(query.id, strings.rsvpGuestSaved(parsed.count));
     await editMessageReplyMarkup(message.chat.id, message.message_id);
     return;
   }

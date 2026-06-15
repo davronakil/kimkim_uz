@@ -615,6 +615,7 @@ export async function listEventMembers(eventId: string): Promise<EventMember[]> 
          em.role,
          em.joined_at,
          COALESCE(r.status, 'going') AS rsvp_status,
+         COALESCE(r.additional_guest_count, 0) AS additional_guest_count,
          r.updated_at AS rsvp_updated_at,
          er.source AS referral_source,
          er.referrer_user_id,

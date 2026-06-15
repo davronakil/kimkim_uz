@@ -14,34 +14,56 @@ const statuses: Array<{ value: EventRsvpStatus; icon: typeof Check }> = [
 export function RsvpStatusPanel({
   eventId,
   initialStatus,
+  initialAdditionalGuestCount = 0,
   onChanged,
   readOnly = false,
 }: {
   eventId: string;
   initialStatus: EventRsvpStatus;
+  initialAdditionalGuestCount?: number;
   onChanged: () => void;
   readOnly?: boolean;
 }) {
   const t = useTranslations("events.rsvp");
   const common = useTranslations("common");
   const [status, setStatus] = useState<EventRsvpStatus>(initialStatus);
+  const [additionalGuestCount, setAdditionalGuestCount] = useState(
+    initialAdditionalGuestCount,
+  );
+  const [savedAdditionalGuestCount, setSavedAdditionalGuestCount] = useState(
+    initialAdditionalGuestCount,
+  );
   const [savingStatus, setSavingStatus] = useState<EventRsvpStatus | null>(null);
+  const [savingGuests, setSavingGuests] = useState(false);
   const [error, setError] = useState(false);
 
-  async function updateStatus(nextStatus: EventRsvpStatus) {
-    if (nextStatus === status || savingStatus || readOnly) return;
+  async function updateRsvp(nextStatus: EventRsvpStatus, nextGuestCount = additionalGuestCount) {
+    const normalizedGuestCount = nextStatus === "declined" ? 0 : nextGuestCount;
+    if (
+      (nextStatus === status && normalizedGuestCount === savedAdditionalGuestCount) ||
+      savingStatus ||
+      savingGuests ||
+      readOnly
+    ) {
+      return;
+    }
 
     setSavingStatus(nextStatus);
+    setSavingGuests(nextStatus === status);
     setError(false);
 
     const response = await fetch(`/api/events/${eventId}/rsvp`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ status: nextStatus }),
+      body: JSON.stringify({
+        status: nextStatus,
+        additional_guest_count: normalizedGuestCount,
+      }),
     });
 
     setSavingStatus(null);
+    setSavingGuests(false);
 
     if (!response.ok) {
       setError(true);
@@ -49,6 +71,8 @@ export function RsvpStatusPanel({
     }
 
     setStatus(nextStatus);
+    setAdditionalGuestCount(normalizedGuestCount);
+    setSavedAdditionalGuestCount(normalizedGuestCount);
     onChanged();
   }
 
@@ -69,7 +93,7 @@ export function RsvpStatusPanel({
               <button
                 key={value}
                 type="button"
-                onClick={() => void updateStatus(value)}
+                onClick={() => void updateRsvp(value)}
                 disabled={readOnly || Boolean(savingStatus)}
                 className={`kk-btn min-h-11 px-3 text-sm ${
                   active
@@ -84,6 +108,39 @@ export function RsvpStatusPanel({
           })}
         </div>
       </div>
+      {status !== "declined" ? (
+        <div className="mt-5 grid gap-3 border-t border-zinc-100 pt-4 sm:grid-cols-[1fr_auto] sm:items-end dark:border-zinc-800">
+          <label className="kk-label">
+            {t("additionalGuestsLabel")}
+            <input
+              type="number"
+              min="0"
+              max="20"
+              step="1"
+              inputMode="numeric"
+              value={additionalGuestCount}
+              onChange={(event) =>
+                setAdditionalGuestCount(
+                  Math.min(20, Math.max(0, Number(event.target.value) || 0)),
+                )
+              }
+              disabled={readOnly || savingGuests}
+              className="kk-input mt-2"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => void updateRsvp(status)}
+            disabled={readOnly || savingGuests || Boolean(savingStatus)}
+            className="kk-btn-secondary min-h-11"
+          >
+            {savingGuests ? common("loading") : common("save")}
+          </button>
+          <p className="text-sm text-zinc-500 sm:col-span-2 dark:text-zinc-400">
+            {t("additionalGuestsHint", { count: additionalGuestCount })}
+          </p>
+        </div>
+      ) : null}
       {error ? <p className="mt-3 text-sm text-red-600">{t("statusError")}</p> : null}
     </section>
   );
