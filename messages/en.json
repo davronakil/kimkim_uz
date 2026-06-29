@@ -620,6 +620,7 @@
       "cover": "Cover photo",
       "removeCover": "Remove cover",
       "submit": "Submit for review",
+      "submitPublish": "Publish listing",
       "submitError": "Could not save listing. Check the fields and try again.",
       "resubmitNotice": "Saving changes will send this listing back for review before it appears in the catalog again."
     }

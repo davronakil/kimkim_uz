@@ -620,6 +620,7 @@
       "cover": "Muqova",
       "removeCover": "Muqovani olib tashlash",
       "submit": "Tekshiruvga yuborish",
+      "submitPublish": "Nashr qilish",
       "submitError": "Saqlab bo'lmadi. Maydonlarni tekshirib qayta urinib ko'ring.",
       "resubmitNotice": "O'zgarishlardan keyin e'lon yana tekshiruvga yuboriladi."
     }
