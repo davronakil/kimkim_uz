@@ -3,6 +3,7 @@
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { EventCoverImage } from "@/components/events/event-cover-image";
+import { FormattedEventDescription } from "@/components/events/formatted-event-description";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import type { Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
@@ -89,9 +90,10 @@ export function PublicEventOverview({
               ) : null}
 
               {event.description ? (
-                <p className="rounded-2xl border border-zinc-100 bg-zinc-50 p-4 text-base leading-relaxed text-zinc-700 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200">
-                  {event.description}
-                </p>
+                <FormattedEventDescription
+                  text={event.description}
+                  className="whitespace-pre-wrap break-words rounded-2xl border border-zinc-100 bg-zinc-50 p-4 text-base leading-relaxed text-zinc-700 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200"
+                />
               ) : null}
 
               <div className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950/50">

@@ -8,6 +8,7 @@ import { cacheEventDetail, getCachedEventDetail } from "@/lib/offline/event-cach
 import { useOnlineStatus } from "@/lib/offline/use-online-status";
 import { ActivityTimelinePanel } from "@/components/events/activity-timeline-panel";
 import { EventCoverImage } from "@/components/events/event-cover-image";
+import { FormattedEventDescription } from "@/components/events/formatted-event-description";
 import { CommentThread } from "@/components/events/comment-thread";
 import { HostChecklistPanel } from "@/components/events/host-checklist-panel";
 import { ExpensePanel } from "@/components/events/expense-panel";
@@ -236,9 +237,10 @@ export function EventWorkspace({
               <h1 className="text-2xl font-semibold leading-tight sm:text-3xl">{event.title}</h1>
               <PaymentModeBadge mode={event.payment_mode ?? "free"} size="sm" />
               {event.description ? (
-                <p className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
-                  {event.description}
-                </p>
+                <FormattedEventDescription
+                  text={event.description}
+                  className="whitespace-pre-wrap break-words text-base leading-relaxed text-zinc-600 dark:text-zinc-300"
+                />
               ) : null}
             </div>
 
