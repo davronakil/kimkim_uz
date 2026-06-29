@@ -25,6 +25,7 @@ type JoinPreview = {
     | "location_name"
     | "cover_image_key"
     | "payment_mode"
+    | "expenses_enabled"
     | "ticket_price_cents"
     | "ticket_currency"
     | "invite_code"
@@ -277,7 +278,7 @@ export function JoinEventPanel({
             </p>
           </div>
 
-          {showsExpenseNote(paymentMode) ? (
+          {event.expenses_enabled && showsExpenseNote(paymentMode) ? (
             <p className="rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm leading-relaxed text-sky-950 dark:border-sky-900 dark:bg-sky-950 dark:text-sky-100">
               {t("expensesNote")}
             </p>

@@ -4,6 +4,10 @@ export type EventPaymentMode = (typeof eventPaymentModes)[number];
 
 export const defaultPaymentMode: EventPaymentMode = "free";
 
+export function areExpensesEnabledByDefault(paymentMode: EventPaymentMode) {
+  return paymentMode === "split";
+}
+
 export function isEventPaymentMode(value: string): value is EventPaymentMode {
   return (eventPaymentModes as readonly string[]).includes(value);
 }

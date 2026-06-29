@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
       location_lng: event.location_lng,
       cover_image_key: event.cover_image_key,
       payment_mode: event.payment_mode ?? "free",
+      expenses_enabled: event.expenses_enabled,
       ticket_price_cents: event.ticket_price_cents,
       ticket_currency: event.ticket_currency ?? "UZS",
       invite_code: event.invite_code,

@@ -92,6 +92,7 @@ export type Event = {
   location_lng: number | null;
   cover_image_key: string | null;
   payment_mode: EventPaymentMode;
+  expenses_enabled: boolean;
   expense_currency: string;
   ticket_price_cents: number | null;
   ticket_currency: string;

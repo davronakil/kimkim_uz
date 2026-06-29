@@ -332,6 +332,8 @@
       "ticketPrice": "Цена билета",
       "ticketPricePlaceholder": "например, 150000",
       "ticketCurrency": "Валюта",
+      "expensesToggle": "Включить расходы",
+      "expensesToggleHint": "Показывает раздел общих расходов для события. Для режима «Делим счёт» включено по умолчанию.",
       "expenseCurrency": "Валюта расходов",
       "expenseCurrencyHint": "Новые общие расходы и балансы будут в этой валюте.",
       "ticketHint": "Гости оплатят эту сумму через Stripe при присоединении."

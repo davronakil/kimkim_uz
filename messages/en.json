@@ -332,6 +332,8 @@
       "ticketPrice": "Ticket price",
       "ticketPricePlaceholder": "e.g. 150000",
       "ticketCurrency": "Currency",
+      "expensesToggle": "Enable expenses",
+      "expensesToggleHint": "Show the shared expenses section for this event. Split-the-bill events turn this on by default.",
       "expenseCurrency": "Expense currency",
       "expenseCurrencyHint": "New shared expenses and balances use this currency.",
       "ticketHint": "Guests will pay this amount via Stripe when they join."

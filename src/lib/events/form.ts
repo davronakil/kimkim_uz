@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { defaultPaymentMode, eventPaymentModes } from "@/lib/events/payment-mode";
+import {
+  areExpensesEnabledByDefault,
+  defaultPaymentMode,
+  eventPaymentModes,
+  isEventPaymentMode,
+} from "@/lib/events/payment-mode";
 import { defaultEventVisibility, eventVisibilityModes } from "@/lib/events/visibility";
 import { majorToCents } from "@/lib/utils";
 
@@ -16,6 +21,10 @@ export const eventFormSchema = z
     location_lat: z.number().optional(),
     location_lng: z.number().optional(),
     payment_mode: z.enum(eventPaymentModes).default(defaultPaymentMode),
+    expenses_enabled: z.preprocess(
+      (value) => value === true || value === "true" || value === "1" || value === "on",
+      z.boolean(),
+    ),
     expense_currency: z.enum(eventCurrencies).default("UZS"),
     ticket_price: z.coerce.number().optional(),
     ticket_currency: z.enum(eventCurrencies).default("UZS"),
@@ -41,6 +50,12 @@ export function resolveTicketPriceCents(paymentMode: string, ticketPrice?: numbe
 export function parseEventFormData(formData: FormData) {
   const lat = formData.get("location_lat");
   const lng = formData.get("location_lng");
+  const rawPaymentMode = formData.get("payment_mode");
+  const paymentMode =
+    typeof rawPaymentMode === "string" && isEventPaymentMode(rawPaymentMode)
+      ? rawPaymentMode
+      : defaultPaymentMode;
+  const rawExpensesEnabled = formData.get("expenses_enabled");
 
   return eventFormSchema.safeParse({
     title: formData.get("title"),
@@ -51,7 +66,9 @@ export function parseEventFormData(formData: FormData) {
     location_address: formData.get("location_address") || undefined,
     location_lat: lat ? Number(lat) : undefined,
     location_lng: lng ? Number(lng) : undefined,
-    payment_mode: formData.get("payment_mode") || defaultPaymentMode,
+    payment_mode: paymentMode,
+    expenses_enabled:
+      rawExpensesEnabled ?? String(areExpensesEnabledByDefault(paymentMode)),
     expense_currency: formData.get("expense_currency") || "UZS",
     ticket_price: formData.get("ticket_price") || undefined,
     ticket_currency: formData.get("ticket_currency") || "UZS",

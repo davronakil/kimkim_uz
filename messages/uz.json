@@ -332,6 +332,8 @@
       "ticketPrice": "Chipta narxi",
       "ticketPricePlaceholder": "masalan, 150000",
       "ticketCurrency": "Valyuta",
+      "expensesToggle": "Xarajatlarni yoqish",
+      "expensesToggleHint": "Bu yig'ilishda umumiy xarajatlar bo'limini ko'rsatadi. Hisobni bo'lish turida avtomatik yoqiladi.",
       "expenseCurrency": "Xarajat valyutasi",
       "expenseCurrencyHint": "Yangi umumiy xarajatlar va qarzlar shu valyutada bo'ladi.",
       "ticketHint": "Qo'shilishda mehmonlar shu summani Stripe orqali to'laydi."

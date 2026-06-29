@@ -113,6 +113,9 @@ export function EventWorkspace({
   }, [eventId, online]);
 
   const { event, members, comments, expenses, settlements, paymentSummaries } = data;
+  const expensesEnabled = event.expenses_enabled;
+  const visibleExpenses = expensesEnabled ? expenses : [];
+  const visibleSettlements = expensesEnabled ? settlements : [];
   const startsAt = new Date(event.starts_at);
   const owner = members.find((member) => member.role === "owner");
   const currentMember = members.find((member) => member.id === currentUserId);
@@ -132,7 +135,7 @@ export function EventWorkspace({
             event={event}
             members={members}
             comments={comments}
-            expenses={expenses}
+            expenses={visibleExpenses}
             paymentSummaries={paymentSummaries}
           />
         ) : null}
@@ -140,7 +143,7 @@ export function EventWorkspace({
           eventId={eventId}
           members={members}
           comments={comments}
-          expenses={expenses}
+          expenses={visibleExpenses}
           locale={locale}
           canPostToGroup={canEdit && Boolean(event.telegram_chat_id)}
         />
@@ -279,7 +282,7 @@ export function EventWorkspace({
           </div>
         </section>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className={`grid gap-3 ${expensesEnabled ? "grid-cols-2" : "grid-cols-1"}`}>
           <button
             type="button"
             onClick={() => scrollToSection("event-comments")}
@@ -296,22 +299,24 @@ export function EventWorkspace({
               {t("sectionNav.commentsCount", { count: comments.length })}
             </span>
           </button>
-          <button
-            type="button"
-            onClick={() => scrollToSection("event-expenses")}
-            className="kk-card flex min-h-[5.5rem] flex-col items-start gap-2 p-4 text-left transition active:scale-[0.99] sm:min-h-0 sm:p-5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:sm:hover:border-emerald-900"
-          >
-            <span className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-              <Receipt className="h-5 w-5" />
-              {t("tabs.expenses")}
-            </span>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              {t("sectionNav.expensesHint")}
-            </span>
-            <span className="mt-auto text-sm font-medium text-zinc-700 dark:text-zinc-200">
-              {t("sectionNav.expensesCount", { count: expenses.length })}
-            </span>
-          </button>
+          {expensesEnabled ? (
+            <button
+              type="button"
+              onClick={() => scrollToSection("event-expenses")}
+              className="kk-card flex min-h-[5.5rem] flex-col items-start gap-2 p-4 text-left transition active:scale-[0.99] sm:min-h-0 sm:p-5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:sm:hover:border-emerald-900"
+            >
+              <span className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                <Receipt className="h-5 w-5" />
+                {t("tabs.expenses")}
+              </span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                {t("sectionNav.expensesHint")}
+              </span>
+              <span className="mt-auto text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                {t("sectionNav.expensesCount", { count: visibleExpenses.length })}
+              </span>
+            </button>
+          ) : null}
         </div>
 
         <section id="event-comments" className="scroll-mt-6 space-y-4">
@@ -335,32 +340,34 @@ export function EventWorkspace({
           />
         </section>
 
-        <section id="event-expenses" className="scroll-mt-6 space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className="inline-flex rounded-xl bg-emerald-50 p-2 dark:bg-emerald-950/50">
-              <Receipt className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+        {expensesEnabled ? (
+          <section id="event-expenses" className="scroll-mt-6 space-y-4">
+            <div className="flex items-center gap-2.5">
+              <div className="inline-flex rounded-xl bg-emerald-50 p-2 dark:bg-emerald-950/50">
+                <Receipt className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold sm:text-xl">{t("expenses.title")}</h2>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  {t("sectionNav.expensesHint")}
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-semibold sm:text-xl">{t("expenses.title")}</h2>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {t("sectionNav.expensesHint")}
-              </p>
-            </div>
-          </div>
-          <ExpensePanel
-            key={members
-              .map((member) => `${member.id}:${member.additional_guest_count ?? 0}`)
-              .join("-")}
-            eventId={eventId}
-            members={members}
-            expenses={expenses}
-            settlements={settlements}
-            locale={locale}
-            currency={event.expense_currency ?? "UZS"}
-            onAdded={load}
-            readOnly={!online}
-          />
-        </section>
+            <ExpensePanel
+              key={members
+                .map((member) => `${member.id}:${member.additional_guest_count ?? 0}`)
+                .join("-")}
+              eventId={eventId}
+              members={members}
+              expenses={visibleExpenses}
+              settlements={visibleSettlements}
+              locale={locale}
+              currency={event.expense_currency ?? "UZS"}
+              onAdded={load}
+              readOnly={!online}
+            />
+          </section>
+        ) : null}
 
         {renderOverview()}
       </div>

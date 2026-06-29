@@ -71,6 +71,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   if (!event) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  if (!event.expenses_enabled) {
+    return NextResponse.json({ error: "Expenses are disabled for this event" }, { status: 403 });
+  }
 
   const parsed = expenseSchema.safeParse(await request.json());
   if (!parsed.success) {
@@ -129,6 +132,14 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
   const member = await isEventMember(eventId, user.id);
   if (!member) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const event = await getEventById(eventId);
+  if (!event) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (!event.expenses_enabled) {
+    return NextResponse.json({ error: "Expenses are disabled for this event" }, { status: 403 });
   }
 
   const expense = await getExpenseForEvent(eventId, expenseId);

@@ -74,7 +74,7 @@ export default async function EventDetailPage({
   const [members, comments, expenses, paymentSummaries] = await Promise.all([
     listEventMembers(id),
     listEventComments(id),
-    listEventExpenses(id),
+    event.expenses_enabled ? listEventExpenses(id) : Promise.resolve([]),
     listEventPaymentSummaries(id),
   ]);
 

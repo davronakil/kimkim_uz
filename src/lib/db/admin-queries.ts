@@ -224,6 +224,7 @@ export async function listAdminEvents({
   return (result.results ?? []).map((row) => ({
     ...row,
     payment_mode: row.payment_mode ?? "free",
+    expenses_enabled: Boolean(row.expenses_enabled),
     ticket_currency: row.ticket_currency ?? "UZS",
     visibility: row.visibility === "public" ? "public" : "private",
     telegram_message_thread_id:
@@ -287,6 +288,7 @@ export async function getEventByIdForAdmin(eventId: string): Promise<Event | nul
   return {
     ...row,
     payment_mode: row.payment_mode ?? "free",
+    expenses_enabled: Boolean(row.expenses_enabled),
     ticket_currency: row.ticket_currency ?? "UZS",
     visibility: row.visibility === "public" ? "public" : "private",
     telegram_message_thread_id:

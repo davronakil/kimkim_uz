@@ -1,9 +1,10 @@
 "use client";
 
-import { Banknote, CircleDollarSign, Gift, Users } from "lucide-react";
+import { Banknote, CircleDollarSign, Gift, Receipt, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
+  areExpensesEnabledByDefault,
   defaultPaymentMode,
   eventPaymentModes,
   type EventPaymentMode,
@@ -20,17 +21,23 @@ const modeIcons: Record<EventPaymentMode, typeof Gift> = {
 
 export function PaymentModePicker({
   defaultValue = defaultPaymentMode,
+  defaultExpensesEnabled,
   defaultExpenseCurrency = "UZS",
   defaultTicketPriceCents,
   defaultTicketCurrency = "UZS",
 }: {
   defaultValue?: EventPaymentMode;
+  defaultExpensesEnabled?: boolean;
   defaultExpenseCurrency?: string;
   defaultTicketPriceCents?: number | null;
   defaultTicketCurrency?: string;
 }) {
   const t = useTranslations("events.paymentMode");
   const [selected, setSelected] = useState<EventPaymentMode>(defaultValue);
+  const [expensesEnabled, setExpensesEnabled] = useState(
+    defaultExpensesEnabled ?? areExpensesEnabledByDefault(defaultValue),
+  );
+  const [expensesTouched, setExpensesTouched] = useState(false);
   const defaultPrice =
     defaultTicketPriceCents && defaultTicketPriceCents > 0
       ? String(centsToMajor(defaultTicketPriceCents))
@@ -48,7 +55,12 @@ export function PaymentModePicker({
             <button
               key={mode}
               type="button"
-              onClick={() => setSelected(mode)}
+              onClick={() => {
+                setSelected(mode);
+                if (!expensesTouched) {
+                  setExpensesEnabled(areExpensesEnabledByDefault(mode));
+                }
+              }}
               className={`flex min-h-[5.5rem] touch-manipulation flex-col items-start gap-2 rounded-2xl border p-3 text-left transition active:scale-[0.98] sm:min-h-24 sm:p-4 ${
                 active
                   ? "border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500/30 dark:border-emerald-600 dark:bg-emerald-950/50"
@@ -65,6 +77,40 @@ export function PaymentModePicker({
             </button>
           );
         })}
+      </div>
+
+      <div className="grid gap-3 rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+        <input type="hidden" name="expenses_enabled" value={String(expensesEnabled)} />
+        <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white text-emerald-700 dark:bg-zinc-900 dark:text-emerald-300">
+          <Receipt className="h-5 w-5" />
+        </span>
+        <label htmlFor="expenses_enabled_toggle" className="space-y-1">
+          <span className="block text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+            {t("expensesToggle")}
+          </span>
+          <span className="block text-sm text-zinc-500 dark:text-zinc-400">
+            {t("expensesToggleHint")}
+          </span>
+        </label>
+        <button
+          id="expenses_enabled_toggle"
+          type="button"
+          role="switch"
+          aria-checked={expensesEnabled}
+          onClick={() => {
+            setExpensesTouched(true);
+            setExpensesEnabled((enabled) => !enabled);
+          }}
+          className={`relative h-8 w-14 rounded-full transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
+            expensesEnabled ? "bg-emerald-600" : "bg-zinc-300 dark:bg-zinc-700"
+          }`}
+        >
+          <span
+            className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition ${
+              expensesEnabled ? "left-7" : "left-1"
+            }`}
+          />
+        </button>
       </div>
 
       <div className="grid gap-2 rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950 sm:grid-cols-[1fr_auto] sm:items-center">

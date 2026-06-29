@@ -21,6 +21,7 @@ import { nestComments } from "@/lib/expense/settlement";
 function normalizeEvent<T extends Partial<Event>>(
   row: T | null,
 ): (T & {
+  expenses_enabled: boolean;
   expense_currency: string;
   payment_mode: EventPaymentMode;
   visibility: Event["visibility"];
@@ -29,6 +30,10 @@ function normalizeEvent<T extends Partial<Event>>(
   return {
     ...row,
     payment_mode: (row.payment_mode as EventPaymentMode | undefined) ?? "free",
+    expenses_enabled:
+      typeof row.expenses_enabled === "boolean"
+        ? row.expenses_enabled
+        : Boolean(row.expenses_enabled),
     expense_currency: row.expense_currency ?? "UZS",
     ticket_currency: row.ticket_currency ?? "UZS",
     visibility: row.visibility === "public" ? "public" : "private",
