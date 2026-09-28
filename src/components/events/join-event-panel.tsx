@@ -7,6 +7,7 @@ import { CalendarDays, MapPin, Sparkles, Users } from "lucide-react";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
+import { ConfirmContinueCard } from "@/components/ui/confirm-continue-card";
 import type { Locale } from "@/i18n/config";
 import { useRouter } from "@/i18n/navigation";
 import { intlLocale } from "@/lib/locale";
@@ -60,9 +61,11 @@ export function JoinEventPanel({
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [confirmingCheckout, setConfirmingCheckout] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
   const [rsvpMessage, setRsvpMessage] = useState<string | null>(null);
   const referrerUserId = searchParams.get("ref");
+  const checkoutSessionId = searchParams.get("session_id");
 
   const load = useCallback(async () => {
     const response = await fetch(`/api/events/join?code=${encodeURIComponent(code)}`, {
@@ -87,40 +90,37 @@ export function JoinEventPanel({
   }, [load]);
 
   useEffect(() => {
-    const sessionId = searchParams.get("session_id");
-    const cancelled = searchParams.get("checkout") === "cancelled";
-
-    if (cancelled) {
+    if (searchParams.get("checkout") === "cancelled") {
       setCheckoutMessage(t("checkoutCancelled"));
-      return;
     }
+  }, [searchParams, t]);
 
-    if (!sessionId) return;
+  const confirmCheckout = useCallback(async () => {
+    if (!checkoutSessionId) return;
 
-    async function confirmCheckout() {
-      setCheckoutMessage(t("confirmingPayment"));
-      const response = await fetch(
-        `/api/events/join/checkout?session_id=${encodeURIComponent(sessionId!)}`,
-        { credentials: "include" },
-      );
+    setConfirmingCheckout(true);
+    setCheckoutMessage(t("confirmingPayment"));
 
-      if (response.ok) {
-        const data = (await response.json()) as { joined?: boolean; eventId?: string };
-        if (data.joined && data.eventId) {
-          setCheckoutMessage(t("paymentSuccess"));
-          router.replace(`/join/${code}`);
-          router.push(`/events/${data.eventId}`);
-          router.refresh();
-          return;
-        }
+    const response = await fetch(
+      `/api/events/join/checkout/confirm?session_id=${encodeURIComponent(checkoutSessionId)}`,
+      { method: "POST", credentials: "include" },
+    );
+
+    if (response.ok) {
+      const data = (await response.json()) as { joined?: boolean; eventId?: string };
+      if (data.joined && data.eventId) {
+        setCheckoutMessage(t("paymentSuccess"));
+        router.replace(`/join/${code}`);
+        router.push(`/events/${data.eventId}`);
+        router.refresh();
+        return;
       }
-
-      setCheckoutMessage(t("paymentPending"));
-      void load();
     }
 
-    void confirmCheckout();
-  }, [code, load, router, searchParams, t]);
+    setCheckoutMessage(t("paymentPending"));
+    setConfirmingCheckout(false);
+    void load();
+  }, [checkoutSessionId, code, load, router, t]);
 
   async function join(payLater = false, rsvpStatus: EventRsvpStatus = "going") {
     setJoining(true);
@@ -171,6 +171,18 @@ export function JoinEventPanel({
 
     setCheckoutMessage(t("checkoutError"));
     setPaying(false);
+  }
+
+  if (checkoutSessionId) {
+    return (
+      <ConfirmContinueCard
+        title={t("confirmCheckoutTitle")}
+        description={t("confirmCheckoutBody")}
+        pending={confirmingCheckout}
+        message={checkoutMessage}
+        onConfirm={() => void confirmCheckout()}
+      />
+    );
   }
 
   if (loading) {

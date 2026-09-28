@@ -16,6 +16,11 @@
     "noEvents": "Hali yig'ilishlar yo'q. Birinchisini yarating va odamlarni chaqiring.",
     "language": "Til"
   },
+  "linkGate": {
+    "continue": "Davom etish",
+    "working": "Bir soniya...",
+    "hint": "Bu havola faqat bir marta ishlaydi. Havola ko'rinishi va ilova ichidagi brauzerlar uni sarflab yubormasligi uchun bosishingizni kutamiz."
+  },
   "meta": {
     "title": "KimKim — Kim, Qayerda, Qachon?",
     "description": "Kim keladi, qayerda uchrashamiz, hisob kitob + biznes katalog. To'y, gap, choyxona. Hammasi bir joyda. Telegram bilan ulangan.",
@@ -427,6 +432,8 @@
     "payLaterNote": "Tashkilotchi to'lov holatimni ko'radi va KimKimdan tashqarida to'laganimdan keyin meni to'langan deb belgilaydi.",
     "startingCheckout": "To'lov ochilmoqda...",
     "confirmingPayment": "To'lov tekshirilmoqda...",
+    "confirmCheckoutTitle": "To'lovni tasdiqlang",
+    "confirmCheckoutBody": "Davom etishni bosing — chiptangizni yakunlab, sizni mehmonlar ro'yxatiga qo'shamiz.",
     "paymentSuccess": "To'lov qabul qilindi — ro'yxatdaman!",
     "paymentPending": "To'lov qabul qilindi. yig'ilish ko'rinmasa, birozdan keyin yangilang.",
     "checkoutCancelled": "To'lov bekor qilindi. Tayyor bo'lsangiz, qayta urinib ko'ring.",
@@ -541,6 +548,8 @@
     "slotPurchasePending": "To'lov hali qayta ishlanmoqda. Birozdan keyin yangilang.",
     "slotPurchaseCancelled": "To'lov bekor qilindi.",
     "slotPurchaseError": "To'lovni boshlab bo'lmadi. Keyinroq urinib ko'ring.",
+    "confirmSlotTitle": "Xaridni tasdiqlang",
+    "confirmSlotBody": "Davom etishni bosing — qo'shimcha e'lon slotini hisobingizga qo'shamiz.",
     "vouch": {
       "vouch": "Tavsiya qilaman",
       "vouched": "Tavsiya qilaman",

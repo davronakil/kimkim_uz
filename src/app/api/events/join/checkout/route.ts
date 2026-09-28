@@ -9,32 +9,11 @@ import {
   isEventMember,
 } from "@/lib/db/queries";
 import { createEventCheckoutSession, eventPaymentsEnabled } from "@/lib/stripe/checkout";
-import { fulfillCheckoutSession } from "@/lib/stripe/fulfill";
 
 const checkoutSchema = z.object({
   code: z.string().min(4).max(32),
   referrer_user_id: z.string().max(128).optional().nullable(),
 });
-
-export async function GET(request: NextRequest) {
-  const user = await getCurrentUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const sessionId = request.nextUrl.searchParams.get("session_id");
-  if (!sessionId) {
-    return NextResponse.json({ error: "Missing session_id" }, { status: 400 });
-  }
-
-  try {
-    const result = await fulfillCheckoutSession(sessionId, user.id);
-    return NextResponse.json(result);
-  } catch (error) {
-    console.error("Checkout confirmation failed:", error);
-    return NextResponse.json({ error: "Could not confirm payment" }, { status: 400 });
-  }
-}
 
 export async function POST(request: NextRequest) {
   const user = await getCurrentUser();
