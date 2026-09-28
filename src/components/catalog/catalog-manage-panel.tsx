@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { CategoryBadge } from "@/components/catalog/category-badge";
+import { ConfirmContinueCard } from "@/components/ui/confirm-continue-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatMoney } from "@/lib/utils";
 import type { BusinessListing } from "@/types";
@@ -41,9 +42,11 @@ export function CatalogManagePanel({
   const [extraSlot, setExtraSlot] = useState<ExtraSlotInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [buying, setBuying] = useState(false);
+  const [confirmingSlot, setConfirmingSlot] = useState(false);
+  const [slotConfirmed, setSlotConfirmed] = useState(false);
   const [slotMessage, setSlotMessage] = useState<string | null>(null);
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     const response = await fetch("/api/catalog/me", { credentials: "include" });
     if (!response.ok) return;
     const data = (await response.json()) as {
@@ -54,26 +57,36 @@ export function CatalogManagePanel({
     setListings(data.listings);
     setSlots(data.slots);
     setExtraSlot(data.extraSlot);
-  }
+  }, []);
 
   useEffect(() => {
     void (async () => {
-      if (slotSessionId) {
-        const response = await fetch(
-          `/api/catalog/slots/checkout?session_id=${encodeURIComponent(slotSessionId)}`,
-          { credentials: "include" },
-        );
-        if (response.ok) {
-          const result = (await response.json()) as { fulfilled?: boolean };
-          setSlotMessage(result.fulfilled ? t("slotPurchaseSuccess") : t("slotPurchasePending"));
-        }
-        router.replace("/catalog/manage");
-      }
-
       await loadData();
       setLoading(false);
     })();
-  }, [slotSessionId, router, t]);
+  }, [loadData]);
+
+  const confirmSlotPurchase = useCallback(async () => {
+    if (!slotSessionId) return;
+
+    setConfirmingSlot(true);
+    const response = await fetch(
+      `/api/catalog/slots/checkout/confirm?session_id=${encodeURIComponent(slotSessionId)}`,
+      { method: "POST", credentials: "include" },
+    );
+
+    if (response.ok) {
+      const result = (await response.json()) as { fulfilled?: boolean };
+      setSlotMessage(result.fulfilled ? t("slotPurchaseSuccess") : t("slotPurchasePending"));
+    } else {
+      setSlotMessage(t("slotPurchaseError"));
+    }
+
+    setSlotConfirmed(true);
+    router.replace("/catalog/manage");
+    await loadData();
+    setConfirmingSlot(false);
+  }, [loadData, router, slotSessionId, t]);
 
   useEffect(() => {
     if (slotCheckoutCancelled) {
@@ -108,6 +121,18 @@ export function CatalogManagePanel({
     if (status === "approved") return t("statusApproved");
     if (status === "rejected") return t("statusRejected");
     return t("statusPending");
+  }
+
+  if (slotSessionId && !slotConfirmed) {
+    return (
+      <ConfirmContinueCard
+        title={t("confirmSlotTitle")}
+        description={t("confirmSlotBody")}
+        pending={confirmingSlot}
+        message={slotMessage}
+        onConfirm={() => void confirmSlotPurchase()}
+      />
+    );
   }
 
   if (loading) {

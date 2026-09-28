@@ -39,6 +39,7 @@ Bot strings are separate: `src/lib/telegram/i18n.ts`.
 - OG images: cover → map → generated card (`src/lib/og/`)
 - Platform admin / superadmin: `src/lib/platform/admin.ts` (`davron_tx`)
 - Admin UI: `src/components/admin/admin-workspace.tsx`
+- One-time links (Stripe return URLs, anything redeemed by opening a URL): redeem via `POST .../confirm` behind `ConfirmContinueCard` (`src/components/ui/confirm-continue-card.tsx`) — never on page load, so link previews and in-app browsers can't spend them
 
 ## Public pages
 

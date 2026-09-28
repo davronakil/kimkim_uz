@@ -16,6 +16,11 @@
     "noEvents": "No events yet. Create your first gathering and invite your people.",
     "language": "Language"
   },
+  "linkGate": {
+    "continue": "Continue",
+    "working": "Just a moment...",
+    "hint": "This link works only once. We wait for your tap so link previews and in-app browsers can't use it up first."
+  },
   "meta": {
     "title": "KimKim - Gatherings, invites, and shared costs",
     "description": "Plan the gathering, invite your people, track RSVPs, and split costs in one calm place. Built around Telegram.",
@@ -427,6 +432,9 @@
     "payLaterNote": "The host will track your payment status and can mark you paid after you settle outside KimKim.",
     "startingCheckout": "Opening checkout...",
     "confirmingPayment": "Confirming your payment...",
+    "confirmCheckoutTitle": "Confirm your payment",
+    "confirmCheckoutBody": "Tap continue and we'll finish your ticket and add you to the guest list.",
+    "confirmSignInFirst": "Sign in with Telegram first, then tap continue to finish your payment.",
     "paymentSuccess": "Payment received — welcome to the event!",
     "paymentPending": "Payment received. If you don't see the event yet, refresh in a moment.",
     "checkoutCancelled": "Checkout cancelled. You can try again when you're ready.",
@@ -541,6 +549,8 @@
     "slotPurchasePending": "Payment is still processing. Refresh in a moment.",
     "slotPurchaseCancelled": "Checkout was cancelled.",
     "slotPurchaseError": "Could not start checkout. Try again later.",
+    "confirmSlotTitle": "Confirm your purchase",
+    "confirmSlotBody": "Tap continue and we'll add your extra listing slot.",
     "vouch": {
       "vouch": "Vouch for this business",
       "vouched": "You vouched",
