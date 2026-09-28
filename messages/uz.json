@@ -434,6 +434,7 @@
     "confirmingPayment": "To'lov tekshirilmoqda...",
     "confirmCheckoutTitle": "To'lovni tasdiqlang",
     "confirmCheckoutBody": "Davom etishni bosing — chiptangizni yakunlab, sizni mehmonlar ro'yxatiga qo'shamiz.",
+    "confirmSignInFirst": "Avval Telegram orqali kiring, so'ng to'lovni yakunlash uchun davom etishni bosing.",
     "paymentSuccess": "To'lov qabul qilindi — ro'yxatdaman!",
     "paymentPending": "To'lov qabul qilindi. yig'ilish ko'rinmasa, birozdan keyin yangilang.",
     "checkoutCancelled": "To'lov bekor qilindi. Tayyor bo'lsangiz, qayta urinib ko'ring.",

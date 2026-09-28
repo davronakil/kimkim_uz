@@ -117,7 +117,7 @@ export function JoinEventPanel({
       }
     }
 
-    setCheckoutMessage(t("paymentPending"));
+    setCheckoutMessage(response.status === 401 ? t("confirmSignInFirst") : t("paymentPending"));
     setConfirmingCheckout(false);
     void load();
   }, [checkoutSessionId, code, load, router, t]);
