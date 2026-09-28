@@ -97,13 +97,14 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   const db = await getDb();
   await db
     .prepare(
-      "UPDATE expenses SET payer_id = ?, amount_cents = ?, currency = ?, description = ? WHERE id = ?",
+      "UPDATE expenses SET payer_id = ?, amount_cents = ?, currency = ?, description = ?, split_mode = ? WHERE id = ?",
     )
     .bind(
       parsed.data.payer_id,
       built.amountCents,
       parsed.data.currency ?? event.expense_currency ?? "UZS",
       parsed.data.description,
+      parsed.data.split_mode,
       expenseId,
     )
     .run();

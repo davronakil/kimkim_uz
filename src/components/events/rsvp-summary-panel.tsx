@@ -91,48 +91,30 @@ export function RsvpSummaryPanel({ members }: { members: EventMember[] }) {
   }
 
   return (
-    <section className="kk-card space-y-4 p-5 sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="kk-section-title">{t("summaryTitle")}</h2>
-          <p className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-            {t("summarySubtitle", {
-              count: members.length,
-              partyCount: summary.partyCounts.going + summary.partyCounts.maybe,
-            })}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => void copySummary()}
-          className="kk-btn-secondary min-h-10 w-full gap-2 text-sm sm:w-auto"
-        >
-          <ClipboardCopy className="h-4 w-4" />
-          {copied ? t("copied") : t("copy")}
-        </button>
-      </div>
-      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="grid flex-1 grid-cols-3 gap-2">
         {statuses.map((status) => {
           const { icon: Icon, className } = statusStyles[status];
+          const count = status === "declined" ? summary.counts[status] : summary.partyCounts[status];
           return (
-            <div
-              key={status}
-              className={`min-h-24 rounded-2xl p-3 sm:p-4 ${className}`}
-            >
-              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-              <div className="mt-3 text-2xl font-semibold leading-none sm:text-3xl">
-                {summary.counts[status]}
+            <div key={status} className={`rounded-xl px-3 py-2.5 ${className}`}>
+              <div className="flex items-center gap-1.5 text-xs font-medium">
+                <Icon className="h-3.5 w-3.5" />
+                {t(status)}
               </div>
-              <div className="mt-1 text-xs font-medium sm:text-sm">{t(status)}</div>
-              {status !== "declined" ? (
-                <div className="mt-1 text-xs opacity-80">
-                  {t("partyCount", { count: summary.partyCounts[status] })}
-                </div>
-              ) : null}
+              <div className="mt-1 text-xl font-semibold leading-none">{count}</div>
             </div>
           );
         })}
       </div>
-    </section>
+      <button
+        type="button"
+        onClick={() => void copySummary()}
+        className="kk-btn-secondary min-h-10 w-full gap-2 text-sm sm:w-auto"
+      >
+        <ClipboardCopy className="h-4 w-4" />
+        {copied ? t("copied") : t("copy")}
+      </button>
+    </div>
   );
 }

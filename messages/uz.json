@@ -355,6 +355,8 @@
       "comments": "Chat",
       "expenses": "Hisob-Kitob"
     },
+    "moreTitle": "Yana",
+    "moreHint": "Bildirishnomalar va tashkilotchi vositalari",
     "sectionNav": {
       "commentsHint": "Reja, joy va yangiliklar haqida gapiring",
       "expensesHint": "Umumiy xarajatlar va balanslarni kuzating",

@@ -10,6 +10,7 @@ import {
   listEventMembers,
   listEventPaymentSummaries,
 } from "@/lib/db/queries";
+import { presentEventExpenses } from "@/lib/expense/shares";
 import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
 import { parseEventFormData, resolveTicketPriceCents } from "@/lib/events/form";
 import { notifyEventUpdated } from "@/lib/telegram/notifications";
@@ -42,8 +43,9 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     listEventPaymentSummaries(id),
   ]);
 
+  const sharedExpenses = presentEventExpenses(expenses, members);
   const settlements = calculateSettlementsFromExpenses(
-    expenses.map((expense) => ({
+    sharedExpenses.map((expense) => ({
       payer_id: expense.payer_id,
       amount_cents: expense.amount_cents,
       currency: expense.currency,
@@ -60,7 +62,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     event,
     members,
     comments,
-    expenses,
+    expenses: sharedExpenses,
     settlements,
     paymentSummaries,
     canEdit,

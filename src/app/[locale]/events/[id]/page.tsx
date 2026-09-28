@@ -9,7 +9,9 @@ import { buildEventDetailMetadata } from "@/lib/event-metadata";
 import { isPublicEvent } from "@/lib/events/visibility";
 import { JsonLd } from "@/lib/seo";
 import { displayName } from "@/lib/utils";
+import { presentEventExpenses } from "@/lib/expense/shares";
 import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
+import { goingHeadcount } from "@/lib/events/headcount";
 import {
   getEventById,
   getEventMemberRole,
@@ -63,7 +65,7 @@ export default async function EventDetailPage({
         <PublicEventOverview
           event={event}
           locale={locale}
-          memberCount={members.length}
+          memberCount={goingHeadcount(members)}
           loggedIn={Boolean(user)}
           creatorName={owner ? displayName(owner) : null}
         />
@@ -78,8 +80,9 @@ export default async function EventDetailPage({
     listEventPaymentSummaries(id),
   ]);
 
+  const sharedExpenses = presentEventExpenses(expenses, members);
   const settlements = calculateSettlementsFromExpenses(
-    expenses.map((expense) => ({
+    sharedExpenses.map((expense) => ({
       payer_id: expense.payer_id,
       amount_cents: expense.amount_cents,
       currency: expense.currency,
@@ -113,7 +116,7 @@ export default async function EventDetailPage({
       canLeave={role === "member"}
       showNotifyBanner={!user.telegram_chat_id}
       currentUserId={user.id}
-      initialData={{ event, members, comments, expenses, settlements, paymentSummaries }}
+      initialData={{ event, members, comments, expenses: sharedExpenses, settlements, paymentSummaries }}
     />
     </>
   );

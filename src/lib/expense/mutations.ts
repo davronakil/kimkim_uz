@@ -11,6 +11,37 @@ export type ExpenseInput = {
   custom_splits?: Array<{ user_id: string; amount: number }>;
 };
 
+export function allocateWeightedCents(
+  amountCents: number,
+  entries: Array<{ user_id: string; weight: number }>,
+): Array<{ user_id: string; amount_cents: number }> {
+  const totalWeight = entries.reduce((sum, entry) => sum + entry.weight, 0);
+  if (totalWeight <= 0 || entries.length === 0) return [];
+
+  let assigned = 0;
+  const splits = entries.map((entry) => {
+    const cents = Math.floor((amountCents * entry.weight) / totalWeight);
+    assigned += cents;
+    return { user_id: entry.user_id, amount_cents: cents };
+  });
+
+  let remainder = amountCents - assigned;
+  for (const split of splits) {
+    if (remainder <= 0) break;
+    split.amount_cents += 1;
+    remainder -= 1;
+  }
+
+  return splits;
+}
+
+export function isEvenPerPersonSplit(amountCents: number, amounts: number[]): boolean {
+  if (amounts.length === 0) return false;
+  const base = Math.floor(amountCents / amounts.length);
+  if (amounts.reduce((sum, amount) => sum + amount, 0) !== amountCents) return false;
+  return amounts.every((amount) => amount === base || amount === base + 1);
+}
+
 export function buildExpenseSplits(
   input: ExpenseInput,
   memberIds: Set<string>,
@@ -35,25 +66,12 @@ export function buildExpenseSplits(
       const weight = Math.max(1, Math.floor(input.split_weights?.[userId] ?? 1));
       return { user_id: userId, weight };
     });
-    const totalWeight = weightedSplits.reduce((sum, split) => sum + split.weight, 0);
 
-    if (totalWeight === 0) {
+    if (weightedSplits.reduce((sum, split) => sum + split.weight, 0) === 0) {
       return { ok: false, error: "Invalid split member" };
     }
 
-    let assigned = 0;
-    splitEntries = weightedSplits.map((split) => {
-      const cents = Math.floor((amountCents * split.weight) / totalWeight);
-      assigned += cents;
-      return { user_id: split.user_id, amount_cents: cents };
-    });
-
-    let remainder = amountCents - assigned;
-    for (const split of splitEntries) {
-      if (remainder <= 0) break;
-      split.amount_cents += 1;
-      remainder -= 1;
-    }
+    splitEntries = allocateWeightedCents(amountCents, weightedSplits);
   } else {
     const customSplits = input.custom_splits ?? [];
     let total = 0;
