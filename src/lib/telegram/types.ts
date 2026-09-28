@@ -14,6 +14,13 @@ export type TelegramChat = {
   id: number;
   type?: "private" | "group" | "supergroup" | "channel";
   title?: string;
+  is_forum?: boolean;
+};
+
+export type TelegramForumTopicCreated = {
+  name: string;
+  icon_color?: number;
+  icon_custom_emoji_id?: string;
 };
 
 export type TelegramLocation = {
@@ -29,10 +36,14 @@ export type TelegramVenue = {
 export type TelegramMessage = {
   chat: TelegramChat;
   message_id?: number;
+  message_thread_id?: number;
+  is_topic_message?: boolean;
   text?: string;
   from?: TelegramUser;
   location?: TelegramLocation;
   venue?: TelegramVenue;
+  reply_to_message?: TelegramMessage;
+  forum_topic_created?: TelegramForumTopicCreated;
   new_chat_members?: Array<{
     id: number;
     is_bot?: boolean;

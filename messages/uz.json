@@ -139,7 +139,7 @@
       },
       "telegram": {
         "title": "Telegram guruhi",
-        "body": "Taklif, eslatma va faollik xabarlarini guruhga yuborish uchun ulang."
+        "body": "Taklif, eslatma va faollik xabarlarini guruhga yoki bitta mavzuga yuborish uchun ulang."
       },
       "activity": {
         "title": "Faollik",
@@ -410,12 +410,15 @@
       "title": "Telegram guruhi",
       "subtitle": "Qo'shilishlar, yangiliklar va eslatmalar to'g'ridan-to'g'ri guruhga tushadi.",
       "step1": "KimKim botini Telegram guruhga qo'shing (pastdagi tugma).",
-      "step2": "Organizator sifatida guruhda shu buyruqni yuboring:",
+      "step2": "Organizator sifatida shu buyruqni guruhda yuboring. Mavzuli guruhda — KimKim yozishi kerak bo'lgan mavzuda yuboring, General da emas:",
       "copyCommand": "Buyruqni copy",
       "copied": "Copy bo'ldi!",
       "addBotToGroup": "Botni guruhga qo'shish",
       "linked": "Guruh ulandi",
+      "linkedTopic": "«{topic}» mavzusiga ulandi",
+      "linkedTopicUnnamed": "Guruh mavzusiga ulandi",
       "linkedHint": "KimKim kimdir qo'shilganda, reja o'zgarganda va yig'ilish oldidan xabar beradi.",
+      "linkedHintTopic": "Qo'shilishlar, o'zgarishlar va eslatmalar shu mavzuga tushadi — General ga emas.",
       "shareToGroup": "Taklifni guruhga yuborish",
       "unlink": "Guruhni uzish"
     }

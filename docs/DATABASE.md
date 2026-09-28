@@ -39,6 +39,7 @@ npm run db:migrate:remote   # production
 | `telegram_chat_id` on `users` | `0003` | DM notification target |
 | `bot_sessions` | `0006` | Multi-step bot flows |
 | `login_challenges` | `0019` | One-time web sign-in via `t.me/bot?start=login_…` |
+| `telegram_message_thread_id` / `telegram_topic_name` on `events` | `0020` | Forum topic destination for group posts |
 | `event_group_reminder_logs` | `0007` | Group reminder dedup |
 | `event_rsvps` | `0008` | RSVP status (`going` / `declined`) |
 | `event_notification_preferences` | `0011` | Per-user Telegram notification mode |
@@ -63,6 +64,8 @@ Full catalog flow: [CATALOG.md](./CATALOG.md).
 ## Notable columns on `events`
 
 - `telegram_chat_id` — linked Telegram group for announcements
+- `telegram_message_thread_id` — forum topic thread when linked inside a topic (null = General / whole group)
+- `telegram_topic_name` — topic title captured at link time, when Telegram includes it
 - `payment_mode` — `free` | `split` | `pay_yourself` | `paid`
 - `expense_currency` — `UZS` | `USD` for shared expense logging and settlements
 - `ticket_price_cents`, `ticket_currency` — for Stripe paid events

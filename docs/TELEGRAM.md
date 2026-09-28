@@ -80,9 +80,13 @@ Invite messages show **I'm coming** / **Can't make it** (locale-specific). Callb
 
 | Command | Description |
 |---------|-------------|
-| `/link INVITE_CODE` | Connect group to an event |
+| `/link INVITE_CODE` | Connect this group (or this forum topic) to an event |
 | `/unlink` | Disconnect group |
 | `/event` | Show linked event |
+
+In groups with **topics** (forum groups), send `/link` inside the topic KimKim should use. The bot stores that topic’s `message_thread_id` and posts joins, schedule changes, and reminders there instead of General. Linking from General, or from a group without topics, keeps the previous whole-group behavior.
+
+Re-linking from another topic overwrites the stored destination. If the topic is later deleted, posts fall back to the group (Telegram “message thread not found”).
 
 Group announcements: member joins, schedule changes, reminders (24h / 1h). Reminder dedup uses `event_group_reminder_logs`.
 

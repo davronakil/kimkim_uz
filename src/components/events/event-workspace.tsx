@@ -168,6 +168,8 @@ export function EventWorkspace({
             inviteCode={event.invite_code}
             botUsername={botUsername}
             linked={Boolean(event.telegram_chat_id)}
+            topicName={event.telegram_topic_name}
+            topicLinked={event.telegram_message_thread_id != null}
           />
         ) : null}
         {canEdit ? <ReferralSummaryPanel members={members} /> : null}

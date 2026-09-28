@@ -226,6 +226,13 @@ export async function listAdminEvents({
     payment_mode: row.payment_mode ?? "free",
     ticket_currency: row.ticket_currency ?? "UZS",
     visibility: row.visibility === "public" ? "public" : "private",
+    telegram_message_thread_id:
+      typeof row.telegram_message_thread_id === "number"
+        ? row.telegram_message_thread_id
+        : row.telegram_message_thread_id != null
+          ? Number(row.telegram_message_thread_id)
+          : null,
+    telegram_topic_name: row.telegram_topic_name ?? null,
     member_count: Number(row.member_count ?? 0),
   }));
 }
@@ -282,5 +289,12 @@ export async function getEventByIdForAdmin(eventId: string): Promise<Event | nul
     payment_mode: row.payment_mode ?? "free",
     ticket_currency: row.ticket_currency ?? "UZS",
     visibility: row.visibility === "public" ? "public" : "private",
+    telegram_message_thread_id:
+      typeof row.telegram_message_thread_id === "number"
+        ? row.telegram_message_thread_id
+        : row.telegram_message_thread_id != null
+          ? Number(row.telegram_message_thread_id)
+          : null,
+    telegram_topic_name: row.telegram_topic_name ?? null,
   };
 }

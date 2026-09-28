@@ -1,6 +1,7 @@
 import { upsertTelegramUser } from "@/lib/auth/session";
 import { sendTelegramMessage } from "@/lib/telegram/bot";
 import {
+  forumTopicFromMessage,
   groupT,
   isGroupChatType,
   linkGroupToEvent,
@@ -37,6 +38,7 @@ export async function handleGroupMessage(message: TelegramMessage) {
   const locale = resolveBotLocale(message.from, user);
   const strings = groupT(locale);
   const text = message.text?.trim() ?? "";
+  const topic = forumTopicFromMessage(message);
 
   if (message.new_chat_members?.length) {
     const botAdded = message.new_chat_members.some((member) => member.is_bot);
@@ -47,6 +49,8 @@ export async function handleGroupMessage(message: TelegramMessage) {
         inviteCode: startCode,
         telegramUserId: String(message.from.id),
         locale,
+        messageThreadId: topic.messageThreadId,
+        topicName: topic.topicName,
       });
       return;
     }
@@ -61,6 +65,8 @@ export async function handleGroupMessage(message: TelegramMessage) {
       inviteCode: linkCode,
       telegramUserId: String(message.from.id),
       locale,
+      messageThreadId: topic.messageThreadId,
+      topicName: topic.topicName,
     });
     return;
   }
@@ -70,12 +76,13 @@ export async function handleGroupMessage(message: TelegramMessage) {
       chatId: message.chat.id,
       telegramUserId: String(message.from.id),
       locale,
+      messageThreadId: topic.messageThreadId,
     });
     return;
   }
 
   if (isEventCommand(text)) {
-    await sendLinkedEventInfo(message.chat.id, locale);
+    await sendLinkedEventInfo(message.chat.id, locale, topic.messageThreadId);
     return;
   }
 
@@ -83,7 +90,7 @@ export async function handleGroupMessage(message: TelegramMessage) {
     await sendTelegramMessage(
       message.chat.id,
       `${strings.notLinked}\n\n<code>/link INVITE_CODE</code>`,
-      { parse_mode: "HTML" },
+      { parse_mode: "HTML", message_thread_id: topic.messageThreadId },
     );
   }
 }

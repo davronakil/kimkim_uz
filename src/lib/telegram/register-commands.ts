@@ -34,17 +34,17 @@ const commandSets = {
 
 const groupCommandSets = {
   en: [
-    { command: "link", description: "Link group to event (organizer)" },
+    { command: "link", description: "Link this group or topic to an event" },
     { command: "unlink", description: "Disconnect group from event" },
     { command: "event", description: "Show linked event" },
   ],
   uz: [
-    { command: "link", description: "Guruhni eventga ulash" },
+    { command: "link", description: "Guruh yoki mavzuni eventga ulash" },
     { command: "unlink", description: "Guruhni uzish" },
     { command: "event", description: "Ulangan event" },
   ],
   ru: [
-    { command: "link", description: "Привязать группу к событию" },
+    { command: "link", description: "Привязать группу или тему к событию" },
     { command: "unlink", description: "Отвязать группу" },
     { command: "event", description: "Показать событие" },
   ],

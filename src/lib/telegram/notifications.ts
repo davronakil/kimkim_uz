@@ -324,10 +324,12 @@ export async function processEventReminders() {
           const groupText = reminderText(groupLocale, title, timeLabel, window.type);
 
           try {
-            await sendTelegramMessage(
-              Number(event.telegram_chat_id),
-              groupText,
-              openEventButton(event.id, groupLocale),
+            await notifyEventGroup(
+              event.id,
+              () => groupText,
+              (locale, linkedEvent) => [
+                { text: t(locale).openEvent, url: eventUrl(linkedEvent.id, locale) },
+              ],
             );
             await db
               .prepare(
