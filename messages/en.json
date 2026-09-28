@@ -139,7 +139,7 @@
       },
       "telegram": {
         "title": "Telegram group",
-        "body": "Link a group to post invites, reminders, and activity updates."
+        "body": "Link a group chat — or a specific topic in a forum group — to post invites, reminders, and activity updates."
       },
       "activity": {
         "title": "Activity",
@@ -410,12 +410,15 @@
       "title": "Telegram group",
       "subtitle": "Post joins, updates, and reminders straight to your group chat.",
       "step1": "Add the KimKim bot to your Telegram group (use the button below).",
-      "step2": "As the organizer, send this command in the group:",
+      "step2": "As the organizer, send this command in the group. In a group with topics, send it inside the topic KimKim should use — not General:",
       "copyCommand": "Copy command",
       "copied": "Copied!",
       "addBotToGroup": "Add bot to group",
       "linked": "Group connected",
+      "linkedTopic": "Connected to topic “{topic}”",
+      "linkedTopicUnnamed": "Connected to a group topic",
       "linkedHint": "KimKim will post when someone joins, when details change, and before the event starts.",
+      "linkedHintTopic": "Joins, schedule changes, and reminders will land in this topic — not in General.",
       "shareToGroup": "Post invite to group",
       "unlink": "Disconnect group"
     }

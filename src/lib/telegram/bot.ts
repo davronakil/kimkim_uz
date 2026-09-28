@@ -17,23 +17,44 @@ export async function sendTelegramMessage(
   options?: {
     parse_mode?: "HTML" | "Markdown";
     reply_markup?: TelegramReplyMarkup;
+    message_thread_id?: number | null;
   },
 ) {
   const env = await getEnv();
-  const response = await fetch(
-    `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        ...options,
-      }),
-    },
-  );
+  const threadId =
+    typeof options?.message_thread_id === "number" ? options.message_thread_id : undefined;
 
-  const data = (await response.json()) as TelegramApiResponse<unknown>;
+  const payload: Record<string, unknown> = {
+    chat_id: chatId,
+    text,
+  };
+  if (options?.parse_mode) payload.parse_mode = options.parse_mode;
+  if (options?.reply_markup) payload.reply_markup = options.reply_markup;
+  if (threadId != null) payload.message_thread_id = threadId;
+
+  async function post(body: Record<string, unknown>) {
+    const response = await fetch(
+      `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    );
+    return (await response.json()) as TelegramApiResponse<unknown>;
+  }
+
+  let data = await post(payload);
+  if (
+    !data.ok &&
+    threadId != null &&
+    /message thread not found/i.test(data.description ?? "")
+  ) {
+    const { message_thread_id: _removed, ...withoutThread } = payload;
+    void _removed;
+    data = await post(withoutThread);
+  }
+
   if (!data.ok) {
     throw new Error(data.description ?? "Telegram sendMessage failed");
   }

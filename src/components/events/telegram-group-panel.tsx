@@ -10,11 +10,15 @@ export function TelegramGroupPanel({
   inviteCode,
   botUsername,
   linked,
+  topicName,
+  topicLinked,
 }: {
   eventId: string;
   inviteCode: string;
   botUsername: string;
   linked: boolean;
+  topicName?: string | null;
+  topicLinked?: boolean;
 }) {
   const t = useTranslations("events.telegramGroup");
   const common = useTranslations("common");
@@ -67,8 +71,16 @@ export function TelegramGroupPanel({
 
       {isLinked ? (
         <div className="space-y-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 dark:border-emerald-900 dark:bg-emerald-950/40">
-          <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{t("linked")}</p>
-          <p className="text-sm text-emerald-900/80 dark:text-emerald-100/80">{t("linkedHint")}</p>
+          <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
+            {topicName
+              ? t("linkedTopic", { topic: topicName })
+              : topicLinked
+                ? t("linkedTopicUnnamed")
+                : t("linked")}
+          </p>
+          <p className="text-sm text-emerald-900/80 dark:text-emerald-100/80">
+            {topicLinked ? t("linkedHintTopic") : t("linkedHint")}
+          </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
               type="button"

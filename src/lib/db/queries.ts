@@ -32,6 +32,13 @@ function normalizeEvent<T extends Partial<Event>>(
     expense_currency: row.expense_currency ?? "UZS",
     ticket_currency: row.ticket_currency ?? "UZS",
     visibility: row.visibility === "public" ? "public" : "private",
+    telegram_message_thread_id:
+      typeof row.telegram_message_thread_id === "number"
+        ? row.telegram_message_thread_id
+        : row.telegram_message_thread_id != null
+          ? Number(row.telegram_message_thread_id)
+          : null,
+    telegram_topic_name: row.telegram_topic_name ?? null,
   };
 }
 
@@ -211,13 +218,23 @@ export async function isEventOwnerByTelegramId(
   return Boolean(row);
 }
 
-export async function setEventTelegramGroup(eventId: string, chatId: string): Promise<void> {
+export async function setEventTelegramGroup(
+  eventId: string,
+  chatId: string,
+  messageThreadId?: number | null,
+  topicName?: string | null,
+): Promise<void> {
   const db = await getDb();
   await db
     .prepare(
-      `UPDATE events SET telegram_chat_id = ?, updated_at = datetime('now') WHERE id = ?`,
+      `UPDATE events
+       SET telegram_chat_id = ?,
+           telegram_message_thread_id = ?,
+           telegram_topic_name = ?,
+           updated_at = datetime('now')
+       WHERE id = ?`,
     )
-    .bind(chatId, eventId)
+    .bind(chatId, messageThreadId ?? null, topicName?.trim() || null, eventId)
     .run();
 }
 
@@ -225,14 +242,43 @@ export async function clearEventTelegramGroup(eventId: string): Promise<void> {
   const db = await getDb();
   await db
     .prepare(
-      `UPDATE events SET telegram_chat_id = NULL, updated_at = datetime('now') WHERE id = ?`,
+      `UPDATE events
+       SET telegram_chat_id = NULL,
+           telegram_message_thread_id = NULL,
+           telegram_topic_name = NULL,
+           updated_at = datetime('now')
+       WHERE id = ?`,
     )
     .bind(eventId)
     .run();
 }
 
-export async function getEventByTelegramGroupId(chatId: string): Promise<Event | null> {
+export async function getEventByTelegramGroupId(
+  chatId: string,
+  messageThreadId?: number | null,
+): Promise<Event | null> {
   const db = await getDb();
+
+  if (messageThreadId != null) {
+    const exact = await db
+      .prepare(
+        `SELECT * FROM events
+         WHERE telegram_chat_id = ? AND telegram_message_thread_id = ?`,
+      )
+      .bind(chatId, messageThreadId)
+      .first<Event>();
+    if (exact) return normalizeEvent(exact);
+  }
+
+  const general = await db
+    .prepare(
+      `SELECT * FROM events
+       WHERE telegram_chat_id = ? AND telegram_message_thread_id IS NULL`,
+    )
+    .bind(chatId)
+    .first<Event>();
+  if (general) return normalizeEvent(general);
+
   const row = await db
     .prepare("SELECT * FROM events WHERE telegram_chat_id = ?")
     .bind(chatId)
