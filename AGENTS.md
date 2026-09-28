@@ -25,9 +25,9 @@ Bot strings are separate: `src/lib/telegram/i18n.ts`.
 |------|----------------|
 | Local dev | `npm run dev` → http://localhost:3000/uz |
 | Migrate DB | `npm run db:migrate:local` |
-| Deploy | `npm run deploy` |
+| Deploy | `npm run deploy` (move `.dev.vars` aside first — see [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)) |
 | Bot webhook | `src/app/api/telegram/webhook/route.ts` |
-| Add migration | `migrations/NNNN_name.sql` then migrate remote |
+| Add migration | `migrations/NNNN_name.sql` (currently through `0020`), then migrate remote |
 
 ## Conventions
 
@@ -36,11 +36,12 @@ Bot strings are separate: `src/lib/telegram/i18n.ts`.
 - Event creation: `src/lib/events/create.ts`
 - Expense creation: `src/lib/expense/create.ts`
 - Telegram handler: `src/lib/telegram/handler.ts`
-- OG images: cover → map → generated card (`src/lib/og/`)
+- Group / forum-topic linking: `src/lib/telegram/group.ts` (`/link` in a topic stores `telegram_message_thread_id`)
+- OG images: cover → map → generated card (`src/lib/og/`); cover emoji from `src/lib/og/event-theme.ts`
 - Platform admin / superadmin: `src/lib/platform/admin.ts` (`davron_tx`)
 - Admin UI: `src/components/admin/admin-workspace.tsx`
 - One-time links (Stripe return URLs, bot login `?verify=`, anything redeemed by opening a URL): redeem via POST behind `ConfirmContinueCard` (`src/components/ui/confirm-continue-card.tsx`) — never on page load, so link previews and in-app browsers can't spend them
-- Web sign-in is **Continue in Telegram** only (`src/components/auth/telegram-login-button.tsx`) — `t.me/bot?start=login_…` + `login_challenges`. Mini App auto-login is `TelegramWebAppBootstrap`. Do not use the Telegram Login Widget.
+- Web sign-in is **Continue in Telegram** only (`src/components/auth/telegram-login-button.tsx`) — `t.me/bot?start=login_…` + `login_challenges` in `src/lib/auth/login-challenge.ts`. Mini App auto-login is `TelegramWebAppBootstrap`. Do not add the Telegram Login Widget.
 
 ## Public pages
 

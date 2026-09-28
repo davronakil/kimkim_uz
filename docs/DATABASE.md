@@ -9,6 +9,8 @@ npm run db:migrate:local    # local .wrangler state
 npm run db:migrate:remote   # production
 ```
 
+Apply **remote** migrations before deploying a Worker that reads new columns.
+
 ## Schema overview
 
 ### Core
@@ -17,47 +19,36 @@ npm run db:migrate:remote   # production
 |-------|---------|
 | `users` | Telegram users; `language_code` is app locale (`en` / `uz` / `ru`) |
 | `sessions` | JWT session records |
-| `events` | Events with location, cover, payment mode, invite code, visibility, linked Telegram group |
+| `events` | Events with location, cover, payment mode, invite code, visibility, linked Telegram group/topic |
 | `event_members` | Membership; `owner` or `member` |
 | `comments` | Threaded discussion (`parent_id`) |
 | `expenses` | Who paid, amount in cents, currency |
 | `expense_splits` | Per-user split amounts |
 
-### Invites & payments
+### Migrations
 
-| Table | Migration | Purpose |
-|-------|-----------|---------|
-| `invite_code` on `events` | `0002` | Rotatable invite links |
-| `payment_mode`, ticket fields | `0004` | Free / split / pay_yourself / paid |
-| `event_payments` | `0005` | Stripe checkout records |
-
-### Telegram
-
-| Table | Migration | Purpose |
-|-------|-----------|---------|
-| `event_reminder_logs` | `0003` | Per-user reminder dedup (24h / 1h) |
-| `telegram_chat_id` on `users` | `0003` | DM notification target |
-| `bot_sessions` | `0006` | Multi-step bot flows |
-| `login_challenges` | `0019` | One-time web sign-in via `t.me/bot?start=login_…` |
-| `telegram_message_thread_id` / `telegram_topic_name` on `events` | `0020` | Forum topic destination for group posts |
-| `event_group_reminder_logs` | `0007` | Group reminder dedup |
-| `event_rsvps` | `0008` | RSVP status (`going` / `declined`) |
-| `event_notification_preferences` | `0011` | Per-user Telegram notification mode |
-| `visibility` on `events` | `0012` | `private` (default) or `public` for SEO |
-
-### Business catalog
-
-| Table | Migration | Purpose |
-|-------|-----------|---------|
-| `platform_admins` | `0013` | Platform admins (`admin` / `superadmin`) |
-| `business_listing_entitlements` | `0013` | Free + paid listing slots per user |
-| `business_listings` | `0013` | Business submissions (`pending` / `approved` / `rejected`) |
-| `business_slot_payments` | `0013` | Stripe purchases for extra listing slots |
-| `business_listing_vouches` | `0014` | One vouch per user per approved listing |
-| `event_referrals` | `0017` | First invite referrer recorded when a user joins an event |
-
-Data migration `0015` renames stored category `wedding_venue` → `event_venue` on existing listings.
-Migration `0016` adds per-event `expense_currency` for shared expenses and balances.
+| Migration | What it adds |
+|-----------|----------------|
+| `0001` | Core tables (`users`, `sessions`, `events`, members, comments, expenses) |
+| `0002` | `invite_code` on `events` |
+| `0003` | `telegram_chat_id` on `users`; `event_reminder_logs` |
+| `0004` | `payment_mode` + ticket fields on `events` |
+| `0005` | `event_payments` (Stripe checkout) |
+| `0006` | `bot_sessions` |
+| `0007` | `event_group_reminder_logs` |
+| `0008` | `event_rsvps` (`going` / `declined`) |
+| `0009` | Host `payout_method` / `payout_details`; manual rows on `event_payments` |
+| `0010` | RSVP `maybe` status |
+| `0011` | `event_notification_preferences` (instant / digest / muted) |
+| `0012` | `visibility` on `events` (`private` / `public`) |
+| `0013` | Catalog: admins, listings, entitlements, slot payments |
+| `0014` | `business_listing_vouches` |
+| `0015` | Rename category `wedding_venue` → `event_venue` |
+| `0016` | `expense_currency` on `events` |
+| `0017` | `event_referrals` |
+| `0018` | `additional_guest_count` on `event_rsvps` (0–20) |
+| `0019` | `login_challenges` (web sign-in via `t.me/bot?start=login_…`) |
+| `0020` | `telegram_message_thread_id` + `telegram_topic_name` on `events` |
 
 Full catalog flow: [CATALOG.md](./CATALOG.md).
 
@@ -71,6 +62,14 @@ Full catalog flow: [CATALOG.md](./CATALOG.md).
 - `ticket_price_cents`, `ticket_currency` — for Stripe paid events
 - `invite_code` — public join slug
 - `visibility` — `private` (link-only, `noindex`) or `public` (sitemap + Google indexing on `/events/[id]`)
+
+## RSVP
+
+`event_rsvps.status` is `going` | `maybe` | `declined`. `additional_guest_count` (0–20) is extra people on that RSVP, used for headcount and weighted equal expense splits.
+
+## Auth challenges
+
+`login_challenges` (migration `0019`) are one-time web sign-in records. A challenge is created from `/login`, completed when the user sends `/start login_<id>` to the bot, then claimed by the original tab or by tapping Continue on `/login?verify=`. Rows expire after 10 minutes.
 
 ## Referral tracking
 
@@ -90,4 +89,4 @@ Public events in the sitemap are limited to those starting within the last 90 da
 - Events, members, expenses: `src/lib/db/queries.ts`
 - Business catalog + vouches: `src/lib/db/catalog-queries.ts`
 
-Do not run raw SQL from route handlers except migrations.
+Prefer those helpers over ad-hoc SQL in route handlers.

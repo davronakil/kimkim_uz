@@ -30,3 +30,4 @@ BUSINESS_EXTRA_SLOT_PRICE_CENTS=500000
 BUSINESS_EXTRA_SLOT_CURRENCY=UZS
 
 # See docs/DEPLOYMENT.md for the full production checklist.
+# Move this file aside before `npm run deploy` so dummy values are not uploaded as secrets.
