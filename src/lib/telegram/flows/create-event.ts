@@ -1,4 +1,5 @@
 import { createEventRecord } from "@/lib/events/create";
+import { resolveTimeZone } from "@/lib/events/timezone";
 import { formatEventWhen, t } from "@/lib/telegram/i18n";
 import { isSkipInput, parseEventDateTime } from "@/lib/telegram/parse-datetime";
 import {
@@ -62,11 +63,13 @@ async function finalizeCreateEvent(
   },
 ) {
   const strings = t(locale);
+  const timezone = resolveTimeZone(user.timezone);
   const { eventId, inviteCode } = await createEventRecord({
     creatorId: user.id,
     title: data.title,
     description: data.description,
     startsAt: data.startsAt,
+    timezone,
     locationName: data.locationName ?? null,
     locationLat: data.locationLat ?? null,
     locationLng: data.locationLng ?? null,
@@ -74,7 +77,7 @@ async function finalizeCreateEvent(
 
   await clearBotSession(chatId);
 
-  const when = formatEventWhen(data.startsAt, locale);
+  const when = formatEventWhen(data.startsAt, locale, timezone);
   const eventUrl = buildAppUrl(`/${locale}/events/${eventId}`);
   const inviteUrl = buildAppUrl(`/${locale}/join/${inviteCode}`);
 
@@ -126,7 +129,7 @@ export async function handleCreateEventStep(
   }
 
   if (session.step === "datetime") {
-    const startsAt = parseEventDateTime(text, locale);
+    const startsAt = parseEventDateTime(text, locale, resolveTimeZone(user.timezone));
     if (!startsAt) {
       await sendTelegramMessage(chatId, strings.createInvalidDatetime);
       return;

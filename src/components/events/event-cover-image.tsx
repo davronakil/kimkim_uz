@@ -1,7 +1,10 @@
 import { EventCoverPlaceholder } from "@/components/events/event-cover-placeholder";
 import type { Event } from "@/types";
 
-type EventCoverFields = Pick<Event, "cover_image_key" | "title" | "id" | "starts_at"> &
+type EventCoverFields = Pick<
+  Event,
+  "cover_image_key" | "title" | "id" | "starts_at" | "timezone"
+> &
   Partial<Pick<Event, "description" | "location_name">>;
 
 export function EventCoverImage({
@@ -35,6 +38,7 @@ export function EventCoverImage({
       title={event.title}
       eventId={event.id}
       startsAt={event.starts_at}
+      timeZone={event.timezone}
       locale={locale}
       creatorName={creatorName}
       description={event.description}

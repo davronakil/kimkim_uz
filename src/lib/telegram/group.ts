@@ -10,6 +10,7 @@ import {
 import { buildAppUrl, sendTelegramMessage } from "@/lib/telegram/bot";
 import { inviteRsvpKeyboard } from "@/lib/telegram/keyboards";
 import { t as botStrings } from "@/lib/telegram/i18n";
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
 import { resolveUserLocale } from "@/lib/locale";
 import type { BotLocale, TelegramMessage } from "@/lib/telegram/types";
 import type { Event } from "@/types";
@@ -136,15 +137,8 @@ export async function ownerLocaleForEvent(event: Event): Promise<BotLocale> {
   return resolveUserLocale(owner);
 }
 
-export function formatEventWhen(iso: string, locale: BotLocale) {
-  return new Date(iso).toLocaleString(
-    locale === "uz" ? "uz-UZ" : locale === "ru" ? "ru-RU" : "en-US",
-    {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: "Asia/Tashkent",
-    },
-  );
+export function formatEventWhen(iso: string, locale: BotLocale, timeZone: string) {
+  return formatEventDateTimeWithZone(iso, locale, timeZone);
 }
 
 export async function linkGroupToEvent({
@@ -254,7 +248,7 @@ export async function sendLinkedEventInfo(
     return;
   }
 
-  const when = formatEventWhen(event.starts_at, locale);
+  const when = formatEventWhen(event.starts_at, locale, event.timezone);
   const url = buildAppUrl(`/${locale}/events/${event.id}`);
   await sendTelegramMessage(chatId, strings.eventInfo(event.title, when, url), {
     parse_mode: "HTML",
@@ -293,7 +287,7 @@ export async function postEventShareToGroup(eventId: string) {
 
   const locale = await ownerLocaleForEvent(event);
   const strings = groupT(locale);
-  const when = formatEventWhen(event.starts_at, locale);
+  const when = formatEventWhen(event.starts_at, locale, event.timezone);
 
   const inviteStrings = botStrings(locale);
   const eventUrl = buildAppUrl(`/${locale}/events/${event.id}`);

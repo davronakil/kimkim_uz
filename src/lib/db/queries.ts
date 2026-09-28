@@ -200,6 +200,14 @@ export async function updateUserPayoutPreferences({
   return getUserById(userId);
 }
 
+export async function updateUserTimezone(userId: string, timezone: string): Promise<void> {
+  const db = await getDb();
+  await db
+    .prepare("UPDATE users SET timezone = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(timezone, userId)
+    .run();
+}
+
 export async function getUserByTelegramId(telegramId: string): Promise<User | null> {
   const db = await getDb();
   return (

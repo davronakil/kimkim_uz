@@ -25,10 +25,9 @@ import { MemberList } from "@/components/events/member-list";
 import { TransferOwnershipPanel } from "@/components/events/transfer-ownership-panel";
 import { TelegramGroupPanel } from "@/components/events/telegram-group-panel";
 import { TelegramNotifyBanner } from "@/components/events/telegram-notify-banner";
-import type { Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
 import { goingHeadcount } from "@/lib/events/headcount";
-import { intlLocale } from "@/lib/locale";
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
 import { displayName } from "@/lib/utils";
 import type {
   Comment,
@@ -113,7 +112,6 @@ export function EventWorkspace({
   const expensesEnabled = event.expenses_enabled;
   const visibleExpenses = expensesEnabled ? expenses : [];
   const visibleSettlements = expensesEnabled ? settlements : [];
-  const startsAt = new Date(event.starts_at);
   const owner = members.find((member) => member.role === "owner");
   const currentMember = members.find((member) => member.id === currentUserId);
   const currentRsvpStatus: EventRsvpStatus = currentMember?.rsvp_status ?? "going";
@@ -247,7 +245,7 @@ export function EventWorkspace({
             <div className="space-y-2 text-sm text-zinc-600 dark:text-zinc-300">
               <p className="inline-flex items-start gap-2.5">
                 <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                {startsAt.toLocaleString(intlLocale(locale as Locale), {
+                {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone, {
                   dateStyle: "full",
                   timeStyle: "short",
                 })}

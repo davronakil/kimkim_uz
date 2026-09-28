@@ -1,9 +1,7 @@
 import { CoverSubmitterBadge } from "@/components/ui/cover-submitter-badge";
-import { intlLocale } from "@/lib/locale";
+import { formatEventDateTime } from "@/lib/events/timezone";
 import { resolveEventOgAccent } from "@/lib/og/event-theme";
 import { personInitial } from "@/lib/utils";
-import type { Locale } from "@/i18n/config";
-
 function hashUnit(eventId: string, salt: number) {
   let hash = salt;
   for (let i = 0; i < eventId.length; i += 1) {
@@ -16,6 +14,7 @@ type EventCoverPlaceholderProps = {
   title: string;
   eventId: string;
   startsAt: string;
+  timeZone: string;
   locale?: string;
   creatorName?: string | null;
   description?: string | null;
@@ -28,6 +27,7 @@ export function EventCoverPlaceholder({
   title,
   eventId,
   startsAt,
+  timeZone,
   locale = "en",
   creatorName,
   description,
@@ -36,11 +36,9 @@ export function EventCoverPlaceholder({
   className = "",
 }: EventCoverPlaceholderProps) {
   const accent = resolveEventOgAccent(title, eventId, { description, locationName });
-  const date = new Date(startsAt);
-  const intl = intlLocale(locale as Locale);
-  const month = date.toLocaleString(intl, { month: "short", timeZone: "Asia/Tashkent" }).toUpperCase();
-  const day = date.toLocaleString(intl, { day: "numeric", timeZone: "Asia/Tashkent" });
-  const weekday = date.toLocaleString(intl, { weekday: "short", timeZone: "Asia/Tashkent" });
+  const month = formatEventDateTime(startsAt, locale, timeZone, { month: "short" }).toUpperCase();
+  const day = formatEventDateTime(startsAt, locale, timeZone, { day: "numeric" });
+  const weekday = formatEventDateTime(startsAt, locale, timeZone, { weekday: "short" });
   const initial = personInitial(title);
 
   const blobA = {

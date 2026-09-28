@@ -5,9 +5,8 @@ import { useTranslations } from "next-intl";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { FormattedEventDescription } from "@/components/events/formatted-event-description";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
-import type { Locale } from "@/i18n/config";
 import { Link } from "@/i18n/navigation";
-import { intlLocale } from "@/lib/locale";
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
 import { formatMoney } from "@/lib/utils";
 import type { Event } from "@/types";
 
@@ -17,6 +16,7 @@ type PublicEvent = Pick<
   | "title"
   | "description"
   | "starts_at"
+  | "timezone"
   | "location_name"
   | "location_address"
   | "cover_image_key"
@@ -41,7 +41,6 @@ export function PublicEventOverview({
   creatorName?: string | null;
 }) {
   const t = useTranslations("events.public");
-  const startsAt = new Date(event.starts_at);
   const paymentMode = event.payment_mode ?? "free";
   const ticketLabel =
     event.ticket_price_cents && event.ticket_price_cents > 0
@@ -100,7 +99,7 @@ export function PublicEventOverview({
               <div className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950/50">
                 <p className="flex items-start gap-3 text-base text-zinc-700 dark:text-zinc-200">
                   <CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                  {startsAt.toLocaleString(intlLocale(locale as Locale), {
+                  {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone, {
                     dateStyle: "full",
                     timeStyle: "short",
                   })}

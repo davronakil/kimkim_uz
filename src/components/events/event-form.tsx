@@ -12,11 +12,17 @@ import {
 } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LocationPicker, type LocationValue } from "@/components/events/location-picker";
 import { PaymentModePicker } from "@/components/events/payment-mode-picker";
 import { VisibilityPicker } from "@/components/events/visibility-picker";
-import { toDatetimeLocalValue } from "@/lib/events/form";
+import {
+  DEFAULT_EVENT_TIMEZONE,
+  detectBrowserTimeZone,
+  resolveTimeZone,
+  supportedTimeZones,
+  toDatetimeLocalValue,
+} from "@/lib/events/timezone";
 import type { Event, EventPaymentMode } from "@/types";
 
 type EventFormProps = {
@@ -59,6 +65,24 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
   const [maxGuests, setMaxGuests] = useState(
     event?.max_guest_count ? String(event.max_guest_count) : "",
   );
+  // Rendered on the server too, so start from a value both sides agree on and
+  // switch to the visitor's own zone once we're in the browser.
+  const [timezone, setTimezone] = useState(() =>
+    resolveTimeZone(event?.timezone ?? DEFAULT_EVENT_TIMEZONE),
+  );
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (!event) setTimezone(detectBrowserTimeZone());
+  }, [event]);
+
+  const timezoneOptions = useMemo(() => {
+    if (!mounted) return [timezone];
+    const zones = new Set(supportedTimeZones());
+    zones.add(timezone);
+    return [...zones].sort();
+  }, [mounted, timezone]);
 
   const initialLocation = event ? eventToLocation(event) : null;
   const templates: Array<{
@@ -318,7 +342,7 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
             name="starts_at"
             type="datetime-local"
             required
-            defaultValue={toDatetimeLocalValue(event?.starts_at)}
+            defaultValue={toDatetimeLocalValue(event?.starts_at, timezone)}
             className="kk-input"
           />
         </div>
@@ -330,10 +354,32 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
             id="ends_at"
             name="ends_at"
             type="datetime-local"
-            defaultValue={toDatetimeLocalValue(event?.ends_at)}
+            defaultValue={toDatetimeLocalValue(event?.ends_at, timezone)}
             className="kk-input"
           />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="timezone" className="kk-label">
+          {t("timezone")}
+        </label>
+        <select
+          id="timezone"
+          name="timezone"
+          value={timezone}
+          onChange={(inputEvent) => setTimezone(inputEvent.target.value)}
+          className="kk-input"
+        >
+          {timezoneOptions.map((zone) => (
+            <option key={zone} value={zone}>
+              {zone.replaceAll("_", " ")}
+            </option>
+          ))}
+        </select>
+        <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+          {t("timezoneHint")}
+        </p>
       </div>
 
       <div className="space-y-2">

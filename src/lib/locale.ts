@@ -39,17 +39,6 @@ export function alternateOgLocales(locale: Locale): string[] {
   return locales.filter((code) => code !== locale).map(ogLocaleTag);
 }
 
-export function formatLocaleDateTime(
-  date: Date,
-  locale: Locale,
-  options?: Intl.DateTimeFormatOptions,
-): string {
-  return date.toLocaleString(intlLocale(locale), {
-    timeZone: "Asia/Tashkent",
-    ...options,
-  });
-}
-
 export function localeLabel(locale: Locale): string {
   return localeNames[locale];
 }

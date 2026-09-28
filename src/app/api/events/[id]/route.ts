@@ -12,7 +12,11 @@ import {
 } from "@/lib/db/queries";
 import { presentEventExpenses } from "@/lib/expense/shares";
 import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
-import { parseEventFormData, resolveTicketPriceCents } from "@/lib/events/form";
+import {
+  parseEventFormData,
+  resolveEventTimestamps,
+  resolveTicketPriceCents,
+} from "@/lib/events/form";
 import { notifyEventUpdated } from "@/lib/telegram/notifications";
 
 type RouteContext = {
@@ -92,6 +96,11 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
   }
 
+  const schedule = resolveEventTimestamps(payload.data);
+  if (!schedule) {
+    return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
+  }
+
   const db = await getDb();
   let coverImageKey = event.cover_image_key;
   const removeCover = formData.get("remove_cover") === "true";
@@ -136,7 +145,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   await db
     .prepare(
       `UPDATE events SET
-        title = ?, description = ?, starts_at = ?, ends_at = ?,
+        title = ?, description = ?, starts_at = ?, ends_at = ?, timezone = ?,
         location_name = ?, location_address = ?, location_lat = ?, location_lng = ?,
         cover_image_key = ?, payment_mode = ?, expenses_enabled = ?, expense_currency = ?, ticket_price_cents = ?, ticket_currency = ?,
         visibility = ?, max_guest_count = ?, updated_at = datetime('now')
@@ -145,8 +154,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     .bind(
       payload.data.title,
       payload.data.description ?? null,
-      payload.data.starts_at,
-      payload.data.ends_at ?? null,
+      schedule.startsAt,
+      schedule.endsAt,
+      payload.data.timezone,
       locationName,
       locationAddress,
       locationLat,
@@ -165,7 +175,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
   const changes: Array<"title" | "time" | "location" | "description"> = [];
   if (payload.data.title !== event.title) changes.push("title");
-  if (payload.data.starts_at !== event.starts_at) changes.push("time");
+  if (schedule.startsAt !== event.starts_at || payload.data.timezone !== event.timezone) {
+    changes.push("time");
+  }
   if (
     locationName !== event.location_name ||
     locationAddress !== event.location_address ||

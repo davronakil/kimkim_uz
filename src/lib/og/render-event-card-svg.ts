@@ -1,5 +1,5 @@
 import type { Locale } from "@/i18n/config";
-import { intlLocale } from "@/lib/locale";
+import { formatEventDateTime } from "@/lib/events/timezone";
 import { ogCardLabels } from "@/lib/og/event-card-labels";
 import { resolveEventOgAccent, truncateText } from "@/lib/og/event-theme";
 import type { Event } from "@/types";
@@ -53,14 +53,13 @@ export function renderEventCardSvg(
     locationName: event.location_name,
   });
   const titleLines = wrapTitle(event.title, 22, 3);
-  const dateLabel = new Intl.DateTimeFormat(intlLocale(locale), {
+  const dateLabel = formatEventDateTime(event.starts_at, locale, event.timezone, {
     weekday: "long",
     month: "long",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
-    timeZone: "Asia/Tashkent",
-  }).format(new Date(event.starts_at));
+  });
 
   const location = event.location_name
     ? truncateText(event.location_name, 52)

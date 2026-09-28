@@ -1,3 +1,4 @@
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
 import { localeLabel } from "@/lib/locale";
 import type { BotLocale } from "@/lib/telegram/types";
 
@@ -232,14 +233,6 @@ export function t(locale: BotLocale) {
   return messages[locale];
 }
 
-export function formatEventWhen(iso: string, locale: BotLocale) {
-  const date = new Date(iso);
-  return date.toLocaleString(
-    locale === "uz" ? "uz-UZ" : locale === "ru" ? "ru-RU" : "en-US",
-    {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: "Asia/Tashkent",
-    },
-  );
+export function formatEventWhen(iso: string, locale: BotLocale, timeZone: string) {
+  return formatEventDateTimeWithZone(iso, locale, timeZone);
 }

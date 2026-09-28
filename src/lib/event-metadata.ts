@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { alternateOgLocales, intlLocale, ogLocaleTag } from "@/lib/locale";
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
+import { alternateOgLocales, ogLocaleTag } from "@/lib/locale";
 import { buildEventOgCardUrl } from "@/lib/og/event-card-url";
 import { localizedLanguageAlternates, resolveMetadataLocale } from "@/lib/page-metadata";
 import { isPublicEvent } from "@/lib/events/visibility";
@@ -11,12 +12,13 @@ function formatEventOgDescription(event: Event, locale: string) {
   const parts = [event.title];
   if (event.location_name) parts.push(event.location_name);
 
-  const dateLocale = intlLocale(resolveMetadataLocale(locale));
-  const formattedDate = new Intl.DateTimeFormat(dateLocale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(event.starts_at));
-  parts.push(formattedDate);
+  parts.push(
+    formatEventDateTimeWithZone(
+      event.starts_at,
+      resolveMetadataLocale(locale),
+      event.timezone,
+    ),
+  );
 
   if (event.description) {
     const snippet = event.description.trim().slice(0, 140);

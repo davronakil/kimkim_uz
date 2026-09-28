@@ -302,6 +302,8 @@
       "maxGuestsHint": "Ixtiyoriy. Kelayotgan hammani hisoblaydi, +1 lar bilan. Bo'sh qoldirsangiz — chegara yo'q. Futbol odatda 12–14 kishi.",
       "startsAt": "Qachon?",
       "endsAt": "Tugashi (shart emas)",
+      "timezone": "Vaqt mintaqasi",
+      "timezoneHint": "Eslatmalar va takliflar shu mintaqada yuboriladi. Qurilmangizdagi mintaqani tanladik — event boshqa joyda bo'lsa, o'zgartiring.",
       "location": "Qayerda?",
       "locationPlaceholder": "Joy qidiring...",
       "locationLoading": "Xarita yuklanmoqda...",

@@ -3,7 +3,11 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getDb, getMediaBucket } from "@/lib/cloudflare";
 import { listUserEvents } from "@/lib/db/queries";
 import { createEventRecord } from "@/lib/events/create";
-import { parseEventFormData, resolveTicketPriceCents } from "@/lib/events/form";
+import {
+  parseEventFormData,
+  resolveEventTimestamps,
+  resolveTicketPriceCents,
+} from "@/lib/events/form";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -28,12 +32,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
   }
 
+  const schedule = resolveEventTimestamps(payload.data);
+  if (!schedule) {
+    return NextResponse.json({ error: "Invalid event data" }, { status: 400 });
+  }
+
   const { eventId } = await createEventRecord({
     creatorId: user.id,
     title: payload.data.title,
     description: payload.data.description ?? null,
-    startsAt: payload.data.starts_at,
-    endsAt: payload.data.ends_at ?? null,
+    startsAt: schedule.startsAt,
+    endsAt: schedule.endsAt,
+    timezone: payload.data.timezone,
     locationName: payload.data.location_name ?? null,
     locationAddress: payload.data.location_address ?? null,
     locationLat: payload.data.location_lat ?? null,

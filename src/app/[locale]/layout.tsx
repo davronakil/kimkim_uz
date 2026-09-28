@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { TelegramWebAppBootstrap } from "@/components/auth/telegram-webapp-bootstrap";
+import { TimezoneSync } from "@/components/auth/timezone-sync";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { defaultLocale, locales, type Locale } from "@/i18n/config";
 import { alternateOgLocales, ogLocaleTag } from "@/lib/locale";
@@ -135,6 +136,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <ServiceWorkerRegister />
           <TelegramWebAppBootstrap />
+          <TimezoneSync />
           <SiteHeader />
           <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 overflow-x-clip px-4 py-5 pb-8 sm:px-5 sm:py-8">
             {children}
