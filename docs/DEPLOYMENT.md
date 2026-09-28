@@ -28,6 +28,18 @@ npm run build               # optional sanity check
 npm run deploy
 ```
 
+`@opennextjs/cloudflare` reads `.dev.vars` during deploy and can upload those values as Worker secrets. Dummy local placeholders would overwrite production. Move the file aside, deploy, then restore:
+
+```bash
+mv .dev.vars /tmp/kimkim.dev.vars.bak
+npm run deploy
+mv /tmp/kimkim.dev.vars.bak .dev.vars
+```
+
+If `wrangler whoami` lists several accounts, set `CLOUDFLARE_ACCOUNT_ID` to PixelKraft LLC (`7369a3f31473cbbe3333e48298c5a8a0`) so D1/R2 bind to production.
+
+Worker name: `kimkim-uz`. D1: `kimkim-db`.
+
 ## Environment reference
 
 | Variable | Where | Required |
@@ -41,7 +53,7 @@ npm run deploy
 | `BUSINESS_EXTRA_SLOT_CURRENCY` | Wrangler secret / `.dev.vars` | Optional (default UZS) |
 | `NEXT_PUBLIC_APP_URL` | `wrangler.jsonc` | Yes |
 | `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` | `wrangler.jsonc` | Yes |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Worker variable + `.dev.vars` | Optional (manual location fallback) |
+| `CLOUDFLARE_ACCOUNT_ID` | Env / CI | Set if `wrangler whoami` lists several accounts (PixelKraft LLC) |
 
 Local development: copy `.dev.vars.example` → `.dev.vars`.
 

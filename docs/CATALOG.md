@@ -69,4 +69,4 @@ Checkout metadata: `purchase_type: business_slot`. Fulfillment in `src/lib/strip
 
 ## Database
 
-See [DATABASE.md](./DATABASE.md) for tables (`0013`, `0014` migrations).
+See [DATABASE.md](./DATABASE.md) for tables (migrations `0013`–`0015`).

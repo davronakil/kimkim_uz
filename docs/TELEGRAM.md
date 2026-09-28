@@ -6,16 +6,18 @@ KimKim uses Telegram for auth, notifications, and a trilingual bot (`@kimkimuzbo
 
 | Method | Where | Notes |
 |--------|-------|-------|
-| Login via bot | `/login`, invite pages | “Continue in Telegram” opens `t.me/bot?start=login_…`. The bot confirms a one-time challenge; the original tab claims it, or `/login?verify=` waits for an extra tap so previews cannot spend it. |
+| Continue in Telegram | `/login`, invite pages | Opens `t.me/bot?start=login_…`. The bot confirms a one-time `login_challenges` row; the original tab polls and claims it. If the user lands on `/login?verify=`, they tap Continue so previews cannot spend the challenge. |
 | Mini App | Opened inside Telegram | `PUT /api/auth/telegram` with `initData` (auto, via `TelegramWebAppBootstrap`) |
 
-The web app passes `app_locale` on login so the user's language matches the page URL (`/en`, `/uz`, `/ru`).
+The web app passes `app_locale` on login so the user's language matches the page URL (`/uz`, `/en`, `/ru`).
 
-Sign-in no longer uses Telegram’s Login Widget (the button that asks for a phone number). The only web path is **Continue in Telegram**, which deep-links into `@kimkimuzbot`. After `/start login_<id>`, the bot replies with **Open KimKim**. That return URL is gated: nothing is spent until Continue is tapped. The originating browser tab also polls and finishes sign-in without a second click.
+There is no Telegram Login Widget (the phone-number iframe). Web sign-in is the bot deep link only.
 
 | Start param | Meaning |
 |-------------|---------|
 | `login_<id>` | Web sign-in challenge (`login_challenges`) |
+| `join_CODE` / `{locale}_join_CODE` | Invite join |
+| `{locale}_join_CODE_ref_USER` | Invite join with referrer |
 
 ## Webhook
 
@@ -31,7 +33,7 @@ Commands auto-register on `/start`. To refresh manually:
 npm run bot:commands
 ```
 
-Requires `CRON_SECRET` in `.dev.vars` (same value as production Wrangler secret).
+Requires `CRON_SECRET` in `.dev.vars` matching the production Wrangler secret.
 
 ## Bot commands (DM)
 
@@ -74,7 +76,7 @@ The web invite panel generates locale-prefixed links automatically and includes 
 
 ### RSVP inline buttons
 
-Invite messages show **I'm coming** / **Can't make it** (locale-specific). Callbacks handled in `src/lib/telegram/callbacks.ts`; RSVPs stored in `event_rsvps`.
+Invite messages show **I'm coming** / **Maybe** / **Can't make it** (locale-specific). Callbacks in `src/lib/telegram/callbacks.ts`; rows in `event_rsvps` (`going` / `maybe` / `declined`). Extra guests are set on the web RSVP panel (`additional_guest_count`).
 
 ## Group commands (organizer only)
 
@@ -84,7 +86,7 @@ Invite messages show **I'm coming** / **Can't make it** (locale-specific). Callb
 | `/unlink` | Disconnect group |
 | `/event` | Show linked event |
 
-In groups with **topics** (forum groups), send `/link` inside the topic KimKim should use. The bot stores that topic’s `message_thread_id` and posts joins, schedule changes, and reminders there instead of General. Linking from General, or from a group without topics, keeps the previous whole-group behavior.
+In groups with **topics** (forum groups), send `/link` inside the topic KimKim should use. The bot stores that topic’s `message_thread_id` and posts joins, schedule changes, and reminders there instead of General. Linking from General, or from a group without topics, keeps whole-group behavior.
 
 Re-linking from another topic overwrites the stored destination. If the topic is later deleted, posts fall back to the group (Telegram “message thread not found”).
 
@@ -105,11 +107,17 @@ Hourly cron: `GET /api/cron/event-reminders` with `Authorization: Bearer $CRON_S
 ## Key files
 
 ```
+src/lib/auth/
+├── login-challenge.ts  # Web sign-in via t.me/bot?start=login_…
+└── session.ts          # JWT cookie sessions
+
 src/lib/telegram/
 ├── handler.ts          # Webhook entry
+├── bot.ts              # sendMessage (includes forum message_thread_id)
 ├── callbacks.ts        # Inline buttons (RSVP, lang, expense picker)
+├── register-commands.ts
 ├── flows/              # create-event, log-expense, list-events, group-messages
-├── group.ts            # Group link + announcements
+├── group.ts            # Group / topic link + announcements
 ├── notifications.ts    # DM + reminder delivery
 ├── i18n.ts             # Bot strings (en / uz / ru)
 └── sessions.ts         # bot_sessions for multi-step flows

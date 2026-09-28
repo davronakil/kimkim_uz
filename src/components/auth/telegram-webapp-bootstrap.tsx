@@ -44,7 +44,7 @@ function tryWebAppLogin(onSignedIn: () => void) {
 
 /**
  * When KimKim is opened as a Telegram Mini App, sign in from initData so the
- * visitor never sees the phone-number login widget.
+ * visitor is already authenticated without the web “Continue in Telegram” flow.
  */
 export function TelegramWebAppBootstrap() {
   const router = useRouter();

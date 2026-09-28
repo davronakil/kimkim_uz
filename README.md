@@ -10,17 +10,18 @@ Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on
 
 - **Events** — to'y, "gap", choyxona, weddings, parties, anything; date/time, location, cover image
 - **Public discover** — `/discover` lists events hosts mark as public (indexable, sitemap)
-- **Invites** — shareable links, locale-aware bot deep links, link rotation, RSVP landing page
+- **Invites** — shareable links, locale-aware bot deep links, link rotation, RSVP landing page (going / maybe / declined, extra guests)
+- **Auth** — Continue in Telegram (`t.me/bot?start=login_…`) or Mini App `initData`. One-time return URLs need an extra Continue tap so previews cannot spend them.
 - **Payment modes** — Free, Split the bill, Pay for yourself, Paid (Stripe Checkout)
 - **Members** — join, leave, transfer ownership, remove member
 - **Threaded comments** — nested discussion; delete own comments (no replies)
 - **Expense splitting** — equal or custom splits, settlement copy/share, delete
 - **Business catalog** — Yelp-style directory at `/catalog`; submit listings, admin approval, community vouches, paid extra slots (Stripe)
-- **Telegram bot** — create events, log expenses, RSVP buttons, group linking, bilingual + Russian
+- **Telegram bot** — create events, log expenses, RSVP buttons, group or forum-topic linking, trilingual (en / uz / ru)
 - **Notifications** — DM + group announcements; 24h / 1h reminders
-- **OG previews** — cover photo → map pin → auto-generated event card
+- **OG previews** — cover photo → map pin → generated card (emoji from the event title)
 - **PWA** — installable, offline cached event details
-- **Trilingual UI** — `/en`, `/uz`, `/ru`
+- **Trilingual UI** — `/uz` (default), `/en`, `/ru`
 
 See [ROADMAP.md](./ROADMAP.md) for what's next.
 
@@ -111,7 +112,7 @@ npm run db:migrate:local
 npm run dev
 ```
 
-Open [http://localhost:3000/en](http://localhost:3000/en), [/uz](http://localhost:3000/uz), or [/ru](http://localhost:3000/ru).
+Open [http://localhost:3000/uz](http://localhost:3000/uz) (default), [/en](http://localhost:3000/en), or [/ru](http://localhost:3000/ru).
 
 ---
 
@@ -125,6 +126,8 @@ npm run deploy
 ```
 
 Custom domains `kimkim.uz` and `www.kimkim.uz` are in `wrangler.jsonc`.
+
+Before `npm run deploy`, move `.dev.vars` aside if it exists. OpenNext can upload those local values as Worker secrets and overwrite production. See [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md).
 
 ### Secrets (production)
 
@@ -177,21 +180,22 @@ Bot reference: [docs/TELEGRAM.md](./docs/TELEGRAM.md).
 
 ```
 src/
-├── app/[locale]/          # Pages (en, uz, ru)
+├── app/[locale]/          # Pages (uz default, en, ru)
 ├── app/api/               # REST routes (auth, events, stripe, telegram, og)
 ├── components/            # UI
 ├── i18n/                  # next-intl routing & config
 ├── lib/
-│   ├── telegram/          # Bot handler, flows, notifications
+│   ├── auth/              # Sessions + bot login challenges
+│   ├── telegram/          # Bot handler, flows, group topics, notifications
 │   ├── events/            # Create, payment mode, RSVP, visibility
 │   ├── catalog/           # Business listing form + categories
-│   ├── db/                  # queries.ts + catalog-queries.ts
+│   ├── db/                # queries.ts + catalog-queries.ts
 │   ├── expense/           # Splits, settlement
 │   ├── og/                # Dynamic social preview cards
 │   └── stripe/            # Checkout + webhook (events + catalog slots)
 docs/                      # TELEGRAM, DATABASE, CATALOG, DEPLOYMENT
 messages/                  # en.json, uz.json, ru.json
-migrations/                # D1 SQL migrations (0001–0014)
+migrations/                # D1 SQL migrations (0001–0020)
 wrangler.jsonc             # Cloudflare Worker config
 AGENTS.md                  # Notes for AI coding assistants
 ```
@@ -208,7 +212,7 @@ Share previews use this priority:
 2. **Map snapshot** (if lat/lng + Google Maps key)
 3. **Generated card** — `/api/og/event/{id}/card?locale=ru`
 
-Cards include title, date, location, payment mode, and themed styling. SVG output (1200×630), cached 24h.
+Cards include title, date, location, payment mode, and themed styling (cover emoji is picked from the title/description, not a hash). SVG output (1200×630), cached 24h.
 
 ## Event visibility
 
@@ -251,7 +255,7 @@ Report security issues privately, not in public GitHub issues.
 
 | Doc | Contents |
 |-----|----------|
-| [ROADMAP.md](./ROADMAP.md) | Shipped features, Phase 3, ops backlog |
+| [ROADMAP.md](./ROADMAP.md) | Shipped features and ops backlog |
 | [docs/CATALOG.md](./docs/CATALOG.md) | Business directory, vouches, admin, Stripe slots |
 | [docs/TELEGRAM.md](./docs/TELEGRAM.md) | Bot commands, webhooks, notifications |
 | [docs/DATABASE.md](./docs/DATABASE.md) | Tables, migrations |
@@ -262,4 +266,4 @@ Report security issues privately, not in public GitHub issues.
 
 ## Roadmap
 
-v1 and Phase 2 are complete. Growth items (templates, public pages, UZS/USD toggle) are in [ROADMAP.md](./ROADMAP.md).
+Shipped work and the remaining ops backlog live in [ROADMAP.md](./ROADMAP.md).

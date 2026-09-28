@@ -2,11 +2,13 @@
 
 Living plan for what shipped, what's next, and what we're intentionally not building yet.
 
-## Shipped (v1 + Phase 2)
+## Shipped
 
 ### Core product
-- Telegram auth (Login Widget + Mini App)
+- Telegram auth: **Continue in Telegram** (`t.me/bot?start=login_…` + `login_challenges`) and Mini App `initData`
+- One-time return URLs (Stripe confirm, bot login `?verify=`) gated behind an extra Continue tap
 - Events: create, edit, delete, cover image, Google Maps location
+- Cover / OG emoji chosen from the event title and description (not a hash)
 - Invite links + join flow + bot deep links (locale-aware: `en_join_`, `uz_join_`, `ru_join_`)
 - Invite link rotation (owner)
 - Leave event, remove member, transfer ownership
@@ -17,62 +19,50 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 - Beautiful invite landing for logged-out guests
 - Onboarding banner + empty states
 - PWA + offline event details
-- Trilingual UI: EN / UZ / RU
+- Trilingual UI: EN / UZ / RU (default locale **uz**)
 
 ### Telegram
 - Bot: `/create`, `/expense`, `/events`, `/help`, `/cancel`, `/lang`
 - Create flow with location step (text, pin, skip)
-- Quick expense logging (`/expense 150000 choyxona`)
-- RSVP inline buttons (going / declined)
+- Quick expense logging (`/expense` then `150000 choyxona`)
+- RSVP inline buttons (going / maybe / declined)
 - Language picker + locale from invite links
 - DM notifications (comments, expenses, joins, edits, reminders)
 - Group link: `/link`, `/unlink`, `/event`, post invite to group
-- Hourly cron reminders (24h / 1h) for DMs and linked groups
+- Forum topics: `/link` inside a topic posts later announcements there instead of General
+- Hourly cron reminders (24h / 1h) for DMs and linked groups / topics
 
 ### Social & ops
 - Dynamic OG cards when no cover photo or map
 - Map OG snapshot when location has coordinates
 - Public read-only event pages for non-members and logged-out visitors
 - **Public discover** page (`/discover`) for indexable events
-- **Business catalog** (`/catalog`) — Yelp-style directory with admin approval, community vouches, map/list browse, and shareable category filters
+- **Business catalog** (`/catalog`) — directory with admin approval, community vouches, map/list browse, and shareable category filters
 - Event pages show **comments and expenses inline** (no tab switching)
 - Default locale **Uzbek** with browser detection + persistent cookie
 - Expanded **admin dashboard** (overview, catalog moderation, events, users, admins)
-- Event creation templates
-- RSVP states: going / maybe / can't go
-- Paid-event host payment summary
+- Event creation templates (gap, choyxona, wedding, birthday, sunnat, paid)
+- RSVP states: going / maybe / can't go, plus extra guests for headcount and expense splits
+- Paid-event host payment summary + payout preference
 - Per-event Telegram notification controls: instant / digest / muted
 - PNG generated OG cards
-- CI: `npm run build` on push/PR
+- Referral tracking (web, Telegram bot, Stripe checkout)
+- UZS + USD toggle per event for shared expenses
+- CI: `npm run lint` + `npm run build` on push/PR
 
-## Phase 3 — growth
-
-| Priority | Item | Notes |
-|----------|------|-------|
-| P1 | Event templates | Shipped: gap, choyxona, wedding, birthday, sunnat, paid |
-| P1 | UZS + USD toggle per event | Shipped: expense currency for shared costs + settlements |
-| P2 | Public read-only event page | Shipped for `/events/:id`; browse at `/discover` |
-| P2 | Business catalog | Shipped: submit, admin review, vouches, Stripe extra slots |
-| P2 | Referral tracking | Shipped: web, Telegram bot, and Stripe checkout invite attribution |
-| P3 | PNG OG cards | Shipped for generated site/event cards |
-
-### Recent catalog & UX (2026-06)
-
+### Catalog & UX (since 2026-06)
 - 30 refreshed business categories (migration `0015`: `wedding_venue` → `event_venue`)
 - Homepage featured listings, top-vouched + recently-added rails on browse
 - Listing share (copy link, Telegram, native share), related businesses, category SEO metadata
 - Admin: unpublish / republish listings; catalog dynamic cover placeholders
 - Mobile catalog overflow and card-width fixes
 
-## Housekeeping / ops
+## Next
 
-- [x] Git commit of v1 + Phase 2 work
-- [x] CI: `npm run lint` + `npm run build` on PR
-- [x] README + docs (TELEGRAM, DATABASE, DEPLOYMENT, AGENTS)
-- [x] Google Maps key rotation documented in README
+No product phase is locked. Ops leftovers:
+
 - [ ] Staging worker env (optional `env.staging` in wrangler)
 - [ ] Error monitoring alerts (beyond Workers observability)
-- [x] `npm run lint` clean locally and in CI
 
 ## Not planned (for now)
 
@@ -89,4 +79,4 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 
 ---
 
-Update this file when scope changes. Last reviewed: 2026-06-09.
+Update this file when scope changes. Last reviewed: 2026-09-28.
