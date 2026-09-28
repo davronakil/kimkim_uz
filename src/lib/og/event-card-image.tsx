@@ -29,7 +29,10 @@ function wrapTitle(title: string, maxCharsPerLine: number, maxLines: number) {
 
 export function EventCardImage({ event, locale }: { event: Event; locale: Locale }) {
   const strings = ogCardLabels(locale);
-  const accent = resolveEventOgAccent(event.title, event.id);
+  const accent = resolveEventOgAccent(event.title, event.id, {
+    description: event.description,
+    locationName: event.location_name,
+  });
   const titleLines = wrapTitle(event.title, 22, 3);
   const dateLabel = new Intl.DateTimeFormat(intlLocale(locale), {
     weekday: "long",

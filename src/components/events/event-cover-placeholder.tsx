@@ -18,6 +18,8 @@ type EventCoverPlaceholderProps = {
   startsAt: string;
   locale?: string;
   creatorName?: string | null;
+  description?: string | null;
+  locationName?: string | null;
   variant?: "card" | "hero";
   className?: string;
 };
@@ -28,10 +30,12 @@ export function EventCoverPlaceholder({
   startsAt,
   locale = "en",
   creatorName,
+  description,
+  locationName,
   variant = "hero",
   className = "",
 }: EventCoverPlaceholderProps) {
-  const accent = resolveEventOgAccent(title, eventId);
+  const accent = resolveEventOgAccent(title, eventId, { description, locationName });
   const date = new Date(startsAt);
   const intl = intlLocale(locale as Locale);
   const month = date.toLocaleString(intl, { month: "short", timeZone: "Asia/Tashkent" }).toUpperCase();
