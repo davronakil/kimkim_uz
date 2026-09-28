@@ -6,10 +6,16 @@ KimKim uses Telegram for auth, notifications, and a trilingual bot (`@kimkimuzbo
 
 | Method | Where | Notes |
 |--------|-------|-------|
-| Login Widget | `/login`, invite pages | Sets session cookie via `POST /api/auth/telegram` |
-| Mini App | Opened inside Telegram | `PUT /api/auth/telegram` with `initData` |
+| Login via bot | `/login`, invite pages | “Continue in Telegram” opens `t.me/bot?start=login_…`. The bot confirms a one-time challenge; the original tab claims it, or `/login?verify=` waits for an extra tap so previews cannot spend it. |
+| Mini App | Opened inside Telegram | `PUT /api/auth/telegram` with `initData` (auto, via `TelegramWebAppBootstrap`) |
 
 The web app passes `app_locale` on login so the user's language matches the page URL (`/en`, `/uz`, `/ru`).
+
+Sign-in no longer uses Telegram’s Login Widget (the button that asks for a phone number). The only web path is **Continue in Telegram**, which deep-links into `@kimkimuzbot`. After `/start login_<id>`, the bot replies with **Open KimKim**. That return URL is gated: nothing is spent until Continue is tapped. The originating browser tab also polls and finishes sign-in without a second click.
+
+| Start param | Meaning |
+|-------------|---------|
+| `login_<id>` | Web sign-in challenge (`login_challenges`) |
 
 ## Webhook
 

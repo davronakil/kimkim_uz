@@ -72,6 +72,10 @@ const messages = {
     expensePickEvent: "Which event is this expense for?",
     expensePickEventDone: "Now send amount + description.",
     expenseNotMember: "You're not a member of that event.",
+    loginReady: "You're signed in. Tap below to return to KimKim — we'll finish it on the site.",
+    loginAlreadyUsed: "This sign-in was already finished. Open KimKim if you still need the site.",
+    loginExpired: "That sign-in request expired. Go back to the site and tap Continue in Telegram again.",
+    loginOpenSite: "Open KimKim",
   },
   uz: {
     welcome:
@@ -141,6 +145,10 @@ const messages = {
     expensePickEvent: "Qaysi event uchun?",
     expensePickEventDone: "Endi summa + izoh yuboring.",
     expenseNotMember: "Siz bu event a'zosi emassiz.",
+    loginReady: "Kirdingiz. KimKim'ga qaytish uchun pastdagi tugmani bosing — saytda yakunlaymiz.",
+    loginAlreadyUsed: "Bu kirish allaqachon yakunlangan. Kerak bo'lsa, KimKim'ni oching.",
+    loginExpired: "Bu kirish so'rovi eskirgan. Saytga qaytib, Telegram orqali davom etishni bosing.",
+    loginOpenSite: "KimKim'ni ochish",
   },
   ru: {
     welcome:
@@ -210,6 +218,10 @@ const messages = {
     expensePickEvent: "Для какого события этот расход?",
     expensePickEventDone: "Теперь отправьте сумму и описание.",
     expenseNotMember: "Вы не участник этого события.",
+    loginReady: "Вы вошли. Нажмите ниже, чтобы вернуться на KimKim — закончим вход на сайте.",
+    loginAlreadyUsed: "Этот вход уже завершён. Откройте KimKim, если сайт ещё нужен.",
+    loginExpired: "Запрос на вход устарел. Вернитесь на сайт и снова нажмите «Продолжить в Telegram».",
+    loginOpenSite: "Открыть KimKim",
   },
 } as const;
 

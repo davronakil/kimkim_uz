@@ -69,7 +69,17 @@
   "auth": {
     "title": "Sign in with Telegram",
     "subtitle": "One tap to create or join events. No password needed.",
-    "telegramHint": "We only receive your public Telegram profile.",
+    "telegramHint": "Opens Telegram so we can sign you in from your account. We only receive your public Telegram profile.",
+    "continueInTelegram": "Continue in Telegram",
+    "waitingTitle": "Waiting for Telegram",
+    "waitingBody": "Open Telegram and tap Start. Keep this page open — it will finish signing you in.",
+    "openTelegramAgain": "Open Telegram again",
+    "waitingForTelegram": "Waiting for you to tap Start in Telegram…",
+    "confirmLoginTitle": "Finish signing in",
+    "confirmLoginBody": "Tap continue to sign in on this device. We wait for your tap so link previews can't use this sign-in first.",
+    "loginExpired": "This sign-in request expired. Tap Continue in Telegram to start again.",
+    "loginUsed": "This sign-in was already used. If you're signed in, go to your events.",
+    "loginError": "Couldn't start Telegram sign-in. Please try again.",
     "miniAppHint": "Opened from Telegram? You are already signed in."
   },
   "events": {

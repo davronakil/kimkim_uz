@@ -36,7 +36,7 @@ See [ROADMAP.md](./ROADMAP.md) for what's next.
 | Database | [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) |
 | Media | [Cloudflare R2](https://developers.cloudflare.com/r2/) |
 | Payments | [Stripe](https://stripe.com/) Checkout (paid events + extra catalog slots) |
-| Auth | [Telegram Login](https://core.telegram.org/widgets/login) + Web App initData |
+| Auth | Continue in Telegram (bot deep link) + Mini App initData |
 
 ---
 
