@@ -5,7 +5,8 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { Expense, Settlement, User } from "@/types";
 import { buildTelegramShareUrl } from "@/lib/auth/telegram";
-import { centsToMajor, displayName, formatMoney } from "@/lib/utils";
+import { allocateWeightedCents } from "@/lib/expense/mutations";
+import { centsToMajor, displayName, formatMoney, majorToCents } from "@/lib/utils";
 
 type ExpenseMember = User & { additional_guest_count?: number };
 
@@ -78,8 +79,9 @@ export function ExpensePanel({
       expense.splits.every(
         (split) => split.amount_cents === expense.splits![0]?.amount_cents,
       );
+    const useEqual = expense.split_mode === "equal" || (expense.split_mode !== "custom" && allEqual);
 
-    if (allEqual) {
+    if (useEqual) {
       setSplitMode("equal");
       setCustomAmounts(Object.fromEntries(members.map((member) => [member.id, ""])));
     } else {
@@ -152,6 +154,19 @@ export function ExpensePanel({
 
   const memberMap = new Map(members.map((member) => [member.id, member]));
   const shareCount = (member: ExpenseMember) => 1 + (member.additional_guest_count ?? 0);
+  const equalPreview =
+    splitMode === "equal" && amountNumber > 0 && splitIds.length > 0
+      ? allocateWeightedCents(
+          majorToCents(amountNumber),
+          splitIds.map((userId) => {
+            const member = memberMap.get(userId);
+            return {
+              user_id: userId,
+              weight: member ? shareCount(member) : 1,
+            };
+          }),
+        )
+      : [];
   const canSubmit =
     description &&
     amountNumber > 0 &&
@@ -279,6 +294,32 @@ export function ExpensePanel({
                 </div>
               ))}
             </div>
+            {splitMode === "equal" && equalPreview.length > 0 ? (
+              <ul className="space-y-1.5 pt-1">
+                {equalPreview.map((split) => {
+                  const member = memberMap.get(split.user_id);
+                  const shares = member ? shareCount(member) : 1;
+                  return (
+                    <li
+                      key={split.user_id}
+                      className="flex items-baseline justify-between gap-3 text-sm text-zinc-600 dark:text-zinc-300"
+                    >
+                      <span className="min-w-0 truncate">
+                        {member ? displayName(member) : "—"}
+                        {shares > 1 ? (
+                          <span className="ml-2 text-xs text-zinc-400">
+                            {t("equalShareCount", { count: shares })}
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="shrink-0 tabular-nums">
+                        {formatMoney(split.amount_cents, currency, locale)}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : null}
             {splitMode === "custom" ? (
               <p
                 className={`text-xs ${
@@ -317,10 +358,41 @@ export function ExpensePanel({
                     {t("paidBy")}: {expense.payer ? displayName(expense.payer) : "—"}
                   </p>
                 </div>
-                <p className="text-lg font-semibold text-emerald-700 dark:text-emerald-300">
+                <p className="text-lg font-semibold tabular-nums text-emerald-700 dark:text-emerald-300">
                   {formatMoney(expense.amount_cents, expense.currency, locale)}
                 </p>
               </div>
+              {expense.splits && expense.splits.length > 0 ? (
+                <ul className="space-y-1.5 border-t border-zinc-100 pt-3 dark:border-zinc-800">
+                  {expense.splits.map((split) => {
+                    const member = memberMap.get(split.user_id);
+                    const shares = member ? shareCount(member) : 1;
+                    const name = member
+                      ? displayName(member)
+                      : split.user
+                        ? displayName(split.user)
+                        : "—";
+                    return (
+                      <li
+                        key={split.user_id}
+                        className="flex items-baseline justify-between gap-3 text-sm"
+                      >
+                        <span className="min-w-0 truncate text-zinc-700 dark:text-zinc-200">
+                          {name}
+                          {expense.split_mode !== "custom" && shares > 1 ? (
+                            <span className="ml-2 text-xs text-zinc-400">
+                              {t("equalShareCount", { count: shares })}
+                            </span>
+                          ) : null}
+                        </span>
+                        <span className="shrink-0 tabular-nums text-zinc-900 dark:text-zinc-50">
+                          {formatMoney(split.amount_cents, expense.currency, locale)}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
               {!readOnly ? (
                 <div className="flex flex-wrap gap-2">
                   {confirmDeleteId === expense.id ? (

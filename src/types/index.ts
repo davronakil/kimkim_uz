@@ -130,6 +130,7 @@ export type Expense = {
   amount_cents: number;
   currency: string;
   description: string;
+  split_mode?: "equal" | "custom" | null;
   created_at: string;
   payer?: Pick<User, "id" | "first_name" | "last_name" | "username">;
   splits?: ExpenseSplit[];

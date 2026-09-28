@@ -42,7 +42,7 @@ export async function createExpenseRecord({
 
   await db
     .prepare(
-      "INSERT INTO expenses (id, event_id, payer_id, amount_cents, currency, description) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO expenses (id, event_id, payer_id, amount_cents, currency, description, split_mode) VALUES (?, ?, ?, ?, ?, ?, 'equal')",
     )
     .bind(expenseId, eventId, payerId, built.amountCents, currency, description)
     .run();

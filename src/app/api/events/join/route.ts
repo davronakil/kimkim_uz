@@ -12,6 +12,7 @@ import {
   listEventMembers,
   recordEventReferral,
 } from "@/lib/db/queries";
+import { goingHeadcount } from "@/lib/events/headcount";
 import { displayName } from "@/lib/utils";
 import { eventPaymentsEnabled } from "@/lib/stripe/checkout";
 
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
       ticket_currency: event.ticket_currency ?? "UZS",
       invite_code: event.invite_code,
     },
-    member_count: members.length,
+    member_count: goingHeadcount(members),
     creator_name: owner ? displayName(owner) : null,
     joined,
     logged_in: Boolean(user),

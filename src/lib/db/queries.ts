@@ -774,6 +774,10 @@ export async function listEventExpenses(eventId: string): Promise<Expense[]> {
       amount_cents: expense.amount_cents,
       currency: expense.currency,
       description: expense.description,
+      split_mode:
+        expense.split_mode === "equal" || expense.split_mode === "custom"
+          ? expense.split_mode
+          : null,
       created_at: expense.created_at,
       payer: {
         id: expense.payer_id,

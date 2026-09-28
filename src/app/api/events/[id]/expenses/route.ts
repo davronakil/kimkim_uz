@@ -92,7 +92,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
   await db
     .prepare(
-      "INSERT INTO expenses (id, event_id, payer_id, amount_cents, currency, description) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO expenses (id, event_id, payer_id, amount_cents, currency, description, split_mode) VALUES (?, ?, ?, ?, ?, ?, ?)",
     )
     .bind(
       expenseId,
@@ -101,6 +101,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       amountCents,
       currency,
       parsed.data.description,
+      parsed.data.split_mode,
     )
     .run();
 

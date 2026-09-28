@@ -355,6 +355,8 @@
       "comments": "Comments",
       "expenses": "Expenses"
     },
+    "moreTitle": "More",
+    "moreHint": "Notifications and host tools",
     "sectionNav": {
       "commentsHint": "Discuss plans, venue, and updates",
       "expensesHint": "Track shared costs and balances",
