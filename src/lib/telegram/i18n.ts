@@ -16,6 +16,7 @@ const messages = {
     rsvpAlreadyGoing: "You're already on the guest list.",
     rsvpMaybeConfirmed: "Got it — marked as maybe.",
     rsvpDeclinedConfirmed: "Got it — marked as can't make it.",
+    eventFull: "This event is full.",
     rsvpGuestPrompt: (title: string) =>
       `Are you bringing anyone else to <b>${title}</b>?`,
     rsvpGuestOnlyMe: "Only me",
@@ -91,6 +92,7 @@ const messages = {
     rsvpAlreadyGoing: "Siz allaqachon ro'yxatdasiz.",
     rsvpMaybeConfirmed: "Tushundik — balki deb belgilandi.",
     rsvpDeclinedConfirmed: "Tushundik — bora olmaysiz deb belgilandi.",
+    eventFull: "Bu yig'ilish to'lib bo'ldi.",
     rsvpGuestPrompt: (title: string) =>
       `<b>${title}</b> ga yana kimnidir olib kelasizmi?`,
     rsvpGuestOnlyMe: "Faqat men",
@@ -164,6 +166,7 @@ const messages = {
     rsvpAlreadyGoing: "Вы уже в списке гостей.",
     rsvpMaybeConfirmed: "Понятно — отметили как возможно.",
     rsvpDeclinedConfirmed: "Понятно — отметили, что не сможете прийти.",
+    eventFull: "Мест больше нет.",
     rsvpGuestPrompt: (title: string) =>
       `Берёте кого-нибудь с собой на <b>${title}</b>?`,
     rsvpGuestOnlyMe: "Только я",

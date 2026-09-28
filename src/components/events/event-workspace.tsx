@@ -260,7 +260,14 @@ export function EventWorkspace({
               ) : null}
               <p className="inline-flex items-start gap-2.5">
                 <Users className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                {t("public.memberCount", { count: goingCount })}
+                {event.max_guest_count
+                  ? t(
+                      goingCount >= event.max_guest_count
+                        ? "public.guestCapFull"
+                        : "public.guestCap",
+                      { count: goingCount, max: event.max_guest_count },
+                    )
+                  : t("public.memberCount", { count: goingCount })}
               </p>
             </div>
 

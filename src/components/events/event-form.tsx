@@ -6,6 +6,8 @@ import {
   GlassWater,
   Heart,
   MessageCircle,
+  Trophy,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
@@ -53,6 +55,10 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
     event ? eventToLocation(event) : null,
   );
   const [locationCleared, setLocationCleared] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(mode === "create");
+  const [maxGuests, setMaxGuests] = useState(
+    event?.max_guest_count ? String(event.max_guest_count) : "",
+  );
 
   const initialLocation = event ? eventToLocation(event) : null;
   const templates: Array<{
@@ -61,6 +67,7 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
     short: string;
     description: string;
     paymentMode: EventPaymentMode;
+    maxGuests?: number;
     icon: LucideIcon;
   }> = [
     {
@@ -96,6 +103,15 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
       icon: Cake,
     },
     {
+      id: "soccer",
+      title: t("templates.soccer.title"),
+      short: t("templates.soccer.short"),
+      description: t("templates.soccer.description"),
+      paymentMode: "split",
+      maxGuests: 14,
+      icon: Trophy,
+    },
+    {
       id: "paid",
       title: t("templates.paid.title"),
       short: t("templates.paid.short"),
@@ -115,6 +131,7 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
     setDescription(template.description);
     setPaymentMode(template.paymentMode);
     setPaymentPickerKey((value) => value + 1);
+    setMaxGuests(template.maxGuests ? String(template.maxGuests) : "");
   }
 
   async function onSubmit(formEvent: React.FormEvent<HTMLFormElement>) {
@@ -182,13 +199,23 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
       onSubmit={onSubmit}
       className="space-y-5 rounded-3xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6"
     >
-      {mode === "create" ? (
+      {mode === "create" && showTemplates ? (
         <section className="space-y-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 dark:border-emerald-900 dark:bg-emerald-950/30">
-          <div className="space-y-1">
-            <p className="kk-label">{t("templatesTitle")}</p>
-            <p className="text-sm leading-relaxed text-emerald-950/75 dark:text-emerald-100/75">
-              {t("templatesSubtitle")}
-            </p>
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-1">
+              <p className="kk-label">{t("templatesTitle")}</p>
+              <p className="text-sm leading-relaxed text-emerald-950/75 dark:text-emerald-100/75">
+                {t("templatesSubtitle")}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowTemplates(false)}
+              aria-label={t("templatesDismiss")}
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-emerald-900/70 transition hover:bg-emerald-100 hover:text-emerald-950 dark:text-emerald-100/70 dark:hover:bg-emerald-900 dark:hover:text-emerald-50"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
           <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {templates.map((template) => {
@@ -261,6 +288,25 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
       />
 
       <VisibilityPicker defaultValue={event?.visibility ?? "private"} />
+
+      <div className="space-y-2">
+        <label htmlFor="max_guests" className="kk-label">
+          {t("maxGuests")}
+        </label>
+        <input
+          id="max_guests"
+          name="max_guests"
+          type="number"
+          min="1"
+          max="500"
+          inputMode="numeric"
+          value={maxGuests}
+          onChange={(inputEvent) => setMaxGuests(inputEvent.target.value)}
+          placeholder={t("maxGuestsPlaceholder")}
+          className="kk-input"
+        />
+        <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{t("maxGuestsHint")}</p>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">

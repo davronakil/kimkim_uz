@@ -4,8 +4,10 @@ import {
   getEventByInviteCode,
   getEventById,
   isEventMember,
+  listEventMembers,
   recordEventReferral,
 } from "@/lib/db/queries";
+import { exceedsGuestCap } from "@/lib/events/headcount";
 import {
   getEventRsvp,
   rsvpDeclined,
@@ -109,6 +111,19 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
     }
 
     const previousRsvp = await getEventRsvp(event.id, user.id);
+    const members = await listEventMembers(event.id);
+    if (
+      exceedsGuestCap(members, {
+        userId: user.id,
+        status: "going",
+        additionalGuestCount: previousRsvp?.additional_guest_count ?? 0,
+        maxGuests: event.max_guest_count,
+      })
+    ) {
+      await answerCallbackQuery(query.id, strings.eventFull, true);
+      return;
+    }
+
     const { wasMember } = await rsvpGoing(event, user);
     if (!wasMember) {
       await recordEventReferral({
@@ -261,6 +276,18 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
     const previousRsvp = await getEventRsvp(event.id, user.id);
     const status = previousRsvp?.status ?? "going";
     const previousCount = previousRsvp?.additional_guest_count ?? 0;
+    const members = await listEventMembers(event.id);
+    if (
+      exceedsGuestCap(members, {
+        userId: user.id,
+        status,
+        additionalGuestCount: parsed.count,
+        maxGuests: event.max_guest_count,
+      })
+    ) {
+      await answerCallbackQuery(query.id, strings.eventFull, true);
+      return;
+    }
 
     await upsertEventRsvp(event.id, user.id, status, parsed.count);
 

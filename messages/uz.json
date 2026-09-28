@@ -187,6 +187,7 @@
       "additionalGuestsHint": "{count, plural, =0 {Xarajatlarda faqat o'zim hisoblanaman.} one {Xarajatlarda men va # qo'shimcha mehmon hisoblanamiz.} other {Xarajatlarda men va # qo'shimcha mehmon hisoblanamiz.}}",
       "additionalGuestsShort": "+{count}",
       "statusError": "RSVP yangilanmadi. Qayta urinib ko'ring.",
+      "eventFull": "Bu mehmon chegarasidan oshib ketadi.",
       "summaryTitle": "RSVP xulosasi",
       "summarySubtitle": "{count, plural, one {# ta javob yozilgan} other {# ta javob yozilgan}} · {partyCount} kishi hisobda",
       "copy": "Xulosani nusxalash",
@@ -250,6 +251,8 @@
       "bodyLoggedIn": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash va yopiq yig'ilish faolligini ko'rish uchun yig'ilishga qo'shiling.",
       "ticketPrice": "Chipta: {price}",
       "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
+      "guestCap": "{count} / {max} kishi",
+      "guestCapFull": "To'ldi · {max} kishi",
       "ctaBody": "Mehmonlar ro'yxatiga qo'shilish uchun taklif sahifasi orqali kiring.",
       "signInAction": "Kirish va qo'shilish",
       "joinAction": "Yig'ilishga qo'shilish"
@@ -286,8 +289,17 @@
           "title": "Pullik yig'ilish",
           "short": "Chiptali yig'ilish, karta yoki qo'lda to'lov kuzatuvi bilan.",
           "description": "Chiptali yig'ilish. Narx qo'ying, mehmonlar karta bilan yoki keyin hostga to'laydi, kim to'laganini kuzating."
+        },
+        "soccer": {
+          "title": "Futbol",
+          "short": "Maydon haqini bo'lamiz. Odatda 12–14 kishi.",
+          "description": "Futbol. Maydon yoki bron haqini bo'ling, o'zingiz bilan kim kelishini yozing va ro'yxatni 14 kishida ushlang — o'yin to'la, lekin siqilmagan."
         }
       },
+      "templatesDismiss": "Namunalarni yopish",
+      "maxGuests": "Mehmon chegarasi",
+      "maxGuestsPlaceholder": "Chegara yo'q",
+      "maxGuestsHint": "Ixtiyoriy. Kelayotgan hammani hisoblaydi, +1 lar bilan. Bo'sh qoldirsangiz — chegara yo'q. Futbol odatda 12–14 kishi.",
       "startsAt": "Qachon?",
       "endsAt": "Tugashi (shart emas)",
       "location": "Qayerda?",
@@ -438,6 +450,8 @@
     "paidNotConfigured": "Bu pullik yig'ilish, lekin host hali chipta narxini qo'ymagan.",
     "ticketPrice": "Chipta: {price}",
     "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
+    "eventFull": "Joy qolmagan. Balki yoki kela olmasligingizni belgilashingiz mumkin.",
+    "guestCap": "{count} / {max} kishi",
     "join": "Kelaman — qo'shilish",
     "maybe": "Balki",
     "cantGo": "Kela olmiman",

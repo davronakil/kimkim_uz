@@ -98,6 +98,7 @@ export type Event = {
   ticket_currency: string;
   invite_code: string | null;
   visibility: EventVisibility;
+  max_guest_count: number | null;
   telegram_chat_id: string | null;
   telegram_message_thread_id: number | null;
   telegram_topic_name: string | null;

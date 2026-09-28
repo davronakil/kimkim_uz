@@ -187,6 +187,7 @@
       "additionalGuestsHint": "{count, plural, =0 {Only you will be counted for shared expenses.} one {You and # extra guest will be counted for shared expenses.} other {You and # extra guests will be counted for shared expenses.}}",
       "additionalGuestsShort": "+{count}",
       "statusError": "Could not update your RSVP. Try again.",
+      "eventFull": "That would go over the guest limit.",
       "summaryTitle": "RSVP summary",
       "summarySubtitle": "{count, plural, one {# response recorded} other {# responses recorded}} · {partyCount, plural, one {# person counted} other {# people counted}}",
       "copy": "Copy summary",
@@ -250,6 +251,8 @@
       "bodyLoggedIn": "This is a public preview. Join the event to RSVP, comment, pay, and see private event activity.",
       "ticketPrice": "Ticket: {price}",
       "memberCount": "{count, plural, one {# person going} other {# people going}}",
+      "guestCap": "{count} of {max} going",
+      "guestCapFull": "Full · {max} people",
       "ctaBody": "Join through the invite page to be added to the guest list.",
       "signInAction": "Sign in and join",
       "joinAction": "Join this event"
@@ -286,8 +289,17 @@
           "title": "Paid event",
           "short": "Ticketed gathering with card or manual payment tracking.",
           "description": "Ticketed event. Set a price, let guests pay by card or settle with the host later, and track who has paid."
+        },
+        "soccer": {
+          "title": "Soccer",
+          "short": "Split the booking. A full game is about 12–14 players.",
+          "description": "Soccer game. Split the pitch or booking, RSVP with anyone you're bringing, and keep the list to 14 so the game stays full without getting crowded."
         }
       },
+      "templatesDismiss": "Hide templates",
+      "maxGuests": "Guest limit",
+      "maxGuestsPlaceholder": "No limit",
+      "maxGuestsHint": "Optional. Counts everyone coming, including people marked +1. Leave empty for no limit. A soccer game is often 12–14.",
       "startsAt": "Date & time",
       "endsAt": "End time (optional)",
       "location": "Location",
@@ -438,6 +450,8 @@
     "paidNotConfigured": "This is a paid event, but the host hasn't set a ticket price yet.",
     "ticketPrice": "Ticket: {price}",
     "memberCount": "{count, plural, one {# person going} other {# people going}}",
+    "eventFull": "This event is full. You can still mark maybe or can't go.",
+    "guestCap": "{count} of {max} going",
     "join": "I'm coming — join event",
     "maybe": "Maybe",
     "cantGo": "Can't go",
