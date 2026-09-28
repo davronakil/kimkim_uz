@@ -69,7 +69,17 @@
   "auth": {
     "title": "Войти через Telegram",
     "subtitle": "Один клик — создать или присоединиться. Пароль не нужен.",
-    "telegramHint": "Мы получаем только ваш публичный профиль Telegram.",
+    "telegramHint": "Откроется Telegram — вы войдёте через свой аккаунт. Мы получаем только ваш публичный профиль Telegram.",
+    "continueInTelegram": "Продолжить в Telegram",
+    "waitingTitle": "Ждём Telegram",
+    "waitingBody": "Откройте Telegram и нажмите Start. Не закрывайте эту страницу — вход завершится здесь.",
+    "openTelegramAgain": "Открыть Telegram снова",
+    "waitingForTelegram": "Ждём, пока вы нажмёте Start в Telegram…",
+    "confirmLoginTitle": "Завершите вход",
+    "confirmLoginBody": "Нажмите «Продолжить», чтобы войти на этом устройстве. Мы ждём нажатия, чтобы предпросмотр ссылки не использовал вход раньше вас.",
+    "loginExpired": "Этот запрос на вход устарел. Снова нажмите «Продолжить в Telegram».",
+    "loginUsed": "Этот вход уже использован. Если вы вошли, откройте свои события.",
+    "loginError": "Не удалось начать вход через Telegram. Попробуйте ещё раз.",
     "miniAppHint": "Открыли из Telegram? Вы уже вошли."
   },
   "events": {

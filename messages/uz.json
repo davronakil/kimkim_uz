@@ -69,7 +69,17 @@
   "auth": {
     "title": "Telegram bilan kirish",
     "subtitle": "Bir marta bosish — yig'ilish yaratish yoki qo'shilish. Parol kerak emas.",
-    "telegramHint": "Faqat ochiq profil ma'lumotlaringizni olamiz.",
+    "telegramHint": "Telegram ochiladi va akkauntingiz orqali kirasiz. Faqat ochiq Telegram profilingizni olamiz.",
+    "continueInTelegram": "Telegram orqali davom etish",
+    "waitingTitle": "Telegram kutilmoqda",
+    "waitingBody": "Telegramni oching va Start ni bosing. Bu sahifani ochiq qoldiring — kirish shu yerda yakunlanadi.",
+    "openTelegramAgain": "Telegramni qayta ochish",
+    "waitingForTelegram": "Telegramda Start ni bosishingiz kutilmoqda…",
+    "confirmLoginTitle": "Kirishni yakunlang",
+    "confirmLoginBody": "Davom etishni bosing — shu qurilmada kirasiz. Havola ko'rinishi birinchi bo'lib ishlatib yubormasligi uchun bosishingizni kutamiz.",
+    "loginExpired": "Bu kirish so'rovi eskirgan. Qaytadan Telegram orqali davom etishni bosing.",
+    "loginUsed": "Bu kirish allaqachon ishlatilgan. Kirgan bo'lsangiz, yig'ilishlaringizga o'ting.",
+    "loginError": "Telegram orqali kirib bo'lmadi. Qayta urinib ko'ring.",
     "miniAppHint": "Telegram ichidamisan? Allaqachon kirding."
   },
   "events": {

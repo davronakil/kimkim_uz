@@ -1,4 +1,10 @@
 import { upsertTelegramUser } from "@/lib/auth/session";
+import {
+  buildLoginVerifyPath,
+  confirmLoginChallenge,
+  loginChallengeStatus,
+  parseLoginStartParam,
+} from "@/lib/auth/login-challenge";
 import { getEventByInviteCode } from "@/lib/db/queries";
 import {
   buildAppUrl,
@@ -17,6 +23,7 @@ import { isGroupChatType } from "@/lib/telegram/group";
 import { inviteRsvpKeyboard, languagePickerKeyboard } from "@/lib/telegram/keyboards";
 import { t } from "@/lib/telegram/i18n";
 import { parseIntent } from "@/lib/telegram/intents";
+import { isLocale } from "@/lib/locale";
 import {
   parseJoinStartParam,
   parseLangCommand,
@@ -49,6 +56,48 @@ async function sendWelcome(chatId: number, locale: BotLocale) {
       ],
     },
   });
+}
+
+async function handleLoginStart(message: TelegramMessage, user: User, challengeId: string) {
+  if (!message.from) return;
+  void registerBotCommands().catch((error) => {
+    console.error("registerBotCommands failed:", error);
+  });
+
+  const challenge = await confirmLoginChallenge(challengeId, user.id);
+  const status = loginChallengeStatus(challenge);
+  const locale =
+    challenge?.locale && isLocale(challenge.locale)
+      ? challenge.locale
+      : resolveBotLocale(message.from, user);
+  const strings = t(locale);
+
+  if (!challenge || status === "expired") {
+    await sendTelegramMessage(message.chat.id, strings.loginExpired);
+    return;
+  }
+
+  if (challenge.locale && challenge.locale !== user.language_code) {
+    await upsertTelegramUser({
+      telegram_id: String(message.from.id),
+      first_name: message.from.first_name,
+      last_name: message.from.last_name ?? null,
+      username: message.from.username ?? null,
+      appLocale: locale,
+    });
+  }
+
+  const siteUrl = buildAppUrl(buildLoginVerifyPath(locale, challenge.id));
+  await sendTelegramMessage(
+    message.chat.id,
+    status === "consumed" ? strings.loginAlreadyUsed : strings.loginReady,
+    {
+      parse_mode: "HTML",
+      reply_markup: {
+        inline_keyboard: [[{ text: strings.loginOpenSite, url: siteUrl }]],
+      },
+    },
+  );
 }
 
 async function handleInviteStart(
@@ -103,6 +152,11 @@ async function handlePrivateMessage(message: TelegramMessage) {
 
   if (text) {
     const startParam = parseStartParam(text);
+    const loginId = parseLoginStartParam(startParam);
+    if (loginId) {
+      await handleLoginStart(message, user, loginId);
+      return;
+    }
     const join = parseJoinStartParam(startParam);
     if (join) {
       if (join.locale) {

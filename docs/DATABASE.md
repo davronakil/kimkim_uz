@@ -38,6 +38,7 @@ npm run db:migrate:remote   # production
 | `event_reminder_logs` | `0003` | Per-user reminder dedup (24h / 1h) |
 | `telegram_chat_id` on `users` | `0003` | DM notification target |
 | `bot_sessions` | `0006` | Multi-step bot flows |
+| `login_challenges` | `0019` | One-time web sign-in via `t.me/bot?start=login_…` |
 | `event_group_reminder_logs` | `0007` | Group reminder dedup |
 | `event_rsvps` | `0008` | RSVP status (`going` / `declined`) |
 | `event_notification_preferences` | `0011` | Per-user Telegram notification mode |

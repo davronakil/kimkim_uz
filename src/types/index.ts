@@ -201,6 +201,7 @@ export type CloudflareEnv = Cloudflare.Env & {
   SESSION_SECRET: string;
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_BOT_USERNAME: string;
+  NEXT_PUBLIC_TELEGRAM_BOT_USERNAME?: string;
   CRON_SECRET?: string;
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;

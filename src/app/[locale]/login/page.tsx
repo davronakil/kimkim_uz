@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
+import { safeRedirectPath } from "@/lib/auth/login-challenge";
 import { buildSitePageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({
@@ -32,15 +33,18 @@ export async function generateMetadata({
 
 export default async function LoginPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ verify?: string; next?: string }>;
 }) {
   const { locale } = await params;
+  const { verify, next } = await searchParams;
   setRequestLocale(locale);
 
   const user = await getCurrentUser();
   if (user) {
-    return redirect({ href: "/events", locale });
+    return redirect({ href: safeRedirectPath(next), locale });
   }
 
   const t = await getTranslations("auth");
@@ -48,6 +52,22 @@ export default async function LoginPage({
     process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME ??
     process.env.TELEGRAM_BOT_USERNAME ??
     "your_bot_username";
+  const redirectTo = safeRedirectPath(next);
+
+  if (verify) {
+    return (
+      <div className="relative mx-auto max-w-md">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.12),transparent_65%)]" />
+        <div className="relative">
+          <TelegramLoginButton
+            botUsername={botUsername}
+            redirectTo={redirectTo}
+            verifyId={verify}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative mx-auto max-w-md">
@@ -62,7 +82,7 @@ export default async function LoginPage({
             {t("subtitle")}
           </p>
         </div>
-        <TelegramLoginButton botUsername={botUsername} />
+        <TelegramLoginButton botUsername={botUsername} redirectTo={redirectTo} />
         <p className="text-center text-xs text-zinc-500">{t("telegramHint")}</p>
       </div>
     </div>

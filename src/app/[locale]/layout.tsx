@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { TelegramWebAppBootstrap } from "@/components/auth/telegram-webapp-bootstrap";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { defaultLocale, locales, type Locale } from "@/i18n/config";
 import { alternateOgLocales, ogLocaleTag } from "@/lib/locale";
@@ -133,6 +134,7 @@ export default async function LocaleLayout({
       <body className="flex min-h-full flex-col bg-zinc-50 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
         <NextIntlClientProvider messages={messages}>
           <ServiceWorkerRegister />
+          <TelegramWebAppBootstrap />
           <SiteHeader />
           <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 overflow-x-clip px-4 py-5 pb-8 sm:px-5 sm:py-8">
             {children}
