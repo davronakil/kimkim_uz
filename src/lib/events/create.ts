@@ -25,6 +25,7 @@ export type CreateEventInput = {
   ticketPriceCents?: number | null;
   ticketCurrency?: string;
   visibility?: EventVisibility;
+  maxGuestCount?: number | null;
 };
 
 export async function createEventRecord(input: CreateEventInput) {
@@ -42,8 +43,8 @@ export async function createEventRecord(input: CreateEventInput) {
         id, creator_id, title, description, starts_at, ends_at,
         location_name, location_address, location_lat, location_lng, cover_image_key,
         payment_mode, expenses_enabled, expense_currency, ticket_price_cents, ticket_currency,
-        invite_code, visibility
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        invite_code, visibility, max_guest_count
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       eventId,
@@ -64,6 +65,7 @@ export async function createEventRecord(input: CreateEventInput) {
       input.ticketCurrency ?? "UZS",
       inviteCode,
       visibility,
+      input.maxGuestCount ?? null,
     )
     .run();
 

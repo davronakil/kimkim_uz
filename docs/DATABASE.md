@@ -59,6 +59,7 @@ npm run db:migrate:remote   # production
 Data migration `0015` renames stored category `wedding_venue` → `event_venue` on existing listings.
 Migration `0016` adds per-event `expense_currency` for shared expenses and balances.
 Migration `0021` adds `expenses.split_mode` (`equal` or `custom`) so equal splits keep following extra guests.
+Migration `0022` adds optional `events.max_guest_count` for a headcount cap, including extra guests.
 
 Full catalog flow: [CATALOG.md](./CATALOG.md).
 

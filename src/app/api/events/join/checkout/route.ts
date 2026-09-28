@@ -7,7 +7,9 @@ import {
   createPendingEventPayment,
   getEventByInviteCode,
   isEventMember,
+  listEventMembers,
 } from "@/lib/db/queries";
+import { exceedsGuestCap } from "@/lib/events/headcount";
 import { createEventCheckoutSession, eventPaymentsEnabled } from "@/lib/stripe/checkout";
 
 const checkoutSchema = z.object({
@@ -33,6 +35,17 @@ export async function POST(request: NextRequest) {
 
   if (await isEventMember(event.id, user.id)) {
     return NextResponse.json({ error: "Already joined" }, { status: 409 });
+  }
+
+  const members = await listEventMembers(event.id);
+  if (
+    exceedsGuestCap(members, {
+      userId: user.id,
+      status: "going",
+      maxGuests: event.max_guest_count,
+    })
+  ) {
+    return NextResponse.json({ error: "event_full" }, { status: 409 });
   }
 
   const env = await getEnv();

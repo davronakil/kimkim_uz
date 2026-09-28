@@ -12,7 +12,7 @@ import {
   listEventMembers,
   recordEventReferral,
 } from "@/lib/db/queries";
-import { goingHeadcount } from "@/lib/events/headcount";
+import { exceedsGuestCap, goingHeadcount } from "@/lib/events/headcount";
 import { displayName } from "@/lib/utils";
 import { eventPaymentsEnabled } from "@/lib/stripe/checkout";
 
@@ -61,6 +61,7 @@ export async function GET(request: NextRequest) {
       invite_code: event.invite_code,
     },
     member_count: goingHeadcount(members),
+    max_guest_count: event.max_guest_count,
     creator_name: owner ? displayName(owner) : null,
     joined,
     logged_in: Boolean(user),
@@ -104,6 +105,18 @@ export async function POST(request: NextRequest) {
     if (!paid) {
       return NextResponse.json({ error: "Payment required" }, { status: 402 });
     }
+  }
+
+  const members = await listEventMembers(event.id);
+  if (
+    exceedsGuestCap(members, {
+      userId: user.id,
+      status: rsvpStatus,
+      additionalGuestCount: 0,
+      maxGuests: event.max_guest_count,
+    })
+  ) {
+    return NextResponse.json({ error: "event_full" }, { status: 409 });
   }
 
   const alreadyMember = await isEventMember(event.id, user.id);

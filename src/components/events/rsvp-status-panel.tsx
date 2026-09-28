@@ -35,7 +35,7 @@ export function RsvpStatusPanel({
   );
   const [savingStatus, setSavingStatus] = useState<EventRsvpStatus | null>(null);
   const [savingGuests, setSavingGuests] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<"full" | "generic" | null>(null);
 
   async function updateRsvp(nextStatus: EventRsvpStatus, nextGuestCount = additionalGuestCount) {
     const normalizedGuestCount = nextStatus === "declined" ? 0 : nextGuestCount;
@@ -50,7 +50,7 @@ export function RsvpStatusPanel({
 
     setSavingStatus(nextStatus);
     setSavingGuests(nextStatus === status);
-    setError(false);
+    setError(null);
 
     const response = await fetch(`/api/events/${eventId}/rsvp`, {
       method: "PATCH",
@@ -66,7 +66,7 @@ export function RsvpStatusPanel({
     setSavingGuests(false);
 
     if (!response.ok) {
-      setError(true);
+      setError(response.status === 409 ? "full" : "generic");
       return;
     }
 
@@ -141,7 +141,11 @@ export function RsvpStatusPanel({
           </p>
         </div>
       ) : null}
-      {error ? <p className="mt-3 text-sm text-red-600">{t("statusError")}</p> : null}
+      {error ? (
+        <p className="mt-3 text-sm text-red-600">
+          {error === "full" ? t("eventFull") : t("statusError")}
+        </p>
+      ) : null}
     </section>
   );
 }

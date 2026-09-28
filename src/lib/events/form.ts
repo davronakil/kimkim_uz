@@ -29,6 +29,10 @@ export const eventFormSchema = z
     ticket_price: z.coerce.number().optional(),
     ticket_currency: z.enum(eventCurrencies).default("UZS"),
     visibility: z.enum(eventVisibilityModes).default(defaultEventVisibility),
+    max_guests: z.preprocess(
+      (value) => (value === "" || value == null ? undefined : value),
+      z.coerce.number().int().min(1).max(500).optional(),
+    ),
   })
   .superRefine((data, ctx) => {
     if (data.payment_mode === "paid" && (!data.ticket_price || data.ticket_price <= 0)) {
@@ -73,6 +77,7 @@ export function parseEventFormData(formData: FormData) {
     ticket_price: formData.get("ticket_price") || undefined,
     ticket_currency: formData.get("ticket_currency") || "UZS",
     visibility: formData.get("visibility") || defaultEventVisibility,
+    max_guests: formData.get("max_guests") || undefined,
   });
 }
 

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
 import { runInBackground } from "@/lib/cloudflare";
-import { getEventById, isEventMember } from "@/lib/db/queries";
+import { getEventById, isEventMember, listEventMembers } from "@/lib/db/queries";
+import { exceedsGuestCap } from "@/lib/events/headcount";
 import { getEventRsvp, upsertEventRsvp } from "@/lib/events/rsvp";
 import { notifyRsvpChanged } from "@/lib/telegram/notifications";
 
@@ -46,6 +47,18 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       : (parsed.data.additional_guest_count ?? previousRsvp?.additional_guest_count ?? 0);
   const statusChanged = previousStatus !== parsed.data.status;
   const guestCountChanged = previousAdditionalGuestCount !== additionalGuestCount;
+
+  const members = await listEventMembers(id);
+  if (
+    exceedsGuestCap(members, {
+      userId: user.id,
+      status: parsed.data.status,
+      additionalGuestCount,
+      maxGuests: event.max_guest_count,
+    })
+  ) {
+    return NextResponse.json({ error: "event_full" }, { status: 409 });
+  }
 
   await upsertEventRsvp(id, user.id, parsed.data.status, additionalGuestCount);
 

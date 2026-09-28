@@ -139,7 +139,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
         title = ?, description = ?, starts_at = ?, ends_at = ?,
         location_name = ?, location_address = ?, location_lat = ?, location_lng = ?,
         cover_image_key = ?, payment_mode = ?, expenses_enabled = ?, expense_currency = ?, ticket_price_cents = ?, ticket_currency = ?,
-        visibility = ?, updated_at = datetime('now')
+        visibility = ?, max_guest_count = ?, updated_at = datetime('now')
        WHERE id = ?`,
     )
     .bind(
@@ -158,6 +158,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       resolveTicketPriceCents(payload.data.payment_mode, payload.data.ticket_price),
       payload.data.payment_mode === "paid" ? payload.data.ticket_currency : event.ticket_currency ?? "UZS",
       payload.data.visibility,
+      payload.data.max_guests ?? null,
       id,
     )
     .run();

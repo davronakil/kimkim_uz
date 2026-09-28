@@ -24,6 +24,7 @@ type PublicEvent = Pick<
   | "ticket_price_cents"
   | "ticket_currency"
   | "invite_code"
+  | "max_guest_count"
 >;
 
 export function PublicEventOverview({
@@ -119,7 +120,12 @@ export function PublicEventOverview({
                 ) : null}
                 <p className="flex items-start gap-3 text-base text-zinc-700 dark:text-zinc-200">
                   <Users className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                  {t("memberCount", { count: memberCount })}
+                  {event.max_guest_count
+                    ? t(
+                        memberCount >= event.max_guest_count ? "guestCapFull" : "guestCap",
+                        { count: memberCount, max: event.max_guest_count },
+                      )
+                    : t("memberCount", { count: memberCount })}
                 </p>
               </div>
             </div>

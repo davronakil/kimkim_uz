@@ -32,6 +32,7 @@ type JoinPreview = {
   >;
   creator_name: string | null;
   member_count: number;
+  max_guest_count: number | null;
   joined: boolean;
   logged_in: boolean;
   payments_enabled: boolean;
@@ -139,6 +140,13 @@ export function JoinEventPanel({
       }),
     });
 
+    if (response.status === 409) {
+      setRsvpMessage(t("eventFull"));
+      setJoining(false);
+      void load();
+      return;
+    }
+
     if (response.ok) {
       const data = (await response.json()) as { event_id: string; joined?: boolean };
       window.dispatchEvent(new Event("kimkim:auth-change"));
@@ -171,7 +179,7 @@ export function JoinEventPanel({
       return;
     }
 
-    setCheckoutMessage(t("checkoutError"));
+    setCheckoutMessage(response.status === 409 ? t("eventFull") : t("checkoutError"));
     setPaying(false);
   }
 
@@ -203,8 +211,9 @@ export function JoinEventPanel({
     );
   }
 
-  const { event, member_count, joined, logged_in, payments_enabled, rsvp_status, creator_name } =
+  const { event, member_count, max_guest_count, joined, logged_in, payments_enabled, rsvp_status, creator_name } =
     preview;
+  const eventFull = max_guest_count != null && member_count >= max_guest_count;
   const paymentMode = event.payment_mode ?? "free";
   const startsAt = new Date(event.starts_at);
   const loginRedirect = referrerUserId
@@ -274,7 +283,9 @@ export function JoinEventPanel({
             ) : null}
             <p className="inline-flex w-full items-start gap-3 text-base text-zinc-700 dark:text-zinc-200">
               <Users className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              {t("memberCount", { count: member_count })}
+              {max_guest_count
+                ? t("guestCap", { count: member_count, max: max_guest_count })
+                : t("memberCount", { count: member_count })}
             </p>
           </div>
 
@@ -309,6 +320,11 @@ export function JoinEventPanel({
           ) : null}
 
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 dark:border-emerald-900 dark:bg-emerald-950/40">
+            {eventFull && !joined ? (
+              <p className="mb-4 text-sm leading-relaxed text-emerald-950 dark:text-emerald-100">
+                {t("eventFull")}
+              </p>
+            ) : null}
             {joined ? (
               <div className="space-y-4 text-center">
                 <p className="text-base font-medium text-emerald-800 dark:text-emerald-200">
@@ -334,7 +350,7 @@ export function JoinEventPanel({
               <div className="space-y-3">
                 <button
                   type="button"
-                  disabled={paying || joining}
+                  disabled={paying || joining || eventFull}
                   onClick={() => void startCheckout()}
                   className="kk-btn-primary w-full disabled:opacity-60"
                 >
@@ -344,7 +360,7 @@ export function JoinEventPanel({
                 </button>
                 <button
                   type="button"
-                  disabled={joining || paying}
+                  disabled={joining || paying || eventFull}
                   onClick={() => void join(true, "going")}
                   className="w-full rounded-full border border-emerald-300 bg-white px-5 py-3 text-sm font-semibold text-emerald-950 transition hover:border-emerald-500 hover:bg-emerald-50 disabled:opacity-60 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100 dark:hover:bg-emerald-900"
                 >
@@ -376,7 +392,7 @@ export function JoinEventPanel({
               <div className="space-y-3">
                 <button
                   type="button"
-                  disabled={joining}
+                  disabled={joining || eventFull}
                   onClick={() => void join(false, "going")}
                   className="kk-btn-primary w-full disabled:opacity-60"
                 >

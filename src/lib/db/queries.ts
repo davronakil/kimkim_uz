@@ -44,6 +44,10 @@ function normalizeEvent<T extends Partial<Event>>(
           ? Number(row.telegram_message_thread_id)
           : null,
     telegram_topic_name: row.telegram_topic_name ?? null,
+    max_guest_count:
+      row.max_guest_count == null || Number.isNaN(Number(row.max_guest_count))
+        ? null
+        : Number(row.max_guest_count),
   };
 }
 
