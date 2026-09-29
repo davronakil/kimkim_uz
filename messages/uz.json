@@ -88,6 +88,10 @@
     "editTitle": "Yig'ilishni tahrirlash",
     "deleteEvent": "Yig'ilishni o'chirish",
     "deleteConfirm": "Butunlay o'chirilsinmi? Izohlar va xarajatlar ham ketadi.",
+    "rerun": {
+      "button": "Yana qilish",
+      "error": "Keyingi yig'ilish yaratilmadi. Qayta urinib ko'ring."
+    },
     "detailTitle": "Kim bor?",
     "upcomingTitle": "Yaqinda",
     "pastTitle": "Bo'lgan yig'ilishlar",

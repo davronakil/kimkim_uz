@@ -22,6 +22,7 @@ import { RsvpSummaryPanel } from "@/components/events/rsvp-summary-panel";
 import { RsvpStatusPanel } from "@/components/events/rsvp-status-panel";
 import { LeaveEventButton } from "@/components/events/leave-event-button";
 import { MemberList } from "@/components/events/member-list";
+import { RerunEventButton } from "@/components/events/rerun-event-button";
 import { TransferOwnershipPanel } from "@/components/events/transfer-ownership-panel";
 import { TelegramGroupPanel } from "@/components/events/telegram-group-panel";
 import { TelegramNotifyBanner } from "@/components/events/telegram-notify-banner";
@@ -230,10 +231,13 @@ export function EventWorkspace({
                 <PaymentModeBadge mode={event.payment_mode ?? "free"} size="sm" />
               </div>
               {canEdit ? (
-                <Link href={`/events/${eventId}/edit`} className="kk-btn-secondary shrink-0 px-3">
-                  <Pencil className="h-4 w-4" />
-                  {common("edit")}
-                </Link>
+                <div className="flex shrink-0 flex-col items-stretch gap-2 sm:flex-row">
+                  <RerunEventButton eventId={eventId} />
+                  <Link href={`/events/${eventId}/edit`} className="kk-btn-secondary px-3">
+                    <Pencil className="h-4 w-4" />
+                    {common("edit")}
+                  </Link>
+                </div>
               ) : null}
             </div>
 

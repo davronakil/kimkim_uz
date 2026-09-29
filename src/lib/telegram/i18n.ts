@@ -5,8 +5,10 @@ const messages = {
   en: {
     welcome:
       "KimKim.uz — who's coming, where to meet, who owes what. /create to start, or type /help.",
-    welcomeInvite: (title: string) =>
-      `You're invited to <b>${title}</b>. Tap below to RSVP.`,
+    welcomeInvite: (title: string, spots?: string | null) =>
+      spots
+        ? `You're invited to <b>${title}</b>.\n${spots}\nTap below to RSVP.`
+        : `You're invited to <b>${title}</b>. Tap below to RSVP.`,
     inviteNotFound: "This invite link was not found or has expired.",
     joinButton: "Join event",
     rsvpGoing: "I'm coming",
@@ -81,8 +83,10 @@ const messages = {
   uz: {
     welcome:
       "KimKim.uz — kim keladi, qayerda, pul kimda. /create bilan boshlang yoki /help.",
-    welcomeInvite: (title: string) =>
-      `Sizni <b>${title}</b> ga chaqirishdi. Qo'shilish uchun tugmani bosing.`,
+    welcomeInvite: (title: string, spots?: string | null) =>
+      spots
+        ? `Sizni <b>${title}</b> ga chaqirishdi.\n${spots}\nQo'shilish uchun tugmani bosing.`
+        : `Sizni <b>${title}</b> ga chaqirishdi. Qo'shilish uchun tugmani bosing.`,
     inviteNotFound: "Bu link topilmadi yoki eskirgan.",
     joinButton: "Qo'shilish",
     rsvpGoing: "Kelaman",
@@ -155,8 +159,10 @@ const messages = {
   ru: {
     welcome:
       "KimKim.uz — кто придёт, где встречаемся, кто кому должен. /create чтобы начать, или /help.",
-    welcomeInvite: (title: string) =>
-      `Вас приглашают на <b>${title}</b>. Нажмите ниже, чтобы подтвердить участие.`,
+    welcomeInvite: (title: string, spots?: string | null) =>
+      spots
+        ? `Вас приглашают на <b>${title}</b>.\n${spots}\nНажмите ниже, чтобы подтвердить участие.`
+        : `Вас приглашают на <b>${title}</b>. Нажмите ниже, чтобы подтвердить участие.`,
     inviteNotFound: "Ссылка не найдена или устарела.",
     joinButton: "Присоединиться",
     rsvpGoing: "Приду",

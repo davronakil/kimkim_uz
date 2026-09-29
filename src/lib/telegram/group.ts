@@ -5,9 +5,12 @@ import {
   getEventByTelegramGroupId,
   getUserById,
   isEventOwnerByTelegramId,
+  listEventMembers,
   setEventTelegramGroup,
 } from "@/lib/db/queries";
+import { goingHeadcount } from "@/lib/events/headcount";
 import { buildAppUrl, sendTelegramMessage } from "@/lib/telegram/bot";
+import { guestCapLine } from "@/lib/telegram/guest-cap";
 import { inviteRsvpKeyboard } from "@/lib/telegram/keyboards";
 import { t as botStrings } from "@/lib/telegram/i18n";
 import { resolveUserLocale } from "@/lib/locale";
@@ -87,7 +90,10 @@ const groupStrings = {
     noEvent: "No event linked to this group.",
     openEvent: "Open event",
     joinEvent: "Join / RSVP",
-    shareIntro: (title: string) => `📣 <b>${title}</b> — plan on KimKim.uz`,
+    shareIntro: (title: string, spots?: string | null) =>
+      spots
+        ? `📣 <b>${title}</b> — plan on KimKim.uz\n${spots}`
+        : `📣 <b>${title}</b> — plan on KimKim.uz`,
   },
   ru: {
     linked: (title: string) =>
@@ -105,7 +111,10 @@ const groupStrings = {
     noEvent: "К этой группе не привязано событие.",
     openEvent: "Открыть событие",
     joinEvent: "Присоединиться / RSVP",
-    shareIntro: (title: string) => `📣 <b>${title}</b> — планируйте на KimKim.uz`,
+    shareIntro: (title: string, spots?: string | null) =>
+      spots
+        ? `📣 <b>${title}</b> — планируйте на KimKim.uz\n${spots}`
+        : `📣 <b>${title}</b> — планируйте на KimKim.uz`,
   },
   uz: {
     linked: (title: string) =>
@@ -123,7 +132,10 @@ const groupStrings = {
     noEvent: "Bu guruh eventga ulanmagan.",
     openEvent: "Eventni ochish",
     joinEvent: "Qo'shilish",
-    shareIntro: (title: string) => `📣 <b>${title}</b> — KimKim.uz da reja`,
+    shareIntro: (title: string, spots?: string | null) =>
+      spots
+        ? `📣 <b>${title}</b> — KimKim.uz da reja\n${spots}`
+        : `📣 <b>${title}</b> — KimKim.uz da reja`,
   },
 } as const;
 
@@ -297,10 +309,12 @@ export async function postEventShareToGroup(eventId: string) {
 
   const inviteStrings = botStrings(locale);
   const eventUrl = buildAppUrl(`/${locale}/events/${event.id}`);
+  const members = await listEventMembers(eventId);
+  const spots = guestCapLine(locale, goingHeadcount(members), event.max_guest_count);
 
   await sendTelegramMessage(
     Number(event.telegram_chat_id),
-    `${strings.shareIntro(event.title)}\n${when}`,
+    `${strings.shareIntro(event.title, spots)}\n${when}`,
     {
       parse_mode: "HTML",
       message_thread_id: eventGroupThreadId(event),

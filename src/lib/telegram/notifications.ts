@@ -1,7 +1,9 @@
 import { getDb } from "@/lib/cloudflare";
 import { getEventById, listEventMembers } from "@/lib/db/queries";
+import { goingHeadcount } from "@/lib/events/headcount";
 import { formatLocaleDateTime, intlLocale, resolveUserLocale } from "@/lib/locale";
 import { buildAppUrl, sendTelegramMessage } from "@/lib/telegram/bot";
+import { guestCapLine } from "@/lib/telegram/guest-cap";
 import { notifyEventGroup, ownerLocaleForEvent } from "@/lib/telegram/group";
 import { t } from "@/lib/telegram/i18n";
 import type { BotLocale } from "@/lib/telegram/types";
@@ -216,16 +218,20 @@ export async function notifyMemberJoined(input: {
   memberUserId: string;
 }) {
   const memberName = escapeHtml(displayName(input.member));
+  const members = await listEventMembers(input.eventId);
+  const goingCount = goingHeadcount(members);
 
   const buildJoin = (locale: BotLocale, event: Event) => {
     const title = escapeHtml(event.title);
+    const spots = guestCapLine(locale, goingCount, event.max_guest_count);
+    const spotsLine = spots ? ` ${escapeHtml(spots)}.` : "";
     if (locale === "uz") {
-      return `👋 <b>${memberName}</b> <b>${title}</b> ga qo'shildi.`;
+      return `👋 <b>${memberName}</b> <b>${title}</b> ga qo'shildi.${spotsLine}`;
     }
     if (locale === "ru") {
-      return `👋 <b>${memberName}</b> присоединился(ась) к <b>${title}</b>.`;
+      return `👋 <b>${memberName}</b> присоединился(ась) к <b>${title}</b>.${spotsLine}`;
     }
-    return `👋 <b>${memberName}</b> joined <b>${title}</b>.`;
+    return `👋 <b>${memberName}</b> joined <b>${title}</b>.${spotsLine}`;
   };
 
   await notifyMembers(input.eventId, input.memberUserId, buildJoin);
@@ -242,6 +248,8 @@ export async function notifyRsvpChanged(input: {
   guestCountChanged?: boolean;
 }) {
   const memberName = escapeHtml(displayName(input.member));
+  const members = await listEventMembers(input.eventId);
+  const goingCount = goingHeadcount(members);
 
   const buildRsvp = (locale: BotLocale, event: Event) => {
     const title = escapeHtml(event.title);
@@ -251,13 +259,15 @@ export async function notifyRsvpChanged(input: {
       input.status !== "declined" && (input.guestCountChanged || guestCount > 0)
         ? ` ${escapeHtml(rsvpGuestCountLabel(locale, guestCount))}`
         : "";
+    const spots = guestCapLine(locale, goingCount, event.max_guest_count);
+    const spotsLine = spots ? ` ${escapeHtml(spots)}.` : "";
     if (locale === "uz") {
-      return `📝 <b>${memberName}</b> <b>${title}</b> uchun RSVP holatini o'zgartirdi: <b>${status}</b>.${guestText}`;
+      return `📝 <b>${memberName}</b> <b>${title}</b> uchun RSVP holatini o'zgartirdi: <b>${status}</b>.${guestText}${spotsLine}`;
     }
     if (locale === "ru") {
-      return `📝 <b>${memberName}</b> обновил(а) RSVP для <b>${title}</b>: <b>${status}</b>.${guestText}`;
+      return `📝 <b>${memberName}</b> обновил(а) RSVP для <b>${title}</b>: <b>${status}</b>.${guestText}${spotsLine}`;
     }
-    return `📝 <b>${memberName}</b> updated RSVP for <b>${title}</b>: <b>${status}</b>.${guestText}`;
+    return `📝 <b>${memberName}</b> updated RSVP for <b>${title}</b>: <b>${status}</b>.${guestText}${spotsLine}`;
   };
 
   await notifyMembers(input.eventId, input.memberUserId, buildRsvp);
@@ -267,23 +277,30 @@ export async function notifyRsvpChanged(input: {
   ]);
 }
 
-function reminderText(locale: BotLocale, title: string, timeLabel: string, window: "24h" | "1h") {
+function reminderText(
+  locale: BotLocale,
+  title: string,
+  timeLabel: string,
+  window: "24h" | "1h",
+  spots?: string | null,
+) {
+  const spotsLine = spots ? `\n${escapeHtml(spots)}` : "";
   if (window === "24h") {
     if (locale === "uz") {
-      return `⏰ <b>${title}</b> 24 soatdan keyin boshlanadi (${escapeHtml(timeLabel)}).`;
+      return `⏰ <b>${title}</b> 24 soatdan keyin boshlanadi (${escapeHtml(timeLabel)}).${spotsLine}`;
     }
     if (locale === "ru") {
-      return `⏰ <b>${title}</b> начнётся примерно через 24 часа (${escapeHtml(timeLabel)}).`;
+      return `⏰ <b>${title}</b> начнётся примерно через 24 часа (${escapeHtml(timeLabel)}).${spotsLine}`;
     }
-    return `⏰ <b>${title}</b> starts in about 24 hours (${escapeHtml(timeLabel)}).`;
+    return `⏰ <b>${title}</b> starts in about 24 hours (${escapeHtml(timeLabel)}).${spotsLine}`;
   }
   if (locale === "uz") {
-    return `⏰ <b>${title}</b> 1 soatdan keyin boshlanadi (${escapeHtml(timeLabel)}).`;
+    return `⏰ <b>${title}</b> 1 soatdan keyin boshlanadi (${escapeHtml(timeLabel)}).${spotsLine}`;
   }
   if (locale === "ru") {
-    return `⏰ <b>${title}</b> начнётся примерно через 1 час (${escapeHtml(timeLabel)}).`;
+    return `⏰ <b>${title}</b> начнётся примерно через 1 час (${escapeHtml(timeLabel)}).${spotsLine}`;
   }
-  return `⏰ <b>${title}</b> starts in about 1 hour (${escapeHtml(timeLabel)}).`;
+  return `⏰ <b>${title}</b> starts in about 1 hour (${escapeHtml(timeLabel)}).${spotsLine}`;
 }
 
 export async function processEventReminders() {
@@ -305,6 +322,9 @@ export async function processEventReminders() {
       .all<Event>();
 
     for (const event of events.results ?? []) {
+      const attendees = await listEventMembers(event.id);
+      const goingCount = goingHeadcount(attendees);
+
       if (event.telegram_chat_id) {
         const groupAlreadySent = await db
           .prepare(
@@ -321,7 +341,8 @@ export async function processEventReminders() {
             dateStyle: "medium",
             timeStyle: "short",
           });
-          const groupText = reminderText(groupLocale, title, timeLabel, window.type);
+          const spots = guestCapLine(groupLocale, goingCount, event.max_guest_count);
+          const groupText = reminderText(groupLocale, title, timeLabel, window.type, spots);
 
           try {
             await notifyEventGroup(
@@ -363,7 +384,8 @@ export async function processEventReminders() {
           dateStyle: "medium",
           timeStyle: "short",
         });
-        const text = reminderText(locale, title, timeLabel, window.type);
+        const spots = guestCapLine(locale, goingCount, event.max_guest_count);
+        const text = reminderText(locale, title, timeLabel, window.type, spots);
 
         try {
           await sendTelegramMessage(
