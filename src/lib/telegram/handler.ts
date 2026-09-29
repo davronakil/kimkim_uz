@@ -5,7 +5,9 @@ import {
   loginChallengeStatus,
   parseLoginStartParam,
 } from "@/lib/auth/login-challenge";
-import { getEventByInviteCode } from "@/lib/db/queries";
+import { getEventByInviteCode, listEventMembers } from "@/lib/db/queries";
+import { goingHeadcount } from "@/lib/events/headcount";
+import { guestCapLine } from "@/lib/telegram/guest-cap";
 import {
   buildAppUrl,
   parseStartParam,
@@ -118,7 +120,9 @@ async function handleInviteStart(
   }
 
   const eventUrl = buildAppUrl(`/${locale}/events/${event.id}`);
-  await sendTelegramMessage(message.chat.id, strings.welcomeInvite(event.title), {
+  const members = await listEventMembers(event.id);
+  const spots = guestCapLine(locale, goingHeadcount(members), event.max_guest_count);
+  await sendTelegramMessage(message.chat.id, strings.welcomeInvite(event.title, spots), {
     parse_mode: "HTML",
     reply_markup: inviteRsvpKeyboard({
       inviteCode,

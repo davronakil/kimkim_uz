@@ -49,7 +49,9 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 
 | Priority | Item | Notes |
 |----------|------|-------|
-| P1 | Event templates | Shipped: gap, choyxona, wedding, birthday, sunnat, paid |
+| P1 | Event templates | Shipped: gap, choyxona, wedding, birthday, soccer, paid; dismissible on create |
+| P1 | Guest cap | Shipped: optional max headcount including +N extras |
+| P1 | Run it again | Same place, payment, cap; date +7 days; fresh RSVPs |
 | P1 | UZS + USD toggle per event | Shipped: expense currency for shared costs + settlements |
 | P2 | Public read-only event page | Shipped for `/events/:id`; browse at `/discover` |
 | P2 | Business catalog | Shipped: submit, admin review, vouches, Stripe extra slots |
@@ -89,4 +91,4 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 
 ---
 
-Update this file when scope changes. Last reviewed: 2026-06-09.
+Update this file when scope changes. Last reviewed: 2026-09-29.

@@ -88,6 +88,10 @@
     "editTitle": "Edit event",
     "deleteEvent": "Delete event",
     "deleteConfirm": "Delete this event permanently? All comments and expenses will be removed.",
+    "rerun": {
+      "button": "Run it again",
+      "error": "Could not create the next event. Try again."
+    },
     "detailTitle": "Event details",
     "upcomingTitle": "Upcoming",
     "pastTitle": "Past events",
