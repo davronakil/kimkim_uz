@@ -438,7 +438,7 @@
       "linkedTopic": "«{topic}» mavzusiga ulandi",
       "linkedTopicUnnamed": "Guruh mavzusiga ulandi",
       "linkedHint": "KimKim kimdir qo'shilganda, reja o'zgarganda va yig'ilish oldidan xabar beradi.",
-      "linkedHintTopic": "Qo'shilishlar, o'zgarishlar va eslatmalar shu mavzuga tushadi — General ga emas.",
+      "linkedHintTopic": "Qo'shilishlar, o'zgarishlar va eslatmalar shu mavzuga keladi.",
       "shareToGroup": "Taklifni guruhga yuborish",
       "unlink": "Guruhni uzish"
     }

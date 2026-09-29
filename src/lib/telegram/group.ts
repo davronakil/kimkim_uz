@@ -120,9 +120,9 @@ const groupStrings = {
     linked: (title: string) =>
       `✅ Guruh <b>${title}</b> eventiga ulandi. Qo'shilishlar, o'zgarishlar va eslatmalar shu yerga keladi.`,
     linkedTopic: (title: string, topic: string) =>
-      `✅ <b>${title}</b> «${topic}» mavzusiga ulandi. Xabarlar shu yerga tushadi, General ga emas.`,
+      `✅ <b>${title}</b> «${topic}» mavzusiga ulandi. Qo'shilishlar, o'zgarishlar va eslatmalar shu yerga keladi.`,
     linkedTopicUnnamed: (title: string) =>
-      `✅ <b>${title}</b> shu mavzuga ulandi. Xabarlar shu yerga tushadi, General ga emas.`,
+      `✅ <b>${title}</b> shu mavzuga ulandi. Qo'shilishlar, o'zgarishlar va eslatmalar shu yerga keladi.`,
     linkFailed: "Ulanmadi. Invite kodini tekshirib qayta urinib ko'ring.",
     notOwner: "Faqat event organizatori guruhni ulashi mumkin.",
     unlinked: "Guruh KimKim dan uzildi.",
