@@ -34,11 +34,21 @@ Approved listings are indexable public pages. They are added to `sitemap.xml` an
 
 ## Categories
 
-Defined in `src/lib/catalog/categories.ts` with labels in `messages/*.json` under `catalog.categories`.
+Defined in `src/lib/catalog/categories.ts` with labels in `messages/*.json` under `catalog.categories`. The listing form groups them (`catalog.categoryGroups`); browse chips follow the same order. The database column is free text, so new slugs do not need a migration.
 
-Examples: restaurant, banquet hall, event venue, sauna / banya, photographer, DJ, dacha, hotel, and more.
+| Group | Categories |
+|-------|------------|
+| Food & drink | restaurant, café, bakery, catering |
+| Venues & stays | banquet hall, event venue, dacha, hotel, sauna / banya |
+| Celebrations | photographer, videographer, DJ, MC / host, decorator, florist, event planner |
+| Personal care | beauty salon, barbershop, nail salon, gym, studio, tailor |
+| Home & trades | furniture & upholstery, roofing, restoration & water damage, construction, plumbing, electrician, heating & AC, cleaning, moving, auto service |
+| Professional | travel agency, real estate, digital marketing, legal, professional services (accounting, consulting, notary), clinic, tutoring, printing & signage |
+| Other | other |
 
-Legacy slug `wedding_venue` is migrated to `event_venue` (migration `0015`).
+Restoration is one category and covers water-damage restoration. Professional services is the bucket for accounting, consulting, and notary work.
+
+Legacy slug `wedding_venue` still filters with event venues (migration `0015` rewrote stored rows to `event_venue`).
 
 ## Admin & superadmin
 

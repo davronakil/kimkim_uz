@@ -1,13 +1,8 @@
-export const businessCategories = [
-  "restaurant",
-  "cafe",
-  "bakery",
-  "catering",
-  "banquet_hall",
-  "event_venue",
-  "dacha",
-  "hotel",
-  "sauna_banya",
+const food = ["restaurant", "cafe", "bakery", "catering"] as const;
+
+const venues = ["banquet_hall", "event_venue", "dacha", "hotel", "sauna_banya"] as const;
+
+const celebrations = [
   "photographer",
   "videographer",
   "dj",
@@ -15,26 +10,81 @@ export const businessCategories = [
   "decorator",
   "florist",
   "event_planner",
-  "beauty_salon",
-  "barbershop",
-  "nail_salon",
-  "gym",
-  "studio",
+] as const;
+
+const personal = ["beauty_salon", "barbershop", "nail_salon", "gym", "studio", "tailor"] as const;
+
+const home = [
+  "furniture",
+  "roofing",
+  "restoration",
+  "construction",
+  "plumbing",
+  "electrician",
+  "hvac",
+  "cleaning_service",
+  "moving",
+  "auto_service",
+] as const;
+
+const professional = [
   "travel_agency",
   "real_estate",
   "digital_marketing_agency",
-  "auto_service",
+  "legal",
+  "professional_services",
   "clinic",
   "tutoring",
-  "tailor",
-  "cleaning_service",
-  "other",
+  "printing",
 ] as const;
+
+const other = ["other"] as const;
+
+export const categoryGroups = [
+  { id: "food", categories: food },
+  { id: "venues", categories: venues },
+  { id: "celebrations", categories: celebrations },
+  { id: "personal", categories: personal },
+  { id: "home", categories: home },
+  { id: "professional", categories: professional },
+  { id: "other", categories: other },
+] as const;
+
+export const businessCategories = [
+  ...food,
+  ...venues,
+  ...celebrations,
+  ...personal,
+  ...home,
+  ...professional,
+  ...other,
+] as const;
+
+type Expect<T extends true> = T;
+type Equal<A, B> =
+  (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
+type GroupedCategory = (typeof categoryGroups)[number]["categories"][number];
+type ListedCategory = (typeof businessCategories)[number];
+const categoryListMatchesGroups: Expect<Equal<GroupedCategory, ListedCategory>> = true;
+void categoryListMatchesGroups;
+
+function assertUniqueCategories(categories: readonly string[]) {
+  const seen = new Set<string>();
+  for (const category of categories) {
+    if (seen.has(category)) {
+      throw new Error(`Duplicate business category: ${category}`);
+    }
+    seen.add(category);
+  }
+}
+
+assertUniqueCategories(businessCategories);
 
 /** Stored on older listings; displayed and filtered via {@link normalizeStoredCategory}. */
 export const legacyBusinessCategories = ["wedding_venue"] as const;
 
 export type BusinessCategory = (typeof businessCategories)[number];
+export type CategoryGroupId = (typeof categoryGroups)[number]["id"];
 export type LegacyBusinessCategory = (typeof legacyBusinessCategories)[number];
 export type StoredBusinessCategory = BusinessCategory | LegacyBusinessCategory;
 
