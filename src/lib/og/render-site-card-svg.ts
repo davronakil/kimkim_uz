@@ -11,19 +11,19 @@ const siteCardCopy: Record<Locale, SiteCardCopy> = {
   en: {
     eyebrow: "Telegram-first event planning",
     title: "Gatherings, invites, and shared costs",
-    subtitle: "Shared event photos, invites, RSVPs, and shared costs.",
+    subtitle: "Shared event photos for gatherings, games, and trips.",
     chips: ["Invites", "RSVPs", "Photos", "Comments", "Expenses"],
   },
   uz: {
     eyebrow: "Telegram uchun qulay event rejalash",
     title: "Eventlar, mehmonlar va xarajatlar",
-    subtitle: "Umumiy tadbir rasmlari, takliflar va hisob-kitob.",
+    subtitle: "To'y, ov, baliq ovi va futbol — rasmlar bir joyda.",
     chips: ["Taklif", "RSVP", "Rasmlar", "Izohlar", "Xarajatlar"],
   },
   ru: {
     eyebrow: "Планирование встреч через Telegram",
     title: "Встречи, гости и расходы",
-    subtitle: "Общие фото события, приглашения и общий счёт.",
+    subtitle: "Свадьбы, охота, рыбалка и общие фото.",
     chips: ["Приглашения", "RSVP", "Фото", "Обсуждение", "Расходы"],
   },
 };

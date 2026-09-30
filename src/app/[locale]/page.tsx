@@ -97,7 +97,7 @@ export default async function HomePage({
       <JsonLd data={jsonLd} />
       <section className="relative overflow-hidden rounded-3xl border border-zinc-200/80 bg-white px-5 py-10 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:px-10 sm:py-16">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.12),transparent_55%)]" />
-        <div className="relative mx-auto max-w-2xl space-y-5">
+        <div className="relative mx-auto max-w-3xl space-y-5">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-emerald-600">
             {common("appName")}
           </p>
@@ -108,15 +108,20 @@ export default async function HomePage({
             {user ? t("heroSubtitleSignedIn") : t("heroSubtitle")}
           </p>
           {!user ? (
-            <div className="flex flex-wrap justify-center gap-2">
-              {eventUseCaseKeys.map((key) => (
-                <span
-                  key={key}
-                  className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
-                >
-                  {t(`useCases.${key}`)}
-                </span>
-              ))}
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+                {t("useCasesLabel")}
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {eventUseCaseKeys.map((key) => (
+                  <span
+                    key={key}
+                    className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
+                  >
+                    {t(`useCases.${key}`)}
+                  </span>
+                ))}
+              </div>
             </div>
           ) : null}
           <div className="flex w-full flex-col justify-center gap-3 pt-2 sm:flex-row sm:flex-wrap">
@@ -136,7 +141,27 @@ export default async function HomePage({
               </Link>
             )}
           </div>
+          {!user ? (
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("heroNote")}</p>
+          ) : null}
         </div>
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {features.map(({ icon: Icon, title, body }) => (
+          <article
+            key={title}
+            className="kk-card p-5 shadow-sm transition active:scale-[0.99] sm:p-6 sm:hover:-translate-y-0.5 sm:hover:shadow-md"
+          >
+            <div className="mb-4 inline-flex rounded-xl bg-emerald-50 p-3 dark:bg-emerald-950/50">
+              <Icon className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <h2 className="text-lg font-semibold sm:text-xl">{title}</h2>
+            <p className="mt-2 text-base leading-relaxed text-zinc-600 sm:text-sm dark:text-zinc-300">
+              {body}
+            </p>
+          </article>
+        ))}
       </section>
 
       <section className="relative overflow-hidden rounded-3xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50 via-white to-white px-5 py-8 shadow-sm dark:border-emerald-900/50 dark:from-emerald-950/40 dark:via-zinc-900 dark:to-zinc-900 sm:px-10 sm:py-10">
@@ -184,22 +209,19 @@ export default async function HomePage({
         <Store className="pointer-events-none absolute -bottom-6 -right-4 h-28 w-28 text-emerald-500/10 sm:h-36 sm:w-36" />
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {features.map(({ icon: Icon, title, body }) => (
-          <article
-            key={title}
-            className="kk-card p-5 shadow-sm transition active:scale-[0.99] sm:p-6 sm:hover:-translate-y-0.5 sm:hover:shadow-md"
-          >
-            <div className="mb-4 inline-flex rounded-xl bg-emerald-50 p-3 dark:bg-emerald-950/50">
-              <Icon className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <h2 className="text-lg font-semibold sm:text-xl">{title}</h2>
-            <p className="mt-2 text-base leading-relaxed text-zinc-600 sm:text-sm dark:text-zinc-300">
-              {body}
+      {!user ? (
+        <section className="rounded-3xl border border-zinc-200/80 bg-white px-5 py-10 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:px-10">
+          <div className="mx-auto max-w-2xl space-y-4">
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("closingTitle")}</h2>
+            <p className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+              {t("closingBody")}
             </p>
-          </article>
-        ))}
-      </section>
+            <Link href="/login" className="kk-btn-primary">
+              {t("ctaSignedOut")}
+            </Link>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -23,16 +23,17 @@
   },
   "meta": {
     "title": "KimKim - Gatherings, invites, shared event photos, and costs",
-    "description": "Plan the gathering, invite your people, track RSVPs, keep shared event photos, and split costs in one calm place. Built around Telegram.",
+    "description": "Plan weddings, gap circles, soccer, hunting trips, fishing weekends, and camping. Invite your people, track RSVPs, keep shared event photos, and split costs in one calm place. Built around Telegram.",
     "ogTitle": "KimKim - Keep every gathering clear",
-    "keywords": "event planning, wedding, gap circle, aqiqa, challari, choyxona, birthday, shared event photos, Telegram, Uzbekistan"
+    "keywords": "event planning, wedding, gap circle, choyxona, birthday, soccer, hunting trip, fishing, camping, picnic, shared event photos, Telegram, Uzbekistan"
   },
   "home": {
-    "heroTitle": "Plan the gathering.\nKeep everyone in sync.",
-    "heroSubtitle": "Invites, RSVPs, shared event photos, and shared costs in one simple place.",
-    "heroTitleSignedIn": "Ready to get everyone together?",
-    "heroSubtitleSignedIn": "Plan trips, dinners, gatherings, and group events. Keep guests, updates, expenses, and shared event photos in one place.",
-    "ctaSignedOut": "Sign in with Telegram",
+    "heroTitle": "Bring your people together.\nKeep the plan clear.",
+    "heroSubtitle": "Weddings, gap circles, and the weekends that usually stall in chat — hunting, fishing, camping, or soccer. One invite. RSVPs, photos, and who paid.",
+    "heroNote": "Free to start. No password. It lives in Telegram.",
+    "heroTitleSignedIn": "Ready for the next gathering?",
+    "heroSubtitleSignedIn": "A wedding, a fishing weekend, soccer, or a quiet choyxona. Guests, updates, expenses, and shared event photos stay in one place.",
+    "ctaSignedOut": "Start in Telegram",
     "ctaSignedIn": "My events",
     "catalogCta": "Browse the catalog",
     "catalogTitle": "Find trusted local businesses",
@@ -52,25 +53,33 @@
       "gap": "Gap circle",
       "birthday": "Birthday",
       "choyxona": "Choyxona",
+      "soccer": "Soccer",
+      "hunting": "Hunting trip",
+      "fishing": "Fishing",
+      "camping": "Camping",
+      "picnic": "Picnic",
       "aqiqa": "Aqiqa",
       "challari": "Challari"
     },
     "features": {
-      "eventsTitle": "Create the plan",
-      "eventsBody": "Set the date, place, guest list, and payment style without extra noise.",
+      "eventsTitle": "One plan for the group",
+      "eventsBody": "Date, meeting point, guest list, and how you'll pay — set once, then shared with everyone you invite.",
       "photosTitle": "Shared event photos",
-      "photosBody": "Guests add photos from the event page or Telegram, and save everyone else's in one tap.",
-      "commentsTitle": "Keep decisions clear",
-      "commentsBody": "Use one thread for updates, venue choices, tasks, and small decisions.",
-      "expensesTitle": "Track the money",
-      "expensesBody": "Log payments, split costs, and see balances before the awkward part.",
-      "telegramTitle": "Stay close to Telegram",
-      "telegramBody": "Share invites, send reminders, and post updates where the group already talks."
-    }
+      "photosBody": "After the wedding, the match, or the trip, guests add photos from the page or Telegram and save the rest in one tap.",
+      "commentsTitle": "Decisions stay put",
+      "commentsBody": "Meeting point, gear, and who brings what live in one thread, not buried in the group chat.",
+      "expensesTitle": "Money without the awkward part",
+      "expensesBody": "Log who paid, split the boat, the pitch, or the dinner, and see the balance before anyone has to ask.",
+      "telegramTitle": "Already in Telegram",
+      "telegramBody": "Invites, reminders, and updates land where your people already talk. Joining takes one tap."
+    },
+    "closingTitle": "Your next gathering starts here",
+    "closingBody": "A wedding, a gap, a hunting trip, or a fishing weekend — open KimKim and send the invite.",
+    "useCasesLabel": "For gatherings like"
   },
   "auth": {
     "title": "Sign in with Telegram",
-    "subtitle": "One tap to create or join events and share event photos. No password needed.",
+    "subtitle": "One tap to plan a gathering or a weekend trip and share event photos. No password needed.",
     "telegramHint": "Opens Telegram so we can sign you in from your account. We only receive your public Telegram profile.",
     "continueInTelegram": "Continue in Telegram",
     "waitingTitle": "Waiting for Telegram",
@@ -265,7 +274,7 @@
     },
     "form": {
       "title": "Title",
-      "titlePlaceholder": "e.g. Wedding, Gap circle, Birthday, Choyxona...",
+      "titlePlaceholder": "e.g. Wedding, Gap circle, Hunting trip, Fishing...",
       "description": "Description",
       "descriptionPlaceholder": "Guest notes, venue details, gap rules — anything the group needs.",
       "templatesTitle": "Start from a template",
@@ -540,8 +549,8 @@
   },
   "discover": {
     "title": "Discover",
-    "subtitle": "Public gatherings anyone can find and join. Members keep shared event photos together.",
-    "metaDescription": "Browse public weddings, gap circles, birthdays, and other gatherings on KimKim, with shared event photos for members.",
+    "subtitle": "Public gatherings anyone can find and join — celebrations, games, and weekend trips. Members keep shared event photos together.",
+    "metaDescription": "Browse public weddings, games, hunting and fishing trips, and other gatherings on KimKim, with shared event photos for members.",
     "emptyTitle": "No public events yet",
     "emptyBody": "When hosts publish an event as public, it will show up here.",
     "noUpcoming": "No upcoming public events right now. Check back soon."
