@@ -23,16 +23,17 @@
   },
   "meta": {
     "title": "KimKim — Kim, Qayerda, Qachon?",
-    "description": "Kim keladi, qayerda uchrashamiz, hisob kitob, umumiy tadbir rasmlari va biznes katalog. To'y, gap, choyxona. Hammasi bir joyda. Telegram bilan ulangan.",
+    "description": "To'y, gap, futbol, ovga chiqish, baliq ovi va kemping. Kim keladi, qayerda uchrashamiz, umumiy rasmlar va hisob-kitob — hammasi bir joyda, Telegram bilan.",
     "ogTitle": "KimKim — Kim, Qayerda, Qachon?",
-    "keywords": "yig'ilish, to'y, gap, tug'ilgan kun, aqiqa, challari, choyxona, Telegram, O'zbekiston, yig'ilishlar, tadbirlar, hisob kitob, umumiy tadbir rasmlari, biznes katalog, taklif, rejalar, taklifnoma"
+    "keywords": "yig'ilish, to'y, gap, tug'ilgan kun, choyxona, futbol, ov, ovga chiqish, baliq ovi, kemping, piknik, Telegram, O'zbekiston, umumiy tadbir rasmlari, hisob kitob, biznes katalog"
   },
   "home": {
-    "heroTitle": "KimKim, Qayerda, Qachon?\n",
-    "heroSubtitle": "KimKim, Qayerda, Qachon + Hisob Kitob + Umumiy tadbir rasmlari + Biznes Katalogi. To'y, gap, choyxona. Hammasi bir joyda.",
-    "heroTitleSignedIn": "Hammani bir joyga yig'ishga tayyormisiz?",
-    "heroSubtitleSignedIn": "Sayohat, kechki ovqat, uchrashuv yoki guruh yig'ilishini rejalashtiring. Mehmonlar, yangiliklar, xarajatlar va umumiy tadbir rasmlari — hammasi bir joyda.",
-    "ctaSignedOut": "Telegram bilan kirish",
+    "heroTitle": "KimKim, Qayerda, Qachon?",
+    "heroSubtitle": "To'y va gapdan tortib, ov, baliq ovi, kemping yoki futbolgacha. Bitta taklif: kim keladi, rasmlar va kim qancha to'ladi.",
+    "heroNote": "Bepul boshlanadi. Parol kerak emas. Hammasi Telegramda.",
+    "heroTitleSignedIn": "Keyingi yig'ilishga tayyormisiz?",
+    "heroSubtitleSignedIn": "To'y, baliq ovi, futbol yoki tinch choyxona. Mehmonlar, yangiliklar, xarajatlar va umumiy rasmlar — hammasi bir joyda.",
+    "ctaSignedOut": "Telegram orqali boshlash",
     "ctaSignedIn": "Yig'ilishlarim",
     "catalogCta": "Katalogni ko'rish",
     "catalogTitle": "Atrofdagi ishonchli mahalliy bizneslar katalogi",
@@ -52,25 +53,33 @@
       "gap": "Gap",
       "birthday": "Tug'ilgan kun",
       "choyxona": "Choyxona",
+      "soccer": "Futbol",
+      "hunting": "Ovga chiqish",
+      "fishing": "Baliq ovi",
+      "camping": "Kemping",
+      "picnic": "Piknik",
       "aqiqa": "Aqiqa",
       "challari": "Challari"
     },
     "features": {
-      "eventsTitle": "Har qanday tadbir",
-      "eventsBody": "Sana, joy va mehmonlar — to'y, gap yoki choyxona bo'lishidan qat'i nazar.",
+      "eventsTitle": "Bitta aniq reja",
+      "eventsBody": "Sana, uchrashuv joyi, mehmonlar va to'lov tartibi — bir marta yozasiz, taklif olganlarning hammasi ko'radi.",
       "photosTitle": "Umumiy tadbir rasmlari",
-      "photosBody": "Mehmonlar rasmni yig'ilish sahifasidan yoki Telegramdan qo'shadi va boshqalarnikini bir bosishda saqlaydi.",
-      "commentsTitle": "Birga rejalashtiring",
-      "commentsBody": "Joy tanlash, vazifalar, yangiliklar — shu yerda.",
-      "expensesTitle": "Hisobni adolatli bo'ling",
-      "expensesBody": "Kim to'ladi, kim kimga qarz — hisob-kitob ichida.",
-      "telegramTitle": "Telegram'da yashaydi",
-      "telegramBody": "Taklif linki, eslatmalar va yangiliklar — shu yerda."
-    }
+      "photosBody": "To'y, o'yin yoki sayohatdan keyin mehmonlar rasm qo'shadi va boshqalarnikini bir bosishda saqlaydi.",
+      "commentsTitle": "Gap chatda yo'qolmaydi",
+      "commentsBody": "Uchrashuv joyi, anjom va kim nima olib keladi — bitta muhokamada, guruh chatining tagida emas.",
+      "expensesTitle": "Hisob noqulayliksiz",
+      "expensesBody": "Kim to'laganini yozing, qayiq, maydon yoki dasturxon haqini bo'ling va balansni oldindan ko'ring.",
+      "telegramTitle": "Telegramning o'zida",
+      "telegramBody": "Taklif, eslatma va yangiliklar odamlaringiz allaqachon gaplashadigan joyga tushadi. Qo'shilish — bir bosish."
+    },
+    "closingTitle": "Keyingi yig'ilish shu yerdan boshlanadi",
+    "closingBody": "To'y, gap, ovga chiqish yoki baliq ovi — KimKimni oching va taklif yuboring.",
+    "useCasesLabel": "Shu kabi yig'ilishlar uchun"
   },
   "auth": {
     "title": "Telegram bilan kirish",
-    "subtitle": "Bir marta bosish — yig'ilish yaratish, qo'shilish va umumiy tadbir rasmlari. Parol kerak emas.",
+    "subtitle": "Bir marta bosish — yig'ilish yoki dam olish sayohatini rejalash va rasmlarni ulashish. Parol kerak emas.",
     "telegramHint": "Telegram ochiladi va akkauntingiz orqali kirasiz. Faqat ochiq Telegram profilingizni olamiz.",
     "continueInTelegram": "Telegram orqali davom etish",
     "waitingTitle": "Telegram kutilmoqda",
@@ -265,7 +274,7 @@
     },
     "form": {
       "title": "Nomi",
-      "titlePlaceholder": "Masalan: To'y, Gap, Tug'ilgan kun, Choyxona...",
+      "titlePlaceholder": "Masalan: To'y, Gap, Ovga chiqish, Baliq ovi...",
       "description": "Qisqacha",
       "descriptionPlaceholder": "Mehmonlar, joy yoki gap qoidalari — hammaga kerakli narsa.",
       "templatesTitle": "Tayyor namunadan boshlang",
@@ -540,8 +549,8 @@
   },
   "discover": {
     "title": "Tadbirlar",
-    "subtitle": "Hamma topishi va qo'shilishi mumkin bo'lgan ochiq tadbirlar. A'zolar umumiy tadbir rasmlarini birga saqlaydi.",
-    "metaDescription": "KimKim'da ochiq to'ylar, gaplar, tug'ilgan kunlar va boshqa tadbirlar — a'zolar uchun umumiy tadbir rasmlari bilan.",
+    "subtitle": "Hamma topishi mumkin bo'lgan ochiq tadbirlar — to'y, o'yin va dam olish sayohatlari. A'zolar umumiy rasmlarni birga saqlaydi.",
+    "metaDescription": "KimKim'da ochiq to'ylar, o'yinlar, ov va baliq oviga chiqishlar — a'zolar uchun umumiy tadbir rasmlari bilan.",
     "emptyTitle": "Hali ochiq tadbir yo'q",
     "emptyBody": "Tashkilotchi tadbirni ochiq qilsa, u shu yerda paydo bo'ladi.",
     "noUpcoming": "Hozir yaqinlashayotgan ochiq tadbirlar yo'q. Keyinroq qaytib keling."
