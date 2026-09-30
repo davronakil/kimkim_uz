@@ -5,6 +5,11 @@ import {
   eventPaymentModes,
   isEventPaymentMode,
 } from "@/lib/events/payment-mode";
+import {
+  DEFAULT_EVENT_TIMEZONE,
+  isValidTimeZone,
+  normalizeEventTimestamp,
+} from "@/lib/events/timezone";
 import { defaultEventVisibility, eventVisibilityModes } from "@/lib/events/visibility";
 import { majorToCents } from "@/lib/utils";
 
@@ -16,6 +21,7 @@ export const eventFormSchema = z
     description: z.string().max(5000).optional(),
     starts_at: z.string(),
     ends_at: z.string().optional(),
+    timezone: z.string().refine(isValidTimeZone),
     location_name: z.string().optional(),
     location_address: z.string().optional(),
     location_lat: z.number().optional(),
@@ -60,12 +66,17 @@ export function parseEventFormData(formData: FormData) {
       ? rawPaymentMode
       : defaultPaymentMode;
   const rawExpensesEnabled = formData.get("expenses_enabled");
+  const rawTimezone = formData.get("timezone");
 
   return eventFormSchema.safeParse({
     title: formData.get("title"),
     description: formData.get("description") || undefined,
     starts_at: formData.get("starts_at"),
     ends_at: formData.get("ends_at") || undefined,
+    timezone:
+      typeof rawTimezone === "string" && isValidTimeZone(rawTimezone)
+        ? rawTimezone
+        : DEFAULT_EVENT_TIMEZONE,
     location_name: formData.get("location_name") || undefined,
     location_address: formData.get("location_address") || undefined,
     location_lat: lat ? Number(lat) : undefined,
@@ -81,11 +92,17 @@ export function parseEventFormData(formData: FormData) {
   });
 }
 
-export function toDatetimeLocalValue(iso: string | null | undefined): string {
-  if (!iso) return "";
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "";
+/**
+ * The form posts wall-clock readings plus the zone they were typed in; the
+ * database only ever holds UTC instants.
+ */
+export function resolveEventTimestamps(data: {
+  starts_at: string;
+  ends_at?: string;
+  timezone: string;
+}): { startsAt: string; endsAt: string | null } | null {
+  const startsAt = normalizeEventTimestamp(data.starts_at, data.timezone);
+  if (!startsAt) return null;
 
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return { startsAt, endsAt: normalizeEventTimestamp(data.ends_at, data.timezone) };
 }

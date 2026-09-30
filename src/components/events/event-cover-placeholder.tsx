@@ -1,8 +1,38 @@
 import { CoverSubmitterBadge } from "@/components/ui/cover-submitter-badge";
-import { intlLocale } from "@/lib/locale";
+import { toDatetimeLocalValue } from "@/lib/events/timezone";
 import { resolveEventOgAccent } from "@/lib/og/event-theme";
 import { personInitial } from "@/lib/utils";
-import type { Locale } from "@/i18n/config";
+
+const COVER_MONTHS: Record<string, string[]> = {
+  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  uz: ["Yan", "Fev", "Mar", "Apr", "May", "Iyn", "Iyl", "Avg", "Sen", "Okt", "Noy", "Dek"],
+  ru: ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"],
+};
+
+const COVER_WEEKDAYS: Record<string, string[]> = {
+  en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  uz: ["Yak", "Dush", "Sesh", "Chor", "Pay", "Jum", "Shan"],
+  ru: ["вс", "пн", "вт", "ср", "чт", "пт", "сб"],
+};
+
+/** Calendar badge labels that stay the same in Node and the browser. */
+function coverDateBadge(startsAt: string, locale: string, timeZone: string) {
+  const wall = toDatetimeLocalValue(startsAt, timeZone);
+  const match = wall.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return { month: "", day: "", weekday: "" };
+
+  const year = Number(match[1]);
+  const monthIndex = Number(match[2]) - 1;
+  const day = Number(match[3]);
+  const weekdayIndex = new Date(Date.UTC(year, monthIndex, day)).getUTCDay();
+  const lang = locale === "uz" || locale === "ru" ? locale : "en";
+
+  return {
+    month: COVER_MONTHS[lang][monthIndex] ?? "",
+    day: String(day),
+    weekday: COVER_WEEKDAYS[lang][weekdayIndex] ?? "",
+  };
+}
 
 function hashUnit(eventId: string, salt: number) {
   let hash = salt;
@@ -16,6 +46,7 @@ type EventCoverPlaceholderProps = {
   title: string;
   eventId: string;
   startsAt: string;
+  timeZone: string;
   locale?: string;
   creatorName?: string | null;
   description?: string | null;
@@ -28,6 +59,7 @@ export function EventCoverPlaceholder({
   title,
   eventId,
   startsAt,
+  timeZone,
   locale = "en",
   creatorName,
   description,
@@ -36,11 +68,7 @@ export function EventCoverPlaceholder({
   className = "",
 }: EventCoverPlaceholderProps) {
   const accent = resolveEventOgAccent(title, eventId, { description, locationName });
-  const date = new Date(startsAt);
-  const intl = intlLocale(locale as Locale);
-  const month = date.toLocaleString(intl, { month: "short", timeZone: "Asia/Tashkent" }).toUpperCase();
-  const day = date.toLocaleString(intl, { day: "numeric", timeZone: "Asia/Tashkent" });
-  const weekday = date.toLocaleString(intl, { weekday: "short", timeZone: "Asia/Tashkent" });
+  const { month, day, weekday } = coverDateBadge(startsAt, locale, timeZone);
   const initial = personInitial(title);
 
   const blobA = {

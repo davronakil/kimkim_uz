@@ -60,7 +60,7 @@ export async function listPublicEventsForSitemap(): Promise<
       `SELECT id, updated_at, starts_at
        FROM events
        WHERE visibility = 'public'
-         AND starts_at >= datetime('now', '-90 days')
+         AND datetime(starts_at) >= datetime('now', '-90 days')
        ORDER BY starts_at ASC`,
     )
     .all<Pick<Event, "id" | "updated_at" | "starts_at">>();
@@ -77,7 +77,7 @@ export async function listPublicEvents(): Promise<EventWithCreator[]> {
        FROM events e
        JOIN users u ON u.id = e.creator_id
        WHERE e.visibility = 'public'
-         AND e.starts_at >= datetime('now', '-90 days')
+         AND datetime(e.starts_at) >= datetime('now', '-90 days')
        ORDER BY e.starts_at ASC`,
     )
     .all<EventWithCreator>();
@@ -198,6 +198,14 @@ export async function updateUserPayoutPreferences({
     .run();
 
   return getUserById(userId);
+}
+
+export async function updateUserTimezone(userId: string, timezone: string): Promise<void> {
+  const db = await getDb();
+  await db
+    .prepare("UPDATE users SET timezone = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(timezone, userId)
+    .run();
 }
 
 export async function getUserByTelegramId(telegramId: string): Promise<User | null> {

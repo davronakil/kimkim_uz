@@ -1,7 +1,8 @@
 import { getDb } from "@/lib/cloudflare";
 import { getEventById, listEventMembers } from "@/lib/db/queries";
 import { goingHeadcount } from "@/lib/events/headcount";
-import { formatLocaleDateTime, intlLocale, resolveUserLocale } from "@/lib/locale";
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
+import { resolveUserLocale } from "@/lib/locale";
 import { buildAppUrl, sendTelegramMessage } from "@/lib/telegram/bot";
 import { guestCapLine } from "@/lib/telegram/guest-cap";
 import { notifyEventGroup, ownerLocaleForEvent } from "@/lib/telegram/group";
@@ -335,17 +336,23 @@ function reminderText(
 export async function processEventReminders() {
   const db = await getDb();
 
+  // The cron runs hourly, so each window spans a full hour: anything narrower
+  // lets events fall between two runs and never get a reminder. Overlap is
+  // harmless because the reminder logs deduplicate.
   const windows = [
     { type: "24h" as const, minOffset: "+23 hours", maxOffset: "+25 hours" },
-    { type: "1h" as const, minOffset: "+45 minutes", maxOffset: "+75 minutes" },
+    { type: "1h" as const, minOffset: "+30 minutes", maxOffset: "+90 minutes" },
   ];
 
   for (const window of windows) {
+    // starts_at is a UTC instant, but its stored spelling ("...T...Z") does not
+    // sort against datetime('now')'s "YYYY-MM-DD HH:MM:SS". Normalize both sides
+    // or the comparison silently matches the wrong events.
     const events = await db
       .prepare(
         `SELECT * FROM events
-         WHERE starts_at > datetime('now', ?)
-           AND starts_at <= datetime('now', ?)`,
+         WHERE datetime(starts_at) > datetime('now', ?)
+           AND datetime(starts_at) <= datetime('now', ?)`,
       )
       .bind(window.minOffset, window.maxOffset)
       .all<Event>();
@@ -366,10 +373,11 @@ export async function processEventReminders() {
         if (!groupAlreadySent) {
           const groupLocale = await ownerLocaleForEvent(event);
           const title = escapeHtml(event.title);
-          const timeLabel = formatLocaleDateTime(new Date(event.starts_at), groupLocale, {
-            dateStyle: "medium",
-            timeStyle: "short",
-          });
+          const timeLabel = formatEventDateTimeWithZone(
+            event.starts_at,
+            groupLocale,
+            event.timezone,
+          );
           const spots = guestCapLine(groupLocale, goingCount, event.max_guest_count);
           const groupText = reminderText(groupLocale, title, timeLabel, window.type, spots);
 
@@ -409,10 +417,7 @@ export async function processEventReminders() {
 
         const locale = localeFor(member);
         const title = escapeHtml(event.title);
-        const timeLabel = new Date(event.starts_at).toLocaleString(intlLocale(locale), {
-          dateStyle: "medium",
-          timeStyle: "short",
-        });
+        const timeLabel = formatEventDateTimeWithZone(event.starts_at, locale, event.timezone);
         const spots = guestCapLine(locale, goingCount, event.max_guest_count);
         const text = reminderText(locale, title, timeLabel, window.type, spots);
 

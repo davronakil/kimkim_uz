@@ -5,6 +5,7 @@ import {
   defaultPaymentMode,
   type EventPaymentMode,
 } from "@/lib/events/payment-mode";
+import { resolveTimeZone } from "@/lib/events/timezone";
 import { defaultEventVisibility, type EventVisibility } from "@/lib/events/visibility";
 import { generateInviteCode } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ export type CreateEventInput = {
   description?: string | null;
   startsAt: string;
   endsAt?: string | null;
+  timezone?: string;
   locationName?: string | null;
   locationAddress?: string | null;
   locationLat?: number | null;
@@ -40,11 +42,11 @@ export async function createEventRecord(input: CreateEventInput) {
   await db
     .prepare(
       `INSERT INTO events (
-        id, creator_id, title, description, starts_at, ends_at,
+        id, creator_id, title, description, starts_at, ends_at, timezone,
         location_name, location_address, location_lat, location_lng, cover_image_key,
         payment_mode, expenses_enabled, expense_currency, ticket_price_cents, ticket_currency,
         invite_code, visibility, max_guest_count
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       eventId,
@@ -53,6 +55,7 @@ export async function createEventRecord(input: CreateEventInput) {
       input.description ?? null,
       input.startsAt,
       input.endsAt ?? null,
+      resolveTimeZone(input.timezone),
       input.locationName ?? null,
       input.locationAddress ?? null,
       input.locationLat ?? null,

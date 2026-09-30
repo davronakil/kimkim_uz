@@ -1,6 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { intlLocale } from "@/lib/locale";
-import type { Locale } from "@/i18n/config";
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { CalendarDays, MapPin } from "lucide-react";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
@@ -19,7 +18,6 @@ export function EventCard({ event, locale, past = false }: EventCardProps) {
     last_name: event.creator_last_name,
     username: event.creator_username,
   });
-  const startsAt = new Date(event.starts_at);
 
   return (
     <Link
@@ -48,10 +46,7 @@ export function EventCard({ event, locale, past = false }: EventCardProps) {
         <div className="flex flex-wrap gap-3 text-sm text-zinc-500">
           <span className="inline-flex items-center gap-1">
             <CalendarDays className="h-4 w-4" />
-            {startsAt.toLocaleString(intlLocale(locale as Locale), {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}
+            {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone)}
           </span>
           {event.location_name ? (
             <span className="inline-flex items-center gap-1">

@@ -9,9 +9,8 @@ import { EventCoverImage } from "@/components/events/event-cover-image";
 import { FormattedEventDescription } from "@/components/events/formatted-event-description";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
 import { ConfirmContinueCard } from "@/components/ui/confirm-continue-card";
-import type { Locale } from "@/i18n/config";
 import { useRouter } from "@/i18n/navigation";
-import { intlLocale } from "@/lib/locale";
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
 import { formatMoney } from "@/lib/utils";
 import type { Event, EventPaymentMode, EventRsvpStatus } from "@/types";
 
@@ -22,6 +21,7 @@ type JoinPreview = {
     | "title"
     | "description"
     | "starts_at"
+    | "timezone"
     | "location_name"
     | "cover_image_key"
     | "payment_mode"
@@ -215,7 +215,6 @@ export function JoinEventPanel({
     preview;
   const eventFull = max_guest_count != null && member_count >= max_guest_count;
   const paymentMode = event.payment_mode ?? "free";
-  const startsAt = new Date(event.starts_at);
   const loginRedirect = referrerUserId
     ? `/join/${code}?${new URLSearchParams({ ref: referrerUserId }).toString()}`
     : `/join/${code}`;
@@ -270,7 +269,7 @@ export function JoinEventPanel({
           <div className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950/50">
             <p className="inline-flex w-full items-start gap-3 text-base text-zinc-700 dark:text-zinc-200">
               <CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              {startsAt.toLocaleString(intlLocale(locale as Locale), {
+              {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone, {
                 dateStyle: "full",
                 timeStyle: "short",
               })}

@@ -317,6 +317,8 @@
       "maxGuestsHint": "Optional. Counts everyone coming, including people marked +1. Leave empty for no limit. A soccer game is often 12–14.",
       "startsAt": "Date & time",
       "endsAt": "End time (optional)",
+      "timezone": "Time zone",
+      "timezoneHint": "Reminders and invites use this zone. We picked the one your device is in — change it if the event happens somewhere else.",
       "location": "Location",
       "locationPlaceholder": "Search for a place",
       "locationLoading": "Loading Google Maps...",

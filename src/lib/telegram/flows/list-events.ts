@@ -25,7 +25,7 @@ export async function sendUserEvents(chatId: number, user: User, locale: BotLoca
   }
 
   const lines = upcoming.map((event) =>
-    strings.eventLine(event.title, formatEventWhen(event.starts_at, locale)),
+    strings.eventLine(event.title, formatEventWhen(event.starts_at, locale, event.timezone)),
   );
 
   const remaining = events.filter((event) => new Date(event.starts_at).getTime() >= now).length - upcoming.length;

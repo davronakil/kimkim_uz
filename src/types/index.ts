@@ -7,6 +7,7 @@ export type User = {
   last_name: string | null;
   photo_url: string | null;
   language_code: string;
+  timezone: string | null;
   payout_method: string | null;
   payout_details: string | null;
   payout_updated_at: string | null;
@@ -86,6 +87,7 @@ export type Event = {
   description: string | null;
   starts_at: string;
   ends_at: string | null;
+  timezone: string;
   location_name: string | null;
   location_address: string | null;
   location_lat: number | null;

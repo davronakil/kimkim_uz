@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { AdminEventRow } from "@/lib/db/admin-queries";
-import { intlLocale } from "@/lib/locale";
+import { formatEventDateTimeWithZone } from "@/lib/events/timezone";
 import type { Locale } from "@/i18n/config";
 import { displayName } from "@/lib/utils";
 import { CalendarRange, ExternalLink, Search } from "lucide-react";
@@ -126,7 +126,6 @@ export function AdminEventsPanel() {
                 last_name: event.creator_last_name,
                 username: event.creator_username,
               });
-              const startsAt = new Date(event.starts_at);
 
               return (
                 <li
@@ -148,10 +147,7 @@ export function AdminEventsPanel() {
                         </span>
                       </div>
                       <p className="text-sm text-zinc-600 dark:text-zinc-300">
-                        {startsAt.toLocaleString(intlLocale(locale), {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })}
+                        {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone)}
                         {event.location_name ? ` · ${event.location_name}` : ""}
                       </p>
                       <p className="text-sm text-zinc-500">

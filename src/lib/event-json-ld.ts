@@ -5,6 +5,7 @@ import { resolveMetadataLocale } from "@/lib/page-metadata";
 import { absoluteUrl, appBaseUrl } from "@/lib/seo";
 import { buildAppUrl } from "@/lib/telegram/bot";
 import { resolveServerGoogleMapsApiKey } from "@/lib/google-static-map";
+import { eventInstant } from "@/lib/events/timezone";
 import type { Event } from "@/types";
 
 async function resolveEventImage(event: Event, locale: Locale) {
@@ -52,8 +53,10 @@ export async function buildEventJsonLd(event: Event, locale: string) {
     "@type": "Event",
     name: event.title,
     description: event.description?.trim() || undefined,
-    startDate: new Date(event.starts_at).toISOString(),
-    endDate: event.ends_at ? new Date(event.ends_at).toISOString() : undefined,
+    startDate: eventInstant(event.starts_at, event.timezone).toISOString(),
+    endDate: event.ends_at
+      ? eventInstant(event.ends_at, event.timezone).toISOString()
+      : undefined,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     inLanguage: dateLocale,

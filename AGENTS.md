@@ -34,6 +34,7 @@ Bot strings are separate: `src/lib/telegram/i18n.ts`.
 - Event DB queries: `src/lib/db/queries.ts`
 - Catalog DB queries: `src/lib/db/catalog-queries.ts`
 - Event creation: `src/lib/events/create.ts`
+- Event times: `starts_at`/`ends_at` are canonical UTC (`...Z`) and `events.timezone` is the IANA zone they were entered in — convert and format via `src/lib/events/timezone.ts`, never `toLocaleString` without an explicit zone (the worker clock is UTC), and always wrap SQL comparisons as `datetime(starts_at) > datetime('now', ?)`
 - Expense creation: `src/lib/expense/create.ts`
 - Telegram handler: `src/lib/telegram/handler.ts`
 - OG images: cover → map → generated card (`src/lib/og/`)

@@ -62,11 +62,24 @@ Migration `0016` adds per-event `expense_currency` for shared expenses and balan
 Migration `0021` adds `expenses.split_mode` (`equal` or `custom`) so equal splits keep following extra guests.
 Migration `0022` adds optional `events.max_guest_count` for a headcount cap, including extra guests.
 Migration `0023` adds `event_album_photos` for the shared album (free cap: 20 photos per event).
+Migration `0024` adds `events.timezone` and `users.timezone`, and rewrites existing `starts_at` / `ends_at` values to canonical UTC.
 
 Full catalog flow: [CATALOG.md](./CATALOG.md).
 
+## Event times
+
+`starts_at` and `ends_at` are always canonical UTC: `YYYY-MM-DDTHH:MM:SSZ`, produced by `toUtcTimestamp` in `src/lib/events/timezone.ts`. `events.timezone` holds the IANA zone the organizer scheduled in, and every read formats through it.
+
+Two rules keep this from regressing:
+
+- **Never store what a form or the bot hands you.** `<input type="datetime-local">` posts a bare wall clock with no offset; run it through `normalizeEventTimestamp` with the submitted zone first.
+- **Never compare `starts_at` to `datetime('now', …)` directly.** SQLite returns space-separated timestamps, and `'T'` sorts above `' '`, so the comparison matches the wrong rows. Wrap both sides: `datetime(starts_at) > datetime('now', ?)`.
+
+The worker's own clock is UTC, so any `toLocaleString` without an explicit `timeZone` renders UTC in production regardless of where the event is.
+
 ## Notable columns on `events`
 
+- `timezone` — IANA zone the event was scheduled in; all display and reminder formatting goes through it
 - `telegram_chat_id` — linked Telegram group for announcements
 - `telegram_message_thread_id` — forum topic thread when linked inside a topic (null = General / whole group)
 - `telegram_topic_name` — topic title captured at link time, when Telegram includes it
