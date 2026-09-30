@@ -116,6 +116,35 @@ async function notifyMembers(
   );
 }
 
+export async function notifyAlbumPhotosAdded(input: {
+  eventId: string;
+  author: Pick<User, "id" | "first_name" | "last_name" | "username">;
+  count: number;
+}) {
+  const event = await getEventById(input.eventId);
+  if (!event || input.count < 1) return;
+
+  const members = await listNotifiableMembers(input.eventId, input.author.id, true);
+  const name = escapeHtml(displayName(input.author));
+  const title = escapeHtml(event.title);
+
+  await Promise.allSettled(
+    members.map(async (member) => {
+      const locale = localeFor(member);
+      const strings = t(locale);
+      await sendTelegramMessage(member.telegram_chat_id!, strings.albumNotify(name, title, input.count), {
+        parse_mode: "HTML",
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: strings.albumSaveOthers, callback_data: `albdl:${input.eventId}` }],
+            [{ text: strings.openEvent, url: eventUrl(input.eventId, locale) }],
+          ],
+        },
+      });
+    }),
+  );
+}
+
 export async function notifyNewComment(input: {
   eventId: string;
   author: Pick<User, "first_name" | "last_name" | "username">;

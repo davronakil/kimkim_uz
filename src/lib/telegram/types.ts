@@ -44,6 +44,29 @@ export type TelegramMessage = {
   venue?: TelegramVenue;
   reply_to_message?: TelegramMessage;
   forum_topic_created?: TelegramForumTopicCreated;
+  caption?: string;
+  media_group_id?: string;
+  photo?: Array<{
+    file_id: string;
+    file_unique_id?: string;
+    width: number;
+    height: number;
+    file_size?: number;
+  }>;
+  document?: {
+    file_id: string;
+    file_name?: string;
+    mime_type?: string;
+    file_size?: number;
+  };
+  video?: {
+    file_id: string;
+    mime_type?: string;
+    file_size?: number;
+  };
+  video_note?: {
+    file_id: string;
+  };
   new_chat_members?: Array<{
     id: number;
     is_bot?: boolean;
@@ -64,7 +87,7 @@ export type TelegramUpdate = {
   callback_query?: TelegramCallbackQuery;
 };
 
-export type BotSessionFlow = "create_event" | "log_expense";
+export type BotSessionFlow = "create_event" | "log_expense" | "album";
 
 export type CreateEventSessionData = {
   title?: string;
@@ -77,6 +100,11 @@ export type CreateEventSessionData = {
 
 export type ExpenseSessionData = {
   eventId?: string;
+};
+
+export type AlbumSessionData = {
+  eventId?: string;
+  added?: number;
 };
 
 export type BotSession = {

@@ -1,6 +1,9 @@
 export type BotIntent =
-  | { type: "command"; name: "start" | "help" | "create" | "events" | "expense" | "cancel" | "lang" }
-  | { type: "natural"; name: "create" | "events" | "expense" | "help" }
+  | {
+      type: "command";
+      name: "start" | "help" | "create" | "events" | "expense" | "album" | "cancel" | "lang";
+    }
+  | { type: "natural"; name: "create" | "events" | "expense" | "album" | "help" }
   | { type: "text" };
 
 const createPatterns = [
@@ -20,6 +23,14 @@ const eventsPatterns = [
   /^\/events(?:@\w+)?$/i,
   /^\/eventlar(?:@\w+)?$/i,
   /^(my events|eventlarim|eventlar)$/i,
+];
+
+const albumPatterns = [
+  /^\/album(?:@\w+)?$/i,
+  /^\/photos(?:@\w+)?$/i,
+  /^\/rasm(?:@\w+)?$/i,
+  /^\/rasmlar(?:@\w+)?$/i,
+  /^(album|photos|rasmlar|fotoalbom|фото)$/i,
 ];
 
 const helpPatterns = [/^\/help(?:@\w+)?$/i, /^\/yordam(?:@\w+)?$/i, /^help$/i, /^yordam$/i];
@@ -50,6 +61,9 @@ export function parseIntent(text: string): BotIntent {
   if (eventsPatterns.some((pattern) => pattern.test(trimmed))) {
     return { type: "command", name: "events" };
   }
+  if (albumPatterns.some((pattern) => pattern.test(trimmed))) {
+    return { type: "command", name: "album" };
+  }
 
   if (/^(create|new)\b/i.test(trimmed) && /event/i.test(trimmed)) {
     return { type: "natural", name: "create" };
@@ -62,6 +76,9 @@ export function parseIntent(text: string): BotIntent {
   }
   if (/xarajat/i.test(trimmed) && /(qo'sh|qosh|log)/i.test(trimmed)) {
     return { type: "natural", name: "expense" };
+  }
+  if (/^(shared )?photos$/i.test(trimmed) || /rasm(lar)? (qo'sh|qosh)/i.test(trimmed)) {
+    return { type: "natural", name: "album" };
   }
 
   return { type: "text" };

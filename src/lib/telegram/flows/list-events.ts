@@ -1,5 +1,6 @@
 import { listUserEvents } from "@/lib/db/queries";
 import { buildAppUrl, sendTelegramMessage } from "@/lib/telegram/bot";
+import type { InlineButton } from "@/lib/telegram/keyboards";
 import { formatEventWhen, t } from "@/lib/telegram/i18n";
 import type { BotLocale } from "@/lib/telegram/types";
 import type { User } from "@/types";
@@ -32,13 +33,14 @@ export async function sendUserEvents(chatId: number, user: User, locale: BotLoca
     lines.push(strings.moreEvents(remaining));
   }
 
-  const keyboard = upcoming.slice(0, 3).map((event) => [
+  const keyboard: InlineButton[][] = upcoming.slice(0, 3).map((event) => [
     {
       text: event.title.slice(0, 40),
       url: buildAppUrl(`/${locale}/events/${event.id}`),
     },
   ]);
 
+  keyboard.push([{ text: strings.albumBtn, callback_data: "alb:pick" }]);
   keyboard.push([{ text: strings.openApp, url: buildAppUrl(`/${locale}/events`) }]);
 
   await sendTelegramMessage(chatId, `${strings.eventsHeader}\n\n${lines.join("\n")}`, {

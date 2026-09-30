@@ -18,6 +18,7 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 - Onboarding banner + empty states
 - PWA + offline event details
 - Trilingual UI: EN / UZ / RU
+- Shared event photo album (20 photos; web + Telegram bot)
 
 ### Telegram
 - Bot: `/create`, `/expense`, `/events`, `/help`, `/cancel`, `/lang`
@@ -81,6 +82,7 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 - Local payment rails (Payme/Click) — Stripe for paid tickets; settlement stays informational
 - Native iOS/Android apps — PWA + Telegram Mini App is enough
 - Full Splitwise parity — keep it lightweight for friend groups
+- Pro album limits (1,000 photos and video) — caps live in `src/lib/album/limits.ts`; billing and video storage are not wired yet
 
 ## Success metrics (informal)
 
@@ -91,4 +93,4 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 
 ---
 
-Update this file when scope changes. Last reviewed: 2026-09-29.
+Update this file when scope changes. Last reviewed: 2026-09-30.

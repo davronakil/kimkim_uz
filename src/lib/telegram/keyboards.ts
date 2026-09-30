@@ -34,6 +34,17 @@ export function inviteRsvpKeyboard({
   };
 }
 
+export function albumEventPickerKeyboard(events: Array<{ id: string; title: string }>) {
+  return {
+    inline_keyboard: events.slice(0, 8).map((event) => [
+      {
+        text: event.title.slice(0, 40),
+        callback_data: `alb:${event.id}`,
+      },
+    ]),
+  };
+}
+
 export function expenseEventPickerKeyboard(events: Array<{ id: string; title: string }>) {
   return {
     inline_keyboard: events.slice(0, 6).map((event) => [

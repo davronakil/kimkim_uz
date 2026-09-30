@@ -42,6 +42,7 @@ Available in **English**, **Oʻzbek**, and **Русский** (Telegram menu fol
 | `/create` | Guided event flow: title → date → description → location |
 | `/expense` | Log an expense (equal split among members) |
 | `/events` | Upcoming events with links |
+| `/album` | Add photos to an event, or receive everyone else's |
 | `/help` | Command reference |
 | `/cancel` | Stop current flow |
 | `/lang en` / `/lang uz` / `/lang ru` | Set language (or use inline picker on `/start`) |
@@ -59,6 +60,14 @@ Natural phrases also work: `create event`, `event yarat`, `xarajat qo'sh`, etc.
 
 1. `/expense` — picks event if you're in several
 2. Send `AMOUNT description` — e.g. `150000 choyxona`
+
+### Shared album
+
+1. `/album` — pick an event (upcoming, or one from the last 120 days)
+2. Send one or several photos, then `/done`
+3. **Save others' photos** sends everyone else's pictures back into the chat
+
+A deep link `t.me/<bot>?start=album_<eventId>` opens that event's album directly. In a linked group, `/album` shows the count and a button into the private chat. Video is not accepted yet.
 
 ### Invite deep links
 
@@ -83,6 +92,7 @@ Invite messages show **I'm coming** / **Can't make it** (locale-specific). Callb
 | `/link INVITE_CODE` | Connect this group (or this forum topic) to an event |
 | `/unlink` | Disconnect group |
 | `/event` | Show linked event |
+| `/album` | Album count and a private-chat link to add photos |
 
 In groups with **topics** (forum groups), send `/link` inside the topic KimKim should use. The bot stores that topic’s `message_thread_id` and posts joins, schedule changes, and reminders there instead of General. Linking from General, or from a group without topics, keeps the previous whole-group behavior.
 
@@ -96,6 +106,7 @@ Sent when the user has started the bot (`telegram_chat_id` on `users`):
 
 - New comment / reply
 - New expense
+- Photos added to the shared album
 - Member joined
 - Event updated (title, time, location, description)
 - Reminders (24h and 1h before start)
@@ -108,7 +119,7 @@ Hourly cron: `GET /api/cron/event-reminders` with `Authorization: Bearer $CRON_S
 src/lib/telegram/
 ├── handler.ts          # Webhook entry
 ├── callbacks.ts        # Inline buttons (RSVP, lang, expense picker)
-├── flows/              # create-event, log-expense, list-events, group-messages
+├── flows/              # create-event, log-expense, list-events, album, group-messages
 ├── group.ts            # Group link + announcements
 ├── notifications.ts    # DM + reminder delivery
 ├── i18n.ts             # Bot strings (en / uz / ru)

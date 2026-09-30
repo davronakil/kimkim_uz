@@ -94,6 +94,9 @@ const groupStrings = {
       spots
         ? `📣 <b>${title}</b> — plan on KimKim.uz\n${spots}`
         : `📣 <b>${title}</b> — plan on KimKim.uz`,
+    albumStatus: (title: string, count: number, limit: number) =>
+      `Shared album for <b>${title}</b>: ${count} of ${limit} photos.\n\nAdd photos in a private chat with me. I can also send you everyone else's pictures there.`,
+    albumAdd: "Add photos",
   },
   ru: {
     linked: (title: string) =>
@@ -115,6 +118,9 @@ const groupStrings = {
       spots
         ? `📣 <b>${title}</b> — планируйте на KimKim.uz\n${spots}`
         : `📣 <b>${title}</b> — планируйте на KimKim.uz`,
+    albumStatus: (title: string, count: number, limit: number) =>
+      `Общий альбом <b>${title}</b>: ${count} из ${limit} фото.\n\nДобавляйте снимки в личном чате со мной — там же можно получить фото остальных.`,
+    albumAdd: "Добавить фото",
   },
   uz: {
     linked: (title: string) =>
@@ -136,6 +142,9 @@ const groupStrings = {
       spots
         ? `📣 <b>${title}</b> — KimKim.uz da reja\n${spots}`
         : `📣 <b>${title}</b> — KimKim.uz da reja`,
+    albumStatus: (title: string, count: number, limit: number) =>
+      `<b>${title}</b> umumiy albomi: ${count} / ${limit} rasm.\n\nRasmlarni menga shaxsiy chatda yuboring — boshqalarning rasmlarini ham o'sha yerda olasiz.`,
+    albumAdd: "Rasm qo'shish",
   },
 } as const;
 

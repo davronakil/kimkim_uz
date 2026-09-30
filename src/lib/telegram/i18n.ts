@@ -33,6 +33,7 @@ const messages = {
 /create — new event
 /expense — log an expense
 /events — upcoming events
+/album — add photos, or save everyone else's
 /cancel — stop current flow
 /lang en, /lang uz, or /lang ru
 
@@ -79,6 +80,35 @@ const messages = {
     loginAlreadyUsed: "This sign-in was already finished. Open KimKim if you still need the site.",
     loginExpired: "That sign-in request expired. Go back to the site and tap Continue in Telegram again.",
     loginOpenSite: "Open KimKim",
+    albumBtn: "Shared photos",
+    albumNoEvents: "You're not in an event from the last few months. Join one, then send /album.",
+    albumPickEvent: "Which event are these photos for?",
+    albumPrompt: (title: string, count: number, limit: number) =>
+      `Send photos for <b>${title}</b>.\n${count} of ${limit} in the album.\n\nSend one or several, then /done.`,
+    albumSendMore: "Send a photo, or /done when you're finished.",
+    albumNeedCommand: "To add photos, send /album and pick the event. Then send the pictures here.",
+    albumAdded: (count: number, limit: number) =>
+      `Added. The album is ${count} of ${limit}. Send more, or /done.`,
+    albumFull: (limit: number) => `This album is full (${limit} photos).`,
+    albumNotImage: "Send a photo — other files stay out of the album.",
+    albumVideoLater: "Video is planned for a later plan. Send photos for now.",
+    albumTooLarge: "That photo is too large. Send it as a photo, not as a file.",
+    albumUnreadable: "I couldn't read that photo. Try sending it again as a photo.",
+    albumNotMember: "You're not on the guest list for that event.",
+    albumDone: (count: number) =>
+      count === 1 ? "Saved 1 photo to the album." : `Saved ${count} photos to the album.`,
+    albumDoneEmpty: "No new photos. The album is unchanged.",
+    albumSaveOthers: "Save others' photos",
+    albumSaveEmpty: "No one else has added photos yet.",
+    albumSaveSending: (count: number) =>
+      count === 1 ? "Sending 1 photo from other guests." : `Sending ${count} photos from other guests.`,
+    albumSaveCaption: (title: string) => `Photos from other guests · ${title}`,
+    albumSaveFailed: "I couldn't send those photos. Open the event and save them there.",
+    albumNeedPrivate: "Open a private chat with me to add or save photos.",
+    albumNotify: (name: string, title: string, count: number) =>
+      count === 1
+        ? `<b>${name}</b> added a photo to <b>${title}</b>.`
+        : `<b>${name}</b> added ${count} photos to <b>${title}</b>.`,
   },
   uz: {
     welcome:
@@ -109,6 +139,7 @@ const messages = {
 /create — yangi event
 /expense — xarajat qo'shish
 /events — yaqin eventlar
+/album — rasm qo'shish yoki boshqalarnikini saqlash
 /cancel — bekor qilish
 /lang uz, /lang en yoki /lang ru
 
@@ -155,6 +186,37 @@ const messages = {
     loginAlreadyUsed: "Bu kirish allaqachon yakunlangan. Kerak bo'lsa, KimKim'ni oching.",
     loginExpired: "Bu kirish so'rovi eskirgan. Saytga qaytib, Telegram orqali davom etishni bosing.",
     loginOpenSite: "KimKim'ni ochish",
+    albumBtn: "Umumiy rasmlar",
+    albumNoEvents: "So'nggi oylarda eventingiz yo'q. Qo'shiling, keyin /album yuboring.",
+    albumPickEvent: "Rasmlar qaysi event uchun?",
+    albumPrompt: (title: string, count: number, limit: number) =>
+      `<b>${title}</b> uchun rasm yuboring.\nAlbomda ${count} / ${limit}.\n\nBir yoki bir nechta rasm yuboring, keyin /done.`,
+    albumSendMore: "Rasm yuboring yoki tugatish uchun /done.",
+    albumNeedCommand: "Rasm qo'shish uchun /album yuboring va eventni tanlang. Keyin rasmlarni shu yerga yuboring.",
+    albumAdded: (count: number, limit: number) =>
+      `Qo'shildi. Albom ${count} / ${limit}. Yana yuboring yoki /done.`,
+    albumFull: (limit: number) => `Albom to'ldi (${limit} ta rasm).`,
+    albumNotImage: "Rasm yuboring — boshqa fayllar albomga tushmaydi.",
+    albumVideoLater: "Video keyinroq qo'shiladi. Hozircha rasm yuboring.",
+    albumTooLarge: "Rasm juda katta. Uni fayl emas, oddiy rasm sifatida yuboring.",
+    albumUnreadable: "Bu rasmni o'qib bo'lmadi. Qayta rasm qilib yuboring.",
+    albumNotMember: "Siz bu event mehmonlari ro'yxatida emassiz.",
+    albumDone: (count: number) =>
+      count === 1 ? "1 ta rasm albomga saqlandi." : `${count} ta rasm albomga saqlandi.`,
+    albumDoneEmpty: "Yangi rasm yo'q. Albom o'zgarmadi.",
+    albumSaveOthers: "Boshqalarning rasmlari",
+    albumSaveEmpty: "Hali boshqalar rasm qo'shmagan.",
+    albumSaveSending: (count: number) =>
+      count === 1
+        ? "Boshqa mehmonlardan 1 ta rasm yuboryapman."
+        : `Boshqa mehmonlardan ${count} ta rasm yuboryapman.`,
+    albumSaveCaption: (title: string) => `Boshqa mehmonlar rasmlari · ${title}`,
+    albumSaveFailed: "Rasmlarni yubora olmadim. Eventni ochib, u yerdan saqlang.",
+    albumNeedPrivate: "Rasm qo'shish yoki saqlash uchun menga shaxsiy chatda yozing.",
+    albumNotify: (name: string, title: string, count: number) =>
+      count === 1
+        ? `<b>${name}</b> <b>${title}</b> albomiga rasm qo'shdi.`
+        : `<b>${name}</b> <b>${title}</b> albomiga ${count} ta rasm qo'shdi.`,
   },
   ru: {
     welcome:
@@ -185,6 +247,7 @@ const messages = {
 /create — новое событие
 /expense — записать расход
 /events — ближайшие события
+/album — добавить фото или сохранить чужие
 /cancel — отменить текущее действие
 /lang ru, /lang en или /lang uz
 
@@ -231,6 +294,35 @@ const messages = {
     loginAlreadyUsed: "Этот вход уже завершён. Откройте KimKim, если сайт ещё нужен.",
     loginExpired: "Запрос на вход устарел. Вернитесь на сайт и снова нажмите «Продолжить в Telegram».",
     loginOpenSite: "Открыть KimKim",
+    albumBtn: "Общие фото",
+    albumNoEvents: "Нет событий за последние месяцы. Сначала присоединитесь, затем отправьте /album.",
+    albumPickEvent: "Для какого события эти фото?",
+    albumPrompt: (title: string, count: number, limit: number) =>
+      `Пришлите фото для <b>${title}</b>.\nВ альбоме ${count} из ${limit}.\n\nМожно несколько сразу, затем /done.`,
+    albumSendMore: "Пришлите фото или /done, когда закончите.",
+    albumNeedCommand: "Чтобы добавить фото, отправьте /album и выберите событие. Затем пришлите снимки сюда.",
+    albumAdded: (count: number, limit: number) =>
+      `Добавлено. В альбоме ${count} из ${limit}. Пришлите ещё или /done.`,
+    albumFull: (limit: number) => `Альбом заполнен (${limit} фото).`,
+    albumNotImage: "Пришлите фото — другие файлы в альбом не попадают.",
+    albumVideoLater: "Видео появится в более позднем плане. Пока присылайте фото.",
+    albumTooLarge: "Фото слишком большое. Отправьте его как фото, а не файлом.",
+    albumUnreadable: "Не получилось прочитать это фото. Отправьте его ещё раз как фото.",
+    albumNotMember: "Вас нет в списке гостей этого события.",
+    albumDone: (count: number) =>
+      count === 1 ? "1 фото сохранено в альбом." : `В альбом сохранено фото: ${count}.`,
+    albumDoneEmpty: "Новых фото нет. Альбом без изменений.",
+    albumSaveOthers: "Сохранить чужие фото",
+    albumSaveEmpty: "Другие гости пока не добавили фото.",
+    albumSaveSending: (count: number) =>
+      count === 1 ? "Отправляю 1 фото от других гостей." : `Отправляю фото от других гостей: ${count}.`,
+    albumSaveCaption: (title: string) => `Фото других гостей · ${title}`,
+    albumSaveFailed: "Не удалось отправить фото. Откройте событие и сохраните их там.",
+    albumNeedPrivate: "Чтобы добавить или сохранить фото, напишите мне в личном чате.",
+    albumNotify: (name: string, title: string, count: number) =>
+      count === 1
+        ? `<b>${name}</b> добавил(а) фото в <b>${title}</b>.`
+        : `<b>${name}</b> добавил(а) ${count} фото в <b>${title}</b>.`,
   },
 } as const;
 

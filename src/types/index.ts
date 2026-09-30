@@ -192,6 +192,28 @@ export type EventPayment = {
   updated_at: string;
 };
 
+export type AlbumPhotoSource = "web" | "telegram";
+
+export type AlbumPhoto = {
+  id: string;
+  event_id: string;
+  user_id: string;
+  width: number | null;
+  height: number | null;
+  byte_size: number;
+  mime_type: string;
+  source: AlbumPhotoSource;
+  created_at: string;
+  first_name: string;
+  last_name: string | null;
+  username: string | null;
+};
+
+export type AlbumPhotoRecord = AlbumPhoto & {
+  storage_key: string;
+  thumb_key: string | null;
+};
+
 export type EventPaymentSummary = {
   user_id: string;
   amount_cents: number;

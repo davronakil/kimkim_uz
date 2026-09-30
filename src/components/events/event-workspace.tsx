@@ -7,6 +7,7 @@ import { OfflineBanner } from "@/components/pwa/offline-banner";
 import { cacheEventDetail, getCachedEventDetail } from "@/lib/offline/event-cache";
 import { useOnlineStatus } from "@/lib/offline/use-online-status";
 import { ActivityTimelinePanel } from "@/components/events/activity-timeline-panel";
+import { EventAlbumPanel } from "@/components/events/event-album-panel";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { FormattedEventDescription } from "@/components/events/formatted-event-description";
 import { CommentThread } from "@/components/events/comment-thread";
@@ -295,6 +296,14 @@ export function EventWorkspace({
           initialAdditionalGuestCount={currentAdditionalGuestCount}
           onChanged={load}
           readOnly={!online}
+        />
+
+        <EventAlbumPanel
+          eventId={eventId}
+          eventTitle={event.title}
+          currentUserId={currentUserId}
+          canModerate={canEdit}
+          online={online}
         />
 
         {renderGuests()}

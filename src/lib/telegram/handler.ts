@@ -14,6 +14,12 @@ import {
   sendTelegramMessage,
 } from "@/lib/telegram/bot";
 import { handleCallbackQuery } from "@/lib/telegram/callbacks";
+import {
+  beginAlbumCollect,
+  handleAlbumMessage,
+  parseAlbumStartParam,
+  startAlbumFlow,
+} from "@/lib/telegram/flows/album";
 import { handleCreateEventStep, startCreateEventFlow } from "@/lib/telegram/flows/create-event";
 import {
   handleLogExpenseStep,
@@ -161,6 +167,16 @@ async function handlePrivateMessage(message: TelegramMessage) {
       await handleLoginStart(message, user, loginId);
       return;
     }
+    const albumEventId = parseAlbumStartParam(startParam);
+    if (albumEventId) {
+      await beginAlbumCollect(
+        message.chat.id,
+        user,
+        resolveBotLocale(message.from, user),
+        albumEventId,
+      );
+      return;
+    }
     const join = parseJoinStartParam(startParam);
     if (join) {
       if (join.locale) {
@@ -230,6 +246,16 @@ async function handlePrivateMessage(message: TelegramMessage) {
     }
   }
 
+  if (session?.flow === "album") {
+    const isDone = /^\/done(?:@\w+)?$/i.test(text);
+    const isOtherCommand = text.startsWith("/") && !isDone;
+    if (!isOtherCommand) {
+      await handleAlbumMessage(message.chat.id, user, session, message);
+      return;
+    }
+    await clearBotSession(message.chat.id);
+  }
+
   if (session?.flow === "create_event") {
     const onLocationStep = session.step === "location";
     if (text || (onLocationStep && hasLocation)) {
@@ -247,6 +273,14 @@ async function handlePrivateMessage(message: TelegramMessage) {
       return;
     }
     await clearBotSession(message.chat.id);
+  }
+
+  const incomingMedia = Boolean(
+    message.photo?.length || message.document || message.video || message.video_note,
+  );
+  if (!text && incomingMedia) {
+    await sendTelegramMessage(message.chat.id, strings.albumNeedCommand);
+    return;
   }
 
   if (!text) return;
@@ -280,6 +314,14 @@ async function handlePrivateMessage(message: TelegramMessage) {
     return;
   }
 
+  if (
+    (intent.type === "command" && intent.name === "album") ||
+    (intent.type === "natural" && intent.name === "album")
+  ) {
+    await startAlbumFlow(message.chat.id, user, locale);
+    return;
+  }
+
   if (intent.type === "command" && intent.name === "start") {
     await sendWelcome(message.chat.id, locale);
     return;
@@ -305,7 +347,13 @@ export async function handleTelegramUpdate(update: TelegramUpdate) {
   }
 
   const hasContent =
-    Boolean(message.text) || Boolean(message.location) || Boolean(message.venue);
+    Boolean(message.text) ||
+    Boolean(message.location) ||
+    Boolean(message.venue) ||
+    Boolean(message.photo?.length) ||
+    Boolean(message.document) ||
+    Boolean(message.video) ||
+    Boolean(message.video_note);
   if (!hasContent) return;
 
   await handlePrivateMessage(message);

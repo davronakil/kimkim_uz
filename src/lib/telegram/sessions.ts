@@ -3,6 +3,7 @@ import type {
   BotLocale,
   BotSession,
   BotSessionFlow,
+  AlbumSessionData,
   CreateEventSessionData,
   ExpenseSessionData,
 } from "@/lib/telegram/types";
@@ -65,6 +66,14 @@ export function readCreateEventData(session: BotSession): CreateEventSessionData
 export function readExpenseSessionData(session: BotSession): ExpenseSessionData {
   try {
     return JSON.parse(session.data) as ExpenseSessionData;
+  } catch {
+    return {};
+  }
+}
+
+export function readAlbumSessionData(session: BotSession): AlbumSessionData {
+  try {
+    return JSON.parse(session.data) as AlbumSessionData;
   } catch {
     return {};
   }

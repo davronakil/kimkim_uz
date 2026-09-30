@@ -21,7 +21,14 @@ import {
   editMessageReplyMarkup,
   sendTelegramMessage,
 } from "@/lib/telegram/bot";
+import {
+  beginAlbumCollect,
+  finishAlbumSession,
+  sendOthersAlbumPhotos,
+  startAlbumFlow,
+} from "@/lib/telegram/flows/album";
 import { startLogExpenseForEvent } from "@/lib/telegram/flows/log-expense";
+import { readAlbumSessionData, getBotSession } from "@/lib/telegram/sessions";
 import { t } from "@/lib/telegram/i18n";
 import {
   buildEventOpenUrl,
@@ -306,6 +313,57 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
 
     await answerCallbackQuery(query.id, strings.rsvpGuestSaved(parsed.count));
     await editMessageReplyMarkup(message.chat.id, message.message_id);
+    return;
+  }
+
+  if (data === "albdone") {
+    if (message.chat.type !== "private") {
+      await answerCallbackQuery(query.id, strings.albumNeedPrivate, true);
+      return;
+    }
+    const session = await getBotSession(message.chat.id);
+    const album = session?.flow === "album" ? readAlbumSessionData(session) : {};
+    await answerCallbackQuery(query.id);
+    if (album.eventId) {
+      await finishAlbumSession(message.chat.id, user, locale, album.eventId, album.added ?? 0);
+    }
+    return;
+  }
+
+  if (data.startsWith("albdl:")) {
+    const eventId = data.slice("albdl:".length);
+    if (!eventId || message.chat.type !== "private") {
+      await answerCallbackQuery(query.id, strings.albumNeedPrivate, true);
+      return;
+    }
+    await answerCallbackQuery(query.id);
+    await sendOthersAlbumPhotos(message.chat.id, user, locale, eventId);
+    return;
+  }
+
+  if (data === "alb:pick") {
+    if (message.chat.type !== "private") {
+      await answerCallbackQuery(query.id, strings.albumNeedPrivate, true);
+      return;
+    }
+    await answerCallbackQuery(query.id);
+    await startAlbumFlow(message.chat.id, user, locale);
+    return;
+  }
+
+  if (data.startsWith("alb:")) {
+    const eventId = data.slice("alb:".length);
+    if (!eventId || message.chat.type !== "private") {
+      await answerCallbackQuery(query.id, strings.albumNeedPrivate, true);
+      return;
+    }
+    const member = await isEventMember(eventId, user.id);
+    if (!member) {
+      await answerCallbackQuery(query.id, strings.albumNotMember, true);
+      return;
+    }
+    await answerCallbackQuery(query.id);
+    await beginAlbumCollect(message.chat.id, user, locale, eventId);
     return;
   }
 

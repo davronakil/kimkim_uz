@@ -8,6 +8,9 @@ type RouteContext = {
 export async function GET(_request: NextRequest, context: RouteContext) {
   const { key } = await context.params;
   const objectKey = key.join("/");
+  if (objectKey.startsWith("albums/") || objectKey.split("/").includes("..")) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const media = await getMediaBucket();
   const object = await media.get(objectKey);
 

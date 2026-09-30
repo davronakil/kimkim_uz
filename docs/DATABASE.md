@@ -55,11 +55,13 @@ npm run db:migrate:remote   # production
 | `business_slot_payments` | `0013` | Stripe purchases for extra listing slots |
 | `business_listing_vouches` | `0014` | One vouch per user per approved listing |
 | `event_referrals` | `0017` | First invite referrer recorded when a user joins an event |
+| `event_album_photos` | `0023` | Shared event album. Members upload; bytes live in R2 under `albums/` |
 
 Data migration `0015` renames stored category `wedding_venue` → `event_venue` on existing listings.
 Migration `0016` adds per-event `expense_currency` for shared expenses and balances.
 Migration `0021` adds `expenses.split_mode` (`equal` or `custom`) so equal splits keep following extra guests.
 Migration `0022` adds optional `events.max_guest_count` for a headcount cap, including extra guests.
+Migration `0023` adds `event_album_photos` for the shared album (free cap: 20 photos per event).
 
 Full catalog flow: [CATALOG.md](./CATALOG.md).
 

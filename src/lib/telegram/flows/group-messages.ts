@@ -1,4 +1,5 @@
 import { upsertTelegramUser } from "@/lib/auth/session";
+import { sendGroupAlbumStatus } from "@/lib/telegram/flows/album";
 import { sendTelegramMessage } from "@/lib/telegram/bot";
 import {
   forumTopicFromMessage,
@@ -19,6 +20,10 @@ function isUnlinkCommand(text: string) {
 
 function isEventCommand(text: string) {
   return /^\/event(?:@\w+)?\s*$/i.test(text.trim());
+}
+
+function isAlbumCommand(text: string) {
+  return /^\/album(?:@\w+)?\s*$/i.test(text.trim());
 }
 
 export async function handleGroupMessage(message: TelegramMessage) {
@@ -83,6 +88,11 @@ export async function handleGroupMessage(message: TelegramMessage) {
 
   if (isEventCommand(text)) {
     await sendLinkedEventInfo(message.chat.id, locale, topic.messageThreadId);
+    return;
+  }
+
+  if (isAlbumCommand(text)) {
+    await sendGroupAlbumStatus(message.chat.id, locale, topic.messageThreadId);
     return;
   }
 
