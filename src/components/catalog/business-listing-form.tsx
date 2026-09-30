@@ -4,7 +4,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LocationPicker, type LocationValue } from "@/components/events/location-picker";
-import { businessCategories, normalizeStoredCategory } from "@/lib/catalog/categories";
+import { categoryGroups, normalizeStoredCategory } from "@/lib/catalog/categories";
 import type { BusinessListing } from "@/types";
 
 type BusinessListingFormProps = {
@@ -34,6 +34,7 @@ export function BusinessListingForm({
 }: BusinessListingFormProps) {
   const t = useTranslations("catalog.form");
   const tCategories = useTranslations("catalog.categories");
+  const tGroups = useTranslations("catalog.categoryGroups");
   const common = useTranslations("common");
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -119,10 +120,14 @@ export function BusinessListingForm({
           defaultValue={normalizeStoredCategory(listing?.category ?? "other")}
           className="kk-input"
         >
-          {businessCategories.map((category) => (
-            <option key={category} value={category}>
-              {tCategories(category)}
-            </option>
+          {categoryGroups.map((group) => (
+            <optgroup key={group.id} label={tGroups(group.id)}>
+              {group.categories.map((category) => (
+                <option key={category} value={category}>
+                  {tCategories(category)}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </div>

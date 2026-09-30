@@ -630,6 +630,15 @@
       "signInAction": "Войти",
       "error": "Не удалось обновить рекомендацию. Попробуйте снова."
     },
+    "categoryGroups": {
+      "food": "Еда и напитки",
+      "venues": "Площадки и проживание",
+      "celebrations": "Праздники",
+      "personal": "Уход и спорт",
+      "home": "Дом и ремонт",
+      "professional": "Профессиональные",
+      "other": "Другое"
+    },
     "categories": {
       "restaurant": "Ресторан",
       "cafe": "Кафе",
@@ -660,6 +669,17 @@
       "tutoring": "Репетиторство",
       "tailor": "Ателье",
       "cleaning_service": "Клининг",
+      "furniture": "Мебель",
+      "roofing": "Кровля",
+      "restoration": "Реставрация и залив",
+      "construction": "Строительство",
+      "plumbing": "Сантехника",
+      "electrician": "Электрик",
+      "hvac": "Отопление и кондиционеры",
+      "moving": "Переезд",
+      "printing": "Полиграфия",
+      "legal": "Юридические услуги",
+      "professional_services": "Профессиональные услуги",
       "other": "Другое",
       "wedding_venue": "Свадебная площадка"
     },

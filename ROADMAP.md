@@ -62,6 +62,7 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 ### Recent catalog & UX (2026-06)
 
 - 30 refreshed business categories (migration `0015`: `wedding_venue` → `event_venue`)
+- Catalog categories expanded with home trades (furniture & upholstery, roofing, restoration including water damage, construction, plumbing, electrician, HVAC, moving) and professional services (legal, printing, and a professional-services bucket)
 - Homepage featured listings, top-vouched + recently-added rails on browse
 - Listing share (copy link, Telegram, native share), related businesses, category SEO metadata
 - Admin: unpublish / republish listings; catalog dynamic cover placeholders

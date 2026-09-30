@@ -1,4 +1,4 @@
-import { normalizeStoredCategory } from "@/lib/catalog/categories";
+import { normalizeStoredCategory, type BusinessCategory } from "@/lib/catalog/categories";
 
 export type BusinessCoverAccent = {
   emoji: string;
@@ -24,7 +24,7 @@ const palette: BusinessCoverAccent[] = [
   { emoji: "✨", gradientFrom: "#134e4a", gradientTo: "#0e7490", glow: "#67e8f9" },
 ];
 
-const categoryThemes: Record<string, BusinessCoverAccent[]> = {
+const categoryThemes: Record<BusinessCategory, BusinessCoverAccent[]> = {
   restaurant: [
     { emoji: "🍽️", gradientFrom: "#b45309", gradientTo: "#dc2626", glow: "#fb923c" },
     { emoji: "🍽️", gradientFrom: "#9a3412", gradientTo: "#c2410c", glow: "#fdba74" },
@@ -169,6 +169,61 @@ const categoryThemes: Record<string, BusinessCoverAccent[]> = {
     { emoji: "✨", gradientFrom: "#0891b2", gradientTo: "#059669", glow: "#67e8f9" },
     { emoji: "🧼", gradientFrom: "#0e7490", gradientTo: "#047857", glow: "#5eead4" },
     { emoji: "🫧", gradientFrom: "#0284c7", gradientTo: "#0f766e", glow: "#7dd3fc" },
+  ],
+  furniture: [
+    { emoji: "🛋️", gradientFrom: "#92400e", gradientTo: "#78350f", glow: "#fdba74" },
+    { emoji: "🪑", gradientFrom: "#7c2d12", gradientTo: "#a16207", glow: "#fcd34d" },
+    { emoji: "🪵", gradientFrom: "#78350f", gradientTo: "#b45309", glow: "#fbbf24" },
+  ],
+  roofing: [
+    { emoji: "🏠", gradientFrom: "#44403c", gradientTo: "#57534e", glow: "#d6d3d1" },
+    { emoji: "🛖", gradientFrom: "#292524", gradientTo: "#78716c", glow: "#a8a29e" },
+    { emoji: "🔨", gradientFrom: "#1c1917", gradientTo: "#57534e", glow: "#e7e5e4" },
+  ],
+  restoration: [
+    { emoji: "💧", gradientFrom: "#0369a1", gradientTo: "#0e7490", glow: "#7dd3fc" },
+    { emoji: "🛠️", gradientFrom: "#1d4ed8", gradientTo: "#0891b2", glow: "#67e8f9" },
+    { emoji: "🏠", gradientFrom: "#1e40af", gradientTo: "#0284c7", glow: "#93c5fd" },
+  ],
+  construction: [
+    { emoji: "🏗️", gradientFrom: "#c2410c", gradientTo: "#a16207", glow: "#fdba74" },
+    { emoji: "🧱", gradientFrom: "#9a3412", gradientTo: "#b45309", glow: "#fbbf24" },
+    { emoji: "👷", gradientFrom: "#7c2d12", gradientTo: "#ca8a04", glow: "#fde047" },
+  ],
+  plumbing: [
+    { emoji: "🚿", gradientFrom: "#0284c7", gradientTo: "#0891b2", glow: "#7dd3fc" },
+    { emoji: "🔧", gradientFrom: "#0369a1", gradientTo: "#0d9488", glow: "#5eead4" },
+    { emoji: "💧", gradientFrom: "#075985", gradientTo: "#0e7490", glow: "#67e8f9" },
+  ],
+  electrician: [
+    { emoji: "⚡", gradientFrom: "#ca8a04", gradientTo: "#ea580c", glow: "#fde047" },
+    { emoji: "💡", gradientFrom: "#a16207", gradientTo: "#d97706", glow: "#fbbf24" },
+    { emoji: "🔌", gradientFrom: "#854d0e", gradientTo: "#c2410c", glow: "#fdba74" },
+  ],
+  hvac: [
+    { emoji: "❄️", gradientFrom: "#0284c7", gradientTo: "#6366f1", glow: "#a5b4fc" },
+    { emoji: "🌡️", gradientFrom: "#0369a1", gradientTo: "#4f46e5", glow: "#818cf8" },
+    { emoji: "💨", gradientFrom: "#0e7490", gradientTo: "#4338ca", glow: "#67e8f9" },
+  ],
+  moving: [
+    { emoji: "📦", gradientFrom: "#b45309", gradientTo: "#78716c", glow: "#fdba74" },
+    { emoji: "🚚", gradientFrom: "#9a3412", gradientTo: "#57534e", glow: "#d6d3d1" },
+    { emoji: "📦", gradientFrom: "#92400e", gradientTo: "#44403c", glow: "#fcd34d" },
+  ],
+  printing: [
+    { emoji: "🖨️", gradientFrom: "#4338ca", gradientTo: "#7c3aed", glow: "#a78bfa" },
+    { emoji: "🪧", gradientFrom: "#3730a3", gradientTo: "#6d28d9", glow: "#c4b5fd" },
+    { emoji: "📄", gradientFrom: "#312e81", gradientTo: "#9333ea", glow: "#818cf8" },
+  ],
+  legal: [
+    { emoji: "⚖️", gradientFrom: "#1e3a8a", gradientTo: "#1e293b", glow: "#93c5fd" },
+    { emoji: "📜", gradientFrom: "#1e40af", gradientTo: "#334155", glow: "#60a5fa" },
+    { emoji: "⚖️", gradientFrom: "#172554", gradientTo: "#312e81", glow: "#818cf8" },
+  ],
+  professional_services: [
+    { emoji: "💼", gradientFrom: "#334155", gradientTo: "#1e40af", glow: "#94a3b8" },
+    { emoji: "📎", gradientFrom: "#1e293b", gradientTo: "#3730a3", glow: "#a5b4fc" },
+    { emoji: "🗂️", gradientFrom: "#0f172a", gradientTo: "#1e3a8a", glow: "#60a5fa" },
   ],
   other: palette,
 };

@@ -630,6 +630,15 @@
       "signInAction": "Kirish",
       "error": "Tavsiyani yangilab bo'lmadi. Qayta urinib ko'ring."
     },
+    "categoryGroups": {
+      "food": "Ovqat va ichimlik",
+      "venues": "Joylar va turar joy",
+      "celebrations": "Tadbirlar",
+      "personal": "Shaxsiy parvarish",
+      "home": "Uy va ta'mirlash",
+      "professional": "Professional",
+      "other": "Boshqa"
+    },
     "categories": {
       "restaurant": "Restoran",
       "cafe": "Kafe",
@@ -660,6 +669,17 @@
       "tutoring": "Repetitorlik",
       "tailor": "Tikuvchilik",
       "cleaning_service": "Tozalash xizmati",
+      "furniture": "Mebel",
+      "roofing": "Tom yopish",
+      "restoration": "Restavratsiya va suv zarari",
+      "construction": "Qurilish",
+      "plumbing": "Santexnika",
+      "electrician": "Elektrik",
+      "hvac": "Isitish va konditsioner",
+      "moving": "Ko'chirish xizmati",
+      "printing": "Poligrafiya",
+      "legal": "Yuridik xizmatlar",
+      "professional_services": "Professional xizmatlar",
       "other": "Boshqa",
       "wedding_venue": "To'y xona"
     },

@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { BusinessCard } from "@/components/catalog/business-card";
 import { Link, useRouter } from "@/i18n/navigation";
-import { businessCategories, normalizeStoredCategory } from "@/lib/catalog/categories";
+import { categoryGroups, normalizeStoredCategory } from "@/lib/catalog/categories";
 import {
   fetchPlaceDetails,
   getLoadedGoogleMaps,
@@ -494,19 +494,29 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
               >
                 {t("allCategories")}
               </button>
-              {businessCategories.map((businessCategory) => (
-                <button
-                  key={businessCategory}
-                  type="button"
-                  onClick={() => setCategoryFilter(businessCategory)}
-                  className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition ${
-                    category === businessCategory
-                      ? "bg-emerald-500 text-white"
-                      : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-                  }`}
-                >
-                  {tCategories(businessCategory)}
-                </button>
+              {categoryGroups.map((group, groupIndex) => (
+                <span key={group.id} className="contents">
+                  {groupIndex > 0 ? (
+                    <span
+                      aria-hidden
+                      className="mx-1 hidden w-px shrink-0 self-stretch bg-zinc-200 sm:block dark:bg-zinc-700"
+                    />
+                  ) : null}
+                  {group.categories.map((businessCategory) => (
+                    <button
+                      key={businessCategory}
+                      type="button"
+                      onClick={() => setCategoryFilter(businessCategory)}
+                      className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition ${
+                        category === businessCategory
+                          ? "bg-emerald-500 text-white"
+                          : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+                      }`}
+                    >
+                      {tCategories(businessCategory)}
+                    </button>
+                  ))}
+                </span>
               ))}
             </div>
           </div>

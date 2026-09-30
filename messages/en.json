@@ -630,6 +630,15 @@
       "signInAction": "Sign in",
       "error": "Could not update your vouch. Try again."
     },
+    "categoryGroups": {
+      "food": "Food & drink",
+      "venues": "Venues & stays",
+      "celebrations": "Celebrations",
+      "personal": "Personal care",
+      "home": "Home & trades",
+      "professional": "Professional",
+      "other": "Other"
+    },
     "categories": {
       "restaurant": "Restaurant",
       "cafe": "Café",
@@ -660,6 +669,17 @@
       "tutoring": "Tutoring",
       "tailor": "Tailor",
       "cleaning_service": "Cleaning service",
+      "furniture": "Furniture & upholstery",
+      "roofing": "Roofing",
+      "restoration": "Restoration & water damage",
+      "construction": "Construction",
+      "plumbing": "Plumbing",
+      "electrician": "Electrician",
+      "hvac": "Heating & AC",
+      "moving": "Moving",
+      "printing": "Printing & signage",
+      "legal": "Legal",
+      "professional_services": "Professional services",
       "other": "Other",
       "wedding_venue": "Wedding venue"
     },
