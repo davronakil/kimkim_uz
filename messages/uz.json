@@ -23,15 +23,15 @@
   },
   "meta": {
     "title": "KimKim — Kim, Qayerda, Qachon?",
-    "description": "Kim keladi, qayerda uchrashamiz, hisob kitob + biznes katalog. To'y, gap, choyxona. Hammasi bir joyda. Telegram bilan ulangan.",
+    "description": "Kim keladi, qayerda uchrashamiz, hisob kitob, umumiy tadbir rasmlari va biznes katalog. To'y, gap, choyxona. Hammasi bir joyda. Telegram bilan ulangan.",
     "ogTitle": "KimKim — Kim, Qayerda, Qachon?",
-    "keywords": "yig'ilish, to'y, gap, tug'ilgan kun, aqiqa, challari, choyxona, Telegram, O'zbekiston, yig'ilishlar, tadbirlar, hisob kitob, biznes katalog, taklif, rejalar, taklifnoma"
+    "keywords": "yig'ilish, to'y, gap, tug'ilgan kun, aqiqa, challari, choyxona, Telegram, O'zbekiston, yig'ilishlar, tadbirlar, hisob kitob, umumiy tadbir rasmlari, biznes katalog, taklif, rejalar, taklifnoma"
   },
   "home": {
     "heroTitle": "KimKim, Qayerda, Qachon?\n",
-    "heroSubtitle": "KimKim, Qayerda, Qachon + Hisob Kitob + Biznes Katalogi. To'y, gap, choyxona. Hammasi bir joyda.",
+    "heroSubtitle": "KimKim, Qayerda, Qachon + Hisob Kitob + Umumiy tadbir rasmlari + Biznes Katalogi. To'y, gap, choyxona. Hammasi bir joyda.",
     "heroTitleSignedIn": "Hammani bir joyga yig'ishga tayyormisiz?",
-    "heroSubtitleSignedIn": "Sayohat, kechki ovqat, uchrashuv yoki guruh yig'ilishini rejalashtiring. Mehmonlar, yangiliklar va xarajatlar — hammasi bir joyda.",
+    "heroSubtitleSignedIn": "Sayohat, kechki ovqat, uchrashuv yoki guruh yig'ilishini rejalashtiring. Mehmonlar, yangiliklar, xarajatlar va umumiy tadbir rasmlari — hammasi bir joyda.",
     "ctaSignedOut": "Telegram bilan kirish",
     "ctaSignedIn": "Yig'ilishlarim",
     "catalogCta": "Katalogni ko'rish",
@@ -58,6 +58,8 @@
     "features": {
       "eventsTitle": "Har qanday tadbir",
       "eventsBody": "Sana, joy va mehmonlar — to'y, gap yoki choyxona bo'lishidan qat'i nazar.",
+      "photosTitle": "Umumiy tadbir rasmlari",
+      "photosBody": "Mehmonlar rasmni yig'ilish sahifasidan yoki Telegramdan qo'shadi va boshqalarnikini bir bosishda saqlaydi.",
       "commentsTitle": "Birga rejalashtiring",
       "commentsBody": "Joy tanlash, vazifalar, yangiliklar — shu yerda.",
       "expensesTitle": "Hisobni adolatli bo'ling",
@@ -68,7 +70,7 @@
   },
   "auth": {
     "title": "Telegram bilan kirish",
-    "subtitle": "Bir marta bosish — yig'ilish yaratish yoki qo'shilish. Parol kerak emas.",
+    "subtitle": "Bir marta bosish — yig'ilish yaratish, qo'shilish va umumiy tadbir rasmlari. Parol kerak emas.",
     "telegramHint": "Telegram ochiladi va akkauntingiz orqali kirasiz. Faqat ochiq Telegram profilingizni olamiz.",
     "continueInTelegram": "Telegram orqali davom etish",
     "waitingTitle": "Telegram kutilmoqda",
@@ -251,8 +253,8 @@
     "public": {
       "eyebrow": "Yig'ilish ko'rinishi",
       "title": "Qo'shilishdan oldin rejani ko'ring",
-      "bodyLoggedOut": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash yoki yopiq yig'ilish faolligini ko'rish uchun Telegram bilan kiring.",
-      "bodyLoggedIn": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, to'lash va yopiq yig'ilish faolligini ko'rish uchun yig'ilishga qo'shiling.",
+      "bodyLoggedOut": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, umumiy tadbir rasmlarini qo'shish, to'lash yoki yopiq faollikni ko'rish uchun Telegram bilan kiring.",
+      "bodyLoggedIn": "Bu ochiq ko'rinish. RSVP qilish, izoh yozish, umumiy tadbir rasmlarini qo'shish, to'lash va yopiq faollikni ko'rish uchun yig'ilishga qo'shiling.",
       "ticketPrice": "Chipta: {price}",
       "memberCount": "{count, plural, one {# kishi bor} other {# kishi bor}}",
       "guestCap": "{count} / {max} kishi",
@@ -481,6 +483,7 @@
     "eyebrow": "Sizni chaqirishdi",
     "headline": "Qo'shiling",
     "intro": "Pastdan tanlayman — tashkilotchi RSVP javobimni ko'radi.",
+    "photosNote": "Umumiy tadbir rasmlari shu yerda — qo'shilgach o'z rasmingizni qo'shing va boshqalarnikini saqlang.",
     "expensesNote": "Umumiy xarajatlar shu yerda yoziladi — qo'shilgach kim kimga qarz ekanini ko'raman.",
     "paidNote": "Joyimni band qilish uchun karta bilan to'layman. To'lovdan keyin darhol qo'shilaman.",
     "paidNotConfigured": "Bu pullik yig'ilish, lekin host hali chipta narxini qo'ymagan.",
@@ -537,8 +540,8 @@
   },
   "discover": {
     "title": "Tadbirlar",
-    "subtitle": "Hamma topishi va qo'shilishi mumkin bo'lgan ochiq tadbirlar.",
-    "metaDescription": "KimKim'da ochiq to'ylar, gaplar, tug'ilgan kunlar va boshqa tadbirlar.",
+    "subtitle": "Hamma topishi va qo'shilishi mumkin bo'lgan ochiq tadbirlar. A'zolar umumiy tadbir rasmlarini birga saqlaydi.",
+    "metaDescription": "KimKim'da ochiq to'ylar, gaplar, tug'ilgan kunlar va boshqa tadbirlar — a'zolar uchun umumiy tadbir rasmlari bilan.",
     "emptyTitle": "Hali ochiq tadbir yo'q",
     "emptyBody": "Tashkilotchi tadbirni ochiq qilsa, u shu yerda paydo bo'ladi.",
     "noUpcoming": "Hozir yaqinlashayotgan ochiq tadbirlar yo'q. Keyinroq qaytib keling."

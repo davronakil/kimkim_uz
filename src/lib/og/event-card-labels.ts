@@ -4,7 +4,7 @@ import type { EventPaymentMode } from "@/types";
 const labels = {
   en: {
     brand: "KimKim.uz",
-    tagline: "Invites · RSVPs · Shared costs",
+    tagline: "Invites · RSVPs · Shared event photos · Shared costs",
     date: "When",
     location: "Where",
     payment: {
@@ -16,7 +16,7 @@ const labels = {
   },
   uz: {
     brand: "KimKim.uz",
-    tagline: "Taklif · RSVP · Xarajatlar",
+    tagline: "Taklif · RSVP · Umumiy rasmlar · Xarajatlar",
     date: "Qachon",
     location: "Qayerda",
     payment: {
@@ -28,7 +28,7 @@ const labels = {
   },
   ru: {
     brand: "KimKim.uz",
-    tagline: "Приглашения · RSVP · Расходы",
+    tagline: "Приглашения · RSVP · Общие фото · Расходы",
     date: "Когда",
     location: "Где",
     payment: {

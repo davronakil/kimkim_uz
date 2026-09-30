@@ -4,20 +4,20 @@ const siteCardCopy = {
   en: {
     eyebrow: "Telegram-first event planning",
     title: "Gatherings, invites, and shared costs",
-    subtitle: "Plan the gathering, invite your people, track RSVPs, and keep money clear.",
-    chips: ["Invites", "RSVPs", "Comments", "Expenses"],
+    subtitle: "Shared event photos, invites, RSVPs, and shared costs.",
+    chips: ["Invites", "RSVPs", "Photos", "Comments", "Expenses"],
   },
   uz: {
     eyebrow: "Telegram uchun qulay event rejalash",
     title: "Eventlar, mehmonlar va xarajatlar",
-    subtitle: "Taklif yuboring, kim kelishini biling va hisob-kitobni bir joyda yuriting.",
-    chips: ["Taklif", "RSVP", "Izohlar", "Xarajatlar"],
+    subtitle: "Umumiy tadbir rasmlari, takliflar va hisob-kitob.",
+    chips: ["Taklif", "RSVP", "Rasmlar", "Izohlar", "Xarajatlar"],
   },
   ru: {
     eyebrow: "Планирование встреч через Telegram",
     title: "Встречи, гости и расходы",
-    subtitle: "Приглашения, ответы гостей и общий счёт — в одном спокойном месте.",
-    chips: ["Приглашения", "RSVP", "Обсуждение", "Расходы"],
+    subtitle: "Общие фото события, приглашения и общий счёт.",
+    chips: ["Приглашения", "RSVP", "Фото", "Обсуждение", "Расходы"],
   },
 } satisfies Record<Locale, { eyebrow: string; title: string; subtitle: string; chips: string[] }>;
 
@@ -129,12 +129,12 @@ export function SiteCardImage({ locale }: { locale: Locale }) {
         ))}
       </div>
 
-      <div style={{ display: "flex", gap: 30, marginTop: "auto" }}>
+      <div style={{ display: "flex", gap: 16, marginTop: "auto" }}>
         {copy.chips.map((chip) => (
           <div
             key={chip}
             style={{
-              width: 216,
+              width: 188,
               height: 58,
               borderRadius: 18,
               border: "1px solid rgba(255,255,255,0.18)",
@@ -142,7 +142,7 @@ export function SiteCardImage({ locale }: { locale: Locale }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: 650,
             }}
           >

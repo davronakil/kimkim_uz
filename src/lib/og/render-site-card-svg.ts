@@ -11,20 +11,20 @@ const siteCardCopy: Record<Locale, SiteCardCopy> = {
   en: {
     eyebrow: "Telegram-first event planning",
     title: "Gatherings, invites, and shared costs",
-    subtitle: "Plan the gathering, invite your people, track RSVPs, and keep money clear.",
-    chips: ["Invites", "RSVPs", "Comments", "Expenses"],
+    subtitle: "Shared event photos, invites, RSVPs, and shared costs.",
+    chips: ["Invites", "RSVPs", "Photos", "Comments", "Expenses"],
   },
   uz: {
     eyebrow: "Telegram uchun qulay event rejalash",
     title: "Eventlar, mehmonlar va xarajatlar",
-    subtitle: "Taklif yuboring, kim kelishini biling va hisob-kitobni bir joyda yuriting.",
-    chips: ["Taklif", "RSVP", "Izohlar", "Xarajatlar"],
+    subtitle: "Umumiy tadbir rasmlari, takliflar va hisob-kitob.",
+    chips: ["Taklif", "RSVP", "Rasmlar", "Izohlar", "Xarajatlar"],
   },
   ru: {
     eyebrow: "Планирование встреч через Telegram",
     title: "Встречи, гости и расходы",
-    subtitle: "Приглашения, ответы гостей и общий счёт — в одном спокойном месте.",
-    chips: ["Приглашения", "RSVP", "Обсуждение", "Расходы"],
+    subtitle: "Общие фото события, приглашения и общий счёт.",
+    chips: ["Приглашения", "RSVP", "Фото", "Обсуждение", "Расходы"],
   },
 };
 
@@ -79,13 +79,17 @@ export function renderSiteCardSvg(locale: Locale) {
     })
     .join("");
 
+  const chipWidth = 188;
+  const chipGap = 16;
+  const chipsWidth = copy.chips.length * chipWidth + (copy.chips.length - 1) * chipGap;
+  const chipsStart = Math.round((1200 - chipsWidth) / 2);
   const chips = copy.chips
     .map((chip, index) => {
-      const x = 72 + index * 246;
+      const x = chipsStart + index * (chipWidth + chipGap);
       return `
       <g transform="translate(${x} 496)">
-        <rect width="216" height="58" rx="18" fill="rgba(255,255,255,0.13)" stroke="rgba(255,255,255,0.18)"/>
-        <text x="108" y="37" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="650" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">${escapeXml(chip)}</text>
+        <rect width="${chipWidth}" height="58" rx="18" fill="rgba(255,255,255,0.13)" stroke="rgba(255,255,255,0.18)"/>
+        <text x="${chipWidth / 2}" y="37" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="650" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">${escapeXml(chip)}</text>
       </g>`;
     })
     .join("");

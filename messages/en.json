@@ -22,16 +22,16 @@
     "hint": "This link works only once. We wait for your tap so link previews and in-app browsers can't use it up first."
   },
   "meta": {
-    "title": "KimKim - Gatherings, invites, and shared costs",
-    "description": "Plan the gathering, invite your people, track RSVPs, and split costs in one calm place. Built around Telegram.",
+    "title": "KimKim - Gatherings, invites, shared event photos, and costs",
+    "description": "Plan the gathering, invite your people, track RSVPs, keep shared event photos, and split costs in one calm place. Built around Telegram.",
     "ogTitle": "KimKim - Keep every gathering clear",
-    "keywords": "event planning, wedding, gap circle, aqiqa, challari, choyxona, birthday, Telegram, Uzbekistan"
+    "keywords": "event planning, wedding, gap circle, aqiqa, challari, choyxona, birthday, shared event photos, Telegram, Uzbekistan"
   },
   "home": {
     "heroTitle": "Plan the gathering.\nKeep everyone in sync.",
-    "heroSubtitle": "Invites, RSVPs, location, comments, and shared costs in one simple place.",
+    "heroSubtitle": "Invites, RSVPs, shared event photos, and shared costs in one simple place.",
     "heroTitleSignedIn": "Ready to get everyone together?",
-    "heroSubtitleSignedIn": "Plan trips, dinners, gatherings, and group events. Keep guests, updates, and expenses all in one place.",
+    "heroSubtitleSignedIn": "Plan trips, dinners, gatherings, and group events. Keep guests, updates, expenses, and shared event photos in one place.",
     "ctaSignedOut": "Sign in with Telegram",
     "ctaSignedIn": "My events",
     "catalogCta": "Browse the catalog",
@@ -58,6 +58,8 @@
     "features": {
       "eventsTitle": "Create the plan",
       "eventsBody": "Set the date, place, guest list, and payment style without extra noise.",
+      "photosTitle": "Shared event photos",
+      "photosBody": "Guests add photos from the event page or Telegram, and save everyone else's in one tap.",
       "commentsTitle": "Keep decisions clear",
       "commentsBody": "Use one thread for updates, venue choices, tasks, and small decisions.",
       "expensesTitle": "Track the money",
@@ -68,7 +70,7 @@
   },
   "auth": {
     "title": "Sign in with Telegram",
-    "subtitle": "One tap to create or join events. No password needed.",
+    "subtitle": "One tap to create or join events and share event photos. No password needed.",
     "telegramHint": "Opens Telegram so we can sign you in from your account. We only receive your public Telegram profile.",
     "continueInTelegram": "Continue in Telegram",
     "waitingTitle": "Waiting for Telegram",
@@ -251,8 +253,8 @@
     "public": {
       "eyebrow": "Event preview",
       "title": "See the plan before you join",
-      "bodyLoggedOut": "This is a public preview. Sign in with Telegram when you're ready to RSVP, comment, pay, or see private event activity.",
-      "bodyLoggedIn": "This is a public preview. Join the event to RSVP, comment, pay, and see private event activity.",
+      "bodyLoggedOut": "This is a public preview. Sign in with Telegram when you're ready to RSVP, comment, add shared event photos, pay, or see private event activity.",
+      "bodyLoggedIn": "This is a public preview. Join the event to RSVP, comment, add shared event photos, pay, and see private event activity.",
       "ticketPrice": "Ticket: {price}",
       "memberCount": "{count, plural, one {# person going} other {# people going}}",
       "guestCap": "{count} of {max} going",
@@ -481,6 +483,7 @@
     "eyebrow": "You're invited",
     "headline": "Join the gathering",
     "intro": "Tap below to RSVP — the host will see you're coming.",
+    "photosNote": "Shared event photos live here — after you join, add your own and save what others shared.",
     "expensesNote": "Shared expenses are tracked here — you'll see who owes what after you join.",
     "paidNote": "Pay by card to secure your spot. You'll join right after checkout.",
     "paidNotConfigured": "This is a paid event, but the host hasn't set a ticket price yet.",
@@ -537,8 +540,8 @@
   },
   "discover": {
     "title": "Discover",
-    "subtitle": "Public gatherings anyone can find and join.",
-    "metaDescription": "Browse public weddings, gap circles, birthdays, and other gatherings on KimKim.",
+    "subtitle": "Public gatherings anyone can find and join. Members keep shared event photos together.",
+    "metaDescription": "Browse public weddings, gap circles, birthdays, and other gatherings on KimKim, with shared event photos for members.",
     "emptyTitle": "No public events yet",
     "emptyBody": "When hosts publish an event as public, it will show up here.",
     "noUpcoming": "No upcoming public events right now. Check back soon."

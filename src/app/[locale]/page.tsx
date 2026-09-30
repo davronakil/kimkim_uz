@@ -1,4 +1,4 @@
-import { CalendarDays, MessageSquare, Receipt, Send, Store } from "lucide-react";
+import { CalendarDays, Images, MessageSquare, Receipt, Send, Store } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HomeFeaturedCatalog } from "@/components/catalog/home-featured-catalog";
 import { localeNames, locales, type Locale } from "@/i18n/config";
@@ -28,6 +28,33 @@ export default async function HomePage({
   const baseUrl = appBaseUrl();
   const localeCode = locale as Locale;
   const siteUrl = absoluteUrl(`/${locale}`, baseUrl);
+  const features = [
+    {
+      icon: CalendarDays,
+      title: t("features.eventsTitle"),
+      body: t("features.eventsBody"),
+    },
+    {
+      icon: Images,
+      title: t("features.photosTitle"),
+      body: t("features.photosBody"),
+    },
+    {
+      icon: MessageSquare,
+      title: t("features.commentsTitle"),
+      body: t("features.commentsBody"),
+    },
+    {
+      icon: Receipt,
+      title: t("features.expensesTitle"),
+      body: t("features.expensesBody"),
+    },
+    {
+      icon: Send,
+      title: t("features.telegramTitle"),
+      body: t("features.telegramBody"),
+    },
+  ];
   const jsonLd = [
     {
       "@context": "https://schema.org",
@@ -55,35 +82,13 @@ export default async function HomePage({
       operatingSystem: "Web, Telegram",
       url: siteUrl,
       description: meta("description"),
+      featureList: features.map((feature) => feature.title),
       image: absoluteUrl(`/api/og/site?locale=${locale}`, baseUrl),
       offers: {
         "@type": "Offer",
         price: "0",
         priceCurrency: "USD",
       },
-    },
-  ];
-
-  const features = [
-    {
-      icon: CalendarDays,
-      title: t("features.eventsTitle"),
-      body: t("features.eventsBody"),
-    },
-    {
-      icon: MessageSquare,
-      title: t("features.commentsTitle"),
-      body: t("features.commentsBody"),
-    },
-    {
-      icon: Receipt,
-      title: t("features.expensesTitle"),
-      body: t("features.expensesBody"),
-    },
-    {
-      icon: Send,
-      title: t("features.telegramTitle"),
-      body: t("features.telegramBody"),
     },
   ];
 
@@ -179,7 +184,7 @@ export default async function HomePage({
         <Store className="pointer-events-none absolute -bottom-6 -right-4 h-28 w-28 text-emerald-500/10 sm:h-36 sm:w-36" />
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {features.map(({ icon: Icon, title, body }) => (
           <article
             key={title}

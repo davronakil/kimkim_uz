@@ -289,6 +289,10 @@ export function JoinEventPanel({
             </p>
           </div>
 
+          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-relaxed text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100">
+            {t("photosNote")}
+          </p>
+
           {event.expenses_enabled && showsExpenseNote(paymentMode) ? (
             <p className="rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm leading-relaxed text-sky-950 dark:border-sky-900 dark:bg-sky-950 dark:text-sky-100">
               {t("expensesNote")}
