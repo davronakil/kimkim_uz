@@ -74,14 +74,15 @@ function threadOptions(messageThreadId?: number | null) {
   return typeof messageThreadId === "number" ? { message_thread_id: messageThreadId } : {};
 }
 
+/** Posted into the linked topic. Same short line in each group language, without naming the topic. */
+function linkedTopicConfirm(title: string) {
+  return `✅ <b>${title}</b>\nShu mavzuga ulandi.\nLinked to this topic.\nПривязано к этой теме.`;
+}
+
 const groupStrings = {
   en: {
     linked: (title: string) =>
       `✅ This group is now linked to <b>${title}</b>. I'll post joins, schedule changes, and reminders here.`,
-    linkedTopic: (title: string, topic: string) =>
-      `✅ Linked <b>${title}</b> to topic <b>${topic}</b>. Joins, schedule changes, and reminders will land here — not in General.`,
-    linkedTopicUnnamed: (title: string) =>
-      `✅ Linked <b>${title}</b> to this topic. Joins, schedule changes, and reminders will land here — not in General.`,
     linkFailed: "Could not link this group. Check the invite code and try again.",
     notOwner: "Only the event organizer can link a group.",
     unlinked: "Group disconnected from KimKim.",
@@ -102,10 +103,6 @@ const groupStrings = {
   ru: {
     linked: (title: string) =>
       `✅ Группа привязана к событию <b>${title}</b>. Здесь будут присоединения, изменения и напоминания.`,
-    linkedTopic: (title: string, topic: string) =>
-      `✅ Событие <b>${title}</b> привязано к теме <b>${topic}</b>. Сообщения будут здесь, а не в «General».`,
-    linkedTopicUnnamed: (title: string) =>
-      `✅ Событие <b>${title}</b> привязано к этой теме. Сообщения будут здесь, а не в «General».`,
     linkFailed: "Не удалось привязать группу. Проверьте код приглашения и попробуйте снова.",
     notOwner: "Только организатор может привязать группу.",
     unlinked: "Группа отключена от KimKim.",
@@ -126,10 +123,6 @@ const groupStrings = {
   uz: {
     linked: (title: string) =>
       `✅ Guruh <b>${title}</b> eventiga ulandi. Qo'shilishlar, o'zgarishlar va eslatmalar shu yerga keladi.`,
-    linkedTopic: (title: string, topic: string) =>
-      `✅ <b>${title}</b> «${topic}» mavzusiga ulandi. Qo'shilishlar, o'zgarishlar va eslatmalar shu yerga keladi.`,
-    linkedTopicUnnamed: (title: string) =>
-      `✅ <b>${title}</b> shu mavzuga ulandi. Qo'shilishlar, o'zgarishlar va eslatmalar shu yerga keladi.`,
     linkFailed: "Ulanmadi. Invite kodini tekshirib qayta urinib ko'ring.",
     notOwner: "Faqat event organizatori guruhni ulashi mumkin.",
     unlinked: "Guruh KimKim dan uzildi.",
@@ -197,11 +190,7 @@ export async function linkGroupToEvent({
   const eventUrl = buildAppUrl(`/${locale}/events/${event.id}`);
   const inviteStrings = botStrings(locale);
   const confirmText =
-    messageThreadId != null
-      ? topicName
-        ? strings.linkedTopic(event.title, topicName)
-        : strings.linkedTopicUnnamed(event.title)
-      : strings.linked(event.title);
+    messageThreadId != null ? linkedTopicConfirm(event.title) : strings.linked(event.title);
 
   await sendTelegramMessage(chatId, confirmText, {
     parse_mode: "HTML",
