@@ -255,6 +255,25 @@ export async function setEventTelegramGroup(
     .run();
 }
 
+export async function renameEventTelegramTopics(
+  chatId: string,
+  messageThreadId: number,
+  topicName: string,
+): Promise<void> {
+  const name = topicName.trim();
+  if (!name) return;
+  const db = await getDb();
+  await db
+    .prepare(
+      `UPDATE events
+       SET telegram_topic_name = ?,
+           updated_at = datetime('now')
+       WHERE telegram_chat_id = ? AND telegram_message_thread_id = ?`,
+    )
+    .bind(name, chatId, messageThreadId)
+    .run();
+}
+
 export async function clearEventTelegramGroup(eventId: string): Promise<void> {
   const db = await getDb();
   await db

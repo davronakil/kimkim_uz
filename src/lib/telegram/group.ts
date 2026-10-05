@@ -6,6 +6,7 @@ import {
   getUserById,
   isEventOwnerByTelegramId,
   listEventMembers,
+  renameEventTelegramTopics,
   setEventTelegramGroup,
 } from "@/lib/db/queries";
 import { goingHeadcount } from "@/lib/events/headcount";
@@ -50,12 +51,43 @@ export function forumTopicFromMessage(message: TelegramMessage): {
     return { messageThreadId: null, topicName: null };
   }
 
-  const topicName =
-    message.reply_to_message?.forum_topic_created?.name?.trim() ||
-    message.forum_topic_created?.name?.trim() ||
-    null;
+  return { messageThreadId: threadId, topicName: topicNameForThread(message, threadId) };
+}
 
-  return { messageThreadId: threadId, topicName };
+/**
+ * Telegram attaches reply_to_message on topic messages. That reply is often a
+ * different topic's creation service message (its name stays the original one,
+ * such as "General Chat"), while message_thread_id is the topic actually used.
+ * Trust a creation name only when that service message is this thread's root.
+ * A later rename arrives as forum_topic_edited.
+ */
+export function topicNameForThread(message: TelegramMessage, threadId: number): string | null {
+  const sources = [message, message.reply_to_message].filter(
+    (source): source is TelegramMessage => Boolean(source),
+  );
+
+  for (const source of sources) {
+    const edited = source.forum_topic_edited?.name?.trim();
+    if (!edited) continue;
+    if (source.message_thread_id === threadId || source.message_id === threadId) return edited;
+  }
+
+  for (const source of sources) {
+    const created = source.forum_topic_created;
+    if (!created || created.is_name_implicit) continue;
+    if (source.message_id !== threadId) continue;
+    const name = created.name?.trim();
+    if (name) return name;
+  }
+
+  return null;
+}
+
+export async function rememberForumTopicRename(message: TelegramMessage) {
+  const threadId = message.message_thread_id;
+  const renamed = message.forum_topic_edited?.name?.trim();
+  if (!renamed || typeof threadId !== "number" || !Number.isFinite(threadId)) return;
+  await renameEventTelegramTopics(String(message.chat.id), threadId, renamed);
 }
 
 export function eventGroupThreadId(

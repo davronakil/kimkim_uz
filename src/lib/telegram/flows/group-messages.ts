@@ -8,6 +8,7 @@ import {
   linkGroupToEvent,
   parseGroupStartLink,
   parseLinkInviteCode,
+  rememberForumTopicRename,
   sendLinkedEventInfo,
   unlinkGroupFromEvent,
 } from "@/lib/telegram/group";
@@ -27,10 +28,12 @@ function isAlbumCommand(text: string) {
 }
 
 export async function handleGroupMessage(message: TelegramMessage) {
-  if (!message.from) return;
-
   const chatType = message.chat.type;
   if (!isGroupChatType(chatType)) return;
+
+  await rememberForumTopicRename(message);
+
+  if (!message.from) return;
 
   const user = await upsertTelegramUser({
     telegram_id: String(message.from.id),

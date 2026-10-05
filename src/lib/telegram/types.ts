@@ -21,6 +21,12 @@ export type TelegramForumTopicCreated = {
   name: string;
   icon_color?: number;
   icon_custom_emoji_id?: string;
+  is_name_implicit?: boolean;
+};
+
+export type TelegramForumTopicEdited = {
+  name?: string;
+  icon_custom_emoji_id?: string;
 };
 
 export type TelegramLocation = {
@@ -44,6 +50,7 @@ export type TelegramMessage = {
   venue?: TelegramVenue;
   reply_to_message?: TelegramMessage;
   forum_topic_created?: TelegramForumTopicCreated;
+  forum_topic_edited?: TelegramForumTopicEdited;
   caption?: string;
   media_group_id?: string;
   photo?: Array<{

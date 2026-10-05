@@ -483,7 +483,7 @@
       "linkedTopic": "Connected to topic “{topic}”",
       "linkedTopicUnnamed": "Connected to a group topic",
       "linkedHint": "KimKim will post when someone joins, when details change, and before the event starts.",
-      "linkedHintTopic": "Joins, schedule changes, and reminders will land in this topic — not in General.",
+      "linkedHintTopic": "Joins, schedule changes, and reminders will be posted in this topic.",
       "shareToGroup": "Post invite to group",
       "unlink": "Disconnect group"
     }

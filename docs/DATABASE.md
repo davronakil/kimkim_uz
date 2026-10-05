@@ -82,7 +82,7 @@ The worker's own clock is UTC, so any `toLocaleString` without an explicit `time
 - `timezone` — IANA zone the event was scheduled in; all display and reminder formatting goes through it
 - `telegram_chat_id` — linked Telegram group for announcements
 - `telegram_message_thread_id` — forum topic thread when linked inside a topic (null = General / whole group)
-- `telegram_topic_name` — topic title captured at link time, when Telegram includes it
+- `telegram_topic_name` — current topic title when the topic-root message or a rename belongs to that thread. A reply’s creation name is ignored, because Telegram often attaches a different topic’s original name (for example “General Chat”).
 - `payment_mode` — `free` | `split` | `pay_yourself` | `paid`
 - `expense_currency` — `UZS` | `USD` for shared expense logging and settlements
 - `ticket_price_cents`, `ticket_currency` — for Stripe paid events
