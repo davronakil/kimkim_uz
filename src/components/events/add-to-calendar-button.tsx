@@ -15,7 +15,7 @@ export function AddToCalendarButton({ eventId, title, className }: AddToCalendar
 
   return (
     <a
-      href={`/api/events/${eventId}/calendar`}
+      href={`/api/events/${eventId}/calendar.ics`}
       download={calendarFilename(title)}
       title={t("addToCalendar")}
       aria-label={t("addToCalendar")}

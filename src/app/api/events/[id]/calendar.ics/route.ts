@@ -31,7 +31,8 @@ export async function GET(
   return new NextResponse(ics, {
     status: 200,
     headers: {
-      "Content-Type": "text/calendar; charset=utf-8",
+      // octet-stream + .ics URL keeps Chrome from inventing a UUID filename.
+      "Content-Type": "application/octet-stream",
       "Content-Disposition": `attachment; filename="${filename}"; filename*=UTF-8''${encoded}`,
       "Cache-Control": "private, max-age=60",
     },
