@@ -278,10 +278,7 @@ export function JoinEventPanel({
                   timeStyle: "short",
                 })}
               </p>
-              <AddToCalendarButton
-                event={event}
-                path={`/${locale}/events/${event.id}`}
-              />
+              <AddToCalendarButton eventId={event.id} />
             </div>
             {event.location_name ? (
               <p className="inline-flex w-full items-start gap-3 text-base text-zinc-700 dark:text-zinc-200">

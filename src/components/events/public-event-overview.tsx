@@ -107,10 +107,7 @@ export function PublicEventOverview({
                       timeStyle: "short",
                     })}
                   </p>
-                  <AddToCalendarButton
-                    event={event}
-                    path={`/${locale}/events/${event.id}`}
-                  />
+                  <AddToCalendarButton eventId={event.id} />
                 </div>
                 {event.location_name ? (
                   <p className="flex items-start gap-3 text-base text-zinc-700 dark:text-zinc-200">

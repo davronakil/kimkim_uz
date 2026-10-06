@@ -129,18 +129,3 @@ export function buildEventIcs(input: CalendarEventInput, now = new Date()): stri
 
   return lines.map(foldIcsLine).join("\r\n");
 }
-
-export function downloadEventIcs(input: CalendarEventInput) {
-  if (typeof document === "undefined") return;
-
-  const ics = buildEventIcs(input);
-  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-  const objectUrl = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = objectUrl;
-  link.download = calendarFilename(input.title);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
-}

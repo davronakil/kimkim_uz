@@ -257,10 +257,7 @@ export function EventWorkspace({
                     timeStyle: "short",
                   })}
                 </p>
-                <AddToCalendarButton
-                  event={event}
-                  path={`/${locale}/events/${eventId}`}
-                />
+                <AddToCalendarButton eventId={eventId} />
               </div>
               {event.location_name ? (
                 <p className="inline-flex items-start gap-2.5">
