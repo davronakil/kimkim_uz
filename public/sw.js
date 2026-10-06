@@ -1,4 +1,4 @@
-const CACHE = "kimkim-v1";
+const CACHE = "kimkim-v2";
 const PRECACHE = [
   "/favicon.ico",
   "/apple-touch-icon.png",
