@@ -1,8 +1,8 @@
 const CACHE = "kimkim-v1";
 const PRECACHE = [
-  "/manifest.webmanifest",
   "/favicon.ico",
   "/apple-touch-icon.png",
+  "/icon-192.png",
   "/icon-512.png",
   "/kimkim-app-icon.png",
 ];

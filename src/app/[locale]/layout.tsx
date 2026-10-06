@@ -8,7 +8,9 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { TelegramWebAppBootstrap } from "@/components/auth/telegram-webapp-bootstrap";
 import { TimezoneSync } from "@/components/auth/timezone-sync";
+import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
+import { getCurrentUser } from "@/lib/auth/session";
 import { defaultLocale, locales, type Locale } from "@/i18n/config";
 import { alternateOgLocales, ogLocaleTag } from "@/lib/locale";
 import { appBaseUrl } from "@/lib/seo";
@@ -66,7 +68,6 @@ export async function generateMetadata({
         "max-video-preview": -1,
       },
     },
-    manifest: "/manifest.webmanifest",
     appleWebApp: {
       capable: true,
       title: "KimKim",
@@ -126,7 +127,7 @@ export default async function LocaleLayout({
   if (!locales.includes(locale as Locale)) notFound();
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const [messages, user] = await Promise.all([getMessages(), getCurrentUser()]);
 
   return (
     <html
@@ -136,9 +137,10 @@ export default async function LocaleLayout({
       <body className="flex min-h-full flex-col bg-zinc-50 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
         <NextIntlClientProvider messages={messages}>
           <ServiceWorkerRegister />
+          <InstallPrompt initialLoggedIn={user !== null} />
           <TelegramWebAppBootstrap />
           <TimezoneSync />
-          <SiteHeader />
+          <SiteHeader user={user} />
           <PullToRefresh />
           <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 overflow-x-clip px-4 py-5 pb-8 sm:px-5 sm:py-8">
             {children}

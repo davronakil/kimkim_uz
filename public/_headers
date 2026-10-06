@@ -5,7 +5,10 @@
   Cache-Control: public,max-age=0,must-revalidate
 
 /manifest.webmanifest
-  Cache-Control: public,max-age=86400
+  Cache-Control: private,max-age=0,must-revalidate
+
+/icon-192.png
+  Cache-Control: public,max-age=0,must-revalidate
 
 /favicon.ico
   Cache-Control: public,max-age=0,must-revalidate

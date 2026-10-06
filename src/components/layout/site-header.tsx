@@ -1,10 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { SiteHeaderClient } from "@/components/layout/site-header-client";
-import { getCurrentUser } from "@/lib/auth/session";
+import type { User } from "@/types";
 
-export async function SiteHeader() {
+export async function SiteHeader({ user }: { user: User | null }) {
   const t = await getTranslations("common");
-  const user = await getCurrentUser();
 
   return (
     <SiteHeaderClient
