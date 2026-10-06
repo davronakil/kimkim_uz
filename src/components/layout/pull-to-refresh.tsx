@@ -25,7 +25,10 @@ function insideVerticalScroller(target: Element) {
 export function PullToRefresh() {
   const router = useRouter();
   const refreshPage = useRef(router.refresh);
-  refreshPage.current = router.refresh;
+
+  useEffect(() => {
+    refreshPage.current = router.refresh;
+  }, [router.refresh]);
 
   const [pull, setPull] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
