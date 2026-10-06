@@ -602,6 +602,8 @@
     "noMatchesTitle": "No matching businesses",
     "noMatchesBody": "Try widening the radius, clearing a category, or add a business you know should be here.",
     "addBusiness": "Add a business",
+    "suggestAdd": "Have a business or service?",
+    "suggestAddAction": "Add it to the catalog",
     "recentTitle": "Recently added",
     "recentSubtitle": "Fresh businesses from the KimKim catalog.",
     "topVouchedTitle": "Most vouched",

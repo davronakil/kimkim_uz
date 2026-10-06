@@ -22,7 +22,12 @@ import type { BusinessListingWithRepresentativeFields } from "@/types";
 
 type CatalogBrowserProps = {
   listings: BusinessListingWithRepresentativeFields[];
+  signedIn?: boolean;
 };
+
+const vouchedRailSize = 3;
+const recentRailMinListings = 9;
+const minListingsAfterRails = 3;
 
 type ListingWithDistance = BusinessListingWithRepresentativeFields & {
   distanceKm: number | null;
@@ -99,7 +104,7 @@ function SectionHeading({ title, subtitle }: { title: string; subtitle: string }
   );
 }
 
-export function CatalogBrowser({ listings }: CatalogBrowserProps) {
+export function CatalogBrowser({ listings, signedIn = false }: CatalogBrowserProps) {
   const t = useTranslations("catalog");
   const tCategories = useTranslations("catalog.categories");
   const router = useRouter();
@@ -312,31 +317,40 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
   const showDropdown = open && query.trim().length >= 2;
   const mapListings = filteredListings.filter(hasCoordinates);
   const filtersActive = Boolean(activeCategory || activeCenter || textQuery.trim());
-  const topVouchedListings = useMemo(
-    () => listings.filter((listing) => listing.vouch_count > 0).slice(0, 3),
-    [listings],
-  );
-  const recentListings = useMemo(() => {
-    const featured = new Set(topVouchedListings.map((listing) => listing.id));
-    return [...listings]
+  const catalogRails = useMemo(() => {
+    const empty = {
+      vouched: [] as BusinessListingWithRepresentativeFields[],
+      recent: [] as BusinessListingWithRepresentativeFields[],
+    };
+    if (filtersActive || mode !== "list") return empty;
+
+    const vouchedSource = listings.filter((listing) => listing.vouch_count > 0);
+    const vouched = vouchedSource.length >= vouchedRailSize ? vouchedSource.slice(0, vouchedRailSize) : [];
+    const excluded = new Set(vouched.map((listing) => listing.id));
+    const recentPreview = [...listings]
       .sort((a, b) => {
         const first = Date.parse(a.published_at ?? a.updated_at ?? a.created_at);
         const second = Date.parse(b.published_at ?? b.updated_at ?? b.created_at);
         return second - first;
       })
-      .filter((listing) => !featured.has(listing.id))
-      .slice(0, 3);
-  }, [listings, topVouchedListings]);
+      .filter((listing) => !excluded.has(listing.id))
+      .slice(0, vouchedRailSize);
+    const remainder = listings.length - vouched.length - recentPreview.length;
+    const recent =
+      listings.length >= recentRailMinListings &&
+      recentPreview.length >= vouchedRailSize &&
+      remainder >= minListingsAfterRails
+        ? recentPreview
+        : [];
+
+    return { vouched, recent };
+  }, [filtersActive, listings, mode]);
   const railIds = useMemo(() => {
-    if (filtersActive || mode !== "list") return new Set<string>();
-    const ids = new Set([
-      ...topVouchedListings.map((listing) => listing.id),
-      ...recentListings.map((listing) => listing.id),
+    return new Set([
+      ...catalogRails.vouched.map((listing) => listing.id),
+      ...catalogRails.recent.map((listing) => listing.id),
     ]);
-    const remainder = listings.length - ids.size;
-    if (ids.size === 0 || remainder < 3) return new Set<string>();
-    return ids;
-  }, [filtersActive, listings.length, mode, recentListings, topVouchedListings]);
+  }, [catalogRails]);
   const mainListings = useMemo(
     () =>
       railIds.size > 0
@@ -362,7 +376,20 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
     <div className="min-w-0 max-w-full space-y-8">
       <div className="min-w-0 max-w-full space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">{summary}</p>
+          <div>
+            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">{summary}</p>
+            {filteredListings.length > 0 ? (
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                {t("suggestAdd")}{" "}
+                <Link
+                  href={signedIn ? "/catalog/submit" : "/login"}
+                  className="font-medium text-emerald-700 underline-offset-2 hover:underline dark:text-emerald-300"
+                >
+                  {t("suggestAddAction")}
+                </Link>
+              </p>
+            ) : null}
+          </div>
           <div className="grid w-full grid-cols-2 gap-1 rounded-2xl border border-zinc-200 bg-white p-1 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:w-[220px]">
             <button
               type="button"
@@ -558,11 +585,11 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
         </div>
       </div>
 
-      {railIds.size > 0 && topVouchedListings.length > 0 ? (
+      {catalogRails.vouched.length > 0 ? (
         <section className="space-y-3">
           <SectionHeading title={t("topVouchedTitle")} subtitle={t("topVouchedSubtitle")} />
           <div className={mobileCardRail}>
-            {topVouchedListings.map((listing) => (
+            {catalogRails.vouched.map((listing) => (
               <div key={listing.id} className={mobileCardRailItem}>
                 <BusinessCard
                   listing={listing}
@@ -574,11 +601,11 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
         </section>
       ) : null}
 
-      {railIds.size > 0 && recentListings.length > 0 ? (
+      {catalogRails.recent.length > 0 ? (
         <section className="space-y-3">
           <SectionHeading title={t("recentTitle")} subtitle={t("recentSubtitle")} />
           <div className={mobileCardRail}>
-            {recentListings.map((listing) => (
+            {catalogRails.recent.map((listing) => (
               <div key={listing.id} className={mobileCardRailItem}>
                 <BusinessCard
                   listing={listing}
@@ -666,7 +693,7 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
               {t("clearFilters")}
             </button>
           ) : (
-            <Link href="/catalog/manage" className="kk-btn-primary">
+            <Link href={signedIn ? "/catalog/submit" : "/login"} className="kk-btn-primary">
               {t("addBusiness")}
             </Link>
           )}

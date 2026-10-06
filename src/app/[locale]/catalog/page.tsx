@@ -90,7 +90,7 @@ export default async function CatalogPage({
           </div>
         }
       >
-        <CatalogBrowser listings={listings} />
+        <CatalogBrowser listings={listings} signedIn={Boolean(user)} />
       </Suspense>
     </div>
   );
