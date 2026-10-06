@@ -16,7 +16,7 @@ Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on
 - **Members** — join, leave, transfer ownership, remove member
 - **Threaded comments** — nested discussion; delete own comments (no replies)
 - **Expense splitting** — equal or custom splits, settlement copy/share, delete
-- **Business catalog** — Yelp-style directory at `/catalog`; submit listings, admin approval, community vouches, paid extra slots (Stripe)
+- **Business catalog** — community catalog of local businesses at `/catalog`; submit listings, admin approval, community vouches, paid extra slots (Stripe)
 - **Telegram bot** — create events, log expenses, RSVP buttons, group linking, bilingual + Russian
 - **Notifications** — DM + group announcements; 24h / 1h reminders
 - **OG previews** — cover photo → map pin → auto-generated event card
@@ -224,7 +224,7 @@ See [docs/DATABASE.md](./docs/DATABASE.md#event-visibility--seo).
 
 ## Business catalog
 
-A **Yelp-style directory** at `/catalog`:
+A community catalog of local businesses at `/catalog`:
 
 - Logged-in users submit businesses (barbershops, salons, restaurants, dachas, agencies, etc.)
 - Platform admins approve before publish

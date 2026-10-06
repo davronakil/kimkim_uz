@@ -1,10 +1,11 @@
 "use client";
 
-import { List, LocateFixed, Map, MapPin, Search, X } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { List, LocateFixed, Map, MapPin, Search, Store, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { BusinessCard } from "@/components/catalog/business-card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Link, useRouter } from "@/i18n/navigation";
 import { categoryGroups, normalizeStoredCategory } from "@/lib/catalog/categories";
 import {
@@ -82,15 +83,33 @@ function escapeHtml(value: string) {
   });
 }
 
+function categoryLabelFor(
+  listing: BusinessListingWithRepresentativeFields,
+  tCategories: ReturnType<typeof useTranslations<"catalog.categories">>,
+) {
+  return tCategories(normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0]);
+}
+
+function SectionHeading({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <div>
+      <h2 className="text-lg font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">{title}</h2>
+      <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">{subtitle}</p>
+    </div>
+  );
+}
+
 export function CatalogBrowser({ listings }: CatalogBrowserProps) {
   const t = useTranslations("catalog");
   const tCategories = useTranslations("catalog.categories");
-  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get("category") ?? "";
+  const activeCategory = category.trim() ? normalizeStoredCategory(category.trim()) : "";
   const listboxId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const categoryScrollerRef = useRef<HTMLDivElement>(null);
+  const activeChipRef = useRef<HTMLButtonElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<InstanceType<GoogleMapsRuntime["Map"]> | null>(null);
   const markerRefs = useRef<Array<InstanceType<GoogleMapsRuntime["Marker"]>>>([]);
@@ -162,24 +181,19 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
   }, [locationStatus, query]);
 
   const filteredListings = useMemo<ListingWithDistance[]>(() => {
-    const selectedCategory = category.trim();
-    const normalized = selectedCategory ? normalizeStoredCategory(selectedCategory) : "";
     const normalizedTextQuery = textQuery.trim().toLowerCase();
-    const byCategory = selectedCategory
-      ? listings.filter((listing) => normalizeStoredCategory(listing.category) === normalized)
+    const byCategory = activeCategory
+      ? listings.filter((listing) => normalizeStoredCategory(listing.category) === activeCategory)
       : listings;
 
     const byText = normalizedTextQuery
       ? byCategory.filter((listing) => {
-          const categoryLabel = tCategories(
-            normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
-          );
           const haystack = [
             listing.name,
             listing.description,
             listing.location_name,
             listing.location_address,
-            categoryLabel,
+            categoryLabelFor(listing, tCategories),
           ]
             .filter(Boolean)
             .join(" ")
@@ -206,7 +220,7 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
     return withDistance
       .filter((listing) => listing.distanceKm != null && listing.distanceKm <= radiusKm)
       .sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
-  }, [activeCenter, category, listings, radiusKm, tCategories, textQuery]);
+  }, [activeCategory, activeCenter, listings, radiusKm, tCategories, textQuery]);
 
   useEffect(() => {
     if (mode !== "map" || locationStatus !== "ready" || !mapRef.current) return;
@@ -249,6 +263,14 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
     };
   }, [center, filteredListings, locationStatus, mapCenter, mode, radiusKm]);
 
+  useEffect(() => {
+    const chip = activeChipRef.current;
+    const scroller = categoryScrollerRef.current;
+    if (!chip || !scroller) return;
+    const left = chip.offsetLeft - scroller.clientWidth / 2 + chip.offsetWidth / 2;
+    scroller.scrollTo({ left: Math.max(0, left) });
+  }, [activeCategory]);
+
   async function choosePrediction(prediction: PlacePrediction) {
     setSearching(true);
     const place = await fetchPlaceDetails(prediction.placeId);
@@ -266,8 +288,8 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
     const params = new URLSearchParams(searchParams.toString());
     if (nextCategory) params.set("category", nextCategory);
     else params.delete("category");
-    const query = params.toString();
-    router.replace(query ? `/catalog?${query}` : "/catalog", { scroll: false });
+    const nextQuery = params.toString();
+    router.replace(nextQuery ? `/catalog?${nextQuery}` : "/catalog", { scroll: false });
   }
 
   function clearLocation() {
@@ -278,63 +300,77 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
     inputRef.current?.focus();
   }
 
+  function clearFilters() {
+    setTextQuery("");
+    setCenter(null);
+    setQuery("");
+    setPredictions([]);
+    setOpen(false);
+    setCategoryFilter("");
+  }
+
   const showDropdown = open && query.trim().length >= 2;
   const mapListings = filteredListings.filter(hasCoordinates);
-  const filtersActive = Boolean(category || activeCenter || textQuery.trim());
+  const filtersActive = Boolean(activeCategory || activeCenter || textQuery.trim());
   const topVouchedListings = useMemo(
     () => listings.filter((listing) => listing.vouch_count > 0).slice(0, 3),
     [listings],
   );
-  const recentListings = useMemo(
-    () =>
-      [...listings]
-        .sort((a, b) => {
-          const first = Date.parse(a.published_at ?? a.updated_at ?? a.created_at);
-          const second = Date.parse(b.published_at ?? b.updated_at ?? b.created_at);
-          return second - first;
-        })
-        .slice(0, 4),
-    [listings],
-  );
-  const featuredListingIds = useMemo(() => {
+  const recentListings = useMemo(() => {
+    const featured = new Set(topVouchedListings.map((listing) => listing.id));
+    return [...listings]
+      .sort((a, b) => {
+        const first = Date.parse(a.published_at ?? a.updated_at ?? a.created_at);
+        const second = Date.parse(b.published_at ?? b.updated_at ?? b.created_at);
+        return second - first;
+      })
+      .filter((listing) => !featured.has(listing.id))
+      .slice(0, 3);
+  }, [listings, topVouchedListings]);
+  const railIds = useMemo(() => {
     if (filtersActive || mode !== "list") return new Set<string>();
-    return new Set([
+    const ids = new Set([
       ...topVouchedListings.map((listing) => listing.id),
       ...recentListings.map((listing) => listing.id),
     ]);
-  }, [filtersActive, mode, recentListings, topVouchedListings]);
+    const remainder = listings.length - ids.size;
+    if (ids.size === 0 || remainder < 3) return new Set<string>();
+    return ids;
+  }, [filtersActive, listings.length, mode, recentListings, topVouchedListings]);
   const mainListings = useMemo(
     () =>
-      featuredListingIds.size > 0
-        ? filteredListings.filter((listing) => !featuredListingIds.has(listing.id))
+      railIds.size > 0
+        ? filteredListings.filter((listing) => !railIds.has(listing.id))
         : filteredListings,
-    [featuredListingIds, filteredListings],
+    [filteredListings, railIds],
   );
 
   const mobileCardRail =
     "-mx-4 flex min-w-0 gap-3 overflow-x-auto overscroll-x-contain px-4 pb-1 snap-x snap-mandatory [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden";
   const mobileCardRailItem =
-    "w-[min(17.5rem,calc(100vw-3rem))] shrink-0 snap-start sm:w-auto sm:min-w-0 sm:shrink";
-  const recentRailItem =
-    "w-[min(17.5rem,calc(100vw-3rem))] shrink-0 snap-start sm:w-auto sm:min-w-0 sm:shrink";
+    "w-[min(18rem,calc(100vw-3rem))] shrink-0 snap-start sm:w-auto sm:min-w-0 sm:shrink";
+
+  const summary = activeCenter
+    ? t("nearSummary", {
+        count: filteredListings.length,
+        radius: radiusKm,
+        place: activeCenter.name,
+      })
+    : t("allSummary", { count: filteredListings.length });
 
   return (
-    <div className="min-w-0 max-w-full space-y-5">
-      <div className="min-w-0 max-w-full space-y-5 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">{t("filtersTitle")}</p>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("filtersHint")}</p>
-          </div>
-
-          <div className="grid w-full grid-cols-2 gap-1 rounded-2xl border border-zinc-200 bg-zinc-50 p-1 dark:border-zinc-700 dark:bg-zinc-950 sm:w-[220px]">
+    <div className="min-w-0 max-w-full space-y-8">
+      <div className="min-w-0 max-w-full space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">{summary}</p>
+          <div className="grid w-full grid-cols-2 gap-1 rounded-2xl border border-zinc-200 bg-white p-1 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:w-[220px]">
             <button
               type="button"
               onClick={() => setMode("list")}
               aria-pressed={mode === "list"}
-              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition ${
+              className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition ${
                 mode === "list"
-                  ? "bg-white text-zinc-950 shadow-sm dark:bg-zinc-800 dark:text-white"
+                  ? "bg-zinc-950 text-white shadow-sm dark:bg-white dark:text-zinc-950"
                   : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
               }`}
             >
@@ -345,9 +381,9 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
               type="button"
               onClick={() => setMode("map")}
               aria-pressed={mode === "map"}
-              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition ${
+              className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition ${
                 mode === "map"
-                  ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/25"
+                  ? "bg-zinc-950 text-white shadow-sm dark:bg-white dark:text-zinc-950"
                   : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
               }`}
             >
@@ -357,199 +393,180 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
           </div>
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="space-y-2">
-              <label htmlFor="catalog-text-search" className="text-sm font-medium">
-                {t("searchLabel")}
-              </label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                <input
-                  id="catalog-text-search"
-                  value={textQuery}
-                  type="search"
-                  autoComplete="off"
-                  onChange={(event) => setTextQuery(event.target.value)}
-                  placeholder={t("searchPlaceholder")}
-                  className="kk-input py-3.5 pl-10"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="catalog-location-search" className="text-sm font-medium">
-                {t("near")}
-              </label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                <input
-                  id="catalog-location-search"
-                  ref={inputRef}
-                  value={query}
-                  autoComplete="off"
-                  role="combobox"
-                  aria-expanded={showDropdown}
-                  aria-controls={listboxId}
-                  onChange={(event) => setQuery(event.target.value)}
-                  onFocus={() => {
-                    if (predictions.length > 0) setOpen(true);
-                  }}
-                  onBlur={() => {
-                    window.setTimeout(() => setOpen(false), 150);
-                  }}
-                  placeholder={
-                    locationStatus === "loading"
-                      ? t("locationLoading")
-                      : locationStatus === "unconfigured"
-                        ? t("locationUnavailable")
-                        : t("nearPlaceholder")
-                  }
-                  className="kk-input py-3.5 pl-10 pr-10"
-                  disabled={locationStatus === "unconfigured"}
-                />
-                {center ? (
-                  <button
-                    type="button"
-                    onClick={clearLocation}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
-                    aria-label={t("clearLocation")}
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                ) : null}
-
-                {showDropdown ? (
-                  <ul
-                    id={listboxId}
-                    role="listbox"
-                    className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900"
-                  >
-                    {searching && predictions.length === 0 ? (
-                      <li className="px-4 py-3 text-sm text-zinc-500">
-                        {t("locationSearching")}
-                      </li>
-                    ) : null}
-
-                    {predictions.map((prediction) => (
-                      <li key={prediction.placeId} role="option" aria-selected={false}>
-                        <button
-                          type="button"
-                          className="flex min-h-12 w-full flex-col items-start px-4 py-3 text-left hover:bg-zinc-50 active:bg-zinc-100 dark:hover:bg-zinc-800"
-                          onMouseDown={(event) => event.preventDefault()}
-                          onClick={() => void choosePrediction(prediction)}
-                        >
-                          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                            {prediction.mainText}
-                          </span>
-                          {prediction.secondaryText ? (
-                            <span className="text-xs text-zinc-500">
-                              {prediction.secondaryText}
-                            </span>
-                          ) : null}
-                        </button>
-                      </li>
-                    ))}
-
-                    {!searching && predictions.length === 0 ? (
-                      <li className="px-4 py-3 text-sm text-zinc-500">
-                        {t("locationNoResults")}
-                      </li>
-                    ) : null}
-                  </ul>
-                ) : null}
-              </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="space-y-2">
+            <label htmlFor="catalog-text-search" className="text-sm font-medium">
+              {t("searchLabel")}
+            </label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+              <input
+                id="catalog-text-search"
+                value={textQuery}
+                type="search"
+                autoComplete="off"
+                onChange={(event) => setTextQuery(event.target.value)}
+                placeholder={t("searchPlaceholder")}
+                className="kk-input bg-white py-3.5 pl-10 pr-10 dark:bg-zinc-900 [&::-webkit-search-cancel-button]:hidden"
+              />
+              {textQuery ? (
+                <button
+                  type="button"
+                  onClick={() => setTextQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                  aria-label={t("clearSearch")}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              ) : null}
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 lg:justify-end">
+          <div className="space-y-2">
+            <label htmlFor="catalog-location-search" className="text-sm font-medium">
+              {t("near")}
+            </label>
+            <div className="relative">
+              <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+              <input
+                id="catalog-location-search"
+                ref={inputRef}
+                value={query}
+                autoComplete="off"
+                role="combobox"
+                aria-expanded={showDropdown}
+                aria-controls={listboxId}
+                onChange={(event) => setQuery(event.target.value)}
+                onFocus={() => {
+                  if (predictions.length > 0) setOpen(true);
+                }}
+                onBlur={() => {
+                  window.setTimeout(() => setOpen(false), 150);
+                }}
+                placeholder={
+                  locationStatus === "loading"
+                    ? t("locationLoading")
+                    : locationStatus === "unconfigured"
+                      ? t("locationUnavailable")
+                      : t("nearPlaceholder")
+                }
+                className="kk-input bg-white py-3.5 pl-10 pr-10 dark:bg-zinc-900"
+                disabled={locationStatus === "unconfigured"}
+              />
+              {center ? (
+                <button
+                  type="button"
+                  onClick={clearLocation}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                  aria-label={t("clearLocation")}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              ) : null}
+
+              {showDropdown ? (
+                <ul
+                  id={listboxId}
+                  role="listbox"
+                  className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900"
+                >
+                  {searching && predictions.length === 0 ? (
+                    <li className="px-4 py-3 text-sm text-zinc-500">{t("locationSearching")}</li>
+                  ) : null}
+
+                  {predictions.map((prediction) => (
+                    <li key={prediction.placeId} role="option" aria-selected={false}>
+                      <button
+                        type="button"
+                        className="flex min-h-12 w-full flex-col items-start px-4 py-3 text-left hover:bg-zinc-50 active:bg-zinc-100 dark:hover:bg-zinc-800"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => void choosePrediction(prediction)}
+                      >
+                        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                          {prediction.mainText}
+                        </span>
+                        {prediction.secondaryText ? (
+                          <span className="text-xs text-zinc-500">{prediction.secondaryText}</span>
+                        ) : null}
+                      </button>
+                    </li>
+                  ))}
+
+                  {!searching && predictions.length === 0 ? (
+                    <li className="px-4 py-3 text-sm text-zinc-500">{t("locationNoResults")}</li>
+                  ) : null}
+                </ul>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        {activeCenter ? (
+          <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {radiusOptions.map((radius) => (
               <button
                 key={radius}
                 type="button"
                 onClick={() => setRadiusKm(radius)}
-                className={`shrink-0 rounded-full px-3 py-2 text-sm font-medium transition ${
-                  radiusKm === radius
-                    ? "bg-emerald-500 text-white"
-                    : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-                }`}
+                className={`shrink-0 ${radiusKm === radius ? "kk-chip-active" : "kk-chip-inactive"}`}
               >
                 {t("radiusKm", { radius })}
               </button>
             ))}
           </div>
-        </div>
+        ) : null}
 
-        <div className="min-w-0 space-y-3">
-          <div className="-mx-4 overflow-x-auto overscroll-x-contain px-4 [scrollbar-width:none] sm:mx-0 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
-            <div className="flex w-max min-w-full gap-2 sm:w-auto sm:min-w-0 sm:flex-wrap">
-              <button
-                type="button"
-                onClick={() => setCategoryFilter("")}
-                className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition ${
-                  !category
-                    ? "bg-emerald-500 text-white"
-                    : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-                }`}
-              >
-                {t("allCategories")}
-              </button>
-              {categoryGroups.map((group, groupIndex) => (
-                <span key={group.id} className="contents">
-                  {groupIndex > 0 ? (
-                    <span
-                      aria-hidden
-                      className="mx-1 hidden w-px shrink-0 self-stretch bg-zinc-200 sm:block dark:bg-zinc-700"
-                    />
-                  ) : null}
-                  {group.categories.map((businessCategory) => (
+        <div className="relative min-w-0">
+          <div
+            ref={categoryScrollerRef}
+            className="flex gap-2 overflow-x-auto overscroll-x-contain pb-1 pr-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <button
+              type="button"
+              ref={activeCategory ? undefined : activeChipRef}
+              onClick={() => setCategoryFilter("")}
+              className={`shrink-0 ${!activeCategory ? "kk-chip-active" : "kk-chip-inactive"}`}
+            >
+              {t("allCategories")}
+            </button>
+            {categoryGroups.map((group, groupIndex) => (
+              <span key={group.id} className="contents">
+                {groupIndex > 0 ? (
+                  <span
+                    aria-hidden
+                    className="mx-1 w-px shrink-0 self-stretch bg-zinc-200 dark:bg-zinc-700"
+                  />
+                ) : null}
+                {group.categories.map((businessCategory) => {
+                  const selected = activeCategory === businessCategory;
+                  return (
                     <button
                       key={businessCategory}
                       type="button"
+                      ref={selected ? activeChipRef : undefined}
                       onClick={() => setCategoryFilter(businessCategory)}
-                      className={`shrink-0 rounded-full px-3 py-1.5 text-sm transition ${
-                        category === businessCategory
-                          ? "bg-emerald-500 text-white"
-                          : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-                      }`}
+                      className={`shrink-0 ${selected ? "kk-chip-active" : "kk-chip-inactive"}`}
                     >
                       {tCategories(businessCategory)}
                     </button>
-                  ))}
-                </span>
-              ))}
-            </div>
+                  );
+                })}
+              </span>
+            ))}
           </div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-zinc-50 to-transparent dark:from-zinc-950" />
         </div>
-
-        <p className="border-t border-zinc-100 pt-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-          {activeCenter
-            ? t("nearSummary", {
-                count: filteredListings.length,
-                radius: radiusKm,
-                place: activeCenter.name,
-              })
-            : t("allSummary", { count: filteredListings.length })}
-        </p>
       </div>
 
-      {!filtersActive && mode === "list" && topVouchedListings.length > 0 ? (
+      {railIds.size > 0 && topVouchedListings.length > 0 ? (
         <section className="space-y-3">
-          <div>
-            <h2 className="text-base font-semibold text-zinc-950 dark:text-zinc-50">
-              {t("topVouchedTitle")}
-            </h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("topVouchedSubtitle")}</p>
-          </div>
+          <SectionHeading title={t("topVouchedTitle")} subtitle={t("topVouchedSubtitle")} />
           <div className={mobileCardRail}>
             {topVouchedListings.map((listing) => (
               <div key={listing.id} className={mobileCardRailItem}>
                 <BusinessCard
                   listing={listing}
-                  locale={locale}
-                  categoryLabel={tCategories(
-                    normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
-                  )}
+                  categoryLabel={categoryLabelFor(listing, tCategories)}
                 />
               </div>
             ))}
@@ -557,59 +574,29 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
         </section>
       ) : null}
 
-      {!filtersActive && mode === "list" && recentListings.length > 0 ? (
+      {railIds.size > 0 && recentListings.length > 0 ? (
         <section className="space-y-3">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <h2 className="text-base font-semibold text-zinc-950 dark:text-zinc-50">
-                {t("recentTitle")}
-              </h2>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("recentSubtitle")}</p>
-            </div>
-          </div>
-          <div className="-mx-4 flex min-w-0 gap-3 overflow-x-auto overscroll-x-contain px-4 pb-1 snap-x snap-mandatory [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+          <SectionHeading title={t("recentTitle")} subtitle={t("recentSubtitle")} />
+          <div className={mobileCardRail}>
             {recentListings.map((listing) => (
-              <Link
-                key={listing.id}
-                href={`/catalog/${listing.id}`}
-                className={`${recentRailItem} group rounded-2xl border border-zinc-200 bg-white p-3.5 shadow-sm transition active:scale-[0.99] sm:p-4 sm:hover:-translate-y-0.5 sm:hover:border-emerald-200 sm:hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:sm:hover:border-emerald-900`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold group-hover:text-emerald-600">
-                      {listing.name}
-                    </p>
-                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                      {tCategories(
-                        normalizeStoredCategory(listing.category) as Parameters<
-                          typeof tCategories
-                        >[0],
-                      )}
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-                    {t("newBadge")}
-                  </span>
-                </div>
-                {listing.location_name ? (
-                  <p className="mt-3 flex items-center gap-1 truncate text-sm text-zinc-500 dark:text-zinc-400">
-                    <MapPin className="h-4 w-4 shrink-0" />
-                    {listing.location_name}
-                  </p>
-                ) : null}
-              </Link>
+              <div key={listing.id} className={mobileCardRailItem}>
+                <BusinessCard
+                  listing={listing}
+                  categoryLabel={categoryLabelFor(listing, tCategories)}
+                />
+              </div>
             ))}
           </div>
         </section>
       ) : null}
 
       {mode === "map" ? (
-        <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,0.8fr)]">
-          <div className="min-w-0 min-h-[420px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(16rem,0.7fr)]">
+          <div className="min-h-[420px] min-w-0 overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-100 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             {locationStatus === "ready" ? (
-              <div ref={mapRef} className="h-[420px] w-full max-w-full" />
+              <div ref={mapRef} className="h-[420px] w-full max-w-full sm:h-[520px]" />
             ) : (
-              <div className="flex h-[420px] flex-col items-center justify-center gap-3 p-6 text-center">
+              <div className="flex h-[420px] flex-col items-center justify-center gap-3 p-6 text-center sm:h-[520px]">
                 <LocateFixed className="h-8 w-8 text-emerald-600" />
                 <p className="max-w-sm text-sm text-zinc-500 dark:text-zinc-400">
                   {locationStatus === "unconfigured" ? t("locationUnavailable") : t("locationLoading")}
@@ -617,80 +604,96 @@ export function CatalogBrowser({ listings }: CatalogBrowserProps) {
               </div>
             )}
           </div>
-          <div className="min-w-0 max-h-[420px] space-y-3 overflow-auto rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="min-w-0 max-h-[420px] space-y-2 overflow-auto sm:max-h-[520px]">
             {mapListings.length === 0 ? (
-              <p className="p-3 text-sm text-zinc-500 dark:text-zinc-400">{t("noNearby")}</p>
+              <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-6 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
+                {t("noNearby")}
+              </div>
             ) : (
               mapListings.map((listing) => {
                 const mapsUrl = mapsSearchUrl(listing);
                 return (
-                  <div
+                  <article
                     key={listing.id}
-                    className="rounded-xl border border-zinc-100 p-3 dark:border-zinc-800"
+                    className="rounded-2xl border border-zinc-200 bg-white p-3.5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-semibold">{listing.name}</p>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                          {listing.distanceKm != null
-                            ? t("distanceKm", { distance: listing.distanceKm.toFixed(1) })
-                            : listing.location_name}
-                        </p>
-                      </div>
-                      <MapPin className="mt-1 h-4 w-4 shrink-0 text-emerald-600" />
-                    </div>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <a href={`/${locale}/catalog/${listing.id}`} className="kk-btn-secondary">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-700 dark:text-emerald-300">
+                      {categoryLabelFor(listing, tCategories)}
+                    </p>
+                    <Link
+                      href={`/catalog/${listing.id}`}
+                      className="mt-1 block font-semibold leading-snug hover:text-emerald-600"
+                    >
+                      {listing.name}
+                    </Link>
+                    <p className="mt-1 flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400">
+                      <MapPin className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                      <span className="truncate">
+                        {listing.distanceKm != null
+                          ? t("distanceKm", { distance: listing.distanceKm.toFixed(1) })
+                          : listing.location_name}
+                      </span>
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-3 text-sm font-medium">
+                      <Link href={`/catalog/${listing.id}`} className="text-emerald-700 hover:text-emerald-800 dark:text-emerald-300">
                         {t("viewListing")}
-                      </a>
+                      </Link>
                       {mapsUrl ? (
                         <a
                           href={mapsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="kk-btn-secondary"
+                          className="text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
                         >
                           {t("openInMaps")}
                         </a>
                       ) : null}
                     </div>
-                  </div>
+                  </article>
                 );
               })
             )}
           </div>
         </div>
       ) : filteredListings.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
-          <p className="font-medium">
-            {filtersActive ? t("noMatchesTitle") : t("emptyTitle")}
-          </p>
-          <p className="mx-auto mt-1 max-w-md text-sm text-zinc-500 dark:text-zinc-400">
-            {filtersActive ? t("noMatchesBody") : t("emptyBody")}
-          </p>
-          <Link href="/catalog/manage" className="kk-btn-primary mt-5">
-            {t("addBusiness")}
-          </Link>
-        </div>
+        <EmptyState
+          icon={Store}
+          title={filtersActive ? t("noMatchesTitle") : t("emptyTitle")}
+          description={filtersActive ? t("noMatchesBody") : t("emptyBody")}
+        >
+          {filtersActive ? (
+            <button type="button" onClick={clearFilters} className="kk-btn-primary">
+              {t("clearFilters")}
+            </button>
+          ) : (
+            <Link href="/catalog/manage" className="kk-btn-primary">
+              {t("addBusiness")}
+            </Link>
+          )}
+        </EmptyState>
       ) : mainListings.length > 0 ? (
-        <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {mainListings.map((listing) => (
-            <div key={listing.id} className="min-w-0">
+        <section className="space-y-3">
+          {railIds.size > 0 ? (
+            <SectionHeading
+              title={t("allListingsTitle")}
+              subtitle={t("allSummary", { count: mainListings.length })}
+            />
+          ) : null}
+          <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {mainListings.map((listing) => (
               <BusinessCard
+                key={listing.id}
                 listing={listing}
-                locale={locale}
-                categoryLabel={tCategories(
-                  normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
-                )}
+                categoryLabel={categoryLabelFor(listing, tCategories)}
                 distanceLabel={
                   listing.distanceKm != null
                     ? t("distanceKm", { distance: listing.distanceKm.toFixed(1) })
                     : null
                 }
               />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </section>
       ) : null}
     </div>
   );

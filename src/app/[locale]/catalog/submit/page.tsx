@@ -48,10 +48,10 @@ export default async function CatalogSubmitPage({
   const t = await getTranslations("catalog");
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl space-y-8">
       <div>
         <h1 className="kk-page-title">{t("submitTitle")}</h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-2 text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
           {superadmin ? t("submitSubtitleSuperadmin") : t("submitSubtitle")}
         </p>
       </div>

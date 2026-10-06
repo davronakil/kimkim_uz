@@ -1,6 +1,6 @@
 # Business catalog
 
-KimKim includes a **Yelp-style business directory** at `/[locale]/catalog` where people discover local businesses and service providers.
+KimKim includes a **business catalog** at `/[locale]/catalog` where the community vouches for local businesses they trust, and people find recommended places in any category nearby — in a list or on the map.
 
 ## How it works
 

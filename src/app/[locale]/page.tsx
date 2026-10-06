@@ -205,7 +205,7 @@ export default async function HomePage({
             ))}
           </div>
         </div>
-        <HomeFeaturedCatalog locale={locale} />
+        <HomeFeaturedCatalog />
         <Store className="pointer-events-none absolute -bottom-6 -right-4 h-28 w-28 text-emerald-500/10 sm:h-36 sm:w-36" />
       </section>
 

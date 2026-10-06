@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { ExternalLink, MapPin, Phone } from "lucide-react";
+import { ArrowLeft, ExternalLink, MapPin, Phone, Send } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { RelatedBusinessListings } from "@/components/catalog/related-business-listings";
@@ -20,6 +21,40 @@ import { JsonLd } from "@/lib/seo";
 import { buildAppUrl } from "@/lib/telegram/bot";
 import { displayName } from "@/lib/utils";
 import { isPlatformAdmin } from "@/lib/platform/admin";
+
+function websiteHost(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+function ContactRow({
+  href,
+  icon: Icon,
+  label,
+  external = false,
+}: {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+  external?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 text-sm font-medium text-zinc-800 transition hover:text-emerald-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:text-emerald-300"
+    >
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+        <Icon className="h-4 w-4" />
+      </span>
+      <span className="min-w-0 truncate">{label}</span>
+    </a>
+  );
+}
 
 export async function generateMetadata({
   params,
@@ -101,122 +136,150 @@ export default async function CatalogDetailPage({
         ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(listing.location_address)}`
         : null;
 
+  const telegramHandle = listing.telegram_username?.replace(/^@/, "");
+  const hasContacts = Boolean(listing.phone || telegramHandle || listing.website_url || mapsUrl);
+  const showAside = hasContacts || listing.status === "approved";
+  const listedBy = displayName(listing);
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {jsonLd ? <JsonLd data={jsonLd} /> : null}
-      <div className="flex flex-wrap items-center gap-3">
-        <Link href="/catalog" className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">
-          ← {t("backToCatalog")}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link
+          href="/catalog"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-800 dark:hover:text-zinc-200"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t("backToCatalog")}
         </Link>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          {listing.status === "approved" ? (
-            <BusinessShareActions listingName={listing.name} />
-          ) : null}
-          {isOwner ? (
-            <Link href={`/catalog/${id}/edit`} className="kk-btn-secondary">
-              {common("edit")}
-            </Link>
-          ) : null}
-        </div>
+        {isOwner ? (
+          <Link href={`/catalog/${id}/edit`} className="kk-btn-secondary">
+            {common("edit")}
+          </Link>
+        ) : null}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="aspect-[4/3] overflow-hidden sm:aspect-[21/9]">
+      <article className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="aspect-[4/3] overflow-hidden bg-zinc-100 sm:aspect-[2/1] dark:bg-zinc-800">
           <BusinessCoverImage
             listing={listing}
-            categoryLabel={categoryLabel}
-            submittedByName={displayName(listing)}
+            submittedByName={listedBy}
             variant="hero"
             className="h-full w-full object-cover"
           />
         </div>
-        <div className="space-y-5 p-5 sm:space-y-6 sm:p-8">
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold leading-tight sm:text-3xl">{listing.name}</h1>
-            <div className="flex flex-wrap items-center gap-2">
-              <Link
-                href={`/catalog?category=${normalizeStoredCategory(listing.category)}`}
-                className="transition hover:opacity-80"
-              >
-                <CategoryBadge category={listing.category} locale={locale} />
-              </Link>
-              {listing.status !== "approved" ? (
-                <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100">
-                  {listing.status === "pending" ? t("statusPending") : t("statusRejected")}
-                </span>
+        <div
+          className={`grid gap-8 p-5 sm:p-8 ${
+            showAside ? "lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start lg:gap-10" : ""
+          }`}
+        >
+          <div className="min-w-0 space-y-5">
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  href={`/catalog?category=${normalizeStoredCategory(listing.category)}`}
+                  className="transition hover:opacity-80"
+                >
+                  <CategoryBadge category={listing.category} locale={locale} />
+                </Link>
+                {listing.status !== "approved" ? (
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                      listing.status === "pending"
+                        ? "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+                        : "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200"
+                    }`}
+                  >
+                    {listing.status === "pending" ? t("statusPending") : t("statusRejected")}
+                  </span>
+                ) : null}
+              </div>
+              <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 sm:text-4xl">
+                {listing.name}
+              </h1>
+              {listing.location_name ? (
+                <p className="flex items-start gap-2 text-sm text-zinc-600 dark:text-zinc-300">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                  <span>
+                    {listing.location_name}
+                    {listing.location_address && listing.location_address !== listing.location_name ? (
+                      <span className="mt-0.5 block text-zinc-500 dark:text-zinc-400">
+                        {listing.location_address}
+                      </span>
+                    ) : null}
+                  </span>
+                </p>
               ) : null}
             </div>
-          </div>
 
-          {listing.description ? (
-            <p className="whitespace-pre-wrap leading-relaxed text-zinc-700 dark:text-zinc-300">
-              {listing.description}
+            {listing.description ? (
+              <p className="max-w-2xl whitespace-pre-wrap text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+                {listing.description}
+              </p>
+            ) : null}
+
+            {listing.status === "rejected" && listing.rejection_reason ? (
+              <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-800 dark:bg-red-950/40 dark:text-red-100">
+                {listing.rejection_reason}
+              </p>
+            ) : null}
+
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              {t("representative", { name: listedBy })}
             </p>
-          ) : null}
-
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-zinc-600 dark:text-zinc-300">
-            {listing.location_name ? (
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-4 w-4" />
-                {listing.location_name}
-              </span>
-            ) : null}
-            {listing.phone ? (
-              <a href={`tel:${listing.phone}`} className="inline-flex items-center gap-1.5 hover:text-emerald-600">
-                <Phone className="h-4 w-4" />
-                {listing.phone}
-              </a>
-            ) : null}
-            {listing.telegram_username ? (
-              <a
-                href={`https://t.me/${listing.telegram_username.replace(/^@/, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 hover:text-emerald-600"
-              >
-                @{listing.telegram_username.replace(/^@/, "")}
-              </a>
-            ) : null}
-            {listing.website_url ? (
-              <a
-                href={listing.website_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 hover:text-emerald-600"
-              >
-                <ExternalLink className="h-4 w-4" />
-                {t("website")}
-              </a>
-            ) : null}
           </div>
 
-          {mapsUrl ? (
-            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="kk-btn-secondary inline-flex">
-              <MapPin className="h-4 w-4" />
-              {t("openInMaps")}
-            </a>
-          ) : null}
+          {showAside ? (
+            <aside className="space-y-4 lg:sticky lg:top-20">
+              {hasContacts ? (
+                <div className="space-y-2 rounded-2xl border border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-800 dark:bg-zinc-950">
+                  {listing.phone ? (
+                    <ContactRow href={`tel:${listing.phone}`} icon={Phone} label={listing.phone} />
+                  ) : null}
+                  {telegramHandle ? (
+                    <ContactRow
+                      href={`https://t.me/${telegramHandle}`}
+                      icon={Send}
+                      label={`@${telegramHandle}`}
+                      external
+                    />
+                  ) : null}
+                  {listing.website_url ? (
+                    <ContactRow
+                      href={listing.website_url}
+                      icon={ExternalLink}
+                      label={websiteHost(listing.website_url)}
+                      external
+                    />
+                  ) : null}
+                  {mapsUrl ? (
+                    <ContactRow href={mapsUrl} icon={MapPin} label={t("openInMaps")} external />
+                  ) : null}
+                </div>
+              ) : null}
 
-          {listing.status === "approved" ? (
-            <div className="border-t border-zinc-100 pt-5 dark:border-zinc-800">
-              <BusinessVouchButton
-                listingId={listing.id}
-                initialCount={vouchSummary.count}
-                initialVouched={vouchSummary.vouchedByMe}
-                loggedIn={Boolean(user)}
-                isOwner={Boolean(isOwner)}
-              />
-            </div>
+              {listing.status === "approved" ? (
+                <div className="rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800">
+                  <BusinessVouchButton
+                    listingId={listing.id}
+                    initialCount={vouchSummary.count}
+                    initialVouched={vouchSummary.vouchedByMe}
+                    loggedIn={Boolean(user)}
+                    isOwner={Boolean(isOwner)}
+                  />
+                </div>
+              ) : null}
+
+              {listing.status === "approved" ? (
+                <BusinessShareActions listingName={listing.name} variant="compact" />
+              ) : null}
+            </aside>
           ) : null}
         </div>
-      </div>
+      </article>
 
       {listing.status === "approved" ? (
-        <RelatedBusinessListings
-          listingId={listing.id}
-          category={listing.category}
-          locale={locale}
-        />
+        <RelatedBusinessListings listingId={listing.id} category={listing.category} />
       ) : null}
     </div>
   );

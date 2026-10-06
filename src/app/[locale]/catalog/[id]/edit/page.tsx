@@ -50,7 +50,10 @@ export default async function CatalogEditPage({
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <Link href="/catalog/manage" className="text-sm text-zinc-500 hover:text-zinc-800">
+        <Link
+          href="/catalog/manage"
+          className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+        >
           ← {common("back")}
         </Link>
         <h1 className="kk-page-title mt-2">{t("editTitle")}</h1>

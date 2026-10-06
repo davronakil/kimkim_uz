@@ -8,7 +8,8 @@ import { ConfirmContinueCard } from "@/components/ui/confirm-continue-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatMoney } from "@/lib/utils";
 import type { BusinessListing } from "@/types";
-import { Clock, Plus, ShoppingBag, Store } from "lucide-react";
+import { resolveBusinessCoverAccent } from "@/lib/catalog/cover-theme";
+import { Plus, ShoppingBag, Store } from "lucide-react";
 
 type SlotSummary = {
   used: number;
@@ -123,6 +124,16 @@ export function CatalogManagePanel({
     return t("statusPending");
   }
 
+  function statusClass(status: BusinessListing["status"]) {
+    if (status === "approved") {
+      return "bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200";
+    }
+    if (status === "rejected") {
+      return "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-200";
+    }
+    return "bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-100";
+  }
+
   if (slotSessionId && !slotConfirmed) {
     return (
       <ConfirmContinueCard
@@ -136,7 +147,12 @@ export function CatalogManagePanel({
   }
 
   if (loading) {
-    return <p className="text-zinc-500">{common("loading")}</p>;
+    return (
+      <div className="space-y-3">
+        <div className="h-28 animate-pulse rounded-3xl bg-zinc-200/80 dark:bg-zinc-900" />
+        <div className="h-24 animate-pulse rounded-3xl bg-zinc-200/80 dark:bg-zinc-900" />
+      </div>
+    );
   }
 
   return (
@@ -148,11 +164,11 @@ export function CatalogManagePanel({
       ) : null}
 
       {slots ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
+            <div className="min-w-0 flex-1">
               <p className="text-sm text-zinc-500">{t("slotsTitle")}</p>
-              <p className="text-lg font-semibold">
+              <p className="mt-1 text-lg font-semibold">
                 {slots.unlimited
                   ? t("slotsUnlimited", { used: slots.used })
                   : t("slotsSummary", {
@@ -161,6 +177,14 @@ export function CatalogManagePanel({
                       remaining: slots.remaining,
                     })}
               </p>
+              {!slots.unlimited && slots.total > 0 ? (
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                  <div
+                    className="h-full rounded-full bg-emerald-500"
+                    style={{ width: `${Math.min(100, (slots.used / slots.total) * 100)}%` }}
+                  />
+                </div>
+              ) : null}
             </div>
             {extraSlot?.available && !slots.unlimited && slots.remaining <= 0 ? (
               <button
@@ -212,31 +236,62 @@ export function CatalogManagePanel({
         </EmptyState>
       ) : (
         <div className="space-y-3">
-          {listings.map((listing) => (
-            <div
-              key={listing.id}
-              className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-900"
-            >
-              <div className="min-w-0 space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Link href={`/catalog/${listing.id}`} className="font-semibold hover:text-emerald-600">
-                    {listing.name}
-                  </Link>
-                  <CategoryBadge category={listing.category} locale={locale} size="sm" />
+          {listings.map((listing) => {
+            const accent = resolveBusinessCoverAccent(listing.category, listing.id);
+            return (
+              <div
+                key={listing.id}
+                className="flex flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center dark:border-zinc-800 dark:bg-zinc-900"
+              >
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl">
+                    {listing.cover_image_key ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`/api/media/${listing.cover_image_key}`}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="flex h-full w-full items-center justify-center text-2xl"
+                        style={{
+                          background: `linear-gradient(135deg, ${accent.gradientFrom}, ${accent.gradientTo})`,
+                        }}
+                        aria-hidden
+                      >
+                        {accent.emoji}
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Link
+                        href={`/catalog/${listing.id}`}
+                        className="truncate font-semibold hover:text-emerald-600"
+                      >
+                        {listing.name}
+                      </Link>
+                      <CategoryBadge category={listing.category} locale={locale} size="sm" />
+                    </div>
+                    <p>
+                      <span
+                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${statusClass(listing.status)}`}
+                      >
+                        {statusLabel(listing.status)}
+                      </span>
+                    </p>
+                    {listing.status === "rejected" && listing.rejection_reason ? (
+                      <p className="text-sm text-red-600">{listing.rejection_reason}</p>
+                    ) : null}
+                  </div>
                 </div>
-                <p className="inline-flex items-center gap-1 text-sm text-zinc-500">
-                  <Clock className="h-3.5 w-3.5" />
-                  {statusLabel(listing.status)}
-                </p>
-                {listing.status === "rejected" && listing.rejection_reason ? (
-                  <p className="text-sm text-red-600">{listing.rejection_reason}</p>
-                ) : null}
+                <Link href={`/catalog/${listing.id}/edit`} className="kk-btn-secondary shrink-0">
+                  {common("edit")}
+                </Link>
               </div>
-              <Link href={`/catalog/${listing.id}/edit`} className="kk-btn-secondary shrink-0">
-                {common("edit")}
-              </Link>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

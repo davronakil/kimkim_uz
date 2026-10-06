@@ -4,11 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { listFeaturedBusinessListings } from "@/lib/db/catalog-queries";
 import { normalizeStoredCategory } from "@/lib/catalog/categories";
 
-type HomeFeaturedCatalogProps = {
-  locale: string;
-};
-
-export async function HomeFeaturedCatalog({ locale }: HomeFeaturedCatalogProps) {
+export async function HomeFeaturedCatalog() {
   const t = await getTranslations("home");
   const tCategories = await getTranslations("catalog.categories");
   const featured = await listFeaturedBusinessListings(3);
@@ -35,7 +31,6 @@ export async function HomeFeaturedCatalog({ locale }: HomeFeaturedCatalogProps) 
           <div key={listing.id} className="min-w-0">
             <BusinessCard
               listing={listing}
-              locale={locale}
               categoryLabel={tCategories(
                 normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
               )}

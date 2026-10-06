@@ -35,7 +35,7 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 - Map OG snapshot when location has coordinates
 - Public read-only event pages for non-members and logged-out visitors
 - **Public discover** page (`/discover`) for indexable events
-- **Business catalog** (`/catalog`) — Yelp-style directory with admin approval, community vouches, map/list browse, and shareable category filters
+- **Business catalog** (`/catalog`) — community catalog of local businesses with admin approval, community vouches, map/list browse, and shareable category filters
 - Event pages show **comments and expenses inline** (no tab switching)
 - Default locale **Uzbek** with browser detection + persistent cookie
 - Expanded **admin dashboard** (overview, catalog moderation, events, users, admins)

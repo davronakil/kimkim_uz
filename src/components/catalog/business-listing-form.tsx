@@ -93,7 +93,10 @@ export function BusinessListingForm({
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="kk-form space-y-6">
+    <form
+      onSubmit={(e) => void handleSubmit(e)}
+      className="kk-card kk-form space-y-6 p-5 shadow-sm sm:p-6"
+    >
       <div>
         <label htmlFor="name" className="kk-label">
           {t("name")}
@@ -142,7 +145,7 @@ export function BusinessListingForm({
           rows={4}
           maxLength={5000}
           defaultValue={listing?.description ?? ""}
-          className="kk-input"
+          className="kk-textarea"
         />
       </div>
 
@@ -234,7 +237,13 @@ export function BusinessListingForm({
             </button>
           </div>
         ) : null}
-        <input id="cover_image" name="cover_image" type="file" accept="image/*" className="kk-input" />
+        <input
+          id="cover_image"
+          name="cover_image"
+          type="file"
+          accept="image/*"
+          className="block w-full text-sm text-zinc-600 file:mr-4 file:rounded-full file:border-0 file:bg-emerald-50 file:px-4 file:py-2.5 file:text-sm file:font-medium file:text-emerald-800 hover:file:bg-emerald-100 dark:text-zinc-300 dark:file:bg-emerald-950 dark:file:text-emerald-200"
+        />
       </div>
 
       {mode === "edit" && listing?.status === "approved" && !instantPublish ? (

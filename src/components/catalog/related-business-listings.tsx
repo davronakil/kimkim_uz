@@ -7,13 +7,11 @@ import { listRelatedBusinessListings } from "@/lib/db/catalog-queries";
 type RelatedBusinessListingsProps = {
   listingId: string;
   category: string;
-  locale: string;
 };
 
 export async function RelatedBusinessListings({
   listingId,
   category,
-  locale,
 }: RelatedBusinessListingsProps) {
   const t = await getTranslations("catalog");
   const tCategories = await getTranslations("catalog.categories");
@@ -49,7 +47,6 @@ export async function RelatedBusinessListings({
           <BusinessCard
             key={listing.id}
             listing={listing}
-            locale={locale}
             categoryLabel={tCategories(
               normalizeStoredCategory(listing.category) as Parameters<typeof tCategories>[0],
             )}

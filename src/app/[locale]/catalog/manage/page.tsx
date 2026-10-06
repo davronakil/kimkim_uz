@@ -41,10 +41,12 @@ export default async function CatalogManagePage({
   const t = await getTranslations("catalog");
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-8">
+      <div className="max-w-2xl">
         <h1 className="kk-page-title">{t("manageTitle")}</h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-300">{t("manageSubtitle")}</p>
+        <p className="mt-2 text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
+          {t("manageSubtitle")}
+        </p>
       </div>
       <CatalogManagePanel
         locale={locale}

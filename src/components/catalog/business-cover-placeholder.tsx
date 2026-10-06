@@ -14,8 +14,6 @@ type BusinessCoverPlaceholderProps = {
   name: string;
   listingId: string;
   category: string;
-  categoryLabel: string;
-  locationName?: string | null;
   submittedByName?: string | null;
   variant?: "card" | "hero";
   className?: string;
@@ -25,8 +23,6 @@ export function BusinessCoverPlaceholder({
   name,
   listingId,
   category,
-  categoryLabel,
-  locationName,
   submittedByName,
   variant = "hero",
   className = "",
@@ -104,23 +100,6 @@ export function BusinessCoverPlaceholder({
       >
         {accent.emoji}
       </span>
-
-      {isCard ? (
-        <div className="pointer-events-none absolute bottom-3 left-3 max-w-[70%] rounded-2xl border border-white/25 bg-white/15 px-2.5 py-2 shadow-lg backdrop-blur-md">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/75">
-            {categoryLabel}
-          </p>
-          {locationName ? (
-            <p className="mt-1 line-clamp-2 text-xs font-medium leading-snug text-white">
-              {locationName}
-            </p>
-          ) : (
-            <p className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-white">
-              {name}
-            </p>
-          )}
-        </div>
-      ) : null}
 
       {submittedByName ? (
         <div
