@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "kimkim-uz",
+  "account_id": "7369a3f31473cbbe3333e48298c5a8a0",
   "main": "worker-scheduled.mjs",
   "compatibility_date": "2026-06-08",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
