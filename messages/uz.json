@@ -544,7 +544,19 @@
   "pwa": {
     "offlineTitle": "Internet yo'q",
     "offlineBody": "Eski ma'lumot ko'rsatilmoqda. Onlayn bo'lgach yangilash mumkin.",
-    "offlineCachedAt": "Oxirgi yangilanish: {time}"
+    "offlineCachedAt": "Oxirgi yangilanish: {time}",
+    "installTitle": "KimKim'ni ilova sifatida oching",
+    "installIosSafari": "<share>Ulashish</share> tugmasini bosing, so'ng Bosh ekranga qo'shish.",
+    "installIosChrome": "Chrome'da <share>Ulashish</share> ni bosing, so'ng Bosh ekranga qo'shish.",
+    "installIosFirefox": "Firefox'da menyuni oching, Ulashish, so'ng Bosh ekranga qo'shish.",
+    "installIosOther": "Ulashish menyusini oching va Bosh ekranga qo'shish ni bosing.",
+    "installIosInApp": "Sahifani Safari'da oching, Ulashish, so'ng Bosh ekranga qo'shish.",
+    "installAndroidInApp": "Sahifani Chrome'da oching va menyudan KimKim'ni o'rnating.",
+    "installAndroidFirefox": "Firefox menyusini oching va O'rnatish ni bosing.",
+    "installMacSafari": "<share>Ulashish</share> ni bosing, so'ng Dock'ka qo'shish.",
+    "installNativeBody": "KimKim alohida oynada ochilishi uchun o'rnating.",
+    "installAction": "O'rnatish",
+    "installDismiss": "Keyinroq"
   },
   "footer": {
     "madeIn": "© 2026 KimKim.Uz - Barcha huquqlar himoyalangan."

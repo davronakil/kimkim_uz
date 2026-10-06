@@ -544,7 +544,19 @@
   "pwa": {
     "offlineTitle": "Нет интернета",
     "offlineBody": "Показаны сохранённые данные. Комментарии и расходы обновятся, когда связь появится.",
-    "offlineCachedAt": "Сохранено {time}"
+    "offlineCachedAt": "Сохранено {time}",
+    "installTitle": "Откройте KimKim как приложение",
+    "installIosSafari": "Нажмите <share>Поделиться</share>, затем «На экран «Домой»».",
+    "installIosChrome": "В Chrome нажмите <share>Поделиться</share>, затем «На экран «Домой»».",
+    "installIosFirefox": "В Firefox откройте меню, затем «Поделиться» и «На экран «Домой»».",
+    "installIosOther": "Откройте меню «Поделиться» и нажмите «На экран «Домой»».",
+    "installIosInApp": "Откройте страницу в Safari, нажмите «Поделиться», затем «На экран «Домой»».",
+    "installAndroidInApp": "Откройте страницу в Chrome и установите KimKim из меню браузера.",
+    "installAndroidFirefox": "Откройте меню Firefox и нажмите «Установить».",
+    "installMacSafari": "Выберите <share>Поделиться</share>, затем «Добавить в Dock».",
+    "installNativeBody": "Установите KimKim, чтобы он открывался в своём окне.",
+    "installAction": "Установить",
+    "installDismiss": "Не сейчас"
   },
   "footer": {
     "madeIn": "© 2026 KimKim.Uz - Все права защищены."
