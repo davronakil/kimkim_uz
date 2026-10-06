@@ -37,8 +37,10 @@ import {
 } from "@/lib/telegram/keyboards";
 import { linkTelegramChat } from "@/lib/telegram/chat";
 import { resolveBotLocale } from "@/lib/telegram/locale";
+import { eventGroupThreadId } from "@/lib/telegram/group";
 import { notifyMemberJoined, notifyRsvpChanged } from "@/lib/telegram/notifications";
-import type { TelegramCallbackQuery } from "@/lib/telegram/types";
+import type { TelegramCallbackQuery, TelegramMessage } from "@/lib/telegram/types";
+import type { Event } from "@/types";
 
 function parseRsvpCallbackData(data: string, prefix: string) {
   if (!data.startsWith(prefix)) return null;
@@ -55,15 +57,27 @@ function parseRsvpGuestCallbackData(data: string) {
   return { eventId, count };
 }
 
+/** Reply in the topic the button was tapped in. A group send with no thread lands in General. */
+function callbackThreadId(message: TelegramMessage, event: Event): number | undefined {
+  const fromMessage = message.message_thread_id;
+  if (typeof fromMessage === "number" && Number.isFinite(fromMessage)) return fromMessage;
+  if (event.telegram_chat_id && String(message.chat.id) === String(event.telegram_chat_id)) {
+    return eventGroupThreadId(event);
+  }
+  return undefined;
+}
+
 async function showGuestCountPicker({
   chatId,
   messageId,
+  messageThreadId,
   eventId,
   eventTitle,
   locale,
 }: {
   chatId: number;
   messageId: number;
+  messageThreadId?: number;
   eventId: string;
   eventTitle: string;
   locale: ReturnType<typeof resolveBotLocale>;
@@ -71,6 +85,7 @@ async function showGuestCountPicker({
   const strings = t(locale);
   await sendTelegramMessage(chatId, strings.rsvpGuestPrompt(eventTitle), {
     parse_mode: "HTML",
+    message_thread_id: messageThreadId,
     reply_markup: rsvpGuestCountKeyboard({
       eventId,
       labels: {
@@ -167,6 +182,7 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
     await showGuestCountPicker({
       chatId: message.chat.id,
       messageId: message.message_id,
+      messageThreadId: callbackThreadId(message, event),
       eventId: event.id,
       eventTitle: event.title,
       locale,
@@ -254,6 +270,7 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
     await showGuestCountPicker({
       chatId: message.chat.id,
       messageId: message.message_id,
+      messageThreadId: callbackThreadId(message, event),
       eventId: event.id,
       eventTitle: event.title,
       locale,
