@@ -27,11 +27,12 @@ export async function GET(
   });
 
   const filename = calendarFilename(event.title);
+  const encoded = encodeURIComponent(filename);
   return new NextResponse(ics, {
     status: 200,
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Content-Disposition": `attachment; filename="${filename}"; filename*=UTF-8''${encoded}`,
       "Cache-Control": "private, max-age=60",
     },
   });

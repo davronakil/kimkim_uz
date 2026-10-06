@@ -2,19 +2,21 @@
 
 import { CalendarPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { calendarFilename } from "@/lib/events/calendar";
 
 type AddToCalendarButtonProps = {
   eventId: string;
+  title: string;
   className?: string;
 };
 
-export function AddToCalendarButton({ eventId, className }: AddToCalendarButtonProps) {
+export function AddToCalendarButton({ eventId, title, className }: AddToCalendarButtonProps) {
   const t = useTranslations("events");
 
   return (
     <a
       href={`/api/events/${eventId}/calendar`}
-      download
+      download={calendarFilename(title)}
       title={t("addToCalendar")}
       aria-label={t("addToCalendar")}
       className={
