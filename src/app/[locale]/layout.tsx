@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
+import { PullToRefresh } from "@/components/layout/pull-to-refresh";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { TelegramWebAppBootstrap } from "@/components/auth/telegram-webapp-bootstrap";
@@ -138,6 +139,7 @@ export default async function LocaleLayout({
           <TelegramWebAppBootstrap />
           <TimezoneSync />
           <SiteHeader />
+          <PullToRefresh />
           <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 overflow-x-clip px-4 py-5 pb-8 sm:px-5 sm:py-8">
             {children}
           </main>
