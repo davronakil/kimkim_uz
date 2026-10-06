@@ -7,6 +7,7 @@ import { OfflineBanner } from "@/components/pwa/offline-banner";
 import { cacheEventDetail, getCachedEventDetail } from "@/lib/offline/event-cache";
 import { useOnlineStatus } from "@/lib/offline/use-online-status";
 import { ActivityTimelinePanel } from "@/components/events/activity-timeline-panel";
+import { AddToCalendarButton } from "@/components/events/add-to-calendar-button";
 import { EventAlbumPanel } from "@/components/events/event-album-panel";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { FormattedEventDescription } from "@/components/events/formatted-event-description";
@@ -248,13 +249,16 @@ export function EventWorkspace({
             ) : null}
 
             <div className="space-y-2 text-sm text-zinc-600 dark:text-zinc-300">
-              <p className="inline-flex items-start gap-2.5">
-                <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone, {
-                  dateStyle: "full",
-                  timeStyle: "short",
-                })}
-              </p>
+              <div className="flex items-start gap-1">
+                <p className="inline-flex min-w-0 flex-1 items-start gap-2.5">
+                  <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone, {
+                    dateStyle: "full",
+                    timeStyle: "short",
+                  })}
+                </p>
+                <AddToCalendarButton eventId={eventId} title={event.title} />
+              </div>
               {event.location_name ? (
                 <p className="inline-flex items-start gap-2.5">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />

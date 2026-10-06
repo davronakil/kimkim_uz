@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
       title: event.title,
       description: event.description,
       starts_at: event.starts_at,
+      ends_at: event.ends_at,
       timezone: event.timezone,
       location_name: event.location_name,
       location_address: event.location_address,

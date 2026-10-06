@@ -112,6 +112,7 @@
     "ownerBadge": "Organizer",
     "leaveEvent": "Leave event",
     "leaveConfirm": "Leave this event? You can rejoin with an invite link.",
+    "addToCalendar": "Add to calendar",
     "removeMember": "Remove",
     "invitedBy": "Invited by {name}",
     "copyGuestList": "Copy guest list",

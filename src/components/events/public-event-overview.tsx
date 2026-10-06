@@ -2,6 +2,7 @@
 
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { AddToCalendarButton } from "@/components/events/add-to-calendar-button";
 import { EventCoverImage } from "@/components/events/event-cover-image";
 import { FormattedEventDescription } from "@/components/events/formatted-event-description";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
@@ -16,6 +17,7 @@ type PublicEvent = Pick<
   | "title"
   | "description"
   | "starts_at"
+  | "ends_at"
   | "timezone"
   | "location_name"
   | "location_address"
@@ -97,13 +99,16 @@ export function PublicEventOverview({
               ) : null}
 
               <div className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950/50">
-                <p className="flex items-start gap-3 text-base text-zinc-700 dark:text-zinc-200">
-                  <CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                  {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone, {
-                    dateStyle: "full",
-                    timeStyle: "short",
-                  })}
-                </p>
+                <div className="flex items-start gap-1 text-base text-zinc-700 dark:text-zinc-200">
+                  <p className="flex min-w-0 flex-1 items-start gap-3">
+                    <CalendarDays className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    {formatEventDateTimeWithZone(event.starts_at, locale, event.timezone, {
+                      dateStyle: "full",
+                      timeStyle: "short",
+                    })}
+                  </p>
+                  <AddToCalendarButton eventId={event.id} title={event.title} />
+                </div>
                 {event.location_name ? (
                   <p className="flex items-start gap-3 text-base text-zinc-700 dark:text-zinc-200">
                     <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />

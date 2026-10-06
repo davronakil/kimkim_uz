@@ -112,6 +112,7 @@
     "ownerBadge": "Admin",
     "leaveEvent": "Chiqib ketish",
     "leaveConfirm": "Yig'ilishdan chiqasizmi? Keyin link orqali yana qo'shilasiz.",
+    "addToCalendar": "Taqvimga qo'shish",
     "removeMember": "Olib tashlash",
     "invitedBy": "{name} taklif qilgan",
     "copyGuestList": "Mehmonlarni nusxalash",
