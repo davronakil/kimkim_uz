@@ -4,12 +4,14 @@ import { Share, X } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
+import { detectInAppBrowser } from "@/lib/pwa/in-app-browser";
 import {
   detectManualInstallHint,
   isInstalledDisplayMode,
   type InstallHint,
   type ManualInstallHint,
 } from "@/lib/pwa/install-platform";
+import { isTelegramMiniApp, isTelegramShellLoading } from "@/lib/pwa/telegram-webview";
 
 const STORAGE_KEY = "kimkim:install-hint-until";
 const SHOW_DELAY_MS = 1200;
@@ -49,13 +51,23 @@ declare global {
   }
 }
 
+/** Nothing to install from inside a webview; OpenInBrowserPrompt owns that case. */
+function isInAppBrowser() {
+  return (
+    detectInAppBrowser({
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      maxTouchPoints: navigator.maxTouchPoints,
+      navigatorStandalone: isNavigatorStandalone(),
+    }) !== null
+  );
+}
+
 const manualMessageKey = {
   "ios-safari": "installIosSafari",
   "ios-chrome": "installIosChrome",
   "ios-firefox": "installIosFirefox",
   "ios-other": "installIosOther",
-  "ios-in-app": "installIosInApp",
-  "android-in-app": "installAndroidInApp",
   "android-firefox": "installAndroidFirefox",
   "mac-safari": "installMacSafari",
 } as const;
@@ -85,15 +97,6 @@ function isNavigatorStandalone() {
 
 function isRunningInstalled() {
   return isInstalledDisplayMode(window.matchMedia.bind(window), isNavigatorStandalone());
-}
-
-function isTelegramMiniApp() {
-  const initData = window.Telegram?.WebApp?.initData;
-  return typeof initData === "string" && initData.length > 0;
-}
-
-function isTelegramShellLoading() {
-  return /Telegram/i.test(navigator.userAgent) && !window.Telegram?.WebApp;
 }
 
 function currentHint(): InstallHint | null {
@@ -158,6 +161,10 @@ export function InstallPrompt({ initialLoggedIn }: { initialLoggedIn: boolean })
     }
     if (!ready) return;
     if (isSnoozed() || isRunningInstalled() || isTelegramMiniApp()) {
+      setVisible(false);
+      return;
+    }
+    if (isInAppBrowser()) {
       setVisible(false);
       return;
     }

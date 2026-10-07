@@ -551,13 +551,19 @@
     "installIosChrome": "In Chrome, tap <share>Share</share>, then Add to Home Screen.",
     "installIosFirefox": "In Firefox, open the menu, tap Share, then Add to Home Screen.",
     "installIosOther": "Open the share menu and tap Add to Home Screen.",
-    "installIosInApp": "Open this page in Safari, tap Share, then Add to Home Screen.",
-    "installAndroidInApp": "Open this page in Chrome, then install KimKim from the browser menu.",
     "installAndroidFirefox": "Open the Firefox menu and tap Install.",
     "installMacSafari": "Choose <share>Share</share>, then Add to Dock.",
     "installNativeBody": "Install KimKim to open it in its own window.",
     "installAction": "Install",
-    "installDismiss": "Not now"
+    "installDismiss": "Not now",
+    "browserTitle": "Open KimKim in your browser",
+    "browserBody": "You are in another app’s built-in browser. Signing in and paying are unreliable here.",
+    "browserHintIos": "Tap <safari>Safari</safari> in the toolbar below, or open the ••• menu and choose Open in Safari.",
+    "browserHintAndroid": "Open the ⋮ menu, then tap Open in browser.",
+    "browserHintOther": "Copy the link and paste it into your browser.",
+    "browserCopy": "Copy link",
+    "browserCopied": "Link copied",
+    "browserDismiss": "Not now"
   },
   "footer": {
     "madeIn": "© 2026 KimKim.Uz - All rights reserved."
