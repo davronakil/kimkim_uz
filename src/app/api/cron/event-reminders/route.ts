@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getEnv } from "@/lib/cloudflare";
+import { getEnv, runInBackground } from "@/lib/cloudflare";
 import { processEventDigests, processEventReminders } from "@/lib/telegram/notifications";
+import { registerBotCommands } from "@/lib/telegram/register-commands";
 
 export async function GET(request: NextRequest) {
   const env = await getEnv();
@@ -14,6 +15,12 @@ export async function GET(request: NextRequest) {
   if (auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  void runInBackground(
+    registerBotCommands().catch((error) => {
+      console.error("registerBotCommands failed:", error);
+    }),
+  );
 
   await processEventReminders();
   await processEventDigests();

@@ -40,14 +40,9 @@ import {
 import { clearBotSession, getBotSession, upsertBotSession } from "@/lib/telegram/sessions";
 import type { BotLocale, BotSessionFlow, TelegramMessage, TelegramUpdate } from "@/lib/telegram/types";
 import { linkTelegramChat } from "@/lib/telegram/chat";
-import { registerBotCommands } from "@/lib/telegram/register-commands";
 import type { User } from "@/types";
 
 async function sendWelcome(chatId: number, locale: BotLocale) {
-  void registerBotCommands().catch((error) => {
-    console.error("registerBotCommands failed:", error);
-  });
-
   const strings = t(locale);
   await sendTelegramMessage(chatId, strings.welcome, {
     parse_mode: "HTML",
@@ -68,9 +63,6 @@ async function sendWelcome(chatId: number, locale: BotLocale) {
 
 async function handleLoginStart(message: TelegramMessage, user: User, challengeId: string) {
   if (!message.from) return;
-  void registerBotCommands().catch((error) => {
-    console.error("registerBotCommands failed:", error);
-  });
 
   const challenge = await confirmLoginChallenge(challengeId, user.id);
   const status = loginChallengeStatus(challenge);

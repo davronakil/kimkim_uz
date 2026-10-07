@@ -35,9 +35,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const force = request.nextUrl.searchParams.get("force") === "1";
+
     try {
-      await registerBotCommands();
-      return NextResponse.json({ ok: true, registered: true });
+      const { written } = await registerBotCommands({ force });
+      return NextResponse.json({ ok: true, registered: true, written });
     } catch (error) {
       console.error("Bot command registration failed:", error);
       return NextResponse.json({ error: "Registration failed" }, { status: 500 });
