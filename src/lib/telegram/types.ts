@@ -90,6 +90,7 @@ export type TelegramCallbackQuery = {
 };
 
 export type TelegramUpdate = {
+  update_id?: number;
   message?: TelegramMessage;
   callback_query?: TelegramCallbackQuery;
 };

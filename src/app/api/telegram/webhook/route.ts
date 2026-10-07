@@ -4,6 +4,15 @@ import { handleTelegramUpdate } from "@/lib/telegram/handler";
 import { registerBotCommands } from "@/lib/telegram/register-commands";
 import type { TelegramUpdate } from "@/lib/telegram/types";
 
+const SLOW_UPDATE_MS = 3000;
+
+function describeUpdate(update: TelegramUpdate) {
+  if (update.callback_query) return "callback_query";
+  const text = update.message?.text?.trim() ?? "";
+  if (text.startsWith("/")) return text.split(/\s+/)[0].slice(0, 32);
+  return "message";
+}
+
 export async function POST(request: NextRequest) {
   let update: TelegramUpdate;
   try {
@@ -16,10 +25,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  const startedAt = Date.now();
   try {
     await handleTelegramUpdate(update);
   } catch (error) {
     console.error("Telegram webhook error:", error);
+  }
+
+  // Telegram re-delivers an update it considers unanswered, which reaches the
+  // user as duplicate bot replies. Flag updates that get close to that window.
+  const elapsed = Date.now() - startedAt;
+  if (elapsed > SLOW_UPDATE_MS) {
+    console.warn(
+      `Telegram webhook slow: ${elapsed}ms for ${describeUpdate(update)} (update ${update.update_id})`,
+    );
   }
 
   return NextResponse.json({ ok: true });
