@@ -18,6 +18,7 @@ export async function sendTelegramMessage(
     parse_mode?: "HTML" | "Markdown";
     reply_markup?: TelegramReplyMarkup;
     message_thread_id?: number | null;
+    link_preview?: boolean;
   },
 ) {
   const env = await getEnv();
@@ -27,6 +28,10 @@ export async function sendTelegramMessage(
   const payload: Record<string, unknown> = {
     chat_id: chatId,
     text,
+    // Bot replies already carry their own buttons, so a preview card buys nothing
+    // and costs the client a remote image fetch plus an extra layout pass on a
+    // message it is rendering mid-animation.
+    link_preview_options: { is_disabled: options?.link_preview !== true },
   };
   if (options?.parse_mode) payload.parse_mode = options.parse_mode;
   if (options?.reply_markup) payload.reply_markup = options.reply_markup;

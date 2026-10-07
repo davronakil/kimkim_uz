@@ -1,7 +1,10 @@
 import { getEnv } from "@/lib/cloudflare";
 
-type TelegramApiResponse = {
+type BotCommand = { command: string; description: string };
+
+type TelegramApiResponse<T = unknown> = {
   ok: boolean;
+  result?: T;
   description?: string;
 };
 
@@ -56,10 +59,12 @@ const groupCommandSets = {
   ],
 } as const;
 
+type CommandScope = { language_code?: string; scope?: { type: string } };
+
 async function setCommands(
   token: string,
-  commands: ReadonlyArray<{ command: string; description: string }>,
-  options?: { language_code?: string; scope?: { type: string } },
+  commands: ReadonlyArray<BotCommand>,
+  options?: CommandScope,
 ) {
   const response = await fetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
     method: "POST",
@@ -73,18 +78,57 @@ async function setCommands(
   }
 }
 
-export async function registerBotCommands() {
+async function getCommands(token: string, options?: CommandScope) {
+  const response = await fetch(`https://api.telegram.org/bot${token}/getMyCommands`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...options }),
+  });
+
+  const data = (await response.json()) as TelegramApiResponse<BotCommand[]>;
+  return data.ok ? (data.result ?? []) : null;
+}
+
+function sameCommands(a: ReadonlyArray<BotCommand>, b: ReadonlyArray<BotCommand>) {
+  return (
+    a.length === b.length &&
+    a.every(
+      (entry, index) =>
+        entry.command === b[index]?.command && entry.description === b[index]?.description,
+    )
+  );
+}
+
+/**
+ * Every successful setMyCommands invalidates the bot's cached info on every
+ * client, so only write when the list actually changed. `force` skips the
+ * comparison for the manual refresh.
+ */
+export async function registerBotCommands(options?: { force?: boolean }) {
   const env = await getEnv();
   const token = env.TELEGRAM_BOT_TOKEN;
+  const force = options?.force === true;
+  let written = 0;
 
-  for (const [languageCode, commands] of Object.entries(commandSets)) {
-    await setCommands(token, commands, { language_code: languageCode });
+  const scoped: Array<{ commands: ReadonlyArray<BotCommand>; scope: CommandScope }> = [
+    ...Object.entries(commandSets).map(([language_code, commands]) => ({
+      commands,
+      scope: { language_code } satisfies CommandScope,
+    })),
+    ...Object.entries(groupCommandSets).map(([language_code, commands]) => ({
+      commands,
+      scope: { language_code, scope: { type: "all_group_chats" } } satisfies CommandScope,
+    })),
+  ];
+
+  for (const { commands, scope } of scoped) {
+    if (!force) {
+      const current = await getCommands(token, scope);
+      if (current && sameCommands(commands, current)) continue;
+    }
+    await setCommands(token, commands, scope);
+    written += 1;
   }
 
-  for (const [languageCode, commands] of Object.entries(groupCommandSets)) {
-    await setCommands(token, commands, {
-      language_code: languageCode,
-      scope: { type: "all_group_chats" },
-    });
-  }
+  return { written };
 }

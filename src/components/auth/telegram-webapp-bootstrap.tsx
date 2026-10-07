@@ -2,18 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "@/i18n/navigation";
-
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp?: {
-        initData?: string;
-        ready?: () => void;
-        expand?: () => void;
-      };
-    };
-  }
-}
+import { telegramWebApp } from "@/lib/pwa/telegram-webview";
 
 async function signInWithInitData(initData: string): Promise<boolean> {
   const me = await fetch("/api/auth/me", { credentials: "include" });
@@ -30,7 +19,7 @@ async function signInWithInitData(initData: string): Promise<boolean> {
 }
 
 function tryWebAppLogin(onSignedIn: () => void) {
-  const webApp = window.Telegram?.WebApp;
+  const webApp = telegramWebApp();
   const initData = webApp?.initData;
   if (!initData) return;
 

@@ -3,8 +3,6 @@ export type ManualInstallHint =
   | "ios-chrome"
   | "ios-firefox"
   | "ios-other"
-  | "ios-in-app"
-  | "android-in-app"
   | "android-firefox"
   | "mac-safari";
 
@@ -17,9 +15,6 @@ export type ClientInstallSignals = {
 };
 
 const INSTALLED_DISPLAY_MODES = ["standalone", "minimal-ui", "fullscreen", "window-controls-overlay"];
-
-const IN_APP_BROWSER =
-  /Instagram|FBAN|FBAV|FB_IAB|FB4A|Line\/|Twitter|TikTok|musical_ly|BytedanceWebview|Snapchat|LinkedInApp|Pinterest|WhatsApp|Telegram|MicroMessenger|GSA\/|; wv\)/i;
 
 /**
  * iPadOS 13+ sends a Macintosh user agent. A multi-touch Macintosh is an iPad;
@@ -43,14 +38,14 @@ export function isInstalledDisplayMode(
 /**
  * Browsers that cannot open the install dialog. Chromium is omitted on purpose:
  * it exposes `beforeinstallprompt` instead of a manual hint.
+ *
+ * Rule out in-app browsers with `detectInAppBrowser` first — there is no install
+ * path out of an embedded webview, so those visitors get the open-in-browser
+ * notice instead and the hint returned here would be wrong for them.
  */
 export function detectManualInstallHint(signals: ClientInstallSignals): ManualInstallHint | null {
   const { userAgent } = signals;
   const ios = isIosDevice(signals);
-
-  if (IN_APP_BROWSER.test(userAgent)) {
-    return ios ? "ios-in-app" : "android-in-app";
-  }
 
   if (ios) {
     if (/CriOS/i.test(userAgent)) return "ios-chrome";

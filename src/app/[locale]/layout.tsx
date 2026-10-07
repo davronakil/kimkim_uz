@@ -9,6 +9,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { TelegramWebAppBootstrap } from "@/components/auth/telegram-webapp-bootstrap";
 import { TimezoneSync } from "@/components/auth/timezone-sync";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
+import { OpenInBrowserPrompt } from "@/components/pwa/open-in-browser-prompt";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import { getCurrentUser } from "@/lib/auth/session";
 import { defaultLocale, locales, type Locale } from "@/i18n/config";
@@ -138,6 +139,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <ServiceWorkerRegister />
           <InstallPrompt initialLoggedIn={user !== null} />
+          <OpenInBrowserPrompt />
           <TelegramWebAppBootstrap />
           <TimezoneSync />
           <SiteHeader user={user} />

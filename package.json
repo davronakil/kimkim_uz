@@ -13,7 +13,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "db:migrate:local": "wrangler d1 migrations apply kimkim-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply kimkim-db --remote",
-    "bot:commands": "curl -s -H \"Authorization: Bearer $(grep '^CRON_SECRET=' .dev.vars | cut -d= -f2-)\" \"${NEXT_PUBLIC_APP_URL:-https://kimkim.uz}/api/telegram/webhook?setup=commands\""
+    "bot:commands": "curl -s -H \"Authorization: Bearer $(grep '^CRON_SECRET=' .dev.vars | cut -d= -f2-)\" \"${NEXT_PUBLIC_APP_URL:-https://kimkim.uz}/api/telegram/webhook?setup=commands&force=1\""
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.19.11",
