@@ -88,7 +88,7 @@ export function SiteHeaderClient({
       <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/95 pt-safe backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16">
           <Link
-            href="/"
+            href={user ? "/discover" : "/"}
             className="flex min-w-0 touch-manipulation items-center gap-2.5 font-semibold tracking-tight"
           >
             <Image
