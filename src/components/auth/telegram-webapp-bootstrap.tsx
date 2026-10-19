@@ -3,8 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
-
-import { telegramWebApp } from "@/lib/pwa/telegram-webview";
+import { isTelegramMiniApp, telegramWebApp } from "@/lib/pwa/telegram-webview";
 
 async function signInWithInitData(initData: string): Promise<boolean> {
   const me = await fetchWithTimeout("/api/auth/me", { credentials: "include", cache: "no-store" });
@@ -23,7 +22,12 @@ async function signInWithInitData(initData: string): Promise<boolean> {
   return response.ok;
 }
 
-/** Recover startup after slow SDK loading, temporary network failures, or resume. */
+/**
+ * Mini App auto-login only. Do not call expand() here: on iOS, Start / login
+ * sometimes warms the Menu Button webview while the chat is still animating;
+ * expand() races that layout and is a common freeze companion. ready() is
+ * enough for auth; the user can enlarge the sheet themselves.
+ */
 export function TelegramWebAppBootstrap() {
   const router = useRouter();
 
@@ -47,12 +51,14 @@ export function TelegramWebAppBootstrap() {
 
     const login = async () => {
       const webApp = telegramWebApp();
-      if (disposed || inFlight || finished || !webApp) return;
+      if (disposed || inFlight || finished || !webApp?.initData) return;
 
-      // Client bridge support varies. A failed expand must not prevent login.
-      try { webApp.ready?.(); } catch { /* Continue with authentication. */ }
-      try { webApp.expand?.(); } catch { /* Optional on older clients. */ }
-      if (!webApp.initData) return;
+      // ready() only — expand() belongs to an explicit user gesture, not Start.
+      try {
+        webApp.ready?.();
+      } catch {
+        /* Continue with authentication. */
+      }
 
       inFlight = true;
       try {
@@ -75,13 +81,25 @@ export function TelegramWebAppBootstrap() {
 
     function start() {
       if (disposed || finished || inFlight) return;
+
+      // Never inject telegram-web-app.js outside a real Mini App shell. Loading
+      // it in the in-app browser or Safari can create a partial WebApp object
+      // and has no benefit without initData.
+      if (!isTelegramMiniApp() && !telegramWebApp()?.initData) {
+        return;
+      }
+
       detachScript();
-      if (telegramWebApp()) {
+      if (telegramWebApp()?.initData) {
         void login();
         return;
       }
 
-      // An existing script may still be loading (including a Strict Mode remount).
+      if (telegramWebApp()) {
+        // SDK present but initData still empty — wait briefly via resume hooks.
+        return;
+      }
+
       let script = document.querySelector<HTMLScriptElement>("script[data-telegram-webapp]");
       const created = !script;
       if (!script) {

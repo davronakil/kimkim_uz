@@ -68,25 +68,36 @@ test('atomic user upsert keeps identity, saved language, chat, and photo', async
   db.close();
 });
 
-function startup({ existing = false, ready = false, failFirst = false, brokenBridge = false } = {}) {
-  let effect, cleanup, calls = 0, refreshes = 0;
+function startup({ existing = false, ready = false, failFirst = false, brokenBridge = false, miniApp = true } = {}) {
+  let effect, cleanup, calls = 0, refreshes = 0, readyCalls = 0, expandCalls = 0;
   const timers = new Map();
   let timerId = 0;
   const script = new EventTarget();
   script.remove = () => {};
   const win = new EventTarget();
+  if (miniApp) win.TelegramWebviewProxy = {};
   const doc = new EventTarget();
   doc.visibilityState = 'visible';
   doc.querySelector = () => existing ? script : null;
   doc.createElement = () => { script.dataset = {}; return script; };
   doc.head = { appendChild: () => {} };
-  const bridge = () => {
+  const bridge = (kind) => () => {
+    if (kind === 'ready') readyCalls++;
+    if (kind === 'expand') expandCalls++;
     if (brokenBridge) throw new Error('unsupported');
   };
-  const installSDK = () => { win.Telegram = { WebApp: { initData: 'signed-data', ready: bridge, expand: bridge } }; };
+  const installSDK = () => {
+    win.Telegram = {
+      WebApp: { initData: 'signed-data', ready: bridge('ready'), expand: bridge('expand') },
+    };
+  };
   if (ready) installSDK();
   const { TelegramWebAppBootstrap } = load('src/components/auth/telegram-webapp-bootstrap.tsx', {
-    '@/lib/pwa/telegram-webview': { telegramWebApp: () => win.Telegram?.WebApp },
+    '@/lib/pwa/telegram-webview': {
+      telegramWebApp: () => win.Telegram?.WebApp,
+      isTelegramMiniApp: () => typeof win.TelegramWebviewProxy !== 'undefined'
+        || Boolean(win.Telegram?.WebApp?.initData),
+    },
     react: { useEffect: (fn) => { effect = fn; } },
     '@/i18n/navigation': { useRouter: () => ({ refresh: () => { refreshes++; } }) },
     '@/lib/fetch-with-timeout': { fetchWithTimeout: async (url) => {
@@ -105,6 +116,7 @@ function startup({ existing = false, ready = false, failFirst = false, brokenBri
   return {
     script, win, installSDK,
     get calls() { return calls; }, get refreshes() { return refreshes; },
+    get readyCalls() { return readyCalls; }, get expandCalls() { return expandCalls; },
     retry: () => { for (const [id, t] of timers) if (t.ms === 1500) { timers.delete(id); t.fn(); break; } },
     cleanup: () => cleanup(),
   };
@@ -139,6 +151,22 @@ test('unsupported client bridge methods do not prevent sign-in', async () => {
   app.cleanup();
 });
 
+test('auto-login calls ready but never expand (avoids iOS Start race)', async () => {
+  const app = startup({ ready: true });
+  await flush();
+  assert.equal(app.readyCalls, 1);
+  assert.equal(app.expandCalls, 0);
+  assert.equal(app.refreshes, 1);
+  app.cleanup();
+});
+
+test('bootstrap stays idle outside a Mini App shell', async () => {
+  const app = startup({ miniApp: false });
+  await flush();
+  assert.equal(app.calls, 0);
+  app.cleanup();
+});
+
 test('unmount removes script listeners and prevents stale login', async () => {
   const app = startup({ existing: true });
   app.cleanup();
@@ -146,6 +174,47 @@ test('unmount removes script listeners and prevents stale login', async () => {
   app.script.dispatchEvent(new Event('load'));
   await flush();
   assert.equal(app.calls, 0);
+});
+
+test('ensureCommandsMenuButton clears a default web_app menu button', async () => {
+  const calls = [];
+  const { ensureCommandsMenuButton } = load('src/lib/telegram/menu-button.ts', {
+    '@/lib/cloudflare': { getEnv: async () => ({ TELEGRAM_BOT_TOKEN: 'token' }) },
+    '@/lib/fetch-with-timeout': {
+      fetchWithTimeout: async (url, init) => {
+        const method = String(url).split('/').pop();
+        calls.push({ method, body: JSON.parse(init.body || '{}') });
+        if (method === 'getChatMenuButton') {
+          return Response.json({
+            ok: true,
+            result: { type: 'web_app', text: 'Events', web_app: { url: 'https://kimkim.uz/uz/events' } },
+          });
+        }
+        return Response.json({ ok: true, result: true });
+      },
+    },
+  });
+  const result = await ensureCommandsMenuButton();
+  assert.equal(result.written, true);
+  assert.equal(result.previous, 'web_app');
+  assert.equal(calls.at(-1)?.method, 'setChatMenuButton');
+  assert.deepEqual(calls.at(-1)?.body, { menu_button: { type: 'commands' } });
+});
+
+test('ensureCommandsMenuButton is a no-op when already commands', async () => {
+  const methods = [];
+  const { ensureCommandsMenuButton } = load('src/lib/telegram/menu-button.ts', {
+    '@/lib/cloudflare': { getEnv: async () => ({ TELEGRAM_BOT_TOKEN: 'token' }) },
+    '@/lib/fetch-with-timeout': {
+      fetchWithTimeout: async (url) => {
+        methods.push(String(url).split('/').pop());
+        return Response.json({ ok: true, result: { type: 'commands' } });
+      },
+    },
+  });
+  const result = await ensureCommandsMenuButton();
+  assert.equal(result.written, false);
+  assert.deepEqual(methods, ['getChatMenuButton']);
 });
 
 test('/start resets an unfinished event flow and sends the welcome message', async () => {
