@@ -87,12 +87,14 @@ async function handleLoginStart(message: TelegramMessage, user: User, challengeI
     });
   }
 
+  // Chat-first handoff: plain text + one HTTPS url button (not web_app). Do not
+  // open or warm a Mini App here — that races Start on iOS when a Menu Button
+  // WebApp is also configured.
   const siteUrl = buildAppUrl(buildLoginVerifyPath(locale, challenge.id));
   await sendTelegramMessage(
     message.chat.id,
     status === "consumed" ? strings.loginAlreadyUsed : strings.loginReady,
     {
-      parse_mode: "HTML",
       reply_markup: {
         inline_keyboard: [[{ text: strings.loginOpenSite, url: siteUrl }]],
       },

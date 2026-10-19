@@ -149,7 +149,10 @@ Checks that live in BotFather rather than this repo, worth ruling out next:
   and is dismissed by the START tap; a clip with odd dimensions or an unusual codec is the single
   most common cause of this exact symptom. Removing it is the cheapest bisect.
 - **Animated bot avatar** — same decoder, same risk.
-- **Menu button** set to a Web App, which makes the client warm a webview alongside the START tap.
+- **Menu button** set to a Web App (symptoms: collapsed bar like `Events · KimKim` stuck at the
+  bottom during Start / re-login). The hourly cron and `npm run bot:commands` now force the default
+  menu button to **commands** when Telegram still reports `web_app`, so Start stays chat-first.
+  Re-opening the site uses the **Open KimKim** URL button (HTTPS), not an auto-launched Mini App.
 
 To confirm it is client-side, have the reporter try the same bot on Telegram for Android/desktop and
 on an older iOS build. Reproducing only on one client family on one OS version, with the bot
@@ -172,10 +175,20 @@ src/lib/telegram/
 
 - User creation is an atomic upsert, so simultaneous bot and Mini App requests retain one user ID.
 - Plain `/start` resets any unfinished bot flow. Transient failures return HTTP 503 so Telegram can retry; other updates retain their existing acknowledgement behavior to avoid replaying expense or album writes.
-- The hourly cron refreshes changed commands, with a manual setup endpoint available; registration stays off each startup.
-- Telegram API and browser sign-in requests have a 10-second timeout. Mini App startup waits for an already-loading SDK, tolerates unsupported bridge methods, retries a transient failure once, and tries again on network recovery or return to the app.
+- The hourly cron refreshes changed commands **and** clears a default Web App menu button when needed. Registration stays off each `/start`. Manual: `npm run bot:commands`.
+- Login deep links (`login_…`) reply with plain text plus one HTTPS **Open KimKim** URL button to `/login?verify=…` (POST claim behind `ConfirmContinueCard` — never on page load). No `web_app` keyboard buttons on that path.
+- Telegram API and browser sign-in requests have a 10-second timeout. Mini App bootstrap runs only inside a real Mini App shell (`TelegramWebviewProxy` / `initData`), calls `ready()` but **not** `expand()`, retries a transient failure once, and tries again on network recovery or return to the app.
 - Web sign-in status polling allows only one request at a time; failed claim requests show the existing retry UI.
 
 Run `npm run test:telegram-startup` with Node.js 22.13+ for the targeted regression checks (including SQLite upsert behavior and mocked browser startup failures).
 
-For another reported freeze, record the exact time and time zone, Telegram client name/version, OS version, and whether `/start` appeared in the chat or a Mini App window opened. The native bot welcome/Start screen runs before KimKim's web code. An absent `/start` can indicate a Telegram/client/network issue; a visible `/start` with no reply warrants checking webhook delivery and Worker logs. Webhook errors include Telegram's update ID for correlation. A screenshot alone cannot establish an unofficial-client bug.
+### What we cannot fix in-repo
+
+A full Telegram.app freeze that needs force-quit is still a **client** bug (often iOS). Auth can succeed server-side while the UI is stuck — that matches “already signed in after force-quit.” We only reduce how much work Start hands the client (menu button, previews, commands churn, Mini App `expand`).
+
+### Manual check (iOS Telegram)
+
+1. After deploy, run `npm run bot:commands` once (or wait for cron) so the default menu button is `commands`.
+2. Logout on the site → Continue in Telegram → Start. Expect the signed-in chat reply **without** a stuck `Events · KimKim` Mini App bar.
+3. Tap **Open KimKim**; confirm Continue spends `?verify=` only after the tap.
+4. Optional bisect: BotFather intro media / animated avatar still matter if freezes remain.

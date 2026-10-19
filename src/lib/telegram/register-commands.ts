@@ -1,5 +1,6 @@
 import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import { getEnv } from "@/lib/cloudflare";
+import { ensureCommandsMenuButton } from "@/lib/telegram/menu-button";
 
 type BotCommand = { command: string; description: string };
 
@@ -131,5 +132,8 @@ export async function registerBotCommands(options?: { force?: boolean }) {
     written += 1;
   }
 
-  return { written };
+  // Same cadence as commands: never on each /start, only cron / setup.
+  const menuButton = await ensureCommandsMenuButton({ force });
+
+  return { written, menuButton };
 }
