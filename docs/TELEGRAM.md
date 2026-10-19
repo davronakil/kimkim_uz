@@ -167,3 +167,15 @@ src/lib/telegram/
 ├── i18n.ts             # Bot strings (en / uz / ru)
 └── sessions.ts         # bot_sessions for multi-step flows
 ```
+
+## Startup reliability and diagnosis
+
+- User creation is an atomic upsert, so simultaneous bot and Mini App requests retain one user ID.
+- Plain `/start` resets any unfinished bot flow. Transient failures return HTTP 503 so Telegram can retry; other updates retain their existing acknowledgement behavior to avoid replaying expense or album writes.
+- The hourly cron refreshes changed commands, with a manual setup endpoint available; registration stays off each startup.
+- Telegram API and browser sign-in requests have a 10-second timeout. Mini App startup waits for an already-loading SDK, tolerates unsupported bridge methods, retries a transient failure once, and tries again on network recovery or return to the app.
+- Web sign-in status polling allows only one request at a time; failed claim requests show the existing retry UI.
+
+Run `npm run test:telegram-startup` with Node.js 22.13+ for the targeted regression checks (including SQLite upsert behavior and mocked browser startup failures).
+
+For another reported freeze, record the exact time and time zone, Telegram client name/version, OS version, and whether `/start` appeared in the chat or a Mini App window opened. The native bot welcome/Start screen runs before KimKim's web code. An absent `/start` can indicate a Telegram/client/network issue; a visible `/start` with no reply warrants checking webhook delivery and Worker logs. Webhook errors include Telegram's update ID for correlation. A screenshot alone cannot establish an unofficial-client bug.

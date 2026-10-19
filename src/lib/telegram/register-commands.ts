@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import { getEnv } from "@/lib/cloudflare";
 
 type BotCommand = { command: string; description: string };
@@ -66,7 +67,7 @@ async function setCommands(
   commands: ReadonlyArray<BotCommand>,
   options?: CommandScope,
 ) {
-  const response = await fetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
+  const response = await fetchWithTimeout(`https://api.telegram.org/bot${token}/setMyCommands`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ commands, ...options }),
@@ -79,7 +80,7 @@ async function setCommands(
 }
 
 async function getCommands(token: string, options?: CommandScope) {
-  const response = await fetch(`https://api.telegram.org/bot${token}/getMyCommands`, {
+  const response = await fetchWithTimeout(`https://api.telegram.org/bot${token}/getMyCommands`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...options }),

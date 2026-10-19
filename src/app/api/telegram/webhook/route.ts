@@ -29,7 +29,15 @@ export async function POST(request: NextRequest) {
   try {
     await handleTelegramUpdate(update);
   } catch (error) {
-    console.error("Telegram webhook error:", error);
+    console.error("Telegram webhook error:", { updateId: update.update_id, error });
+    // A plain /start only resets the flow and sends a greeting, so Telegram can
+    // safely retry it. Other updates may create expenses or send album media.
+    if (
+      update.message?.chat.type === "private" &&
+      /^\/start(?:@\w+)?$/i.test(update.message.text?.trim() ?? "")
+    ) {
+      return NextResponse.json({ ok: false }, { status: 503 });
+    }
   }
 
   // Telegram re-delivers an update it considers unanswered, which reaches the

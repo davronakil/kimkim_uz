@@ -146,64 +146,36 @@ export async function upsertTelegramUser(input: {
   appLocale?: Locale | null;
 }): Promise<User> {
   const db = await getDb();
-  const existing = await db
-    .prepare("SELECT * FROM users WHERE telegram_id = ?")
-    .bind(input.telegram_id)
-    .first<User>();
-
-  if (existing) {
-    await db
-      .prepare(
-        `UPDATE users
-         SET first_name = ?, last_name = ?, username = ?, photo_url = ?,
-             language_code = COALESCE(?, language_code), updated_at = datetime('now')
-         WHERE id = ?`,
-      )
-      .bind(
-        input.first_name,
-        input.last_name ?? null,
-        input.username ?? null,
-        input.photo_url ?? null,
-        input.appLocale ?? null,
-        existing.id,
-      )
-      .run();
-
-    return {
-      ...existing,
-      first_name: input.first_name,
-      last_name: input.last_name ?? null,
-      username: input.username ?? null,
-      photo_url: input.photo_url ?? null,
-      language_code: input.appLocale ?? existing.language_code,
-    };
-  }
-
   const initialLocale =
     input.appLocale ?? resolveLocaleFromTelegramCode(input.language_code);
 
-  const id = nanoid();
-  await db
+  // One atomic statement: bot startup and Mini App login can arrive together.
+  // Keep the existing id and explicit language preference on conflict.
+  const user = await db
     .prepare(
       `INSERT INTO users (id, telegram_id, username, first_name, last_name, photo_url, language_code)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(telegram_id) DO UPDATE SET
+         username = excluded.username,
+         first_name = excluded.first_name,
+         last_name = excluded.last_name,
+         photo_url = COALESCE(excluded.photo_url, users.photo_url),
+         language_code = COALESCE(?, users.language_code),
+         updated_at = datetime('now')
+       RETURNING *`,
     )
     .bind(
-      id,
+      nanoid(),
       input.telegram_id,
       input.username ?? null,
       input.first_name,
       input.last_name ?? null,
       input.photo_url ?? null,
       initialLocale,
+      input.appLocale ?? null,
     )
-    .run();
-
-  const user = await db
-    .prepare("SELECT * FROM users WHERE id = ?")
-    .bind(id)
     .first<User>();
 
-  if (!user) throw new Error("Failed to create user");
+  if (!user) throw new Error("Failed to upsert user");
   return user;
 }

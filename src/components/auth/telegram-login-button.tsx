@@ -1,5 +1,6 @@
 "use client";
 
+import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ConfirmContinueCard } from "@/components/ui/confirm-continue-card";
@@ -50,6 +51,7 @@ export function TelegramLoginButton({
   );
   const [claimMessage, setClaimMessage] = useState<string | null>(null);
   const pollRef = useRef<number | null>(null);
+  const statusInFlight = useRef(false);
 
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
@@ -72,58 +74,69 @@ export function TelegramLoginButton({
     async (id: string) => {
       setPhase("claiming");
       setClaimMessage(null);
-      const response = await fetch("/api/auth/telegram/challenge/claim", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ id }),
-      });
+      try {
+        const response = await fetchWithTimeout("/api/auth/telegram/challenge/claim", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ id }),
+        });
 
-      if (response.ok) {
-        const data = (await response.json()) as { redirectTo?: string };
-        finishLogin(data.redirectTo ?? safeRedirect);
-        return;
+        if (response.ok) {
+          const data = (await response.json()) as { redirectTo?: string };
+          finishLogin(data.redirectTo ?? safeRedirect);
+          return;
+        }
+
+        const payload = (await response.json().catch(() => ({}))) as { status?: ChallengeStatus };
+        if (payload.status === "expired") setErrorKey("loginExpired");
+        else if (payload.status === "consumed") setErrorKey("loginUsed");
+        else if (payload.status === "pending") {
+          setPhase("waiting");
+          return;
+        } else setErrorKey("loginError");
+        setPhase("error");
+      } catch {
+        setErrorKey("loginError");
+        setPhase("error");
       }
-
-      const payload = (await response.json().catch(() => ({}))) as { status?: ChallengeStatus };
-      if (payload.status === "expired") setErrorKey("loginExpired");
-      else if (payload.status === "consumed") setErrorKey("loginUsed");
-      else if (payload.status === "pending") {
-        setPhase("waiting");
-        return;
-      } else setErrorKey("loginError");
-      setPhase("error");
     },
     [finishLogin, safeRedirect],
   );
 
   const checkStatus = useCallback(
     async (id: string, autoClaim: boolean) => {
-      const response = await fetch(`/api/auth/telegram/challenge?id=${encodeURIComponent(id)}`, {
-        credentials: "include",
-      });
-      if (!response.ok) return;
-      const data = (await response.json()) as { status?: ChallengeStatus };
-      if (data.status === "ready") {
-        stopPolling();
-        if (autoClaim && !verifyId) {
-          await claim(id);
+      if (statusInFlight.current) return;
+      statusInFlight.current = true;
+      try {
+        const response = await fetchWithTimeout(`/api/auth/telegram/challenge?id=${encodeURIComponent(id)}`, {
+          credentials: "include",
+        });
+        if (!response.ok) return;
+        const data = (await response.json()) as { status?: ChallengeStatus };
+        if (data.status === "ready") {
+          stopPolling();
+          if (autoClaim && !verifyId) {
+            await claim(id);
+            return;
+          }
+          setPhase("ready");
           return;
         }
-        setPhase("ready");
-        return;
-      }
-      if (data.status === "consumed") {
-        stopPolling();
-        setErrorKey("loginUsed");
-        setPhase("error");
-        return;
-      }
-      if (data.status === "expired") {
-        stopPolling();
-        sessionStorage.removeItem(STORAGE_KEY);
-        setErrorKey("loginExpired");
-        setPhase("error");
+        if (data.status === "consumed") {
+          stopPolling();
+          setErrorKey("loginUsed");
+          setPhase("error");
+          return;
+        }
+        if (data.status === "expired") {
+          stopPolling();
+          sessionStorage.removeItem(STORAGE_KEY);
+          setErrorKey("loginExpired");
+          setPhase("error");
+        }
+      } finally {
+        statusInFlight.current = false;
       }
     },
     [claim, stopPolling, verifyId],
@@ -132,9 +145,13 @@ export function TelegramLoginButton({
   const startPolling = useCallback(
     (id: string, autoClaim: boolean) => {
       stopPolling();
-      void checkStatus(id, autoClaim);
+      void checkStatus(id, autoClaim).catch(() => {
+        // A temporary network failure can be retried on the next poll.
+      });
       pollRef.current = window.setInterval(() => {
-        void checkStatus(id, autoClaim);
+        void checkStatus(id, autoClaim).catch(() => {
+          // A temporary network failure can be retried on the next poll.
+        });
       }, 2000);
     },
     [checkStatus, stopPolling],
@@ -163,7 +180,7 @@ export function TelegramLoginButton({
     setErrorKey(null);
     const popup = window.open("about:blank", "_blank");
     try {
-      const response = await fetch("/api/auth/telegram/challenge", {
+      const response = await fetchWithTimeout("/api/auth/telegram/challenge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

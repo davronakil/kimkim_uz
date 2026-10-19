@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import { getEnv } from "@/lib/cloudflare";
 import type { InlineButton } from "@/lib/telegram/keyboards";
 
@@ -38,7 +39,7 @@ export async function sendTelegramMessage(
   if (threadId != null) payload.message_thread_id = threadId;
 
   async function post(body: Record<string, unknown>) {
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
         method: "POST",
@@ -73,7 +74,7 @@ export async function answerCallbackQuery(
   showAlert = false,
 ) {
   const env = await getEnv();
-  await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
+  await fetchWithTimeout(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -90,7 +91,7 @@ export async function editMessageReplyMarkup(
   replyMarkup?: TelegramReplyMarkup,
 ) {
   const env = await getEnv();
-  await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/editMessageReplyMarkup`, {
+  await fetchWithTimeout(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/editMessageReplyMarkup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

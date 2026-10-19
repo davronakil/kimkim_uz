@@ -150,7 +150,7 @@ async function handlePrivateMessage(message: TelegramMessage) {
     language_code: message.from.language_code ?? null,
   });
 
-  await linkTelegramChat(message.from, message.chat.id);
+  await linkTelegramChat(message.from, message.chat.id, user);
 
   if (text) {
     const startParam = parseStartParam(text);
@@ -199,6 +199,13 @@ async function handlePrivateMessage(message: TelegramMessage) {
 
   const intent = text ? parseIntent(text) : { type: "text" as const };
   const strings = t(locale);
+
+  // /start must always restart the bot, even during an unfinished event flow.
+  if (intent.type === "command" && intent.name === "start") {
+    await clearBotSession(message.chat.id);
+    await sendWelcome(message.chat.id, locale);
+    return;
+  }
 
   if (text) {
     const langChoice = parseLangCommand(text);
@@ -311,11 +318,6 @@ async function handlePrivateMessage(message: TelegramMessage) {
     (intent.type === "natural" && intent.name === "album")
   ) {
     await startAlbumFlow(message.chat.id, user, locale);
-    return;
-  }
-
-  if (intent.type === "command" && intent.name === "start") {
-    await sendWelcome(message.chat.id, locale);
     return;
   }
 
