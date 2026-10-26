@@ -142,7 +142,19 @@ export default async function HomePage({
             )}
           </div>
           {!user ? (
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("heroNote")}</p>
+            <div className="space-y-1">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("heroNote")}</p>
+              <p>
+                <a
+                  href="https://github.com/davronakil/kimkim_uz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-emerald-700 underline-offset-2 hover:underline dark:text-emerald-300"
+                >
+                  {t("openSourceLink")}
+                </a>
+              </p>
+            </div>
           ) : null}
         </div>
       </section>

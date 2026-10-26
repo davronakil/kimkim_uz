@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "KimKim",
-    "tagline": "Gather with clarity.",
+    "tagline": "Who's coming, where, and who paid.",
     "loading": "Loading...",
     "save": "Save",
     "cancel": "Cancel",
@@ -22,22 +22,23 @@
     "hint": "This link works only once. We wait for your tap so link previews and in-app browsers can't use it up first."
   },
   "meta": {
-    "title": "KimKim - Gatherings, invites, shared event photos, and costs",
-    "description": "Plan weddings, gap circles, soccer, hunting trips, fishing weekends, and camping. Invite your people, track RSVPs, keep shared event photos, and split costs in one calm place. Built around Telegram.",
-    "ogTitle": "KimKim - Keep every gathering clear",
-    "keywords": "event planning, wedding, gap circle, choyxona, birthday, soccer, hunting trip, fishing, camping, picnic, shared event photos, Telegram, Uzbekistan"
+    "title": "KimKim — free gatherings, invites, photos, and shared costs",
+    "description": "Plan get-togethers with friends and family: invites, RSVPs, shared photos, and who paid what. Completely free and open source. Sign in with Telegram — English, Oʻzbek, and Русский.",
+    "ogTitle": "KimKim — free, open-source event planning",
+    "keywords": "event planning, free, open source, wedding, birthday, soccer, fishing, camping, picnic, shared photos, expenses, Telegram, Uzbekistan"
   },
   "home": {
-    "heroTitle": "Bring your people together.\nKeep the plan clear.",
-    "heroSubtitle": "Weddings, gap circles, and the weekends that usually stall in chat — hunting, fishing, camping, or soccer. One invite. RSVPs, photos, and who paid.",
-    "heroNote": "Free to start. No password. It lives in Telegram.",
-    "heroTitleSignedIn": "Ready for the next gathering?",
-    "heroSubtitleSignedIn": "A wedding, a fishing weekend, soccer, or a quiet choyxona. Guests, updates, expenses, and shared event photos stay in one place.",
+    "heroTitle": "Plan the get-together.\nSkip the chat mess.",
+    "heroSubtitle": "One invite for who's coming, where you're meeting, the photos afterward, and how you split the bill — right next to Telegram.",
+    "heroNote": "Completely free and open source. No password — just Telegram.",
+    "openSourceLink": "View the code on GitHub",
+    "heroTitleSignedIn": "Ready for the next one?",
+    "heroSubtitleSignedIn": "Set the date, invite people, keep photos together, and settle the bill without awkward DMs.",
     "ctaSignedOut": "Start in Telegram",
     "ctaSignedIn": "My events",
     "catalogCta": "Browse the catalog",
     "catalogTitle": "Find trusted local businesses",
-    "catalogBody": "A catalog of local businesses the community trusts. Vouch for places you know, and find recommended businesses in any category near you — in the list or on the map.",
+    "catalogBody": "A catalog of local businesses the community trusts. Vouch for places you know, and find recommended businesses near you — in the list or on the map.",
     "catalogBrowse": "Browse businesses",
     "catalogListBusiness": "List your business",
     "featuredTitle": "Trusted by the community",
@@ -50,7 +51,7 @@
     ],
     "useCases": {
       "wedding": "Wedding",
-      "gap": "Gap circle",
+      "gap": "Gap",
       "birthday": "Birthday",
       "choyxona": "Choyxona",
       "soccer": "Soccer",
@@ -62,20 +63,20 @@
       "challari": "Challari"
     },
     "features": {
-      "eventsTitle": "One plan for the group",
-      "eventsBody": "Date, meeting point, guest list, and how you'll pay — set once, then shared with everyone you invite.",
+      "eventsTitle": "One clear plan",
+      "eventsBody": "Date, place, guest list, and how you'll pay — written once, shared with everyone you invite.",
       "photosTitle": "Shared event photos",
-      "photosBody": "After the wedding, the match, or the trip, guests add photos from the page or Telegram and save the rest in one tap.",
-      "commentsTitle": "Decisions stay put",
-      "commentsBody": "Meeting point, gear, and who brings what live in one thread, not buried in the group chat.",
-      "expensesTitle": "Money without the awkward part",
-      "expensesBody": "Log who paid, split the boat, the pitch, or the dinner, and see the balance before anyone has to ask.",
-      "telegramTitle": "Already in Telegram",
-      "telegramBody": "Invites, reminders, and updates land where your people already talk. Joining takes one tap."
+      "photosBody": "Afterward, guests add pictures from the page or Telegram and save everyone else's in one tap.",
+      "commentsTitle": "Decisions don't get buried",
+      "commentsBody": "Where to meet, what to bring, and last-minute changes live in one thread — not lost in the group chat.",
+      "expensesTitle": "Split the bill calmly",
+      "expensesBody": "Log who paid, split dinner or the pitch, and see who owes what before anyone has to ask.",
+      "telegramTitle": "Works with Telegram",
+      "telegramBody": "Invites, reminders, and updates land where your people already talk. Joining is one tap."
     },
-    "closingTitle": "Your next gathering starts here",
-    "closingBody": "A wedding, a gap, a hunting trip, or a fishing weekend — open KimKim and send the invite.",
-    "useCasesLabel": "For gatherings like"
+    "closingTitle": "Free for everyone",
+    "closingBody": "KimKim is completely free and open source. Sign in with Telegram and send the invite.",
+    "useCasesLabel": "Good for"
   },
   "auth": {
     "title": "Sign in with Telegram",
@@ -275,14 +276,15 @@
     },
     "form": {
       "title": "Title",
-      "titlePlaceholder": "e.g. Wedding, Gap circle, Hunting trip, Fishing...",
+      "titlePlaceholder": "e.g. Wedding, Birthday, Soccer, Fishing...",
       "description": "Description",
-      "descriptionPlaceholder": "Guest notes, venue details, gap rules — anything the group needs.",
+      "descriptionPlaceholder": "Guest notes, venue details, what to bring — anything the group needs.",
+      "templatesShow": "[view templates]",
       "templatesTitle": "Start from a template",
-      "templatesSubtitle": "Pick a common gathering and KimKim will prefill the basics.",
+      "templatesSubtitle": "Optional. Pick a common gathering and KimKim will prefill the basics.",
       "templates": {
         "gap": {
-          "title": "Gap circle",
+          "title": "Gap",
           "short": "Shared meal, rotating costs, everyone sees their share.",
           "description": "Monthly gap with friends. Add the location, then track expenses here so everyone knows their share."
         },
@@ -312,7 +314,7 @@
           "description": "Soccer game. Split the pitch or booking, RSVP with anyone you're bringing, and keep the list to 14 so the game stays full without getting crowded."
         }
       },
-      "templatesDismiss": "Hide templates",
+      "templatesDismiss": "[hide templates]",
       "maxGuests": "Guest limit",
       "maxGuestsPlaceholder": "No limit",
       "maxGuestsHint": "Optional. Counts everyone coming, including people marked +1. Leave empty for no limit. A soccer game is often 12–14.",
@@ -566,7 +568,8 @@
     "browserDismiss": "Not now"
   },
   "footer": {
-    "madeIn": "© 2026 KimKim.Uz - All rights reserved."
+    "madeIn": "KimKim is completely free and open source.",
+    "github": "GitHub"
   },
   "discover": {
     "title": "Discover",

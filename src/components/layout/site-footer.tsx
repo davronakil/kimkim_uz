@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale/locale-switcher";
 
+const GITHUB_URL = "https://github.com/davronakil/kimkim_uz";
+
 export async function SiteFooter() {
   const t = await getTranslations("footer");
   const common = await getTranslations("common");
@@ -14,7 +16,17 @@ export async function SiteFooter() {
           </p>
           <LocaleSwitcher variant="compact" className="w-full" />
         </div>
-        <p className="text-center text-base text-zinc-500 sm:text-sm">{t("madeIn")}</p>
+        <p className="text-center text-base text-zinc-500 sm:text-sm">
+          {t("madeIn")}{" "}
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-700 underline-offset-2 hover:underline dark:text-emerald-300"
+          >
+            {t("github")}
+          </a>
+        </p>
       </div>
     </footer>
   );

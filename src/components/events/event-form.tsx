@@ -7,7 +7,6 @@ import {
   Heart,
   MessageCircle,
   Trophy,
-  X,
   type LucideIcon,
 } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
@@ -61,7 +60,7 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
     event ? eventToLocation(event) : null,
   );
   const [locationCleared, setLocationCleared] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(mode === "create");
+  const [showTemplates, setShowTemplates] = useState(false);
   const [maxGuests, setMaxGuests] = useState(
     event?.max_guest_count ? String(event.max_guest_count) : "",
   );
@@ -223,53 +222,64 @@ export function EventForm({ mode, event, cancelHref }: EventFormProps) {
       onSubmit={onSubmit}
       className="space-y-5 rounded-3xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-6"
     >
-      {mode === "create" && showTemplates ? (
-        <section className="space-y-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 dark:border-emerald-900 dark:bg-emerald-950/30">
-          <div className="flex items-start justify-between gap-3">
-            <div className="space-y-1">
-              <p className="kk-label">{t("templatesTitle")}</p>
-              <p className="text-sm leading-relaxed text-emerald-950/75 dark:text-emerald-100/75">
-                {t("templatesSubtitle")}
-              </p>
+      {mode === "create" ? (
+        showTemplates ? (
+          <section className="space-y-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 dark:border-emerald-900 dark:bg-emerald-950/30">
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1">
+                <p className="kk-label">{t("templatesTitle")}</p>
+                <p className="text-sm leading-relaxed text-emerald-950/75 dark:text-emerald-100/75">
+                  {t("templatesSubtitle")}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowTemplates(false)}
+                className="shrink-0 text-sm text-emerald-800/80 underline-offset-2 hover:underline dark:text-emerald-200/80"
+              >
+                {t("templatesDismiss")}
+              </button>
             </div>
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+              {templates.map((template) => {
+                const Icon = template.icon;
+                return (
+                  <button
+                    key={template.id}
+                    type="button"
+                    onClick={() => applyTemplate(template)}
+                    className="group flex min-h-28 touch-manipulation flex-col items-start gap-2 rounded-2xl border border-emerald-200 bg-white p-3 text-left transition hover:border-emerald-400 hover:bg-emerald-100 active:scale-[0.98] dark:border-emerald-800 dark:bg-emerald-950 dark:hover:bg-emerald-900"
+                  >
+                    <span className="flex w-full items-center justify-between gap-2">
+                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="rounded-full bg-zinc-100 px-2 py-1 text-[0.68rem] font-semibold text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+                        {events(`paymentMode.labels.${template.paymentMode}`)}
+                      </span>
+                    </span>
+                    <span className="text-sm font-semibold text-emerald-950 dark:text-emerald-100">
+                      {template.title}
+                    </span>
+                    <span className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                      {template.short}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ) : (
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             <button
               type="button"
-              onClick={() => setShowTemplates(false)}
-              aria-label={t("templatesDismiss")}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-emerald-900/70 transition hover:bg-emerald-100 hover:text-emerald-950 dark:text-emerald-100/70 dark:hover:bg-emerald-900 dark:hover:text-emerald-50"
+              onClick={() => setShowTemplates(true)}
+              className="text-zinc-600 underline-offset-2 hover:underline dark:text-zinc-300"
             >
-              <X className="h-4 w-4" />
+              {t("templatesShow")}
             </button>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-            {templates.map((template) => {
-              const Icon = template.icon;
-              return (
-              <button
-                key={template.id}
-                type="button"
-                onClick={() => applyTemplate(template)}
-                className="group flex min-h-28 touch-manipulation flex-col items-start gap-2 rounded-2xl border border-emerald-200 bg-white p-3 text-left transition hover:border-emerald-400 hover:bg-emerald-100 active:scale-[0.98] dark:border-emerald-800 dark:bg-emerald-950 dark:hover:bg-emerald-900"
-              >
-                <span className="flex w-full items-center justify-between gap-2">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <span className="rounded-full bg-zinc-100 px-2 py-1 text-[0.68rem] font-semibold text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
-                    {events(`paymentMode.labels.${template.paymentMode}`)}
-                  </span>
-                </span>
-                <span className="text-sm font-semibold text-emerald-950 dark:text-emerald-100">
-                  {template.title}
-                </span>
-                <span className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-                  {template.short}
-                </span>
-              </button>
-              );
-            })}
-          </div>
-        </section>
+          </p>
+        )
       ) : null}
 
       <div className="space-y-2">
