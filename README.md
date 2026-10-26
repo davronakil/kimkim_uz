@@ -1,8 +1,11 @@
 # KimKim.uz
 
+[![CI](https://github.com/davronakil/kimkim_uz/actions/workflows/ci.yml/badge.svg)](https://github.com/davronakil/kimkim_uz/actions)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 **[kimkim.uz](https://kimkim.uz)** — plan weddings, gap circles, sunnat to'y, aqiqa, challari, choyxona, and any gathering. Coordinate guests, discuss in threads, split expenses, and sign in with Telegram.
 
-Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on Cloudflare Workers.
+**Free to use** for hosts and guests. Open source under the [MIT License](./LICENSE). Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on Cloudflare Workers.
 
 ---
 
@@ -93,12 +96,14 @@ See [.dev.vars.example](./.dev.vars.example) for all variables. Minimum for loca
 
 | Variable | Description |
 |----------|-------------|
-| `SESSION_SECRET` | Long random string for session JWTs |
+| `SESSION_SECRET` | Long random string (≥32 chars) for session JWTs |
 | `TELEGRAM_BOT_TOKEN` | Bot token from BotFather |
+| `TELEGRAM_WEBHOOK_SECRET` | Random string; must match Telegram `setWebhook` `secret_token` |
 | `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` | Bot username without `@` |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Google Maps Places API key |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Google Maps Places API key (optional) |
 | `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` for local dev |
-| `CRON_SECRET` | Random string for cron auth |
+| `CRON_SECRET` | Random string for cron / bot-command setup auth |
+| `SUPERADMIN_TELEGRAM_IDS` | Optional comma-separated Telegram user IDs for platform superadmin |
 
 ### 3. Database migrations (local)
 
@@ -132,9 +137,11 @@ Custom domains `kimkim.uz` and `www.kimkim.uz` are in `wrangler.jsonc`.
 ```bash
 npx wrangler secret put SESSION_SECRET
 npx wrangler secret put TELEGRAM_BOT_TOKEN
+npx wrangler secret put TELEGRAM_WEBHOOK_SECRET
 npx wrangler secret put CRON_SECRET
 npx wrangler secret put STRIPE_SECRET_KEY        # paid events
 npx wrangler secret put STRIPE_WEBHOOK_SECRET    # paid events
+# optional: npx wrangler secret put SUPERADMIN_TELEGRAM_IDS
 ```
 
 ### Google Maps API key
@@ -151,7 +158,8 @@ Enable **Maps JavaScript API** and **Places API** in [Google Cloud Console](http
 
 1. Create bot with [@BotFather](https://t.me/BotFather)
 2. `/setdomain` → `kimkim.uz`
-3. Set webhook: `https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://kimkim.uz/api/telegram/webhook`
+3. Set webhook **with** `secret_token` (same value as `TELEGRAM_WEBHOOK_SECRET`):
+   `https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://kimkim.uz/api/telegram/webhook&secret_token=<TELEGRAM_WEBHOOK_SECRET>`
 4. Users must **start the bot** (`/start`) to receive DM notifications
 
 Bot reference: [docs/TELEGRAM.md](./docs/TELEGRAM.md).
@@ -240,11 +248,14 @@ See [docs/CATALOG.md](./docs/CATALOG.md).
 ## Security
 
 - **Do not commit** `.dev.vars`, `.env*`, API tokens, or bot tokens
-- `.dev.vars` and `.wrangler/` are gitignored
+- `.dev.vars`, `.env*`, and `.wrangler/` are gitignored
 - Use Wrangler secrets and the Cloudflare dashboard for production credentials
 - Restrict Google Maps API key to `kimkim.uz` and localhost
+- Webhook POSTs require `X-Telegram-Bot-Api-Secret-Token` (`TELEGRAM_WEBHOOK_SECRET`)
 
-Report security issues privately, not in public GitHub issues.
+Report security issues privately — see [SECURITY.md](./SECURITY.md).
+
+Contributions: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -257,6 +268,9 @@ Report security issues privately, not in public GitHub issues.
 | [docs/TELEGRAM.md](./docs/TELEGRAM.md) | Bot commands, webhooks, notifications |
 | [docs/DATABASE.md](./docs/DATABASE.md) | Tables, migrations |
 | [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Production checklist |
+| [LICENSE](./LICENSE) | MIT |
+| [SECURITY.md](./SECURITY.md) | Vulnerability reporting |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | Local setup & PR guidelines |
 | [AGENTS.md](./AGENTS.md) | Quick reference for AI assistants |
 
 ---

@@ -6,7 +6,7 @@ import {
   listApprovedBusinessListings,
 } from "@/lib/db/catalog-queries";
 import { parseBusinessListingFormData } from "@/lib/catalog/form";
-import { getMediaBucket } from "@/lib/cloudflare";
+import { putCoverImage } from "@/lib/media/cover-upload";
 import { isSuperadmin } from "@/lib/platform/admin";
 
 export async function GET(request: NextRequest) {
@@ -52,11 +52,10 @@ export async function POST(request: NextRequest) {
 
   const cover = formData.get("cover_image");
   if (cover instanceof File && cover.size > 0) {
-    const media = await getMediaBucket();
-    const coverImageKey = `catalog/${listingId}/${cover.name}`;
-    await media.put(coverImageKey, cover.stream(), {
-      httpMetadata: { contentType: cover.type || "image/jpeg" },
-    });
+    const uploaded = await putCoverImage("catalog", listingId, cover);
+    if (!uploaded.ok) {
+      return NextResponse.json({ error: uploaded.error }, { status: 400 });
+    }
 
     const { updateBusinessListing } = await import("@/lib/db/catalog-queries");
     await updateBusinessListing(listingId, {
@@ -70,7 +69,7 @@ export async function POST(request: NextRequest) {
       locationAddress: parsed.data.location_address ?? null,
       locationLat: parsed.data.location_lat ?? null,
       locationLng: parsed.data.location_lng ?? null,
-      coverImageKey,
+      coverImageKey: uploaded.key,
     });
   }
 

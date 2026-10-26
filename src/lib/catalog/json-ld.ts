@@ -1,5 +1,6 @@
 import type { BusinessListing } from "@/types";
 import { absoluteUrl, appBaseUrl } from "@/lib/seo";
+import { safeHttpUrl } from "@/lib/url-safety";
 
 export function buildBusinessListingJsonLd({
   listing,
@@ -18,7 +19,7 @@ export function buildBusinessListingJsonLd({
     ? absoluteUrl(`/api/media/${listing.cover_image_key}`, baseUrl)
     : undefined;
   const sameAs = [
-    listing.website_url,
+    safeHttpUrl(listing.website_url),
     listing.telegram_username
       ? `https://t.me/${listing.telegram_username.replace(/^@/, "")}`
       : null,

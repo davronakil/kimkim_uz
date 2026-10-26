@@ -165,16 +165,6 @@ export type EventReferral = {
   created_at: string;
 };
 
-export type TelegramLoginPayload = {
-  id: string;
-  first_name: string;
-  last_name?: string;
-  username?: string;
-  photo_url?: string;
-  auth_date: string;
-  hash: string;
-};
-
 export type EventPaymentStatus = "pending" | "completed" | "failed";
 export type EventPaymentSource = "stripe" | "manual";
 
@@ -231,6 +221,10 @@ export type CloudflareEnv = Cloudflare.Env & {
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_BOT_USERNAME: string;
   NEXT_PUBLIC_TELEGRAM_BOT_USERNAME?: string;
+  /** Shared secret set via Telegram setWebhook secret_token; required for webhook POST. */
+  TELEGRAM_WEBHOOK_SECRET?: string;
+  /** Optional comma-separated Telegram user IDs that always map to superadmin. */
+  SUPERADMIN_TELEGRAM_IDS?: string;
   CRON_SECRET?: string;
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;

@@ -497,15 +497,21 @@ export async function fulfillBusinessSlotPayment(input: {
   slotsGranted: number;
 }) {
   const db = await getDb();
-  await db
+  // Only the first successful transition from non-completed grants slots
+  // (webhook + confirm-continue can race).
+  const updated = await db
     .prepare(
       `UPDATE business_slot_payments SET
         status = 'completed',
         stripe_payment_intent_id = ?
-       WHERE stripe_checkout_session_id = ? AND user_id = ?`,
+       WHERE stripe_checkout_session_id = ?
+         AND user_id = ?
+         AND status != 'completed'`,
     )
     .bind(input.stripePaymentIntentId, input.stripeCheckoutSessionId, input.userId)
     .run();
+
+  if (!updated.meta.changes) return;
 
   await getBusinessListingEntitlement(input.userId);
 

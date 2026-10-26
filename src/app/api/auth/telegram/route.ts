@@ -1,24 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { verifyTelegramLogin, verifyTelegramWebAppInitData } from "@/lib/auth/telegram";
+import { verifyTelegramWebAppInitData } from "@/lib/auth/telegram";
 import {
   applySessionCookie,
   createSession,
   upsertTelegramUser,
 } from "@/lib/auth/session";
 import { getEnv } from "@/lib/cloudflare";
-import { isLocale, resolveLocaleFromTelegramCode } from "@/lib/locale";
-
-const loginSchema = z.object({
-  id: z.string(),
-  first_name: z.string(),
-  last_name: z.string().optional(),
-  username: z.string().optional(),
-  photo_url: z.string().optional(),
-  auth_date: z.string(),
-  hash: z.string(),
-  app_locale: z.string().optional(),
-});
+import { resolveLocaleFromTelegramCode } from "@/lib/locale";
 
 function isSecureRequest(request: NextRequest) {
   return (
@@ -27,39 +15,7 @@ function isSecureRequest(request: NextRequest) {
   );
 }
 
-export async function POST(request: NextRequest) {
-  const env = await getEnv();
-  const body = await request.json();
-
-  const parsed = loginSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
-  }
-
-  const { app_locale: appLocaleParam, ...telegramAuthData } = parsed.data;
-  const valid = verifyTelegramLogin(telegramAuthData, env.TELEGRAM_BOT_TOKEN);
-  if (!valid) {
-    return NextResponse.json({ error: "Invalid Telegram auth" }, { status: 401 });
-  }
-
-  const appLocale = appLocaleParam && isLocale(appLocaleParam)
-    ? appLocaleParam
-    : null;
-
-  const user = await upsertTelegramUser({
-    telegram_id: parsed.data.id,
-    first_name: parsed.data.first_name,
-    last_name: parsed.data.last_name,
-    username: parsed.data.username,
-    photo_url: parsed.data.photo_url,
-    appLocale,
-  });
-
-  const token = await createSession(user.id);
-  const response = NextResponse.json({ user });
-  return applySessionCookie(response, token, isSecureRequest(request));
-}
-
+/** Mini App auto-login via initData. Web sign-in uses Continue in Telegram challenges. */
 export async function PUT(request: NextRequest) {
   const env = await getEnv();
   const body = (await request.json()) as { initData?: string };

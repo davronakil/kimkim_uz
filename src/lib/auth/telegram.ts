@@ -1,5 +1,9 @@
-import { createHash, createHmac } from "crypto";
-import type { TelegramLoginPayload } from "@/types";
+import { createHmac } from "crypto";
+import { timingSafeEqualHex } from "@/lib/security/timing-safe";
+
+/** Mini App initData should be fresh; 24h was too long for replay. */
+export const TELEGRAM_AUTH_MAX_AGE_SECONDS = 600;
+const AUTH_DATE_FUTURE_SKEW_SECONDS = 60;
 
 function buildDataCheckString(data: Record<string, string>): string {
   return Object.keys(data)
@@ -8,37 +12,18 @@ function buildDataCheckString(data: Record<string, string>): string {
     .join("\n");
 }
 
-export function verifyTelegramLogin(
-  payload: TelegramLoginPayload,
-  botToken: string,
-  maxAgeSeconds = 86400,
-): boolean {
-  const { hash, ...rest } = payload;
-  const authDate = Number(rest.auth_date);
+function isAuthDateFresh(authDate: number, maxAgeSeconds: number): boolean {
   if (!authDate || Number.isNaN(authDate)) return false;
-
   const now = Math.floor(Date.now() / 1000);
+  if (authDate > now + AUTH_DATE_FUTURE_SKEW_SECONDS) return false;
   if (now - authDate > maxAgeSeconds) return false;
-
-  const fields: Record<string, string> = {};
-  for (const [key, value] of Object.entries(rest)) {
-    if (value !== undefined && value !== null && value !== "") {
-      fields[key] = String(value);
-    }
-  }
-
-  const secretKey = createHash("sha256").update(botToken).digest();
-  const computedHash = createHmac("sha256", secretKey)
-    .update(buildDataCheckString(fields))
-    .digest("hex");
-
-  return computedHash === hash;
+  return true;
 }
 
 export function verifyTelegramWebAppInitData(
   initData: string,
   botToken: string,
-  maxAgeSeconds = 86400,
+  maxAgeSeconds = TELEGRAM_AUTH_MAX_AGE_SECONDS,
 ): Record<string, string> | null {
   const params = new URLSearchParams(initData);
   const hash = params.get("hash");
@@ -51,10 +36,7 @@ export function verifyTelegramWebAppInitData(
   });
 
   const authDate = Number(data.auth_date);
-  if (!authDate || Number.isNaN(authDate)) return null;
-
-  const now = Math.floor(Date.now() / 1000);
-  if (now - authDate > maxAgeSeconds) return null;
+  if (!isAuthDateFresh(authDate, maxAgeSeconds)) return null;
 
   const secretKey = createHmac("sha256", "WebAppData")
     .update(botToken)
@@ -64,7 +46,7 @@ export function verifyTelegramWebAppInitData(
     .update(buildDataCheckString(data))
     .digest("hex");
 
-  if (computedHash !== hash) return null;
+  if (!timingSafeEqualHex(computedHash, hash)) return null;
   return data;
 }
 

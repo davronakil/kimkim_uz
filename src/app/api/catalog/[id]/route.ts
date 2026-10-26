@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
-import { getMediaBucket } from "@/lib/cloudflare";
 import {
   getBusinessListingById,
   getBusinessListingWithRepresentative,
   updateBusinessListing,
 } from "@/lib/db/catalog-queries";
 import { parseBusinessListingFormData } from "@/lib/catalog/form";
+import { putCoverImage } from "@/lib/media/cover-upload";
 import { isPlatformAdmin, isSuperadmin } from "@/lib/platform/admin";
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -65,11 +65,11 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   if (removeCover) {
     coverImageKey = null;
   } else if (cover instanceof File && cover.size > 0) {
-    const media = await getMediaBucket();
-    coverImageKey = `catalog/${id}/${Date.now()}-${cover.name}`;
-    await media.put(coverImageKey, cover.stream(), {
-      httpMetadata: { contentType: cover.type || "image/jpeg" },
-    });
+    const uploaded = await putCoverImage("catalog", id, cover);
+    if (!uploaded.ok) {
+      return NextResponse.json({ error: uploaded.error }, { status: 400 });
+    }
+    coverImageKey = uploaded.key;
   }
 
   await updateBusinessListing(id, {

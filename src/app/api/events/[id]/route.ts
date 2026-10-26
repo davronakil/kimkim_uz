@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
-import { getDb, getMediaBucket, runInBackground } from "@/lib/cloudflare";
+import { getDb, runInBackground } from "@/lib/cloudflare";
+import { putCoverImage } from "@/lib/media/cover-upload";
 import {
   getEventById,
   isEventMember,
@@ -111,11 +112,11 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
   const cover = formData.get("cover_image");
   if (cover instanceof File && cover.size > 0) {
-    const media = await getMediaBucket();
-    coverImageKey = `events/${id}/${Date.now()}-${cover.name}`;
-    await media.put(coverImageKey, cover.stream(), {
-      httpMetadata: { contentType: cover.type || "image/jpeg" },
-    });
+    const uploaded = await putCoverImage("events", id, cover);
+    if (!uploaded.ok) {
+      return NextResponse.json({ error: uploaded.error }, { status: 400 });
+    }
+    coverImageKey = uploaded.key;
   }
 
   const clearLocation = formData.get("clear_location") === "true";
