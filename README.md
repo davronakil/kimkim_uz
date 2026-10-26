@@ -1,11 +1,11 @@
 # KimKim.uz
 
 [![CI](https://github.com/davronakil/kimkim_uz/actions/workflows/ci.yml/badge.svg)](https://github.com/davronakil/kimkim_uz/actions)
-[![License](https://img.shields.io/badge/license-TBD-lightgrey)](./SECURITY.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 **[kimkim.uz](https://kimkim.uz)** — plan weddings, gap circles, sunnat to'y, aqiqa, challari, choyxona, and any gathering. Coordinate guests, discuss in threads, split expenses, and sign in with Telegram.
 
-**Free to use** for hosts and guests. Source is developed in the open on GitHub (license file TBD — see the open PR / maintainer). Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on Cloudflare Workers.
+**Free to use** for hosts and guests. Open source under the [MIT License](./LICENSE). Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on Cloudflare Workers.
 
 ---
 
@@ -268,6 +268,7 @@ Contributions: [CONTRIBUTING.md](./CONTRIBUTING.md).
 | [docs/TELEGRAM.md](./docs/TELEGRAM.md) | Bot commands, webhooks, notifications |
 | [docs/DATABASE.md](./docs/DATABASE.md) | Tables, migrations |
 | [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Production checklist |
+| [LICENSE](./LICENSE) | MIT |
 | [SECURITY.md](./SECURITY.md) | Vulnerability reporting |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | Local setup & PR guidelines |
 | [AGENTS.md](./AGENTS.md) | Quick reference for AI assistants |
