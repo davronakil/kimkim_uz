@@ -19,6 +19,10 @@ See [README.md](./README.md) and [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for 
 - Add or update docs when behavior changes (especially auth, webhooks, secrets)
 - Run `npm run lint` before opening a PR
 
+## License
+
+By contributing, you agree that your contributions are licensed under the [MIT License](./LICENSE).
+
 ## Security
 
 Report vulnerabilities privately per [SECURITY.md](./SECURITY.md).
