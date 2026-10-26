@@ -31,7 +31,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     name: "KimKim — Event planning",
     short_name: "KimKim",
     description:
-      "Plan weddings, gap circles, soccer, hunting trips, fishing, camping, and any gathering. Split expenses, keep shared event photos, stay connected.",
+      "Free, open-source event planning: invites, RSVPs, shared photos, and expenses — with Telegram. English, Oʻzbek, and Русский.",
     start_url: `/${locale}/events`,
     scope: "/",
     display: "standalone",

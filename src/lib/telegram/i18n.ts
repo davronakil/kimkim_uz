@@ -48,7 +48,7 @@ const messages = {
     langUsage: "Choose a language below, or type /lang en, /lang uz, or /lang ru",
     chooseLanguage: "Choose your language:",
     createEventBtn: "Create event",
-    createAskTitle: "What's the event called? (e.g. Gap circle, Wedding, Choyxona night)",
+    createAskTitle: "What's the event called? (e.g. Wedding, Birthday, Choyxona night)",
     createAskDatetime:
       "When does it start?\n\nExamples:\n• <code>tomorrow 19:00</code>\n• <code>15.06.2026 19:00</code>\n• <code>2026-06-15 19:00</code>",
     createAskDescription:

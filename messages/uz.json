@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "KimKim",
-    "tagline": "Kim, Qayerda, Qachon + Hisob Kitob",
+    "tagline": "Kim keladi, qayerda, pul kimda.",
     "loading": "Sabr...",
     "save": "Saqlash",
     "cancel": "Bekor",
@@ -22,22 +22,23 @@
     "hint": "Bu havola faqat bir marta ishlaydi. Havola ko'rinishi va ilova ichidagi brauzerlar uni sarflab yubormasligi uchun bosishingizni kutamiz."
   },
   "meta": {
-    "title": "KimKim — Kim, Qayerda, Qachon?",
-    "description": "To'y, gap, futbol, ovga chiqish, baliq ovi va kemping. Kim keladi, qayerda uchrashamiz, umumiy rasmlar va hisob-kitob — hammasi bir joyda, Telegram bilan.",
-    "ogTitle": "KimKim — Kim, Qayerda, Qachon?",
-    "keywords": "yig'ilish, to'y, gap, tug'ilgan kun, choyxona, futbol, ov, ovga chiqish, baliq ovi, kemping, piknik, Telegram, O'zbekiston, umumiy tadbir rasmlari, hisob kitob, biznes katalog"
+    "title": "KimKim — bepul yig'ilish, taklif, rasmlar va hisob-kitob",
+    "description": "Do'stlar va oila bilan uchrashuvni rejalashtiring: taklif, kim keladi, umumiy rasmlar va kim qancha to'ladi. Butunlay bepul va ochiq kodli. Telegram orqali — o'zbek, ingliz, rus.",
+    "ogTitle": "KimKim — bepul, ochiq kodli yig'ilishlar",
+    "keywords": "yig'ilish, bepul, ochiq kod, to'y, gap, tug'ilgan kun, choyxona, futbol, baliq ovi, kemping, piknik, Telegram, O'zbekiston, umumiy rasmlar, hisob kitob"
   },
   "home": {
-    "heroTitle": "KimKim, Qayerda, Qachon?",
-    "heroSubtitle": "To'y va gapdan tortib, ov, baliq ovi, kemping yoki futbolgacha. Bitta taklif: kim keladi, rasmlar va kim qancha to'ladi.",
-    "heroNote": "Bepul boshlanadi. Parol kerak emas. Hammasi Telegramda.",
-    "heroTitleSignedIn": "Keyingi yig'ilishga tayyormisiz?",
-    "heroSubtitleSignedIn": "To'y, baliq ovi, futbol yoki tinch choyxona. Mehmonlar, yangiliklar, xarajatlar va umumiy rasmlar — hammasi bir joyda.",
+    "heroTitle": "Kim keladi?\nQayerda, qancha?",
+    "heroSubtitle": "Bitta taklif: kim keladi, qayerda uchrashasiz, keyin rasmlar va hisob-kitob — Telegram yonida.",
+    "heroNote": "Butunlay bepul va ochiq kodli. Parol yo'q — faqat Telegram.",
+    "openSourceLink": "Kodni GitHubda ko'rish",
+    "heroTitleSignedIn": "Keyingisi nima?",
+    "heroSubtitleSignedIn": "Sanani qo'ying, odamlarni chaqiring, rasmlarni birga saqlang va hisobni noqulayliksiz yoping.",
     "ctaSignedOut": "Telegram orqali boshlash",
     "ctaSignedIn": "Yig'ilishlarim",
     "catalogCta": "Katalogni ko'rish",
-    "catalogTitle": "Atrofdagi ishonchli mahalliy bizneslar katalogi",
-    "catalogBody": "Jamiyat ishonadigan mahalliy bizneslar katalogi. Bilgan joylaringizni tavsiya qiling va atrofingizdagi istalgan toifadagi tekshirilgan bizneslarni toping — ro'yxatda yoki xaritada.",
+    "catalogTitle": "Atrofdagi ishonchli mahalliy bizneslar",
+    "catalogBody": "Jamiyat ishonadigan mahalliy bizneslar katalogi. Bilgan joylaringizni tavsiya qiling va yaqin atrofdagilarni toping — ro'yxatda yoki xaritada.",
     "catalogBrowse": "Bizneslarni ko'rish",
     "catalogListBusiness": "Biznes qo'shish",
     "featuredTitle": "Jamiyat ishonadi",
@@ -63,19 +64,19 @@
     },
     "features": {
       "eventsTitle": "Bitta aniq reja",
-      "eventsBody": "Sana, uchrashuv joyi, mehmonlar va to'lov tartibi — bir marta yozasiz, taklif olganlarning hammasi ko'radi.",
+      "eventsBody": "Sana, joy, mehmonlar va to'lov tartibi — bir marta yozasiz, taklif olganlarning hammasi ko'radi.",
       "photosTitle": "Umumiy tadbir rasmlari",
-      "photosBody": "To'y, o'yin yoki sayohatdan keyin mehmonlar rasm qo'shadi va boshqalarnikini bir bosishda saqlaydi.",
+      "photosBody": "Keyin mehmonlar sahifadan yoki Telegramdan rasm qo'shadi va boshqalarnikini bir bosishda saqlaydi.",
       "commentsTitle": "Gap chatda yo'qolmaydi",
-      "commentsBody": "Uchrashuv joyi, anjom va kim nima olib keladi — bitta muhokamada, guruh chatining tagida emas.",
-      "expensesTitle": "Hisob noqulayliksiz",
-      "expensesBody": "Kim to'laganini yozing, qayiq, maydon yoki dasturxon haqini bo'ling va balansni oldindan ko'ring.",
-      "telegramTitle": "Telegramning o'zida",
-      "telegramBody": "Taklif, eslatma va yangiliklar odamlaringiz allaqachon gaplashadigan joyga tushadi. Qo'shilish — bir bosish."
+      "commentsBody": "Uchrashuv joyi, nima olib kelish va oxirgi o'zgarishlar — bitta muhokamada, guruh chatining tagida emas.",
+      "expensesTitle": "Hisob tinch yopiladi",
+      "expensesBody": "Kim to'laganini yozing, dasturxon yoki maydon haqini bo'ling — kim qancha qarzdorligi oldindan ko'rinadi.",
+      "telegramTitle": "Telegram bilan ishlaydi",
+      "telegramBody": "Taklif, eslatma va yangiliklar odamlaringiz gaplashadigan joyga tushadi. Qo'shilish — bir bosish."
     },
-    "closingTitle": "Keyingi yig'ilish shu yerdan boshlanadi",
-    "closingBody": "To'y, gap, ovga chiqish yoki baliq ovi — KimKimni oching va taklif yuboring.",
-    "useCasesLabel": "Shu kabi yig'ilishlar uchun"
+    "closingTitle": "Hammaga bepul",
+    "closingBody": "KimKim butunlay bepul va ochiq kodli. Telegram orqali kiring va taklif yuboring.",
+    "useCasesLabel": "Masalan"
   },
   "auth": {
     "title": "Telegram bilan kirish",
@@ -277,9 +278,10 @@
       "title": "Nomi",
       "titlePlaceholder": "Masalan: To'y, Gap, Ovga chiqish, Baliq ovi...",
       "description": "Qisqacha",
-      "descriptionPlaceholder": "Mehmonlar, joy yoki gap qoidalari — hammaga kerakli narsa.",
+      "descriptionPlaceholder": "Mehmonlar, joy yoki nima olib kelish — hammaga kerakli narsa.",
+      "templatesShow": "[namunalarni ko'rish]",
       "templatesTitle": "Tayyor namunadan boshlang",
-      "templatesSubtitle": "Kerakli turini tanlang — KimKim asosiy maydonlarni o'zi to'ldiradi.",
+      "templatesSubtitle": "Ixtiyoriy. Kerakli turini tanlang — KimKim asosiy maydonlarni o'zi to'ldiradi.",
       "templates": {
         "gap": {
           "title": "Gap",
@@ -312,7 +314,7 @@
           "description": "Futbol. Maydon yoki bron haqini bo'ling, o'zingiz bilan kim kelishini yozing va ro'yxatni 14 kishida ushlang — o'yin to'la, lekin siqilmagan."
         }
       },
-      "templatesDismiss": "Namunalarni yopish",
+      "templatesDismiss": "[namunalarni yopish]",
       "maxGuests": "Mehmon chegarasi",
       "maxGuestsPlaceholder": "Chegara yo'q",
       "maxGuestsHint": "Ixtiyoriy. Kelayotgan hammani hisoblaydi, +1 lar bilan. Bo'sh qoldirsangiz — chegara yo'q. Futbol odatda 12–14 kishi.",
@@ -566,7 +568,8 @@
     "browserDismiss": "Keyinroq"
   },
   "footer": {
-    "madeIn": "© 2026 KimKim.Uz - Barcha huquqlar himoyalangan."
+    "madeIn": "KimKim butunlay bepul va ochiq kodli.",
+    "github": "GitHub"
   },
   "discover": {
     "title": "Tadbirlar",
