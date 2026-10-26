@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { businessCategories } from "@/lib/catalog/categories";
+import { safeHttpUrl } from "@/lib/url-safety";
 
 export const businessListingFormSchema = z.object({
   name: z.string().min(2).max(120),
@@ -7,7 +8,14 @@ export const businessListingFormSchema = z.object({
   category: z.enum(businessCategories),
   phone: z.string().max(40).optional(),
   telegram_username: z.string().max(64).optional(),
-  website_url: z.string().max(500).optional(),
+  website_url: z
+    .string()
+    .max(500)
+    .optional()
+    .refine((value) => !value?.trim() || Boolean(safeHttpUrl(value)), {
+      message: "Invalid website URL",
+    })
+    .transform((value) => (value?.trim() ? safeHttpUrl(value) ?? undefined : undefined)),
   location_name: z.string().optional(),
   location_address: z.string().optional(),
   location_lat: z.number().optional(),

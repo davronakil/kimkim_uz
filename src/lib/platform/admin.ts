@@ -1,16 +1,38 @@
-import { getDb } from "@/lib/cloudflare";
+import { getDb, getEnv } from "@/lib/cloudflare";
 import type { User } from "@/types";
 
+/** Legacy username pin — prefer SUPERADMIN_TELEGRAM_IDS in production. */
 export const SUPERADMIN_TELEGRAM_USERNAME = "davron_tx";
 
 export type PlatformAdminRole = "admin" | "superadmin";
+
+function parseSuperadminTelegramIds(raw: string | undefined): Set<string> {
+  if (!raw?.trim()) return new Set();
+  return new Set(
+    raw
+      .split(",")
+      .map((part) => part.trim())
+      .filter(Boolean),
+  );
+}
 
 function usernameMatchesSuperadmin(username: string | null | undefined) {
   return username?.toLowerCase() === SUPERADMIN_TELEGRAM_USERNAME.toLowerCase();
 }
 
-export async function ensureSuperadminRecord(user: Pick<User, "id" | "username">) {
-  if (!usernameMatchesSuperadmin(user.username)) return;
+type AdminUser = Pick<User, "id" | "username"> & { telegram_id?: string | null };
+
+async function isConfiguredSuperadmin(user: AdminUser) {
+  const env = await getEnv();
+  const ids = parseSuperadminTelegramIds(env.SUPERADMIN_TELEGRAM_IDS);
+  if (ids.size > 0) {
+    return Boolean(user.telegram_id && ids.has(user.telegram_id));
+  }
+  return usernameMatchesSuperadmin(user.username);
+}
+
+export async function ensureSuperadminRecord(user: AdminUser) {
+  if (!(await isConfiguredSuperadmin(user))) return;
 
   const db = await getDb();
   await db
@@ -23,12 +45,10 @@ export async function ensureSuperadminRecord(user: Pick<User, "id" | "username">
     .run();
 }
 
-export async function getPlatformAdminRole(
-  user: Pick<User, "id" | "username">,
-): Promise<PlatformAdminRole | null> {
+export async function getPlatformAdminRole(user: AdminUser): Promise<PlatformAdminRole | null> {
   await ensureSuperadminRecord(user);
 
-  if (usernameMatchesSuperadmin(user.username)) {
+  if (await isConfiguredSuperadmin(user)) {
     return "superadmin";
   }
 
@@ -41,15 +61,15 @@ export async function getPlatformAdminRole(
   return row?.role ?? null;
 }
 
-export async function isPlatformAdmin(user: Pick<User, "id" | "username">) {
+export async function isPlatformAdmin(user: AdminUser) {
   return (await getPlatformAdminRole(user)) !== null;
 }
 
-export async function isSuperadmin(user: Pick<User, "id" | "username">) {
+export async function isSuperadmin(user: AdminUser) {
   return (await getPlatformAdminRole(user)) === "superadmin";
 }
 
-export async function requirePlatformAdmin(user: Pick<User, "id" | "username">) {
+export async function requirePlatformAdmin(user: AdminUser) {
   const role = await getPlatformAdminRole(user);
   if (!role) {
     throw new Error("Forbidden");
@@ -57,7 +77,7 @@ export async function requirePlatformAdmin(user: Pick<User, "id" | "username">) 
   return role;
 }
 
-export async function requireSuperadmin(user: Pick<User, "id" | "username">) {
+export async function requireSuperadmin(user: AdminUser) {
   const role = await requirePlatformAdmin(user);
   if (role !== "superadmin") {
     throw new Error("Forbidden");

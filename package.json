@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:telegram-startup": "node --test tests/telegram-startup.test.mjs",
+    "test:security": "node --test tests/security-hardening.test.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",

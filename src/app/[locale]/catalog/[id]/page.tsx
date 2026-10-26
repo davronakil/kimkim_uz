@@ -21,6 +21,7 @@ import { JsonLd } from "@/lib/seo";
 import { buildAppUrl } from "@/lib/telegram/bot";
 import { displayName } from "@/lib/utils";
 import { isPlatformAdmin } from "@/lib/platform/admin";
+import { safeHttpUrl } from "@/lib/url-safety";
 
 function websiteHost(url: string) {
   try {
@@ -137,7 +138,8 @@ export default async function CatalogDetailPage({
         : null;
 
   const telegramHandle = listing.telegram_username?.replace(/^@/, "");
-  const hasContacts = Boolean(listing.phone || telegramHandle || listing.website_url || mapsUrl);
+  const websiteUrl = safeHttpUrl(listing.website_url);
+  const hasContacts = Boolean(listing.phone || telegramHandle || websiteUrl || mapsUrl);
   const showAside = hasContacts || listing.status === "approved";
   const listedBy = displayName(listing);
 
@@ -244,11 +246,11 @@ export default async function CatalogDetailPage({
                       external
                     />
                   ) : null}
-                  {listing.website_url ? (
+                  {websiteUrl ? (
                     <ContactRow
-                      href={listing.website_url}
+                      href={websiteUrl}
                       icon={ExternalLink}
-                      label={websiteHost(listing.website_url)}
+                      label={websiteHost(websiteUrl)}
                       external
                     />
                   ) : null}

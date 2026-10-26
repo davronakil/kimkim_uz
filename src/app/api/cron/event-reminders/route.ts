@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEnv, runInBackground } from "@/lib/cloudflare";
+import { timingSafeEqualString } from "@/lib/security/timing-safe";
 import { processEventDigests, processEventReminders } from "@/lib/telegram/notifications";
 import { registerBotCommands } from "@/lib/telegram/register-commands";
 
@@ -12,7 +13,8 @@ export async function GET(request: NextRequest) {
   }
 
   const auth = request.headers.get("authorization");
-  if (auth !== `Bearer ${secret}`) {
+  const expected = `Bearer ${secret}`;
+  if (!auth || !timingSafeEqualString(auth, expected)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

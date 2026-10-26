@@ -249,16 +249,26 @@ test('/start resets an unfinished event flow and sends the welcome message', asy
 });
 
 test('webhook allows retries for failed plain /start, without replaying expense writes', async () => {
+  const webhookSecret = 'test-webhook-secret';
   const { POST } = load('src/app/api/telegram/webhook/route.ts', {
     'next/server': { NextResponse: { json: (body, init) => Response.json(body, init) } },
-    '@/lib/cloudflare': {}, '@/lib/telegram/register-commands': {},
+    '@/lib/cloudflare': { getEnv: async () => ({ TELEGRAM_WEBHOOK_SECRET: webhookSecret }) },
+    '@/lib/security/timing-safe': {
+      timingSafeEqualString: (a, b) => a === b,
+    },
+    '@/lib/telegram/register-commands': {},
     '@/lib/telegram/handler': { handleTelegramUpdate: async () => { throw new Error('temporary failure'); } },
   }, { console: { error: () => {} } });
-  const send = (text) => POST({ json: async () => ({
-    update_id: 1, message: { from: { id: 123 }, chat: { id: 123, type: 'private' }, text },
-  }) });
-  assert.equal((await send('/start')).status, 503);
-  assert.equal((await send('/start@kimkimuzbot')).status, 503);
-  assert.equal((await send('/expense')).status, 200);
-  assert.equal((await send('/start album_example')).status, 200);
+  const send = (text, headers = {}) => POST({
+    headers: { get: (name) => headers[name.toLowerCase()] ?? null },
+    json: async () => ({
+      update_id: 1, message: { from: { id: 123 }, chat: { id: 123, type: 'private' }, text },
+    }),
+  });
+  assert.equal((await send('/start')).status, 401);
+  const authHeaders = { 'x-telegram-bot-api-secret-token': webhookSecret };
+  assert.equal((await send('/start', authHeaders)).status, 503);
+  assert.equal((await send('/start@kimkimuzbot', authHeaders)).status, 503);
+  assert.equal((await send('/expense', authHeaders)).status, 200);
+  assert.equal((await send('/start album_example', authHeaders)).status, 200);
 });

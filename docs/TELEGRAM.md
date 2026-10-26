@@ -21,7 +21,14 @@ Sign-in no longer uses Telegram’s Login Widget (the button that asks for a pho
 
 - **URL:** `https://kimkim.uz/api/telegram/webhook`
 - **Handler:** `src/lib/telegram/handler.ts`
-- Set once: `https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://kimkim.uz/api/telegram/webhook`
+- **Auth:** Telegram sends `X-Telegram-Bot-Api-Secret-Token`; the Worker compares it to `TELEGRAM_WEBHOOK_SECRET` (fail closed if unset/mismatch).
+- Set once (include the same secret as Wrangler):
+
+```bash
+curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook" \
+  --data-urlencode "url=https://kimkim.uz/api/telegram/webhook" \
+  --data-urlencode "secret_token=${TELEGRAM_WEBHOOK_SECRET}"
+```
 
 All bot text goes out through `sendTelegramMessage` (`src/lib/telegram/bot.ts`), which disables
 link previews. Bot replies carry their own buttons, so a preview card adds nothing but a remote

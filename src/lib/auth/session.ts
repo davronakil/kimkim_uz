@@ -17,7 +17,12 @@ export type SessionCookieOptions = {
   maxAge: number;
 };
 
+const MIN_SESSION_SECRET_LENGTH = 32;
+
 function getSecretKey(secret: string) {
+  if (!secret || secret.length < MIN_SESSION_SECRET_LENGTH) {
+    throw new Error("SESSION_SECRET must be at least 32 characters");
+  }
   return new TextEncoder().encode(secret);
 }
 

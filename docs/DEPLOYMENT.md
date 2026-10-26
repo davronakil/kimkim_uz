@@ -8,16 +8,18 @@ Production target: **https://kimkim.uz** on Cloudflare Workers via OpenNext.
 2. **R2** — `npx wrangler r2 bucket create kimkim-media`
 3. **Secrets** (never commit):
    ```bash
-   npx wrangler secret put SESSION_SECRET
+   npx wrangler secret put SESSION_SECRET          # ≥32 random chars
    npx wrangler secret put TELEGRAM_BOT_TOKEN
+   npx wrangler secret put TELEGRAM_WEBHOOK_SECRET # also pass as setWebhook secret_token
    npx wrangler secret put CRON_SECRET
    npx wrangler secret put STRIPE_SECRET_KEY      # if using paid events
    npx wrangler secret put STRIPE_WEBHOOK_SECRET  # if using paid events
+   # optional: npx wrangler secret put SUPERADMIN_TELEGRAM_IDS
    ```
 4. **Plain-text Worker variables** (dashboard → Settings → Variables):
    - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
 5. **DNS** — zone `kimkim.uz` on Cloudflare; routes in `wrangler.jsonc`
-6. **Telegram** — BotFather `/setdomain` → `kimkim.uz`; set webhook (see [TELEGRAM.md](./TELEGRAM.md))
+6. **Telegram** — BotFather `/setdomain` → `kimkim.uz`; set webhook **with** `secret_token` (see [TELEGRAM.md](./TELEGRAM.md))
 7. **Stripe** — webhook endpoint `https://kimkim.uz/api/stripe/webhook` (paid events + catalog slot purchases)
 
 ## Every release
@@ -32,9 +34,11 @@ npm run deploy
 
 | Variable | Where | Required |
 |----------|-------|----------|
-| `SESSION_SECRET` | Wrangler secret | Yes |
+| `SESSION_SECRET` | Wrangler secret | Yes (≥32 chars) |
 | `TELEGRAM_BOT_TOKEN` | Wrangler secret | Yes |
+| `TELEGRAM_WEBHOOK_SECRET` | Wrangler secret | Yes (must match Telegram `secret_token`) |
 | `CRON_SECRET` | Wrangler secret | Yes (reminders) |
+| `SUPERADMIN_TELEGRAM_IDS` | Wrangler secret | Optional; comma-separated Telegram user IDs |
 | `STRIPE_SECRET_KEY` | Wrangler secret | Paid events + catalog extra slots |
 | `STRIPE_WEBHOOK_SECRET` | Wrangler secret | Paid events + catalog extra slots |
 | `BUSINESS_EXTRA_SLOT_PRICE_CENTS` | Wrangler secret / `.dev.vars` | Optional catalog slot price (default 500000) |

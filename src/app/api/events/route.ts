@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
-import { getDb, getMediaBucket } from "@/lib/cloudflare";
+import { getDb } from "@/lib/cloudflare";
 import { listUserEvents } from "@/lib/db/queries";
 import { createEventRecord } from "@/lib/events/create";
 import {
@@ -8,6 +8,7 @@ import {
   resolveEventTimestamps,
   resolveTicketPriceCents,
 } from "@/lib/events/form";
+import { putCoverImage } from "@/lib/media/cover-upload";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -62,16 +63,15 @@ export async function POST(request: NextRequest) {
 
   const cover = formData.get("cover_image");
   if (cover instanceof File && cover.size > 0) {
-    const media = await getMediaBucket();
-    const coverImageKey = `events/${eventId}/${cover.name}`;
-    await media.put(coverImageKey, cover.stream(), {
-      httpMetadata: { contentType: cover.type || "image/jpeg" },
-    });
+    const uploaded = await putCoverImage("events", eventId, cover);
+    if (!uploaded.ok) {
+      return NextResponse.json({ error: uploaded.error }, { status: 400 });
+    }
 
     const db = await getDb();
     await db
       .prepare("UPDATE events SET cover_image_key = ? WHERE id = ?")
-      .bind(coverImageKey, eventId)
+      .bind(uploaded.key, eventId)
       .run();
   }
 

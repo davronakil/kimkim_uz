@@ -39,6 +39,8 @@ export async function downloadTelegramFile(fileId: string): Promise<ArrayBuffer 
   const path = meta.result?.file_path;
   if (!meta.ok || !path) return null;
   if ((meta.result?.file_size ?? 0) > 20 * 1024 * 1024) return null;
+  // Keep host fixed to api.telegram.org; reject path traversal / odd characters.
+  if (path.includes("..") || !/^[A-Za-z0-9_./-]+$/.test(path)) return null;
 
   const fileResponse = await fetch(`https://api.telegram.org/file/bot${token}/${path}`);
   if (!fileResponse.ok) return null;

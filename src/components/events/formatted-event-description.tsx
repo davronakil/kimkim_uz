@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { safeHttpUrl } from "@/lib/url-safety";
 
 type FormattedEventDescriptionProps = {
   text: string;
@@ -21,19 +22,7 @@ const bareUrlPattern = /(?:https?:\/\/|www\.)[^\s<]+/i;
 const trailingPunctuationPattern = /[),.!?;:]+$/;
 
 function safeHref(rawHref: string) {
-  const normalizedHref = rawHref.startsWith("www.") ? `https://${rawHref}` : rawHref;
-
-  try {
-    const parsed = new URL(normalizedHref);
-
-    if (parsed.protocol === "http:" || parsed.protocol === "https:" || parsed.protocol === "mailto:") {
-      return normalizedHref;
-    }
-  } catch {
-    return null;
-  }
-
-  return null;
+  return safeHttpUrl(rawHref, { allowMailto: true });
 }
 
 function markdownLinkToken(text: string): InlineToken | null {

@@ -38,10 +38,11 @@ Bot strings are separate: `src/lib/telegram/i18n.ts`.
 - Expense creation: `src/lib/expense/create.ts`
 - Telegram handler: `src/lib/telegram/handler.ts`
 - OG images: cover → map → generated card (`src/lib/og/`)
-- Platform admin / superadmin: `src/lib/platform/admin.ts` (`davron_tx`)
+- Platform admin / superadmin: `src/lib/platform/admin.ts` — prefer `SUPERADMIN_TELEGRAM_IDS`; legacy username pin `davron_tx` if unset
 - Admin UI: `src/components/admin/admin-workspace.tsx`
+- Telegram webhook POST requires `TELEGRAM_WEBHOOK_SECRET` (`X-Telegram-Bot-Api-Secret-Token`)
 - One-time links (Stripe return URLs, bot login `?verify=`, anything redeemed by opening a URL): redeem via POST behind `ConfirmContinueCard` (`src/components/ui/confirm-continue-card.tsx`) — never on page load, so link previews and in-app browsers can't spend them
-- Web sign-in is **Continue in Telegram** only (`src/components/auth/telegram-login-button.tsx`) — `t.me/bot?start=login_…` + `login_challenges`. Mini App auto-login is `TelegramWebAppBootstrap`. Do not use the Telegram Login Widget.
+- Web sign-in is **Continue in Telegram** only (`src/components/auth/telegram-login-button.tsx`) — `t.me/bot?start=login_…` + `login_challenges`. Mini App auto-login is `TelegramWebAppBootstrap`. Do not use the Telegram Login Widget (`POST /api/auth/telegram` removed; Mini App uses `PUT`).
 
 ## Public pages
 

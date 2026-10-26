@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEnv } from "@/lib/cloudflare";
+import { timingSafeEqualString } from "@/lib/security/timing-safe";
 import { handleTelegramUpdate } from "@/lib/telegram/handler";
 import { registerBotCommands } from "@/lib/telegram/register-commands";
 import type { TelegramUpdate } from "@/lib/telegram/types";
 
 const SLOW_UPDATE_MS = 3000;
+const SECRET_HEADER = "x-telegram-bot-api-secret-token";
 
 function describeUpdate(update: TelegramUpdate) {
   if (update.callback_query) return "callback_query";
@@ -13,7 +15,19 @@ function describeUpdate(update: TelegramUpdate) {
   return "message";
 }
 
+function authorizeWebhook(request: NextRequest, secret: string | undefined) {
+  if (!secret) return false;
+  const provided = request.headers.get(SECRET_HEADER);
+  if (!provided) return false;
+  return timingSafeEqualString(provided, secret);
+}
+
 export async function POST(request: NextRequest) {
+  const env = await getEnv();
+  if (!authorizeWebhook(request, env.TELEGRAM_WEBHOOK_SECRET)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   let update: TelegramUpdate;
   try {
     update = await request.json();
@@ -58,7 +72,7 @@ export async function GET(request: NextRequest) {
     const auth = request.headers.get("authorization");
     const env = await getEnv();
     const expected = env.CRON_SECRET ? `Bearer ${env.CRON_SECRET}` : null;
-    if (!expected || auth !== expected) {
+    if (!expected || !auth || !timingSafeEqualString(auth, expected)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

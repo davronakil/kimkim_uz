@@ -19,7 +19,8 @@ export function verifyStripeWebhookSignature(
   if (!timestamp || !signature) return false;
 
   const age = Math.floor(Date.now() / 1000) - Number(timestamp);
-  if (Number.isNaN(age) || age > toleranceSeconds) return false;
+  // Reject far-future timestamps; allow a small clock-skew window.
+  if (Number.isNaN(age) || age < -60 || age > toleranceSeconds) return false;
 
   const signedPayload = `${timestamp}.${payload}`;
   const expected = createHmac("sha256", secret).update(signedPayload, "utf8").digest("hex");
