@@ -30,6 +30,15 @@ curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook" \
   --data-urlencode "secret_token=${TELEGRAM_WEBHOOK_SECRET}"
 ```
 
+Ops can also resync from the Worker itself (uses Wrangler secrets; no bot token on the laptop):
+
+```bash
+curl -s -H "Authorization: Bearer ${TELEGRAM_WEBHOOK_SECRET}" \
+  "https://kimkim.uz/api/telegram/webhook?setup=webhook&drop_pending=1"
+```
+
+(`CRON_SECRET` also works as the bearer.)
+
 All bot text goes out through `sendTelegramMessage` (`src/lib/telegram/bot.ts`), which disables
 link previews. Bot replies carry their own buttons, so a preview card adds nothing but a remote
 image fetch and an extra layout pass on the client. Pass `link_preview: true` if a message ever

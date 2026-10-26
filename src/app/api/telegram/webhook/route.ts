@@ -66,14 +66,64 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ ok: true });
 }
 
+function authorizeSetup(auth: string | null, env: Awaited<ReturnType<typeof getEnv>>) {
+  if (!auth?.startsWith("Bearer ")) return false;
+  const token = auth.slice("Bearer ".length);
+  const candidates = [env.CRON_SECRET, env.TELEGRAM_WEBHOOK_SECRET].filter(
+    (value): value is string => Boolean(value),
+  );
+  return candidates.some((expected) => timingSafeEqualString(token, expected));
+}
+
+async function telegramApi(botToken: string, method: string, body?: Record<string, unknown>) {
+  const response = await fetch(`https://api.telegram.org/bot${botToken}/${method}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  return (await response.json()) as {
+    ok: boolean;
+    description?: string;
+    result?: Record<string, unknown>;
+  };
+}
+
 export async function GET(request: NextRequest) {
   const setup = request.nextUrl.searchParams.get("setup");
-  if (setup === "commands") {
-    const auth = request.headers.get("authorization");
+  if (setup === "commands" || setup === "webhook") {
     const env = await getEnv();
-    const expected = env.CRON_SECRET ? `Bearer ${env.CRON_SECRET}` : null;
-    if (!expected || !auth || !timingSafeEqualString(auth, expected)) {
+    if (!authorizeSetup(request.headers.get("authorization"), env)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (setup === "webhook") {
+      const secret = env.TELEGRAM_WEBHOOK_SECRET;
+      const botToken = env.TELEGRAM_BOT_TOKEN;
+      if (!secret || !botToken) {
+        return NextResponse.json(
+          { error: "TELEGRAM_WEBHOOK_SECRET or TELEGRAM_BOT_TOKEN missing" },
+          { status: 503 },
+        );
+      }
+
+      const dropPending = request.nextUrl.searchParams.get("drop_pending") === "1";
+      try {
+        const setResult = await telegramApi(botToken, "setWebhook", {
+          url: "https://kimkim.uz/api/telegram/webhook",
+          secret_token: secret,
+          allowed_updates: ["message", "callback_query"],
+          drop_pending_updates: dropPending,
+        });
+        const info = await telegramApi(botToken, "getWebhookInfo");
+        return NextResponse.json({
+          ok: Boolean(setResult.ok && info.ok),
+          setWebhook: setResult,
+          webhookInfo: info.result ?? null,
+        });
+      } catch (error) {
+        console.error("Telegram webhook resync failed:", error);
+        return NextResponse.json({ error: "Webhook resync failed" }, { status: 500 });
+      }
     }
 
     const force = request.nextUrl.searchParams.get("force") === "1";
