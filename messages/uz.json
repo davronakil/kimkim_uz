@@ -72,7 +72,9 @@
       "expensesTitle": "Hisob tinch yopiladi",
       "expensesBody": "Kim to'laganini yozing, dasturxon yoki maydon haqini bo'ling — kim qancha qarzdorligi oldindan ko'rinadi.",
       "telegramTitle": "Telegram bilan ishlaydi",
-      "telegramBody": "Taklif, eslatma va yangiliklar odamlaringiz gaplashadigan joyga tushadi. Qo'shilish — bir bosish."
+      "telegramBody": "Taklif, eslatma va yangiliklar odamlaringiz gaplashadigan joyga tushadi. Qo'shilish — bir bosish.",
+      "catalogTitle": "Ishonchli joylar",
+      "catalogBody": "Jamiyat tavsiya qilgan bizneslar — joy toping, keyin tadbirni shu atrofda rejalang."
     },
     "closingTitle": "Hammaga bepul",
     "closingBody": "KimKim butunlay bepul va ochiq kodli. Telegram orqali kiring va taklif yuboring.",

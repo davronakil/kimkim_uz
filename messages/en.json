@@ -72,7 +72,9 @@
       "expensesTitle": "Split the bill calmly",
       "expensesBody": "Log who paid, split dinner or the pitch, and see who owes what before anyone has to ask.",
       "telegramTitle": "Works with Telegram",
-      "telegramBody": "Invites, reminders, and updates land where your people already talk. Joining is one tap."
+      "telegramBody": "Invites, reminders, and updates land where your people already talk. Joining is one tap.",
+      "catalogTitle": "Trusted local spots",
+      "catalogBody": "Businesses your community vouches for — find a place, then plan the event around it."
     },
     "closingTitle": "Free for everyone",
     "closingBody": "KimKim is completely free and open source. Sign in with Telegram and send the invite.",
