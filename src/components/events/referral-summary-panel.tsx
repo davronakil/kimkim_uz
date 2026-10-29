@@ -4,7 +4,7 @@ import { UsersRound } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { displayName } from "@/lib/utils";
-import type { EventMember } from "@/types";
+import type { PublicEventMember } from "@/types";
 
 type ReferralSummary = {
   referrerId: string;
@@ -12,7 +12,7 @@ type ReferralSummary = {
   count: number;
 };
 
-function referrerName(member: EventMember) {
+function referrerName(member: PublicEventMember) {
   const name = [member.referrer_first_name, member.referrer_last_name]
     .filter(Boolean)
     .join(" ")
@@ -20,7 +20,7 @@ function referrerName(member: EventMember) {
   return name || (member.referrer_username ? `@${member.referrer_username}` : null);
 }
 
-export function ReferralSummaryPanel({ members }: { members: EventMember[] }) {
+export function ReferralSummaryPanel({ members }: { members: PublicEventMember[] }) {
   const t = useTranslations("events.referrals");
   const summaries = useMemo(() => {
     const byReferrer = new Map<string, ReferralSummary>();

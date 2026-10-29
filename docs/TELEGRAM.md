@@ -70,6 +70,7 @@ Available in **English**, **Oʻzbek**, and **Русский** (Telegram menu fol
 | `/create` | Guided event flow: title → date → description → location |
 | `/expense` | Log an expense (equal split among members) |
 | `/events` | Upcoming events with links |
+| `/balance` | What you owe / are owed per event (aliases `/owe`, `/qarz`). USD debts list the payee's methods: Venmo and Cash App as URL buttons with the amount, Zelle and Apple Cash as copyable text |
 | `/album` | Add photos to an event, or receive everyone else's |
 | `/help` | Command reference |
 | `/cancel` | Stop current flow |

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import type { EventMember, EventPaymentMode, EventPaymentSummary } from "@/types";
+import type { PublicEventMember, EventPaymentMode, EventPaymentSummary } from "@/types";
 import { displayName, formatMoney } from "@/lib/utils";
 
 export function MemberList({
@@ -25,7 +25,7 @@ export function MemberList({
   onChanged,
 }: {
   eventId: string;
-  members: EventMember[];
+  members: PublicEventMember[];
   paymentMode: EventPaymentMode;
   paymentSummaries: EventPaymentSummary[];
   ticketPriceCents: number | null;
@@ -46,7 +46,7 @@ export function MemberList({
   const paymentByUser = new Map(paymentSummaries.map((payment) => [payment.user_id, payment]));
   const showPaymentStatus = paymentMode === "paid";
 
-  function referrerName(member: EventMember) {
+  function referrerName(member: PublicEventMember) {
     if (!member.referrer_user_id) return null;
     const name = [member.referrer_first_name, member.referrer_last_name]
       .filter(Boolean)

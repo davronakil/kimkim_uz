@@ -13,6 +13,7 @@ import { EventCoverImage } from "@/components/events/event-cover-image";
 import { FormattedEventDescription } from "@/components/events/formatted-event-description";
 import { CommentThread } from "@/components/events/comment-thread";
 import { HostChecklistPanel } from "@/components/events/host-checklist-panel";
+import { HostTicketPaymentPanel } from "@/components/events/host-ticket-payment-panel";
 import { ExpensePanel } from "@/components/events/expense-panel";
 import { InvitePanel } from "@/components/events/invite-panel";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
@@ -35,19 +36,22 @@ import { displayName } from "@/lib/utils";
 import type {
   Comment,
   Event,
-  EventMember,
   EventPaymentSummary,
   EventRsvpStatus,
   Expense,
+  PublicEventMember,
   Settlement,
 } from "@/types";
+import { ticketPaidWithHandles, type PaymentMethod } from "@/lib/payments/methods";
+
 type EventPayload = {
   event: Event;
-  members: EventMember[];
+  members: PublicEventMember[];
   comments: Comment[];
   expenses: Expense[];
   settlements: Settlement[];
   paymentSummaries: EventPaymentSummary[];
+  paymentMethods?: Record<string, PaymentMethod[]>;
 };
 
 export function EventWorkspace({
@@ -112,6 +116,7 @@ export function EventWorkspace({
   }, [eventId, online]);
 
   const { event, members, comments, expenses, settlements, paymentSummaries } = data;
+  const paymentMethods = data.paymentMethods ?? {};
   const expensesEnabled = event.expenses_enabled;
   const visibleExpenses = expensesEnabled ? expenses : [];
   const visibleSettlements = expensesEnabled ? settlements : [];
@@ -121,6 +126,19 @@ export function EventWorkspace({
   const currentAdditionalGuestCount = currentMember?.additional_guest_count ?? 0;
   const creatorName = owner ? displayName(owner) : null;
   const goingCount = goingHeadcount(members);
+  const ticketUsesHandles = ticketPaidWithHandles(event);
+  const hostMethods = owner ? (paymentMethods[owner.id] ?? []) : [];
+  const viewerPaidTicket = paymentSummaries.some(
+    (payment) => payment.user_id === currentUserId && payment.status === "completed",
+  );
+  const showHostTicketPayment =
+    ticketUsesHandles &&
+    !canEdit &&
+    owner !== undefined &&
+    owner.id !== currentUserId &&
+    hostMethods.length > 0 &&
+    !viewerPaidTicket &&
+    currentRsvpStatus !== "declined";
 
   function renderGuests() {
     return (
@@ -163,6 +181,7 @@ export function EventWorkspace({
               comments={comments}
               expenses={visibleExpenses}
               paymentSummaries={paymentSummaries}
+              hasSavedPaymentMethods={ticketUsesHandles && hostMethods.length > 0}
             />
           ) : null}
           <ActivityTimelinePanel
@@ -193,7 +212,14 @@ export function EventWorkspace({
               locale={locale}
             />
           ) : null}
-          {canEdit && event.payment_mode === "paid" ? <PayoutMethodPanel /> : null}
+          {canEdit && event.payment_mode === "paid" ? (
+            <PayoutMethodPanel
+              usesSavedMethods={ticketUsesHandles}
+              hostMethods={hostMethods}
+              ticketPriceCents={event.ticket_price_cents}
+              eventTitle={event.title}
+            />
+          ) : null}
           {canEdit ? (
             <TransferOwnershipPanel
               eventId={eventId}
@@ -292,6 +318,17 @@ export function EventWorkspace({
 
         {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
 
+        {showHostTicketPayment ? (
+          <HostTicketPaymentPanel
+            hostName={displayName(owner)}
+            methods={hostMethods}
+            ticketPriceCents={event.ticket_price_cents}
+            ticketCurrency={event.ticket_currency}
+            eventTitle={event.title}
+            locale={locale}
+          />
+        ) : null}
+
         <RsvpStatusPanel
           eventId={eventId}
           initialStatus={currentRsvpStatus}
@@ -321,6 +358,9 @@ export function EventWorkspace({
               members={members}
               expenses={visibleExpenses}
               settlements={visibleSettlements}
+              paymentMethods={paymentMethods}
+              currentUserId={currentUserId}
+              eventTitle={event.title}
               locale={locale}
               currency={event.expense_currency ?? "UZS"}
               onAdded={load}

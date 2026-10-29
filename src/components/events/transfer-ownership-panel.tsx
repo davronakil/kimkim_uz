@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import type { EventMember } from "@/types";
+import type { PublicEventMember } from "@/types";
 import { displayName } from "@/lib/utils";
 
 export function TransferOwnershipPanel({
@@ -12,7 +12,7 @@ export function TransferOwnershipPanel({
   currentUserId,
 }: {
   eventId: string;
-  members: EventMember[];
+  members: PublicEventMember[];
   currentUserId: string;
 }) {
   const t = useTranslations("events");

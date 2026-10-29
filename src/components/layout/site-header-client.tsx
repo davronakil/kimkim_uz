@@ -1,6 +1,16 @@
 "use client";
 
-import { CalendarDays, CalendarPlus, LogOut, Menu, Plus, Shield, Store, X } from "lucide-react";
+import {
+  CalendarDays,
+  CalendarPlus,
+  LogOut,
+  Menu,
+  Plus,
+  Shield,
+  Store,
+  UserRound,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -137,21 +147,27 @@ export function SiteHeaderClient({
                   {t("createEvent")}
                 </Link>
                 <div className="flex items-center gap-2 rounded-full border border-zinc-200 py-1 pl-1 pr-3 dark:border-zinc-700">
-                  {user.photo_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={user.photo_url}
-                      alt=""
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 text-xs font-medium dark:bg-zinc-700">
-                      {user.first_name[0]}
+                  <Link
+                    href="/profile"
+                    className="flex min-w-0 items-center gap-2 rounded-full transition hover:opacity-80"
+                    title={t("profile")}
+                  >
+                    {user.photo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={user.photo_url}
+                        alt=""
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 text-xs font-medium dark:bg-zinc-700">
+                        {user.first_name[0]}
+                      </span>
+                    )}
+                    <span className="max-w-[140px] truncate text-sm text-zinc-600 dark:text-zinc-300">
+                      {displayName(user)}
                     </span>
-                  )}
-                  <span className="max-w-[140px] truncate text-sm text-zinc-600 dark:text-zinc-300">
-                    {displayName(user)}
-                  </span>
+                  </Link>
                   <button
                     type="button"
                     onClick={() => void signOut()}
@@ -260,6 +276,14 @@ export function SiteHeaderClient({
                   >
                     <CalendarPlus className="h-5 w-5 text-emerald-500" />
                     {t("myEvents")}
+                  </Link>
+                  <Link
+                    href="/profile"
+                    onClick={closeMenu}
+                    className="flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition hover:bg-zinc-100 active:bg-zinc-100 dark:hover:bg-zinc-900"
+                  >
+                    <UserRound className="h-5 w-5 text-emerald-500" />
+                    {t("profile")}
                   </Link>
                   {isAdmin ? (
                     <Link

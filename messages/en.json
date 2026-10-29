@@ -14,7 +14,8 @@
     "createEvent": "Create event",
     "myEvents": "My events",
     "noEvents": "No events yet. Create your first gathering and invite your people.",
-    "language": "Language"
+    "language": "Language",
+    "profile": "Profile"
   },
   "linkGate": {
     "continue": "Continue",
@@ -261,7 +262,11 @@
       "details": "Details",
       "detailsPlaceholder": "Add card number, phone number, bank details, or payout notes.",
       "notSet": "No payout preference saved yet.",
-      "updated": "Payout preference saved."
+      "updated": "Payout preference saved.",
+      "savedSubtitle": "Guests on this USD event see these methods from your profile, with the ticket price filled in.",
+      "editInProfile": "Edit payment methods in your profile",
+      "savedNudge": "On USD events, guests can pay you in one tap with Venmo, Cash App, Zelle or Apple Cash.",
+      "savedNudgeLink": "Add them to your profile"
     },
     "public": {
       "eyebrow": "Event preview",
@@ -463,7 +468,18 @@
       "owes": "{from} owes {to} {amount}",
       "copySettlement": "Copy balances",
       "settlementCopied": "Copied!",
-      "shareSettlement": "Share on Telegram"
+      "shareSettlement": "Share on Telegram",
+      "pay": {
+        "copy": "Copy {method}",
+        "open": "Pay with {method}",
+        "venmoHint": "Opens Venmo with the amount and a note filled in — check it and tap Pay.",
+        "cashAppHint": "Opens Cash App with the amount filled in.",
+        "zelleHint": "Copy, then send with Zelle in your bank's app.",
+        "appleCashHint": "Send the message, tap the underlined $ amount in iMessage, then pay with Apple Cash.",
+        "noMethods": "{name} hasn't added payment methods yet.",
+        "addYours": "Want to get paid faster?",
+        "addYoursLink": "Add Venmo, Cash App, Zelle or Apple Cash"
+      }
     },
     "invite": {
       "title": "Invite friends",
@@ -491,6 +507,11 @@
       "linkedHintTopic": "Joins, schedule changes, and reminders will be posted in this topic.",
       "shareToGroup": "Post invite to group",
       "unlink": "Disconnect group"
+    },
+    "hostPayment": {
+      "title": "Pay {name} for your ticket",
+      "ticketPrice": "Ticket: {amount}",
+      "noPrice": "Ask the host how much to send."
     }
   },
   "join": {
@@ -867,5 +888,25 @@
     "tipEvents": "Open your events list to get back to an active gathering.",
     "tipCreate": "Start a fresh event if you were trying to plan something new.",
     "tipRetry": "Reload this page if the problem was temporary — a quick retry often fixes it."
+  },
+  "profile": {
+    "title": "Profile",
+    "paymentTitle": "Payment methods",
+    "paymentSubtitle": "Shown on USD events to people who owe you, with the amount filled in. Never public.",
+    "venmoLabel": "Venmo username",
+    "venmoPlaceholder": "@username",
+    "cashappLabel": "Cash App $Cashtag",
+    "cashappPlaceholder": "$cashtag",
+    "zelleLabel": "Zelle phone or email",
+    "zellePlaceholder": "+1 555 123 4567 or you@email.com",
+    "appleCashLabel": "Apple Cash (iMessage) phone or email",
+    "appleCashPlaceholder": "+1 555 123 4567 or you@icloud.com",
+    "saved": "Saved.",
+    "saveFailed": "Couldn't save. Check the highlighted fields.",
+    "errors": {
+      "invalid_contact": "Enter a phone number (+1 555 123 4567) or an email.",
+      "invalid_venmo": "5–30 letters, numbers, - or _.",
+      "invalid_cashtag": "Up to 20 letters or numbers, at least one letter."
+    }
   }
 }

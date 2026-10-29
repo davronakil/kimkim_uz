@@ -27,6 +27,7 @@ import {
 } from "@/lib/telegram/flows/log-expense";
 import { handleGroupMessage } from "@/lib/telegram/flows/group-messages";
 import { sendUserEvents } from "@/lib/telegram/flows/list-events";
+import { sendUserBalances } from "@/lib/telegram/flows/balances";
 import { isGroupChatType } from "@/lib/telegram/group";
 import { inviteRsvpKeyboard, languagePickerKeyboard } from "@/lib/telegram/keyboards";
 import { t } from "@/lib/telegram/i18n";
@@ -312,6 +313,11 @@ async function handlePrivateMessage(message: TelegramMessage) {
     (intent.type === "natural" && intent.name === "events")
   ) {
     await sendUserEvents(message.chat.id, user, locale);
+    return;
+  }
+
+  if (intent.type === "command" && intent.name === "balance") {
+    await sendUserBalances(message.chat.id, user, locale);
     return;
   }
 

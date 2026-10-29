@@ -28,6 +28,26 @@ export type EventMember = User & {
   referrer_last_name: string | null;
 };
 
+/** What one event member may see about another — no Telegram IDs or payout details. */
+export type PublicEventMember = Pick<
+  EventMember,
+  | "id"
+  | "username"
+  | "first_name"
+  | "last_name"
+  | "photo_url"
+  | "role"
+  | "joined_at"
+  | "rsvp_status"
+  | "additional_guest_count"
+  | "rsvp_updated_at"
+  | "referral_source"
+  | "referrer_user_id"
+  | "referrer_username"
+  | "referrer_first_name"
+  | "referrer_last_name"
+>;
+
 export type EventRsvpStatus = "going" | "maybe" | "declined";
 export type EventNotificationMode = "instant" | "digest" | "muted";
 

@@ -17,6 +17,7 @@ import type {
   User,
 } from "@/types";
 import { nestComments } from "@/lib/expense/settlement";
+import { sortPaymentMethods, type PaymentMethod } from "@/lib/payments/methods";
 
 function normalizeEvent<T extends Partial<Event>>(
   row: T | null,
@@ -198,6 +199,62 @@ export async function updateUserPayoutPreferences({
     .run();
 
   return getUserById(userId);
+}
+
+export async function listUserPaymentMethods(userId: string): Promise<PaymentMethod[]> {
+  const db = await getDb();
+  const result = await db
+    .prepare("SELECT kind, value, value_type FROM user_payment_methods WHERE user_id = ?")
+    .bind(userId)
+    .all<PaymentMethod>();
+  return sortPaymentMethods(result.results ?? []);
+}
+
+export async function listPaymentMethodsForUsers(
+  userIds: string[],
+): Promise<Record<string, PaymentMethod[]>> {
+  const ids = [...new Set(userIds)];
+  if (ids.length === 0) return {};
+
+  const db = await getDb();
+  const result = await db
+    .prepare(
+      `SELECT user_id, kind, value, value_type FROM user_payment_methods
+       WHERE user_id IN (${ids.map(() => "?").join(", ")})`,
+    )
+    .bind(...ids)
+    .all<PaymentMethod & { user_id: string }>();
+
+  const byUser: Record<string, PaymentMethod[]> = {};
+  for (const row of result.results ?? []) {
+    (byUser[row.user_id] ??= []).push({
+      kind: row.kind,
+      value: row.value,
+      value_type: row.value_type,
+    });
+  }
+  for (const userId of Object.keys(byUser)) {
+    byUser[userId] = sortPaymentMethods(byUser[userId]!);
+  }
+  return byUser;
+}
+
+export async function replaceUserPaymentMethods(
+  userId: string,
+  methods: PaymentMethod[],
+): Promise<PaymentMethod[]> {
+  const db = await getDb();
+  await db.batch([
+    db.prepare("DELETE FROM user_payment_methods WHERE user_id = ?").bind(userId),
+    ...methods.map((method) =>
+      db
+        .prepare(
+          "INSERT INTO user_payment_methods (user_id, kind, value, value_type) VALUES (?, ?, ?, ?)",
+        )
+        .bind(userId, method.kind, method.value, method.value_type),
+    ),
+  ]);
+  return listUserPaymentMethods(userId);
 }
 
 export async function updateUserTimezone(userId: string, timezone: string): Promise<void> {

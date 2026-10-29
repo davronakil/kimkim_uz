@@ -17,7 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { buildTelegramShareUrl } from "@/lib/auth/telegram";
-import type { Comment, Event, EventMember, EventPaymentSummary, Expense } from "@/types";
+import type { Comment, Event, PublicEventMember, EventPaymentSummary, Expense } from "@/types";
 
 type PayoutPreference = {
   payout_method: string | null;
@@ -33,14 +33,16 @@ export function HostChecklistPanel({
   comments,
   expenses,
   paymentSummaries,
+  hasSavedPaymentMethods = false,
 }: {
   locale: string;
   currentUserId: string;
   event: Event;
-  members: EventMember[];
+  members: PublicEventMember[];
   comments: Comment[];
   expenses: Expense[];
   paymentSummaries: EventPaymentSummary[];
+  hasSavedPaymentMethods?: boolean;
 }) {
   const t = useTranslations("events.hostChecklist");
   const [payoutPreference, setPayoutPreference] = useState<PayoutPreference | null>(null);
@@ -79,9 +81,9 @@ export function HostChecklistPanel({
         .map((payment) => payment.user_id),
     );
     const unpaidCount = [...attendeeIds].filter((userId) => !paidUserIds.has(userId)).length;
-    const payoutReady = Boolean(
-      payoutPreference?.payout_method?.trim() || payoutPreference?.payout_details?.trim(),
-    );
+    const payoutReady =
+      hasSavedPaymentMethods ||
+      Boolean(payoutPreference?.payout_method?.trim() || payoutPreference?.payout_details?.trim());
 
     return [
       {
@@ -144,7 +146,7 @@ export function HostChecklistPanel({
           ]
         : []),
     ];
-  }, [comments.length, event, expenses.length, inviteUrl, isPaidEvent, members, paymentSummaries, payoutPreference, t]);
+  }, [comments.length, event, expenses.length, hasSavedPaymentMethods, inviteUrl, isPaidEvent, members, paymentSummaries, payoutPreference, t]);
 
   const doneCount = items.filter((item) => item.done).length;
 

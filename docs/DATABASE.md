@@ -22,6 +22,7 @@ npm run db:migrate:remote   # production
 | `comments` | Threaded discussion (`parent_id`) |
 | `expenses` | Who paid, amount in cents, currency |
 | `expense_splits` | Per-user split amounts |
+| `user_payment_methods` | `0025` — one Zelle / Venmo / Cash App / Apple Cash handle per user (normalized: E.164 phone, lowercased email, handle without `@`/`$`). Returned only for payees of USD settlements in events the viewer shares |
 
 ### Invites & payments
 
