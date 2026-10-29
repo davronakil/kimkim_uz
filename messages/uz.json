@@ -262,7 +262,11 @@
       "details": "Ma'lumotlar",
       "detailsPlaceholder": "Karta raqami, telefon, bank rekvizitlari yoki izoh yozing.",
       "notSet": "Hali pul olish usuli saqlanmagan.",
-      "updated": "Pul olish usuli saqlandi."
+      "updated": "Pul olish usuli saqlandi.",
+      "savedSubtitle": "Bu USD eventdagi mehmonlar profilingizdagi usullarni chipta narxi bilan ko'radi.",
+      "editInProfile": "To'lov usullarini profilda tahrirlash",
+      "savedNudge": "USD eventlarda mehmonlar sizga Venmo, Cash App, Zelle yoki Apple Cash orqali bir bosishda to'lashi mumkin.",
+      "savedNudgeLink": "Profilingizga qo'shing"
     },
     "public": {
       "eyebrow": "Yig'ilish ko'rinishi",
@@ -503,6 +507,11 @@
       "linkedHintTopic": "Qo'shilishlar, o'zgarishlar va eslatmalar shu mavzuga keladi.",
       "shareToGroup": "Taklifni guruhga yuborish",
       "unlink": "Guruhni uzish"
+    },
+    "hostPayment": {
+      "title": "Chipta uchun {name}ga to'lang",
+      "ticketPrice": "Chipta: {amount}",
+      "noPrice": "Qancha yuborishni tashkilotchidan so'rang."
     }
   },
   "join": {

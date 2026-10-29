@@ -13,6 +13,7 @@ import { EventCoverImage } from "@/components/events/event-cover-image";
 import { FormattedEventDescription } from "@/components/events/formatted-event-description";
 import { CommentThread } from "@/components/events/comment-thread";
 import { HostChecklistPanel } from "@/components/events/host-checklist-panel";
+import { HostTicketPaymentPanel } from "@/components/events/host-ticket-payment-panel";
 import { ExpensePanel } from "@/components/events/expense-panel";
 import { InvitePanel } from "@/components/events/invite-panel";
 import { PaymentModeBadge } from "@/components/events/payment-mode-badge";
@@ -41,7 +42,7 @@ import type {
   PublicEventMember,
   Settlement,
 } from "@/types";
-import type { PaymentMethod } from "@/lib/payments/methods";
+import { ticketPaidWithHandles, type PaymentMethod } from "@/lib/payments/methods";
 
 type EventPayload = {
   event: Event;
@@ -125,6 +126,19 @@ export function EventWorkspace({
   const currentAdditionalGuestCount = currentMember?.additional_guest_count ?? 0;
   const creatorName = owner ? displayName(owner) : null;
   const goingCount = goingHeadcount(members);
+  const ticketUsesHandles = ticketPaidWithHandles(event);
+  const hostMethods = owner ? (paymentMethods[owner.id] ?? []) : [];
+  const viewerPaidTicket = paymentSummaries.some(
+    (payment) => payment.user_id === currentUserId && payment.status === "completed",
+  );
+  const showHostTicketPayment =
+    ticketUsesHandles &&
+    !canEdit &&
+    owner !== undefined &&
+    owner.id !== currentUserId &&
+    hostMethods.length > 0 &&
+    !viewerPaidTicket &&
+    currentRsvpStatus !== "declined";
 
   function renderGuests() {
     return (
@@ -167,6 +181,7 @@ export function EventWorkspace({
               comments={comments}
               expenses={visibleExpenses}
               paymentSummaries={paymentSummaries}
+              hasSavedPaymentMethods={ticketUsesHandles && hostMethods.length > 0}
             />
           ) : null}
           <ActivityTimelinePanel
@@ -197,7 +212,14 @@ export function EventWorkspace({
               locale={locale}
             />
           ) : null}
-          {canEdit && event.payment_mode === "paid" ? <PayoutMethodPanel /> : null}
+          {canEdit && event.payment_mode === "paid" ? (
+            <PayoutMethodPanel
+              usesSavedMethods={ticketUsesHandles}
+              hostMethods={hostMethods}
+              ticketPriceCents={event.ticket_price_cents}
+              eventTitle={event.title}
+            />
+          ) : null}
           {canEdit ? (
             <TransferOwnershipPanel
               eventId={eventId}
@@ -295,6 +317,17 @@ export function EventWorkspace({
         </section>
 
         {showNotifyBanner ? <TelegramNotifyBanner botUsername={botUsername} /> : null}
+
+        {showHostTicketPayment ? (
+          <HostTicketPaymentPanel
+            hostName={displayName(owner)}
+            methods={hostMethods}
+            ticketPriceCents={event.ticket_price_cents}
+            ticketCurrency={event.ticket_currency}
+            eventTitle={event.title}
+            locale={locale}
+          />
+        ) : null}
 
         <RsvpStatusPanel
           eventId={eventId}

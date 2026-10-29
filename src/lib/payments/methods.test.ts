@@ -54,6 +54,9 @@ assert.equal(
   "https://venmo.com/davron?txn=pay&amount=42.50&note=Plov%20night%20%C2%B7%20KimKim",
 );
 assert.equal(cashAppPayUrl("davron", 4250), "https://cash.app/$davron/42.50");
+assert.equal(cashAppPayUrl("davron", null), "https://cash.app/$davron");
+assert.equal(venmoPayUrl("davron", null, "Gala"), "https://venmo.com/davron?txn=pay&note=Gala");
+assert.equal(appleCashMessageUrl("a@icloud.com", null, "Gala"), "sms:a@icloud.com&body=Gala");
 assert.equal(
   appleCashMessageUrl("+15551234567", 4250, "Plov night"),
   "sms:+15551234567&body=%2442.50%20Plov%20night",

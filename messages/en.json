@@ -262,7 +262,11 @@
       "details": "Details",
       "detailsPlaceholder": "Add card number, phone number, bank details, or payout notes.",
       "notSet": "No payout preference saved yet.",
-      "updated": "Payout preference saved."
+      "updated": "Payout preference saved.",
+      "savedSubtitle": "Guests on this USD event see these methods from your profile, with the ticket price filled in.",
+      "editInProfile": "Edit payment methods in your profile",
+      "savedNudge": "On USD events, guests can pay you in one tap with Venmo, Cash App, Zelle or Apple Cash.",
+      "savedNudgeLink": "Add them to your profile"
     },
     "public": {
       "eyebrow": "Event preview",
@@ -503,6 +507,11 @@
       "linkedHintTopic": "Joins, schedule changes, and reminders will be posted in this topic.",
       "shareToGroup": "Post invite to group",
       "unlink": "Disconnect group"
+    },
+    "hostPayment": {
+      "title": "Pay {name} for your ticket",
+      "ticketPrice": "Ticket: {amount}",
+      "noPrice": "Ask the host how much to send."
     }
   },
   "join": {

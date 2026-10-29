@@ -12,6 +12,14 @@ export type PaymentMethod = {
 /** These apps only move US dollars, so handles are only offered on USD settlements. */
 export const PAYMENT_METHODS_CURRENCY = "USD";
 
+/** Paid (ticketed) USD events point guests at the host's saved handles. */
+export function ticketPaidWithHandles(event: {
+  payment_mode?: string | null;
+  ticket_currency?: string | null;
+}): boolean {
+  return event.payment_mode === "paid" && event.ticket_currency === PAYMENT_METHODS_CURRENCY;
+}
+
 export type PaymentMethodError = "invalid_contact" | "invalid_venmo" | "invalid_cashtag";
 
 type NormalizeResult =
@@ -91,20 +99,27 @@ export function usdAmount(cents: number): string {
   return (cents / 100).toFixed(2);
 }
 
-export function venmoPayUrl(handle: string, amountCents: number, note: string): string {
-  return `https://venmo.com/${encodeURIComponent(handle)}?txn=pay&amount=${usdAmount(amountCents)}&note=${encodeURIComponent(note)}`;
+/** A null amount (e.g. a paid event without a ticket price) opens the payee without one. */
+export function venmoPayUrl(handle: string, amountCents: number | null, note: string): string {
+  const amount = amountCents ? `&amount=${usdAmount(amountCents)}` : "";
+  return `https://venmo.com/${encodeURIComponent(handle)}?txn=pay${amount}&note=${encodeURIComponent(note)}`;
 }
 
-export function cashAppPayUrl(cashtag: string, amountCents: number): string {
-  return `https://cash.app/$${encodeURIComponent(cashtag)}/${usdAmount(amountCents)}`;
+export function cashAppPayUrl(cashtag: string, amountCents: number | null): string {
+  const base = `https://cash.app/$${encodeURIComponent(cashtag)}`;
+  return amountCents ? `${base}/${usdAmount(amountCents)}` : base;
 }
 
 /**
  * iMessage underlines a "$12.34" amount in a message and offers Apple Cash on tap.
  * Apple platforms accept `sms:<address>&body=`; only offered there.
  */
-export function appleCashMessageUrl(address: string, amountCents: number, note: string): string {
-  const body = `$${usdAmount(amountCents)} ${note}`.trim();
+export function appleCashMessageUrl(
+  address: string,
+  amountCents: number | null,
+  note: string,
+): string {
+  const body = (amountCents ? `$${usdAmount(amountCents)} ${note}` : note).trim();
   return `sms:${address}&body=${encodeURIComponent(body)}`;
 }
 
@@ -112,7 +127,7 @@ export type PaymentDeepLink = { kind: "web" | "sms"; url: string };
 
 export function paymentDeepLink(
   method: PaymentMethod,
-  amountCents: number,
+  amountCents: number | null,
   note: string,
 ): PaymentDeepLink | null {
   if (method.kind === "venmo") return { kind: "web", url: venmoPayUrl(method.value, amountCents, note) };

@@ -41,7 +41,7 @@ export function SettlementPayMethods({
   note,
 }: {
   methods: PaymentMethod[];
-  amountCents: number;
+  amountCents: number | null;
   note: string;
 }) {
   const t = useTranslations("events.expenses.pay");

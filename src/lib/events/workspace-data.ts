@@ -7,7 +7,11 @@ import {
 } from "@/lib/db/queries";
 import { presentEventExpenses } from "@/lib/expense/shares";
 import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
-import { PAYMENT_METHODS_CURRENCY, type PaymentMethod } from "@/lib/payments/methods";
+import {
+  PAYMENT_METHODS_CURRENCY,
+  ticketPaidWithHandles,
+  type PaymentMethod,
+} from "@/lib/payments/methods";
 import type { Event, EventMember, Expense, PublicEventMember, Settlement } from "@/types";
 
 export function toPublicEventMember(member: EventMember): PublicEventMember {
@@ -44,15 +48,18 @@ export function settlementsForExpenses(expenses: Expense[]): Settlement[] {
   );
 }
 
-/** Payment handles of whoever is owed money in a USD settlement; nobody else's leave the server. */
+/**
+ * Payment handles of whoever is owed money in a USD settlement, plus the host's
+ * on a paid USD event; nobody else's leave the server.
+ */
 export async function payeePaymentMethods(
   settlements: Settlement[],
+  hostId?: string | null,
 ): Promise<Record<string, PaymentMethod[]>> {
-  return listPaymentMethodsForUsers(
-    settlements
-      .filter((settlement) => settlement.currency === PAYMENT_METHODS_CURRENCY)
-      .map((settlement) => settlement.to_user_id),
-  );
+  const payees = settlements
+    .filter((settlement) => settlement.currency === PAYMENT_METHODS_CURRENCY)
+    .map((settlement) => settlement.to_user_id);
+  return listPaymentMethodsForUsers(hostId ? [...payees, hostId] : payees);
 }
 
 export async function loadEventSettlements(eventId: string, members?: EventMember[]) {
@@ -86,7 +93,12 @@ export async function loadEventWorkspaceData(event: Event) {
     expenses,
     settlements,
     paymentSummaries,
-    paymentMethods: await payeePaymentMethods(settlements),
+    paymentMethods: await payeePaymentMethods(
+      settlements,
+      ticketPaidWithHandles(event)
+        ? members.find((member) => member.role === "owner")?.id
+        : null,
+    ),
   };
 }
 
