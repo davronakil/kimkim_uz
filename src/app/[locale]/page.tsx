@@ -54,6 +54,11 @@ export default async function HomePage({
       title: t("features.telegramTitle"),
       body: t("features.telegramBody"),
     },
+    {
+      icon: Store,
+      title: t("features.catalogTitle"),
+      body: t("features.catalogBody"),
+    },
   ];
   const jsonLd = [
     {
