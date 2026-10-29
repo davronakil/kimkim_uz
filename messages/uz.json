@@ -479,6 +479,21 @@
         "noMethods": "{name} hali to'lov usullarini qo'shmagan.",
         "addYours": "Pulingizni tezroq olmoqchimisiz?",
         "addYoursLink": "Venmo, Cash App, Zelle yoki Apple Cash qo'shing"
+      },
+      "settle": {
+        "markPaid": "To'landi",
+        "settleUp": "Hammasini yopish",
+        "confirmTitle": "{count} ta qarz to'langan deb belgilansinmi?",
+        "confirmBody": "Yuqoridagi har bir qator uchun to'lov yoziladi va hammaning qarzi nolga tushadi. Keyin bekor qilish mumkin.",
+        "confirm": "Ha, yopish",
+        "paidLine": "{from} → {to}: {amount} to'landi",
+        "markedBy": "{name} belgiladi · {date}",
+        "settledUpBy": "{name} hammasini yopdi",
+        "undo": "Bekor qilish",
+        "undoSettleUp": "Yopishni bekor qilish",
+        "historyTitle": "To'lovlar",
+        "allSettled": "Hammasi yopilgan",
+        "error": "Qarzni yangilab bo'lmadi. Qayta urinib ko'ring."
       }
     },
     "invite": {

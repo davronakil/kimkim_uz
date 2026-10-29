@@ -173,6 +173,19 @@ export type Settlement = {
   currency: string;
 };
 
+/** A recorded "Mark paid" or owner settle-up transfer; offsets expense balances. */
+export type SettlementPayment = {
+  id: string;
+  event_id: string;
+  from_user_id: string;
+  to_user_id: string;
+  amount_cents: number;
+  currency: string;
+  recorded_by_user_id: string | null;
+  settle_up_id: string | null;
+  created_at: string;
+};
+
 export type EventReferralSource = "web" | "telegram" | "stripe";
 
 export type EventReferral = {

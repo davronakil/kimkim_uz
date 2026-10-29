@@ -479,6 +479,21 @@
         "noMethods": "{name} пока не добавил(а) способы оплаты.",
         "addYours": "Хотите получать деньги быстрее?",
         "addYoursLink": "Добавьте Venmo, Cash App, Zelle или Apple Cash"
+      },
+      "settle": {
+        "markPaid": "Оплачено",
+        "settleUp": "Закрыть все долги",
+        "confirmTitle": "Отметить {count, plural, one {# долг} few {# долга} other {# долгов}} оплаченными?",
+        "confirmBody": "Для каждой строки выше будет записан платёж, и балансы обнулятся. Потом это можно отменить.",
+        "confirm": "Да, закрыть",
+        "paidLine": "{from} заплатил(а) {to} {amount}",
+        "markedBy": "Отметил(а) {name} · {date}",
+        "settledUpBy": "{name} закрыл(а) все долги",
+        "undo": "Отменить",
+        "undoSettleUp": "Отменить закрытие",
+        "historyTitle": "Платежи",
+        "allSettled": "Всё рассчитано",
+        "error": "Не удалось обновить баланс. Попробуйте ещё раз."
       }
     },
     "invite": {

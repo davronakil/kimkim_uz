@@ -28,6 +28,7 @@ import {
   startAlbumFlow,
 } from "@/lib/telegram/flows/album";
 import { startLogExpenseForEvent } from "@/lib/telegram/flows/log-expense";
+import { handleSettleCallback } from "@/lib/telegram/flows/settle";
 import { readAlbumSessionData, getBotSession } from "@/lib/telegram/sessions";
 import { t } from "@/lib/telegram/i18n";
 import {
@@ -118,6 +119,8 @@ export async function handleCallbackQuery(query: TelegramCallbackQuery) {
 
   const locale = resolveBotLocale(from, user);
   const strings = t(locale);
+
+  if (await handleSettleCallback(query, user, locale)) return;
 
   if (data.startsWith("rsvp:y:")) {
     const rsvp = parseRsvpCallbackData(data, "rsvp:y:");

@@ -41,6 +41,7 @@ import type {
   Expense,
   PublicEventMember,
   Settlement,
+  SettlementPayment,
 } from "@/types";
 import { ticketPaidWithHandles, type PaymentMethod } from "@/lib/payments/methods";
 
@@ -50,6 +51,7 @@ type EventPayload = {
   comments: Comment[];
   expenses: Expense[];
   settlements: Settlement[];
+  settlementPayments?: SettlementPayment[];
   paymentSummaries: EventPaymentSummary[];
   paymentMethods?: Record<string, PaymentMethod[]>;
 };
@@ -358,9 +360,12 @@ export function EventWorkspace({
               members={members}
               expenses={visibleExpenses}
               settlements={visibleSettlements}
+              settlementPayments={expensesEnabled ? (data.settlementPayments ?? []) : []}
               paymentMethods={paymentMethods}
               currentUserId={currentUserId}
+              canSettleUp={!!currentUserId && owner?.id === currentUserId}
               eventTitle={event.title}
+              timeZone={event.timezone}
               locale={locale}
               currency={event.expense_currency ?? "UZS"}
               onAdded={load}

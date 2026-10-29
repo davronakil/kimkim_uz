@@ -13,6 +13,7 @@ import {
 } from "@/lib/payments/methods";
 import { buildAppUrl, sendTelegramMessage } from "@/lib/telegram/bot";
 import { t } from "@/lib/telegram/i18n";
+import { markPaidCallbackData } from "@/lib/telegram/settle-callback-data";
 import type { InlineButton } from "@/lib/telegram/keyboards";
 import type { BotLocale } from "@/lib/telegram/types";
 import type { EventMember, Settlement, User } from "@/types";
@@ -20,6 +21,7 @@ import { displayName, formatMoney } from "@/lib/utils";
 
 const MAX_EVENTS = 8;
 const MAX_PAY_BUTTONS = 12;
+const MAX_MARK_BUTTONS = 20;
 
 function escapeHtml(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -66,6 +68,13 @@ export async function sendUserBalances(chatId: number, user: User, locale: BotLo
 
   const sections: string[] = [];
   const payButtons: InlineButton[][] = [];
+  const markButtons: InlineButton[][] = [];
+  const addMarkButton = (eventId: string, counterpartId: string, currency: string, text: string) => {
+    if (markButtons.length >= MAX_MARK_BUTTONS) return;
+    markButtons.push([
+      { text, callback_data: markPaidCallbackData(eventId, counterpartId, currency) },
+    ]);
+  };
   let owedInUsd = false;
 
   for (const entry of balances) {
@@ -81,6 +90,12 @@ export async function sendUserBalances(chatId: number, user: User, locale: BotLo
       const name = nameOf(settlement.to_user_id);
       const amount = formatMoney(settlement.amount_cents, settlement.currency, locale);
       lines.push(strings.balanceYouOwe(name, amount));
+      addMarkButton(
+        entry.eventId,
+        settlement.to_user_id,
+        settlement.currency,
+        strings.balanceMarkPaidBtn(plainNameOf(settlement.to_user_id), amount),
+      );
       if (settlement.currency !== PAYMENT_METHODS_CURRENCY) continue;
 
       const methods: PaymentMethod[] = methodsByUser[settlement.to_user_id] ?? [];
@@ -111,11 +126,13 @@ export async function sendUserBalances(chatId: number, user: User, locale: BotLo
 
     for (const settlement of entry.owed) {
       if (settlement.currency === PAYMENT_METHODS_CURRENCY) owedInUsd = true;
-      lines.push(
-        strings.balanceOwesYou(
-          nameOf(settlement.from_user_id),
-          formatMoney(settlement.amount_cents, settlement.currency, locale),
-        ),
+      const amount = formatMoney(settlement.amount_cents, settlement.currency, locale);
+      lines.push(strings.balanceOwesYou(nameOf(settlement.from_user_id), amount));
+      addMarkButton(
+        entry.eventId,
+        settlement.from_user_id,
+        settlement.currency,
+        strings.balanceMarkReceivedBtn(plainNameOf(settlement.from_user_id), amount),
       );
     }
 
@@ -126,7 +143,7 @@ export async function sendUserBalances(chatId: number, user: User, locale: BotLo
     sections.push(strings.balanceAddYours);
   }
 
-  const keyboard: InlineButton[][] = [...payButtons];
+  const keyboard: InlineButton[][] = [...payButtons, ...markButtons];
   if (balances.length === 1) {
     keyboard.push([
       { text: strings.openEvent, url: buildAppUrl(`/${locale}/events/${balances[0]!.eventId}`) },

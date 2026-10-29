@@ -74,6 +74,9 @@ export type TelegramMessage = {
   video_note?: {
     file_id: string;
   };
+  reply_markup?: {
+    inline_keyboard: Array<Array<{ text: string; url?: string; callback_data?: string }>>;
+  };
   new_chat_members?: Array<{
     id: number;
     is_bot?: boolean;
