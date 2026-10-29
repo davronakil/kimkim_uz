@@ -3,7 +3,7 @@
 [![CI](https://github.com/davronakil/kimkim_uz/actions/workflows/ci.yml/badge.svg)](https://github.com/davronakil/kimkim_uz/actions)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-**[kimkim.uz](https://kimkim.uz)** — plan weddings, gap circles, sunnat to'y, aqiqa, challari, choyxona, and any gathering. Coordinate guests, discuss in threads, split expenses, and sign in with Telegram.
+**[kimkim.uz](https://kimkim.uz)** — plan get-togethers with friends and family. One place for who's coming, where you're meeting, and who paid what. Share an invite, track headcount, split expenses, keep the photos together — right next to Telegram.
 
 **Free to use** for hosts and guests. Open source under the [MIT License](./LICENSE). Built for **English**, **Oʻzbek**, and **Русский** speakers. Deployed on Cloudflare Workers.
 
@@ -11,14 +11,14 @@
 
 ## Features
 
-- **Events** — to'y, "gap", choyxona, weddings, parties, anything; date/time, location, cover image
+- **Events** — any gathering: date/time, location, cover image, and a guest list so you know the headcount
 - **Shared photo album** — guests add up to 20 photos from the event page or the bot, and save everyone else's in one tap
 - **Public discover** — `/discover` lists events hosts mark as public (indexable, sitemap)
 - **Invites** — shareable links, locale-aware bot deep links, link rotation, RSVP landing page
 - **Payment modes** — Free, Split the bill, Pay for yourself, Paid (Stripe Checkout)
-- **Members** — join, leave, transfer ownership, remove member
+- **Members** — join, leave, transfer ownership, remove member; RSVPs keep attendance clear
 - **Threaded comments** — nested discussion; delete own comments (no replies)
-- **Expense splitting** — equal or custom splits, settlement copy/share, delete
+- **Expense splitting** — log who paid, equal or custom splits, settlement copy/share, delete
 - **Business catalog** — community catalog of local businesses at `/catalog`; submit listings, admin approval, community vouches, paid extra slots (Stripe)
 - **Telegram bot** — create events, log expenses, RSVP buttons, group linking, bilingual + Russian
 - **Notifications** — DM + group announcements; 24h / 1h reminders
