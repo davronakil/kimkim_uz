@@ -2,17 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getDb, runInBackground } from "@/lib/cloudflare";
 import { putCoverImage } from "@/lib/media/cover-upload";
-import {
-  getEventById,
-  isEventMember,
-  isEventOwner,
-  listEventComments,
-  listEventExpenses,
-  listEventMembers,
-  listEventPaymentSummaries,
-} from "@/lib/db/queries";
-import { presentEventExpenses } from "@/lib/expense/shares";
-import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
+import { getEventById, isEventMember, isEventOwner } from "@/lib/db/queries";
+import { loadEventWorkspaceData } from "@/lib/events/workspace-data";
 import {
   parseEventFormData,
   resolveEventTimestamps,
@@ -41,37 +32,12 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const [members, comments, expenses, paymentSummaries] = await Promise.all([
-    listEventMembers(id),
-    listEventComments(id),
-    event.expenses_enabled ? listEventExpenses(id) : Promise.resolve([]),
-    listEventPaymentSummaries(id),
+  const [data, canEdit] = await Promise.all([
+    loadEventWorkspaceData(event),
+    isEventOwner(id, user.id),
   ]);
 
-  const sharedExpenses = presentEventExpenses(expenses, members);
-  const settlements = calculateSettlementsFromExpenses(
-    sharedExpenses.map((expense) => ({
-      payer_id: expense.payer_id,
-      amount_cents: expense.amount_cents,
-      currency: expense.currency,
-      splits: (expense.splits ?? []).map((split) => ({
-        user_id: split.user_id,
-        amount_cents: split.amount_cents,
-      })),
-    })),
-  );
-
-  const canEdit = await isEventOwner(id, user.id);
-
-  return NextResponse.json({
-    event,
-    members,
-    comments,
-    expenses: sharedExpenses,
-    settlements,
-    paymentSummaries,
-    canEdit,
-  });
+  return NextResponse.json({ ...data, canEdit });
 }
 
 export async function PATCH(request: NextRequest, context: RouteContext) {

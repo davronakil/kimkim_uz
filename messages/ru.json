@@ -14,7 +14,8 @@
     "createEvent": "Создать событие",
     "myEvents": "Мои события",
     "noEvents": "Пока нет событий. Создайте первое и пригласите гостей.",
-    "language": "Язык"
+    "language": "Язык",
+    "profile": "Профиль"
   },
   "linkGate": {
     "continue": "Продолжить",
@@ -463,7 +464,18 @@
       "owes": "{from} должен {to} {amount}",
       "copySettlement": "Скопировать балансы",
       "settlementCopied": "Скопировано!",
-      "shareSettlement": "Поделиться в Telegram"
+      "shareSettlement": "Поделиться в Telegram",
+      "pay": {
+        "copy": "Скопировать {method}",
+        "open": "Оплатить через {method}",
+        "venmoHint": "Откроет Venmo с суммой и комментарием — проверьте и нажмите Pay.",
+        "cashAppHint": "Откроет Cash App с суммой.",
+        "zelleHint": "Скопируйте и отправьте через Zelle в приложении банка.",
+        "appleCashHint": "Отправьте сообщение, нажмите на подчёркнутую сумму $ в iMessage и оплатите через Apple Cash.",
+        "noMethods": "{name} пока не добавил(а) способы оплаты.",
+        "addYours": "Хотите получать деньги быстрее?",
+        "addYoursLink": "Добавьте Venmo, Cash App, Zelle или Apple Cash"
+      }
     },
     "invite": {
       "title": "Пригласить гостей",
@@ -867,5 +879,25 @@
     "tipEvents": "Откройте список событий, чтобы вернуться к активной встрече.",
     "tipCreate": "Создайте новое событие, если хотели спланировать что-то с нуля.",
     "tipRetry": "Если сбой был временным, обновите страницу — часто этого достаточно."
+  },
+  "profile": {
+    "title": "Профиль",
+    "paymentTitle": "Способы оплаты",
+    "paymentSubtitle": "Видны на USD-событиях тем, кто вам должен, с уже указанной суммой. Не публикуются.",
+    "venmoLabel": "Имя пользователя Venmo",
+    "venmoPlaceholder": "@username",
+    "cashappLabel": "Cash App $Cashtag",
+    "cashappPlaceholder": "$cashtag",
+    "zelleLabel": "Zelle: телефон или email",
+    "zellePlaceholder": "+1 555 123 4567 или you@email.com",
+    "appleCashLabel": "Apple Cash (iMessage): телефон или email",
+    "appleCashPlaceholder": "+1 555 123 4567 или you@icloud.com",
+    "saved": "Сохранено.",
+    "saveFailed": "Не удалось сохранить. Проверьте отмеченные поля.",
+    "errors": {
+      "invalid_contact": "Введите телефон (+1 555 123 4567) или email.",
+      "invalid_venmo": "5–30 букв, цифр, - или _.",
+      "invalid_cashtag": "До 20 букв или цифр, минимум одна буква."
+    }
   }
 }

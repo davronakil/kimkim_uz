@@ -12,6 +12,7 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 - Leave event, remove member, transfer ownership
 - Nested comments + delete own comments (blocked if has replies)
 - Expenses: equal + custom splits, settlement copy/share, delete
+- Payment handles on `/profile` (Zelle, Venmo, Cash App, Apple Cash); USD settlements show copy + pay links for the payee
 - Payment modes: Free, Split, Pay yourself, Paid
 - Stripe Checkout for paid events
 - Beautiful invite landing for logged-out guests
@@ -21,7 +22,7 @@ Living plan for what shipped, what's next, and what we're intentionally not buil
 - Shared event photo album (20 photos; web + Telegram bot)
 
 ### Telegram
-- Bot: `/create`, `/expense`, `/events`, `/help`, `/cancel`, `/lang`
+- Bot: `/create`, `/expense`, `/events`, `/balance`, `/help`, `/cancel`, `/lang`
 - Create flow with location step (text, pin, skip)
 - Quick expense logging (`/expense 150000 choyxona`)
 - RSVP inline buttons (going / declined)

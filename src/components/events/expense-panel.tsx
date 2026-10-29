@@ -3,18 +3,26 @@
 import { Copy, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import type { Expense, Settlement, User } from "@/types";
+import type { Expense, PublicEventMember, Settlement } from "@/types";
+import { SettlementPayMethods } from "@/components/events/settlement-pay-methods";
+import { Link } from "@/i18n/navigation";
 import { buildTelegramShareUrl } from "@/lib/auth/telegram";
 import { allocateWeightedCents } from "@/lib/expense/mutations";
+import { PAYMENT_METHODS_CURRENCY, type PaymentMethod } from "@/lib/payments/methods";
 import { centsToMajor, displayName, formatMoney, majorToCents } from "@/lib/utils";
 
-type ExpenseMember = User & { additional_guest_count?: number };
+type ExpenseMember = Pick<PublicEventMember, "id" | "first_name" | "last_name" | "username"> & {
+  additional_guest_count?: number;
+};
 
 export function ExpensePanel({
   eventId,
   members,
   expenses,
   settlements,
+  paymentMethods = {},
+  currentUserId,
+  eventTitle,
   locale,
   currency = "UZS",
   onAdded,
@@ -24,12 +32,16 @@ export function ExpensePanel({
   members: ExpenseMember[];
   expenses: Expense[];
   settlements: Settlement[];
+  paymentMethods?: Record<string, PaymentMethod[]>;
+  currentUserId?: string;
+  eventTitle?: string;
   locale: string;
   currency?: string;
   onAdded: () => void;
   readOnly?: boolean;
 }) {
   const t = useTranslations("events.expenses");
+  const pay = useTranslations("events.expenses.pay");
   const common = useTranslations("common");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -509,21 +521,48 @@ export function ExpensePanel({
           settlements.map((settlement) => {
             const from = memberMap.get(settlement.from_user_id);
             const to = memberMap.get(settlement.to_user_id);
+            const toName = to ? displayName(to) : "?";
+            const supportsMethods = settlement.currency === PAYMENT_METHODS_CURRENCY;
+            const viewerOwes = supportsMethods && settlement.from_user_id === currentUserId;
+            const viewerIsOwed = supportsMethods && settlement.to_user_id === currentUserId;
+            const payeeMethods = paymentMethods[settlement.to_user_id] ?? [];
             return (
-              <p
+              <div
                 key={`${settlement.from_user_id}-${settlement.to_user_id}`}
-                className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3.5 text-base text-emerald-900 sm:text-sm dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100"
+                className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3.5 text-base text-emerald-900 sm:text-sm dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100"
               >
-                {t("owes", {
-                  from: from ? displayName(from) : "?",
-                  to: to ? displayName(to) : "?",
-                  amount: formatMoney(
-                    settlement.amount_cents,
-                    settlement.currency,
-                    locale,
-                  ),
-                })}
-              </p>
+                <p>
+                  {t("owes", {
+                    from: from ? displayName(from) : "?",
+                    to: toName,
+                    amount: formatMoney(
+                      settlement.amount_cents,
+                      settlement.currency,
+                      locale,
+                    ),
+                  })}
+                </p>
+                {viewerOwes && payeeMethods.length > 0 ? (
+                  <SettlementPayMethods
+                    methods={payeeMethods}
+                    amountCents={settlement.amount_cents}
+                    note={eventTitle ? `${eventTitle} · KimKim` : "KimKim"}
+                  />
+                ) : null}
+                {viewerOwes && payeeMethods.length === 0 ? (
+                  <p className="text-xs text-emerald-800/70 dark:text-emerald-200/70">
+                    {pay("noMethods", { name: toName })}
+                  </p>
+                ) : null}
+                {viewerIsOwed && payeeMethods.length === 0 ? (
+                  <p className="text-xs text-emerald-800/70 dark:text-emerald-200/70">
+                    {pay("addYours")}{" "}
+                    <Link href="/profile" className="font-medium underline">
+                      {pay("addYoursLink")}
+                    </Link>
+                  </p>
+                ) : null}
+              </div>
             );
           })
         )}

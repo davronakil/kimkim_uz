@@ -1,9 +1,18 @@
 export type BotIntent =
   | {
       type: "command";
-      name: "start" | "help" | "create" | "events" | "expense" | "album" | "cancel" | "lang";
+      name:
+        | "start"
+        | "help"
+        | "create"
+        | "events"
+        | "expense"
+        | "balance"
+        | "album"
+        | "cancel"
+        | "lang";
     }
-  | { type: "natural"; name: "create" | "events" | "expense" | "album" | "help" }
+  | { type: "natural"; name: "create" | "events" | "expense" | "balance" | "album" | "help" }
   | { type: "text" };
 
 const createPatterns = [
@@ -17,6 +26,13 @@ const expensePatterns = [
   /^\/expense(?:@\w+)?$/i,
   /^\/xarajat(?:@\w+)?$/i,
   /^(log expense|expense log|xarajat qo'sh|xarajat qosh)$/i,
+];
+
+const balancePatterns = [
+  /^\/balance(?:@\w+)?$/i,
+  /^\/owe(?:@\w+)?$/i,
+  /^\/qarz(?:@\w+)?$/i,
+  /^(balance|balances|who owes|qarzlar|qarzlarim|долги|балансы)$/i,
 ];
 
 const eventsPatterns = [
@@ -57,6 +73,9 @@ export function parseIntent(text: string): BotIntent {
   }
   if (expensePatterns.some((pattern) => pattern.test(trimmed))) {
     return { type: "command", name: "expense" };
+  }
+  if (balancePatterns.some((pattern) => pattern.test(trimmed))) {
+    return { type: "command", name: "balance" };
   }
   if (eventsPatterns.some((pattern) => pattern.test(trimmed))) {
     return { type: "command", name: "events" };

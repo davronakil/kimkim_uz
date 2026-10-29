@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import type { Comment, EventMember, Expense } from "@/types";
+import type { Comment, PublicEventMember, Expense } from "@/types";
 import { displayName, formatMoney } from "@/lib/utils";
 import { buildTelegramShareUrl } from "@/lib/auth/telegram";
 
@@ -29,14 +29,14 @@ function flattenComments(comments: Comment[]): Comment[] {
   return comments.flatMap((comment) => [comment, ...flattenComments(comment.replies ?? [])]);
 }
 
-function isLaterRsvpUpdate(member: EventMember) {
+function isLaterRsvpUpdate(member: PublicEventMember) {
   if (!member.rsvp_updated_at) return false;
   const joinedAt = new Date(member.joined_at).getTime();
   const rsvpAt = new Date(member.rsvp_updated_at).getTime();
   return Number.isFinite(joinedAt) && Number.isFinite(rsvpAt) && rsvpAt - joinedAt > 60_000;
 }
 
-function rsvpIcon(status: EventMember["rsvp_status"]) {
+function rsvpIcon(status: PublicEventMember["rsvp_status"]) {
   if (status === "declined") return XCircle;
   if (status === "maybe") return CircleHelp;
   return CheckCircle2;
@@ -51,7 +51,7 @@ export function ActivityTimelinePanel({
   canPostToGroup = false,
 }: {
   eventId: string;
-  members: EventMember[];
+  members: PublicEventMember[];
   comments: Comment[];
   expenses: Expense[];
   locale: string;

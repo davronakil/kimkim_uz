@@ -34,6 +34,7 @@ const messages = {
 /create — new event
 /expense — log an expense
 /events — upcoming events
+/balance — who owes whom, with pay links
 /album — add photos, or save everyone else's
 /cancel — stop current flow
 /lang en, /lang uz, or /lang ru
@@ -72,6 +73,19 @@ const messages = {
     expenseInvalidFormat: "Use: AMOUNT description — e.g. <code>150000 choyxona</code>",
     expenseLogged: (description: string, amount: string, title: string) =>
       `Logged <b>${amount}</b> for "${description}" in <b>${title}</b> (split equally).`,
+    balanceHeader: "💸 <b>Your balances</b>",
+    balanceEmpty: "You're all settled up — no open balances in your events.",
+    balanceYouOwe: (name: string, amount: string) => `• You owe <b>${name}</b> ${amount}`,
+    balanceOwesYou: (name: string, amount: string) => `• <b>${name}</b> owes you ${amount}`,
+    balanceNoMethods: (name: string) => `   ${name} hasn't added payment methods yet.`,
+    balanceMethodLine: (label: string, value: string) => `   ${label}: <code>${value}</code>`,
+    balanceAppleCashHint: (amount: string) =>
+      `   Text ${amount} in iMessage, tap the amount, pay with Apple Cash.`,
+    balancePayButton: (method: string, name: string, amount: string) =>
+      `${method} · ${name} · ${amount}`,
+    balanceAddYours:
+      "Add your Venmo, Cash App, Zelle or Apple Cash on your KimKim profile so people can pay you.",
+    balanceProfileBtn: "Payment methods",
     expenseNoEvents: "You're not in any upcoming events. Join one first.",
     expenseNoMembers: "No members to split with yet.",
     expensePickEvent: "Which event is this expense for?",
@@ -140,6 +154,7 @@ const messages = {
 /create — yangi event
 /expense — xarajat qo'shish
 /events — yaqin eventlar
+/balance — kim kimga qarz, to'lov havolalari bilan
 /album — rasm qo'shish yoki boshqalarnikini saqlash
 /cancel — bekor qilish
 /lang uz, /lang en yoki /lang ru
@@ -178,6 +193,19 @@ const messages = {
     expenseInvalidFormat: "Format: SUMMA izoh — masalan <code>150000 choyxona</code>",
     expenseLogged: (description: string, amount: string, title: string) =>
       `<b>${title}</b> ga <b>${amount}</b> — "${description}" (teng bo'lish).`,
+    balanceHeader: "💸 <b>Qarzlaringiz</b>",
+    balanceEmpty: "Hammasi yopilgan — eventlaringizda ochiq qarz yo'q.",
+    balanceYouOwe: (name: string, amount: string) => `• Siz <b>${name}</b>ga ${amount} qarzsiz`,
+    balanceOwesYou: (name: string, amount: string) => `• <b>${name}</b> sizga ${amount} qarz`,
+    balanceNoMethods: (name: string) => `   ${name} hali to'lov usullarini qo'shmagan.`,
+    balanceMethodLine: (label: string, value: string) => `   ${label}: <code>${value}</code>`,
+    balanceAppleCashHint: (amount: string) =>
+      `   iMessage'da ${amount} deb yozing, summani bosing va Apple Cash bilan to'lang.`,
+    balancePayButton: (method: string, name: string, amount: string) =>
+      `${method} · ${name} · ${amount}`,
+    balanceAddYours:
+      "Sizga to'lashlari oson bo'lishi uchun KimKim profilingizga Venmo, Cash App, Zelle yoki Apple Cash qo'shing.",
+    balanceProfileBtn: "To'lov usullari",
     expenseNoEvents: "Yaqin eventda emassiz. Avval qo'shiling.",
     expenseNoMembers: "Bo'linadigan a'zo yo'q.",
     expensePickEvent: "Qaysi event uchun?",
@@ -248,6 +276,7 @@ const messages = {
 /create — новое событие
 /expense — записать расход
 /events — ближайшие события
+/balance — кто кому должен, со ссылками на оплату
 /album — добавить фото или сохранить чужие
 /cancel — отменить текущее действие
 /lang ru, /lang en или /lang uz
@@ -286,6 +315,19 @@ const messages = {
     expenseInvalidFormat: "Формат: СУММА описание — например <code>150000 чайхана</code>",
     expenseLogged: (description: string, amount: string, title: string) =>
       `Записано <b>${amount}</b> — «${description}» в <b>${title}</b> (поровну).`,
+    balanceHeader: "💸 <b>Ваши балансы</b>",
+    balanceEmpty: "Всё рассчитано — открытых долгов в ваших событиях нет.",
+    balanceYouOwe: (name: string, amount: string) => `• Вы должны <b>${name}</b> ${amount}`,
+    balanceOwesYou: (name: string, amount: string) => `• <b>${name}</b> должен(а) вам ${amount}`,
+    balanceNoMethods: (name: string) => `   ${name} пока не добавил(а) способы оплаты.`,
+    balanceMethodLine: (label: string, value: string) => `   ${label}: <code>${value}</code>`,
+    balanceAppleCashHint: (amount: string) =>
+      `   Напишите ${amount} в iMessage, нажмите на сумму и оплатите через Apple Cash.`,
+    balancePayButton: (method: string, name: string, amount: string) =>
+      `${method} · ${name} · ${amount}`,
+    balanceAddYours:
+      "Добавьте Venmo, Cash App, Zelle или Apple Cash в профиль KimKim, чтобы вам было проще платить.",
+    balanceProfileBtn: "Способы оплаты",
     expenseNoEvents: "Вы не участвуете в ближайших событиях. Сначала присоединитесь.",
     expenseNoMembers: "Пока нет участников для разделения.",
     expensePickEvent: "Для какого события этот расход?",

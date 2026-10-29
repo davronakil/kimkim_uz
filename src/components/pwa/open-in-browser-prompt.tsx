@@ -3,6 +3,7 @@
 import { Check, Compass, Copy, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
+import { copyToClipboard } from "@/lib/clipboard";
 import {
   detectInAppBrowser,
   type InAppBrowserPlatform,
@@ -52,32 +53,6 @@ function currentPlatform(): InAppBrowserPlatform | null {
     maxTouchPoints: navigator.maxTouchPoints,
     navigatorStandalone: isNavigatorStandalone(),
   });
-}
-
-/** Embedded webviews often block the async clipboard, so fall back to a selection copy. */
-async function copyToClipboard(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    // Fall through to the legacy path below.
-  }
-
-  const field = document.createElement("textarea");
-  field.value = text;
-  field.setAttribute("readonly", "");
-  field.style.position = "fixed";
-  field.style.opacity = "0";
-  document.body.appendChild(field);
-  try {
-    field.select();
-    field.setSelectionRange(0, text.length);
-    return document.execCommand("copy");
-  } catch {
-    return false;
-  } finally {
-    field.remove();
-  }
 }
 
 /**

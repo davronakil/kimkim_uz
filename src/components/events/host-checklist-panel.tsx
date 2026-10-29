@@ -17,7 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { buildTelegramShareUrl } from "@/lib/auth/telegram";
-import type { Comment, Event, EventMember, EventPaymentSummary, Expense } from "@/types";
+import type { Comment, Event, PublicEventMember, EventPaymentSummary, Expense } from "@/types";
 
 type PayoutPreference = {
   payout_method: string | null;
@@ -37,7 +37,7 @@ export function HostChecklistPanel({
   locale: string;
   currentUserId: string;
   event: Event;
-  members: EventMember[];
+  members: PublicEventMember[];
   comments: Comment[];
   expenses: Expense[];
   paymentSummaries: EventPaymentSummary[];

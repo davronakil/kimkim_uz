@@ -35,19 +35,22 @@ import { displayName } from "@/lib/utils";
 import type {
   Comment,
   Event,
-  EventMember,
   EventPaymentSummary,
   EventRsvpStatus,
   Expense,
+  PublicEventMember,
   Settlement,
 } from "@/types";
+import type { PaymentMethod } from "@/lib/payments/methods";
+
 type EventPayload = {
   event: Event;
-  members: EventMember[];
+  members: PublicEventMember[];
   comments: Comment[];
   expenses: Expense[];
   settlements: Settlement[];
   paymentSummaries: EventPaymentSummary[];
+  paymentMethods?: Record<string, PaymentMethod[]>;
 };
 
 export function EventWorkspace({
@@ -112,6 +115,7 @@ export function EventWorkspace({
   }, [eventId, online]);
 
   const { event, members, comments, expenses, settlements, paymentSummaries } = data;
+  const paymentMethods = data.paymentMethods ?? {};
   const expensesEnabled = event.expenses_enabled;
   const visibleExpenses = expensesEnabled ? expenses : [];
   const visibleSettlements = expensesEnabled ? settlements : [];
@@ -321,6 +325,9 @@ export function EventWorkspace({
               members={members}
               expenses={visibleExpenses}
               settlements={visibleSettlements}
+              paymentMethods={paymentMethods}
+              currentUserId={currentUserId}
+              eventTitle={event.title}
               locale={locale}
               currency={event.expense_currency ?? "UZS"}
               onAdded={load}

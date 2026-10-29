@@ -14,7 +14,8 @@
     "createEvent": "Yangi yig'ilish",
     "myEvents": "Yig'ilishlarim",
     "noEvents": "Hali yig'ilishlar yo'q. Birinchisini yarating va odamlarni chaqiring.",
-    "language": "Til"
+    "language": "Til",
+    "profile": "Profil"
   },
   "linkGate": {
     "continue": "Davom etish",
@@ -463,7 +464,18 @@
       "owes": "{from} → {to}: {amount}",
       "copySettlement": "Qarzlarni copy",
       "settlementCopied": "Copy bo'ldi!",
-      "shareSettlement": "Telegramda share"
+      "shareSettlement": "Telegramda share",
+      "pay": {
+        "copy": "{method}ni copy qilish",
+        "open": "{method} orqali to'lash",
+        "venmoHint": "Venmo summa va izoh bilan ochiladi — tekshirib, Pay bosing.",
+        "cashAppHint": "Cash App summa bilan ochiladi.",
+        "zelleHint": "Copy qiling va bankingiz ilovasida Zelle orqali yuboring.",
+        "appleCashHint": "Xabarni yuboring, iMessage'dagi $ summani bosing va Apple Cash bilan to'lang.",
+        "noMethods": "{name} hali to'lov usullarini qo'shmagan.",
+        "addYours": "Pulingizni tezroq olmoqchimisiz?",
+        "addYoursLink": "Venmo, Cash App, Zelle yoki Apple Cash qo'shing"
+      }
     },
     "invite": {
       "title": "Do'stlarni chaqirish",
@@ -867,5 +879,25 @@
     "tipEvents": "yig'ilishlar ro'yxatini oching — faol tadbiringiz shu yerda.",
     "tipCreate": "Yangi reja qilmoqchi bo'lsangiz, yangi yig'ilish yarating.",
     "tipRetry": "Vaqtinchalik muammo bo'lishi mumkin — sahifani yangilab ko'ring."
+  },
+  "profile": {
+    "title": "Profil",
+    "paymentTitle": "To'lov usullari",
+    "paymentSubtitle": "USD eventlarda sizga qarzi borlarga summa bilan ko'rsatiladi. Hammaga ochiq emas.",
+    "venmoLabel": "Venmo username",
+    "venmoPlaceholder": "@username",
+    "cashappLabel": "Cash App $Cashtag",
+    "cashappPlaceholder": "$cashtag",
+    "zelleLabel": "Zelle telefon yoki email",
+    "zellePlaceholder": "+1 555 123 4567 yoki you@email.com",
+    "appleCashLabel": "Apple Cash (iMessage) telefon yoki email",
+    "appleCashPlaceholder": "+1 555 123 4567 yoki you@icloud.com",
+    "saved": "Saqlandi.",
+    "saveFailed": "Saqlanmadi. Belgilangan maydonlarni tekshiring.",
+    "errors": {
+      "invalid_contact": "Telefon raqam (+1 555 123 4567) yoki email kiriting.",
+      "invalid_venmo": "5–30 ta harf, raqam, - yoki _.",
+      "invalid_cashtag": "20 tagacha harf yoki raqam, kamida bitta harf."
+    }
   }
 }

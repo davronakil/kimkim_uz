@@ -4,7 +4,7 @@ import { CheckCircle2, ClipboardCopy, CreditCard, HandCoins, TimerReset } from "
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { formatMoney } from "@/lib/utils";
-import type { EventMember, EventPaymentSummary } from "@/types";
+import type { PublicEventMember, EventPaymentSummary } from "@/types";
 
 export function PaidEventSummaryPanel({
   members,
@@ -13,7 +13,7 @@ export function PaidEventSummaryPanel({
   ticketCurrency,
   locale,
 }: {
-  members: EventMember[];
+  members: PublicEventMember[];
   paymentSummaries: EventPaymentSummary[];
   ticketPriceCents: number | null;
   ticketCurrency: string;

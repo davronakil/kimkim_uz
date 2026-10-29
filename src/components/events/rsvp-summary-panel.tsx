@@ -4,7 +4,7 @@ import { Check, ClipboardCopy, HelpCircle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { displayName } from "@/lib/utils";
-import type { EventMember, EventRsvpStatus } from "@/types";
+import type { PublicEventMember, EventRsvpStatus } from "@/types";
 
 const statusStyles: Record<
   EventRsvpStatus,
@@ -29,17 +29,17 @@ const statusStyles: Record<
 
 const statuses: EventRsvpStatus[] = ["going", "maybe", "declined"];
 
-function partySize(member: EventMember) {
+function partySize(member: PublicEventMember) {
   return member.rsvp_status === "declined"
     ? 0
     : 1 + (member.additional_guest_count ?? 0);
 }
 
-export function RsvpSummaryPanel({ members }: { members: EventMember[] }) {
+export function RsvpSummaryPanel({ members }: { members: PublicEventMember[] }) {
   const t = useTranslations("events.rsvp");
   const [copied, setCopied] = useState(false);
   const summary = useMemo(() => {
-    const grouped = members.reduce<Record<EventRsvpStatus, EventMember[]>>(
+    const grouped = members.reduce<Record<EventRsvpStatus, PublicEventMember[]>>(
       (acc, member) => {
         const status = member.rsvp_status ?? "going";
         acc[status].push(member);

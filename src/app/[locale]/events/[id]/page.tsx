@@ -9,18 +9,14 @@ import { buildEventDetailMetadata } from "@/lib/event-metadata";
 import { isPublicEvent } from "@/lib/events/visibility";
 import { JsonLd } from "@/lib/seo";
 import { displayName } from "@/lib/utils";
-import { presentEventExpenses } from "@/lib/expense/shares";
-import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
 import { goingHeadcount } from "@/lib/events/headcount";
+import { loadEventWorkspaceData } from "@/lib/events/workspace-data";
 import {
   getEventById,
   getEventMemberRole,
   isEventMember,
   isEventOwner,
-  listEventComments,
-  listEventExpenses,
   listEventMembers,
-  listEventPaymentSummaries,
 } from "@/lib/db/queries";
 
 export async function generateMetadata({
@@ -73,27 +69,8 @@ export default async function EventDetailPage({
     );
   }
 
-  const [members, comments, expenses, paymentSummaries] = await Promise.all([
-    listEventMembers(id),
-    listEventComments(id),
-    event.expenses_enabled ? listEventExpenses(id) : Promise.resolve([]),
-    listEventPaymentSummaries(id),
-  ]);
-
-  const sharedExpenses = presentEventExpenses(expenses, members);
-  const settlements = calculateSettlementsFromExpenses(
-    sharedExpenses.map((expense) => ({
-      payer_id: expense.payer_id,
-      amount_cents: expense.amount_cents,
-      currency: expense.currency,
-      splits: (expense.splits ?? []).map((split) => ({
-        user_id: split.user_id,
-        amount_cents: split.amount_cents,
-      })),
-    })),
-  );
-
-  const [canEdit, role, botUsername] = await Promise.all([
+  const [initialData, canEdit, role, botUsername] = await Promise.all([
+    loadEventWorkspaceData(event),
     isEventOwner(id, user.id),
     getEventMemberRole(id, user.id),
     Promise.resolve(
@@ -116,7 +93,7 @@ export default async function EventDetailPage({
       canLeave={role === "member"}
       showNotifyBanner={!user.telegram_chat_id}
       currentUserId={user.id}
-      initialData={{ event, members, comments, expenses: sharedExpenses, settlements, paymentSummaries }}
+      initialData={initialData}
     />
     </>
   );
