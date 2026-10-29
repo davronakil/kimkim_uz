@@ -86,6 +86,21 @@ const messages = {
     balanceAddYours:
       "Add your Venmo, Cash App, Zelle or Apple Cash on your KimKim profile so people can pay you.",
     balanceProfileBtn: "Payment methods",
+    balanceMarkPaidBtn: (name: string, amount: string) => `✅ I paid ${name} ${amount}`,
+    balanceMarkReceivedBtn: (name: string, amount: string) => `✅ ${name} paid me ${amount}`,
+    settleMarkedPaid: (name: string, amount: string, title: string) =>
+      `✅ Marked ${amount} paid to <b>${name}</b> · ${title}`,
+    settleMarkedReceived: (name: string, amount: string, title: string) =>
+      `✅ Marked ${amount} from <b>${name}</b> as received · ${title}`,
+    settleNotifyPaid: (name: string, amount: string, title: string) =>
+      `💸 <b>${name}</b> marked ${amount} as paid to you · ${title}`,
+    settleNotifyReceived: (name: string, amount: string, title: string) =>
+      `💸 <b>${name}</b> marked your ${amount} as received · ${title}`,
+    settleUndoBtn: "↩️ Undo",
+    settleUndone: "Undone — the balance is back.",
+    settleNothingOwed: "Nothing left to settle there.",
+    settleNotAllowed: "Only the two people on this payment can undo it.",
+    settleAlreadyUndone: "Already undone.",
     expenseNoEvents: "You're not in any upcoming events. Join one first.",
     expenseNoMembers: "No members to split with yet.",
     expensePickEvent: "Which event is this expense for?",
@@ -206,6 +221,21 @@ const messages = {
     balanceAddYours:
       "Sizga to'lashlari oson bo'lishi uchun KimKim profilingizga Venmo, Cash App, Zelle yoki Apple Cash qo'shing.",
     balanceProfileBtn: "To'lov usullari",
+    balanceMarkPaidBtn: (name: string, amount: string) => `✅ ${name}ga ${amount} to'ladim`,
+    balanceMarkReceivedBtn: (name: string, amount: string) => `✅ ${name} ${amount} to'ladi`,
+    settleMarkedPaid: (name: string, amount: string, title: string) =>
+      `✅ <b>${name}</b>ga ${amount} to'landi deb belgilandi · ${title}`,
+    settleMarkedReceived: (name: string, amount: string, title: string) =>
+      `✅ <b>${name}</b>dan ${amount} olindi deb belgilandi · ${title}`,
+    settleNotifyPaid: (name: string, amount: string, title: string) =>
+      `💸 <b>${name}</b> sizga ${amount} to'laganini belgiladi · ${title}`,
+    settleNotifyReceived: (name: string, amount: string, title: string) =>
+      `💸 <b>${name}</b> sizdan ${amount} olganini belgiladi · ${title}`,
+    settleUndoBtn: "↩️ Bekor qilish",
+    settleUndone: "Bekor qilindi — qarz qaytdi.",
+    settleNothingOwed: "Bu yerda yopiladigan qarz qolmagan.",
+    settleNotAllowed: "Buni faqat to'lovdagi ikki kishi bekor qila oladi.",
+    settleAlreadyUndone: "Allaqachon bekor qilingan.",
     expenseNoEvents: "Yaqin eventda emassiz. Avval qo'shiling.",
     expenseNoMembers: "Bo'linadigan a'zo yo'q.",
     expensePickEvent: "Qaysi event uchun?",
@@ -328,6 +358,21 @@ const messages = {
     balanceAddYours:
       "Добавьте Venmo, Cash App, Zelle или Apple Cash в профиль KimKim, чтобы вам было проще платить.",
     balanceProfileBtn: "Способы оплаты",
+    balanceMarkPaidBtn: (name: string, amount: string) => `✅ Я заплатил(а) ${name} ${amount}`,
+    balanceMarkReceivedBtn: (name: string, amount: string) => `✅ ${name} заплатил(а) мне ${amount}`,
+    settleMarkedPaid: (name: string, amount: string, title: string) =>
+      `✅ ${amount} для <b>${name}</b> отмечено оплаченным · ${title}`,
+    settleMarkedReceived: (name: string, amount: string, title: string) =>
+      `✅ ${amount} от <b>${name}</b> отмечено полученным · ${title}`,
+    settleNotifyPaid: (name: string, amount: string, title: string) =>
+      `💸 <b>${name}</b> отметил(а), что заплатил(а) вам ${amount} · ${title}`,
+    settleNotifyReceived: (name: string, amount: string, title: string) =>
+      `💸 <b>${name}</b> отметил(а), что получил(а) от вас ${amount} · ${title}`,
+    settleUndoBtn: "↩️ Отменить",
+    settleUndone: "Отменено — долг вернулся.",
+    settleNothingOwed: "Здесь уже нечего закрывать.",
+    settleNotAllowed: "Отменить могут только двое участников этого платежа.",
+    settleAlreadyUndone: "Уже отменено.",
     expenseNoEvents: "Вы не участвуете в ближайших событиях. Сначала присоединитесь.",
     expenseNoMembers: "Пока нет участников для разделения.",
     expensePickEvent: "Для какого события этот расход?",

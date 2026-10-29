@@ -51,12 +51,26 @@ export function calculateSettlements(
   return settlements;
 }
 
+/** Either party can undo a payment; the owner can also undo any line of their settle-up. */
+export function canUndoSettlementPayment(
+  payment: { from_user_id: string; to_user_id: string; settle_up_id: string | null },
+  actorId: string,
+  actorIsOwner: boolean,
+) {
+  if (payment.from_user_id === actorId || payment.to_user_id === actorId) return true;
+  return Boolean(payment.settle_up_id) && actorIsOwner;
+}
+
+type LedgerTransfer = { from_user_id: string; to_user_id: string; amount_cents: number };
+
+/** Expenses credit the payer; recorded transfers credit the sender and debit the recipient. */
 export function buildBalancesFromExpenses(
   expenses: Array<{
     payer_id: string;
     amount_cents: number;
     splits: Array<{ user_id: string; amount_cents: number }>;
   }>,
+  transfers: LedgerTransfer[] = [],
 ): Map<string, number> {
   const balances = new Map<string, number>();
 
@@ -71,6 +85,11 @@ export function buildBalancesFromExpenses(
     }
   }
 
+  for (const transfer of transfers) {
+    adjust(transfer.from_user_id, transfer.amount_cents);
+    adjust(transfer.to_user_id, -transfer.amount_cents);
+  }
+
   return balances;
 }
 
@@ -81,18 +100,26 @@ export function calculateSettlementsFromExpenses(
     currency: string;
     splits: Array<{ user_id: string; amount_cents: number }>;
   }>,
+  transfers: Array<LedgerTransfer & { currency: string }> = [],
 ): Settlement[] {
-  const byCurrency = new Map<string, typeof expenses>();
+  const byCurrency = new Map<string, { expenses: typeof expenses; transfers: typeof transfers }>();
+  const bucket = (currency: string) => {
+    const existing = byCurrency.get(currency);
+    if (existing) return existing;
+    const created = { expenses: [] as typeof expenses, transfers: [] as typeof transfers };
+    byCurrency.set(currency, created);
+    return created;
+  };
 
   for (const expense of expenses) {
-    const currency = expense.currency || "UZS";
-    const currencyExpenses = byCurrency.get(currency) ?? [];
-    currencyExpenses.push(expense);
-    byCurrency.set(currency, currencyExpenses);
+    bucket(expense.currency || "UZS").expenses.push(expense);
+  }
+  for (const transfer of transfers) {
+    bucket(transfer.currency || "UZS").transfers.push(transfer);
   }
 
-  return [...byCurrency.entries()].flatMap(([currency, currencyExpenses]) => {
-    const balances = buildBalancesFromExpenses(currencyExpenses);
+  return [...byCurrency.entries()].flatMap(([currency, ledger]) => {
+    const balances = buildBalancesFromExpenses(ledger.expenses, ledger.transfers);
     return calculateSettlements(
       [...balances.entries()].map(([userId, balanceCents]) => ({
         userId,

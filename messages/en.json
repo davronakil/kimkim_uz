@@ -479,6 +479,21 @@
         "noMethods": "{name} hasn't added payment methods yet.",
         "addYours": "Want to get paid faster?",
         "addYoursLink": "Add Venmo, Cash App, Zelle or Apple Cash"
+      },
+      "settle": {
+        "markPaid": "Mark paid",
+        "settleUp": "Settle up event",
+        "confirmTitle": "Mark all {count, plural, one {# balance} other {# balances}} as paid?",
+        "confirmBody": "This records a payment for every line above so everyone's balance goes to zero. You can undo it afterwards.",
+        "confirm": "Yes, settle up",
+        "paidLine": "{from} paid {to} {amount}",
+        "markedBy": "Marked by {name} · {date}",
+        "settledUpBy": "Settled up by {name}",
+        "undo": "Undo",
+        "undoSettleUp": "Undo settle-up",
+        "historyTitle": "Payments",
+        "allSettled": "All settled",
+        "error": "Couldn't update the balance. Try again."
       }
     },
     "invite": {

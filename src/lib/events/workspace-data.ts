@@ -4,6 +4,7 @@ import {
   listEventMembers,
   listEventPaymentSummaries,
   listPaymentMethodsForUsers,
+  listSettlementPayments,
 } from "@/lib/db/queries";
 import { presentEventExpenses } from "@/lib/expense/shares";
 import { calculateSettlementsFromExpenses } from "@/lib/expense/settlement";
@@ -12,7 +13,14 @@ import {
   ticketPaidWithHandles,
   type PaymentMethod,
 } from "@/lib/payments/methods";
-import type { Event, EventMember, Expense, PublicEventMember, Settlement } from "@/types";
+import type {
+  Event,
+  EventMember,
+  Expense,
+  PublicEventMember,
+  Settlement,
+  SettlementPayment,
+} from "@/types";
 
 export function toPublicEventMember(member: EventMember): PublicEventMember {
   return {
@@ -34,7 +42,10 @@ export function toPublicEventMember(member: EventMember): PublicEventMember {
   };
 }
 
-export function settlementsForExpenses(expenses: Expense[]): Settlement[] {
+export function settlementsForExpenses(
+  expenses: Expense[],
+  payments: SettlementPayment[] = [],
+): Settlement[] {
   return calculateSettlementsFromExpenses(
     expenses.map((expense) => ({
       payer_id: expense.payer_id,
@@ -45,6 +56,7 @@ export function settlementsForExpenses(expenses: Expense[]): Settlement[] {
         amount_cents: split.amount_cents,
       })),
     })),
+    payments,
   );
 }
 
@@ -63,15 +75,17 @@ export async function payeePaymentMethods(
 }
 
 export async function loadEventSettlements(eventId: string, members?: EventMember[]) {
-  const [expenses, eventMembers] = await Promise.all([
+  const [expenses, eventMembers, payments] = await Promise.all([
     listEventExpenses(eventId),
     members ? Promise.resolve(members) : listEventMembers(eventId),
+    listSettlementPayments(eventId),
   ]);
   const sharedExpenses = presentEventExpenses(expenses, eventMembers);
   return {
     members: eventMembers,
     expenses: sharedExpenses,
-    settlements: settlementsForExpenses(sharedExpenses),
+    settlementPayments: payments,
+    settlements: settlementsForExpenses(sharedExpenses, payments),
   };
 }
 
@@ -82,9 +96,13 @@ export async function loadEventWorkspaceData(event: Event) {
     listEventPaymentSummaries(event.id),
   ]);
 
-  const { expenses, settlements } = event.expenses_enabled
+  const { expenses, settlements, settlementPayments } = event.expenses_enabled
     ? await loadEventSettlements(event.id, members)
-    : { expenses: [] as Expense[], settlements: [] as Settlement[] };
+    : {
+        expenses: [] as Expense[],
+        settlements: [] as Settlement[],
+        settlementPayments: [] as SettlementPayment[],
+      };
 
   return {
     event,
@@ -92,6 +110,7 @@ export async function loadEventWorkspaceData(event: Event) {
     comments,
     expenses,
     settlements,
+    settlementPayments,
     paymentSummaries,
     paymentMethods: await payeePaymentMethods(
       settlements,

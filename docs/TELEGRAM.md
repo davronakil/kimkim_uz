@@ -70,7 +70,7 @@ Available in **English**, **Oʻzbek**, and **Русский** (Telegram menu fol
 | `/create` | Guided event flow: title → date → description → location |
 | `/expense` | Log an expense (equal split among members) |
 | `/events` | Upcoming events with links |
-| `/balance` | What you owe / are owed per event (aliases `/owe`, `/qarz`). USD debts list the payee's methods: Venmo and Cash App as URL buttons with the amount, Zelle and Apple Cash as copyable text |
+| `/balance` | What you owe / are owed per event (aliases `/owe`, `/qarz`). USD debts list the payee's methods: Venmo and Cash App as URL buttons with the amount, Zelle and Apple Cash as copyable text. Each line has a ✅ button that records it as paid (either party); the confirmation and the other party's DM carry an Undo button. Settled events are hidden |
 | `/album` | Add photos to an event, or receive everyone else's |
 | `/help` | Command reference |
 | `/cancel` | Stop current flow |

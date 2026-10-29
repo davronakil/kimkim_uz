@@ -8,7 +8,9 @@ import { guestCapLine } from "@/lib/telegram/guest-cap";
 import { notifyEventGroup, ownerLocaleForEvent } from "@/lib/telegram/group";
 import { t } from "@/lib/telegram/i18n";
 import type { BotLocale } from "@/lib/telegram/types";
-import type { Event, EventRsvpStatus, User } from "@/types";
+import { undoPaymentCallbackData } from "@/lib/telegram/settle-callback-data";
+import { formatMoney } from "@/lib/utils";
+import type { Event, EventRsvpStatus, SettlementPayment, User } from "@/types";
 
 function escapeHtml(text: string): string {
   return text
@@ -115,6 +117,54 @@ async function notifyMembers(
       await sendTelegramMessage(member.telegram_chat_id!, text, openEventButton(eventId, locale));
     }),
   );
+}
+
+/** DM the other party of a "Mark paid" so they can undo a mistaken one. Skipped if muted. */
+export async function notifySettlementPaymentRecorded(input: {
+  event: Event;
+  payment: SettlementPayment;
+  actorId: string;
+}) {
+  const { event, payment, actorId } = input;
+  const counterpartId = payment.from_user_id === actorId ? payment.to_user_id : payment.from_user_id;
+  const members = await listEventMembers(event.id);
+  const actor = members.find((member) => member.id === actorId);
+  const counterpart = members.find((member) => member.id === counterpartId);
+  if (!actor || !counterpart?.telegram_chat_id) return;
+
+  const db = await getDb();
+  const pref = await db
+    .prepare(
+      `SELECT mode FROM event_notification_preferences WHERE event_id = ? AND user_id = ?`,
+    )
+    .bind(event.id, counterpartId)
+    .first<{ mode: string }>();
+  if (pref?.mode === "muted") return;
+
+  const locale = localeFor(counterpart);
+  const strings = t(locale);
+  const amount = formatMoney(payment.amount_cents, payment.currency, locale);
+  const name = escapeHtml(displayName(actor));
+  const title = escapeHtml(truncate(event.title, 80));
+  const text =
+    payment.from_user_id === actorId
+      ? strings.settleNotifyPaid(name, amount, title)
+      : strings.settleNotifyReceived(name, amount, title);
+
+  await sendTelegramMessage(counterpart.telegram_chat_id, text, {
+    parse_mode: "HTML",
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: strings.settleUndoBtn,
+            callback_data: undoPaymentCallbackData(event.id, payment.id),
+          },
+          { text: strings.openEvent, url: eventUrl(event.id, locale) },
+        ],
+      ],
+    },
+  });
 }
 
 export async function notifyAlbumPhotosAdded(input: {

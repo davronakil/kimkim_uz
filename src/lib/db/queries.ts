@@ -14,9 +14,11 @@ import type {
   EventReferralSource,
   EventWithCreator,
   Expense,
+  SettlementPayment,
   User,
 } from "@/types";
 import { nestComments } from "@/lib/expense/settlement";
+import { toUtcTimestamp } from "@/lib/events/timezone";
 import { sortPaymentMethods, type PaymentMethod } from "@/lib/payments/methods";
 
 function normalizeEvent<T extends Partial<Event>>(
@@ -888,4 +890,98 @@ export async function listEventExpenses(eventId: string): Promise<Expense[]> {
   }
 
   return withSplits;
+}
+
+export async function listSettlementPayments(eventId: string): Promise<SettlementPayment[]> {
+  const db = await getDb();
+  const result = await db
+    .prepare(
+      `SELECT id, event_id, from_user_id, to_user_id, amount_cents, currency,
+              recorded_by_user_id, settle_up_id, created_at
+       FROM expense_settlement_payments
+       WHERE event_id = ?
+       ORDER BY created_at DESC, id`,
+    )
+    .bind(eventId)
+    .all<SettlementPayment>();
+  return result.results ?? [];
+}
+
+export async function getSettlementPayment(
+  eventId: string,
+  paymentId: string,
+): Promise<SettlementPayment | null> {
+  const db = await getDb();
+  return db
+    .prepare(
+      `SELECT id, event_id, from_user_id, to_user_id, amount_cents, currency,
+              recorded_by_user_id, settle_up_id, created_at
+       FROM expense_settlement_payments
+       WHERE id = ? AND event_id = ?`,
+    )
+    .bind(paymentId, eventId)
+    .first<SettlementPayment>();
+}
+
+export async function insertSettlementPayments(
+  eventId: string,
+  transfers: Array<Pick<SettlementPayment, "from_user_id" | "to_user_id" | "amount_cents" | "currency">>,
+  recordedByUserId: string,
+  settleUpId: string | null = null,
+): Promise<SettlementPayment[]> {
+  if (transfers.length === 0) return [];
+  const db = await getDb();
+  const createdAt = toUtcTimestamp(new Date());
+  const rows: SettlementPayment[] = transfers.map((transfer) => ({
+    id: nanoid(),
+    event_id: eventId,
+    from_user_id: transfer.from_user_id,
+    to_user_id: transfer.to_user_id,
+    amount_cents: transfer.amount_cents,
+    currency: transfer.currency,
+    recorded_by_user_id: recordedByUserId,
+    settle_up_id: settleUpId,
+    created_at: createdAt,
+  }));
+  await db.batch(
+    rows.map((row) =>
+      db
+        .prepare(
+          `INSERT INTO expense_settlement_payments
+             (id, event_id, from_user_id, to_user_id, amount_cents, currency,
+              recorded_by_user_id, settle_up_id, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+        .bind(
+          row.id,
+          row.event_id,
+          row.from_user_id,
+          row.to_user_id,
+          row.amount_cents,
+          row.currency,
+          row.recorded_by_user_id,
+          row.settle_up_id,
+          row.created_at,
+        ),
+    ),
+  );
+  return rows;
+}
+
+export async function deleteSettlementPayment(eventId: string, paymentId: string) {
+  const db = await getDb();
+  const result = await db
+    .prepare(`DELETE FROM expense_settlement_payments WHERE id = ? AND event_id = ?`)
+    .bind(paymentId, eventId)
+    .run();
+  return (result.meta?.changes ?? 0) > 0;
+}
+
+export async function deleteSettleUp(eventId: string, settleUpId: string) {
+  const db = await getDb();
+  const result = await db
+    .prepare(`DELETE FROM expense_settlement_payments WHERE settle_up_id = ? AND event_id = ?`)
+    .bind(settleUpId, eventId)
+    .run();
+  return result.meta?.changes ?? 0;
 }
