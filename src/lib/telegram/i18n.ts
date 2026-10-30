@@ -101,6 +101,8 @@ const messages = {
     settleNothingOwed: "Nothing left to settle there.",
     settleNotAllowed: "Only the two people on this payment can undo it.",
     settleAlreadyUndone: "Already undone.",
+    settleNotifySettledUp: (name: string, title: string) =>
+      `✅ <b>${name}</b> settled up <b>${title}</b> — your balances there are cleared.`,
     expenseNoEvents: "You're not in any upcoming events. Join one first.",
     expenseNoMembers: "No members to split with yet.",
     expensePickEvent: "Which event is this expense for?",
@@ -236,6 +238,8 @@ const messages = {
     settleNothingOwed: "Bu yerda yopiladigan qarz qolmagan.",
     settleNotAllowed: "Buni faqat to'lovdagi ikki kishi bekor qila oladi.",
     settleAlreadyUndone: "Allaqachon bekor qilingan.",
+    settleNotifySettledUp: (name: string, title: string) =>
+      `✅ <b>${name}</b> <b>${title}</b>ni yopdi — shu eventdagi qarzlaringiz yopildi.`,
     expenseNoEvents: "Yaqin eventda emassiz. Avval qo'shiling.",
     expenseNoMembers: "Bo'linadigan a'zo yo'q.",
     expensePickEvent: "Qaysi event uchun?",
@@ -373,6 +377,8 @@ const messages = {
     settleNothingOwed: "Здесь уже нечего закрывать.",
     settleNotAllowed: "Отменить могут только двое участников этого платежа.",
     settleAlreadyUndone: "Уже отменено.",
+    settleNotifySettledUp: (name: string, title: string) =>
+      `✅ <b>${name}</b> закрыл(а) долги в <b>${title}</b> — ваши балансы там обнулены.`,
     expenseNoEvents: "Вы не участвуете в ближайших событиях. Сначала присоединитесь.",
     expenseNoMembers: "Пока нет участников для разделения.",
     expensePickEvent: "Для какого события этот расход?",

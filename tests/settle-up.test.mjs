@@ -4,6 +4,7 @@ import {
   calculateSettlementsFromExpenses,
   canUndoSettlementPayment,
 } from "../src/lib/expense/settlement.ts";
+import { settleUpNotifyRecipientIds } from "../src/lib/expense/settle-recipients.ts";
 import {
   markPaidCallbackData,
   parseMarkPaidCallbackData,
@@ -91,4 +92,22 @@ test("bot callback data round-trips and fits Telegram's 64-byte limit", () => {
   assert.ok(Buffer.byteLength(undo) <= 64);
   assert.deepEqual(parseUndoPaymentCallbackData(undo), { eventId: id, paymentId: "c".repeat(21) });
   assert.equal(parseMarkPaidCallbackData("rsvp:y:abc"), null);
+});
+
+test("settle-up DMs go once per affected person, not the owner", () => {
+  assert.deepEqual(
+    settleUpNotifyRecipientIds(
+      [
+        { from_user_id: "aziz", to_user_id: "host" },
+        { from_user_id: "lola", to_user_id: "host" },
+        { from_user_id: "aziz", to_user_id: "lola" },
+      ],
+      "host",
+    ).sort(),
+    ["aziz", "lola"],
+  );
+  assert.deepEqual(
+    settleUpNotifyRecipientIds([{ from_user_id: "host", to_user_id: "aziz" }], "host"),
+    ["aziz"],
+  );
 });

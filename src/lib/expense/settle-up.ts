@@ -10,7 +10,10 @@ import {
 } from "@/lib/db/queries";
 import { loadEventSettlements } from "@/lib/events/workspace-data";
 import { canUndoSettlementPayment } from "@/lib/expense/settlement";
-import { notifySettlementPaymentRecorded } from "@/lib/telegram/notifications";
+import {
+  notifySettlementPaymentRecorded,
+  notifySettleUpRecorded,
+} from "@/lib/telegram/notifications";
 import type { Event, SettlementPayment } from "@/types";
 
 export type SettleError = "forbidden" | "disabled" | "nothing_owed" | "not_found";
@@ -63,6 +66,11 @@ export async function settleUpEvent(input: {
 
   const settleUpId = nanoid();
   const payments = await insertSettlementPayments(event.id, settlements, actorId, settleUpId);
+  void runInBackground(
+    notifySettleUpRecorded({ event, payments, actorId }).catch((error) =>
+      console.error("[settle-up] notify settle-up failed", error),
+    ),
+  );
   return { ok: true, value: { settleUpId, payments } };
 }
 
