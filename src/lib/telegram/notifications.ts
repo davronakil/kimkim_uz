@@ -8,9 +8,12 @@ import { guestCapLine } from "@/lib/telegram/guest-cap";
 import { notifyEventGroup, ownerLocaleForEvent } from "@/lib/telegram/group";
 import { t } from "@/lib/telegram/i18n";
 import type { BotLocale } from "@/lib/telegram/types";
+import { settleUpNotifyRecipientIds } from "@/lib/expense/settle-recipients";
 import { undoPaymentCallbackData } from "@/lib/telegram/settle-callback-data";
 import { formatMoney } from "@/lib/utils";
 import type { Event, EventRsvpStatus, SettlementPayment, User } from "@/types";
+
+export { settleUpNotifyRecipientIds } from "@/lib/expense/settle-recipients";
 
 function escapeHtml(text: string): string {
   return text
@@ -119,6 +122,17 @@ async function notifyMembers(
   );
 }
 
+async function isEventMuted(eventId: string, userId: string): Promise<boolean> {
+  const db = await getDb();
+  const pref = await db
+    .prepare(
+      `SELECT mode FROM event_notification_preferences WHERE event_id = ? AND user_id = ?`,
+    )
+    .bind(eventId, userId)
+    .first<{ mode: string }>();
+  return pref?.mode === "muted";
+}
+
 /** DM the other party of a "Mark paid" so they can undo a mistaken one. Skipped if muted. */
 export async function notifySettlementPaymentRecorded(input: {
   event: Event;
@@ -131,15 +145,7 @@ export async function notifySettlementPaymentRecorded(input: {
   const actor = members.find((member) => member.id === actorId);
   const counterpart = members.find((member) => member.id === counterpartId);
   if (!actor || !counterpart?.telegram_chat_id) return;
-
-  const db = await getDb();
-  const pref = await db
-    .prepare(
-      `SELECT mode FROM event_notification_preferences WHERE event_id = ? AND user_id = ?`,
-    )
-    .bind(event.id, counterpartId)
-    .first<{ mode: string }>();
-  if (pref?.mode === "muted") return;
+  if (await isEventMuted(event.id, counterpartId)) return;
 
   const locale = localeFor(counterpart);
   const strings = t(locale);
@@ -165,6 +171,44 @@ export async function notifySettlementPaymentRecorded(input: {
       ],
     },
   });
+}
+
+/**
+ * One short DM per affected member when the owner settles up.
+ * Open event only — no Undo buttons (owner undoes on the event page; avoids N undo taps).
+ * Skips muted members and the owner.
+ */
+export async function notifySettleUpRecorded(input: {
+  event: Event;
+  payments: SettlementPayment[];
+  actorId: string;
+}) {
+  const { event, payments, actorId } = input;
+  if (payments.length === 0) return;
+
+  const members = await listEventMembers(event.id);
+  const actor = members.find((member) => member.id === actorId);
+  if (!actor) return;
+
+  const recipients = settleUpNotifyRecipientIds(payments, actorId)
+    .map((id) => members.find((member) => member.id === id))
+    .filter((member): member is NonNullable<typeof member> => Boolean(member?.telegram_chat_id));
+
+  await Promise.allSettled(
+    recipients.map(async (member) => {
+      if (await isEventMuted(event.id, member.id)) return;
+      const locale = localeFor(member);
+      const strings = t(locale);
+      await sendTelegramMessage(
+        member.telegram_chat_id!,
+        strings.settleNotifySettledUp(
+          escapeHtml(displayName(actor)),
+          escapeHtml(truncate(event.title, 80)),
+        ),
+        openEventButton(event.id, locale),
+      );
+    }),
+  );
 }
 
 export async function notifyAlbumPhotosAdded(input: {
